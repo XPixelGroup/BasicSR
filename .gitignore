@@ -1,0 +1,19 @@
+.vscode
+experiments
+
+*.svg
+
+*.pyc
+*.t7
+*.pth
+*.caffemodel
+*.mat
+*.npy
+
+# latex
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
