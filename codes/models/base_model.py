@@ -1,0 +1,68 @@
+import os
+import torch
+import torch.nn as nn
+
+
+class BaseModel():
+    def name(self):
+        return 'BaseModel'
+
+    def __init__(self, opt):
+        self.opt = opt
+        self.save_dir = opt['path']['models']  # save models
+        self.use_gpu = opt['gpu_ids'] is not None
+        self.Tensor = torch.cuda.FloatTensor if self.use_gpu else torch.FloatTensor
+        self.is_train = opt['is_train']
+
+    def feed_data(self, data):
+        pass
+
+    def optimize_parameters(self):
+        pass
+
+    def get_current_visuals(self):
+        pass
+
+    def get_current_losses(self):
+        pass
+
+    def print_network(self):
+        pass
+
+    def save(self, label):
+        pass
+
+    def load(self):
+        pass
+
+    def update_learning_rate(self):
+        for scheduler in self.schedulers:
+            scheduler.step()
+
+    def get_current_learning_rate(self):
+        return self.optimizers[0].param_groups[0]['lr']
+
+    # helper printing function that can be used by subclasses
+    def get_network_decsription(self, network):
+        if isinstance(network, nn.DataParallel):
+            network = network.module
+        s = str(network)
+        n = sum(map(lambda x: x.numel(), network.parameters()))
+        return s, n
+
+    # helper saving function that can be used by subclasses
+    def save_network(self, save_dir, network, network_label, iter_label):
+        save_filename = '%s_%s.pth' % (iter_label, network_label)
+        save_path = os.path.join(save_dir, save_filename)
+        if isinstance(network, nn.DataParallel):
+            network = network.module
+        state_dict = network.state_dict()
+        for key, param in state_dict.items():
+            state_dict[key] = param.cpu()
+        torch.save(state_dict, save_path)
+
+    # helper loading function that can be used by subclasses
+    def load_network(self, load_path, network, strict=True):
+        if isinstance(network, nn.DataParallel):
+            network = network.module
+        network.load_state_dict(torch.load(load_path), strict=strict)
