@@ -1,6 +1,6 @@
 {
-  "name":"010_008c_DegradationNet_noBN_GOPRO_DIV2Kbic"
-  ,"model":"sr"
+  "name":"debug_000_exp_name"
+  ,"model":"srgan"
   ,"gpu_ids": [0]
 
   ,"datasets": [{
@@ -20,7 +20,7 @@
     ,"scale": 4
     ,"use_flip": true
     ,"use_rot": true
-    ,"reverse": true // reverse LR and HR
+    //,"reverse": true // reverse LR and HR
   }, {
     "name": "Set5"
     ,"data_type": "img"
@@ -32,17 +32,17 @@
     ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLR"
     ,"scale": 4
     ,"metric_mode": "rgb"
-    ,"reverse": true // reverse LR and HR
+    //,"reverse": true // reverse LR and HR
   }]
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/008_004c_DegradationNet_noBN_GOPRO/models/380000_G.pth"
+    //,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/008_004c_DegradationNet_noBN_GOPRO/models/380000_G.pth"
   }
 
   ,"network": {
-    //"which_model_G": "sr_resnet_torch"
-    "which_model_G": "degradation_net"
+    "which_model_G": "sr_resnet_torch"
+    // "which_model_G": "degradation_net"
     ,"norm_type": null
     ,"mode": "NAC"
     ,"scale": 4
@@ -57,13 +57,22 @@
     "manual_seed": 0
     ,"niter": 1e6
 
-    ,"lr_G": 1e-4
+    ,"lr_G": 2e-4
+    ,"weight_decay_G": 0
+    ,"beta1_G": 0.9
+    ,"lr_D": 2e-4
+    ,"weight_decay_D": 0
+    ,"beta1_D": 0.9
     ,"lr_scheme": "MultiStepLR"
     ,"lr_steps": [100000, 200000, 300000, 400000]
     ,"lr_gamma": 0.5
 
-    ,"pixel_criterion": "l1"
+    ,"pixel_criterion": "l1" // "l1" | "l2"
     ,"pixel_weight": 1.0
+    ,"feature_criterion": "l1" // "l1" | "l2"
+    ,"feature_weight": 1.0
+    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan"
+    ,"gan_weight": 1.0
     ,"val_freq": 1e4
   }
 
