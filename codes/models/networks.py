@@ -81,6 +81,9 @@ def define_G(opt):
     if which_model == 'sr_resnet_torch':
         netG = G.SRResNet_torch(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
+    elif which_model == 'degradation_net':
+        netG = G.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
 
     else:
         raise NotImplementedError('Generator model [%s] is not recognized' % which_model)
