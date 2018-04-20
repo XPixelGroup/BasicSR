@@ -129,7 +129,7 @@ def main():
             # update learning rate
             model.update_learning_rate()
 
-        print('End of epoch %d.' % epoch)
+        # print('End of epoch %d.' % epoch)
 
     print('Saving the final model.')
     model.save('latest')
@@ -185,6 +185,8 @@ def validate(val_loader, model, logger, epoch, current_step, val_dataset_opt):
     print_rlt['psnr'] = avg_psnr
     logger.print_results('val', print_rlt)
     model.train() # change back to train mode.
+    print('-----------------------------------')
+
 
 if __name__ == '__main__':
     main()

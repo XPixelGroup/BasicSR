@@ -122,6 +122,9 @@ class LRHRPairDataset(data.Dataset):
             return {'LR': img_LR, 'LR_path': LR_path}
         elif  LR_path is None:
             LR_path = HR_path
+        if self.opt['reverse']:
+            img_LR, img_HR = img_HR, img_LR
+            LR_path, HR_path = HR_path, LR_path
         return {'LR': img_LR, 'HR': img_HR, 'LR_path': LR_path, 'HR_path': HR_path}
 
     def __len__(self):
