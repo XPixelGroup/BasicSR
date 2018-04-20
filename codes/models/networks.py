@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.nn import init
 import functools
 import models.modules.generator as G
+import models.modules.perceptual_network as F
 
 ####################
 # initialize
@@ -93,3 +94,18 @@ def define_G(opt):
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG).cuda()
     return netG
+
+
+def define_F(opt, use_bn=False):
+    gpu_ids = opt['gpu_ids']
+    # pytorch pretrained VGG19, with BN
+    # VGG19-54, before ReLU.
+    if use_bn:
+        feature_layer = 49
+    else:
+        feature_layer = 34
+    netF = F.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, use_input_norm=True)
+    if gpu_ids:
+        netF = nn.DataParallel(netF).cuda()
+    netF.eval()  # No need to train
+    return netF
