@@ -33,7 +33,7 @@ class SRModel(BaseModel):
             elif loss_type == 'l2':
                 self.criterion_pixel = nn.MSELoss()
             else:
-                raise NotImplementedError('Loss type [%s] is not recognized.' % loss_tpe)
+                raise NotImplementedError('Loss type [%s] is not recognized.' % loss_type)
             if self.use_gpu:
                 self.criterion_pixel.cuda()
             self.loss_pixel_weight = train_opt['pixel_weight']
