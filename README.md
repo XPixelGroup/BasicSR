@@ -8,21 +8,21 @@ BasicSR repo mainly contains 3 parts:
 
 ### Table of Contents
 1. [Introduction](#introduction)
-2. [Code Stuctures](#code-structures)
-1. [TODO list](#todo-list)
+2. [Code Structures](#code-structures)
+1. [TODO List](#todo-list)
 
 ### Introduction
 
-0. commands
+1. commands
 
 * train: `python3 train.py -opt options/train/SRResNet.json`
 * test: `python3 test.py -opt options/test/test.json`
 
-### Code Stuctures
+### Code Structures
 
 1. data
 
-use cv2 to process images.
+    use cv2 to process images.
 
 * LRHR_pair (also for HR images only and down-sampling on-the-fly)
 
@@ -31,23 +31,18 @@ use cv2 to process images.
 
 3. options
 
-use JSON file to load options.
+    use JSON file to load options.
 
-JSON files supports `//` comments
+    JSON files supports `//` comments
 
 4. utils
 
 
 ### TODO list
 
-[ ] test code.
-
-[ ] on-the-fly down-sampling supports matlab bicubic.
-
-[ ] tensorboard logger
-
-[ ] SRGAN models
-
-[ ] unpair SRGAN dataloader
-
-[ ] support Y channel training and testing (the save_image function and metric may not work now.)
+- [ ] test code.
+- [ ] on-the-fly down-sampling supports matlab bicubic.
+- [ ] tensorboard logger
+- [ ] SRGAN models
+- [ ] unpair SRGAN dataloader
+- [ ] support Y channel training and testing (the save_image function and metric may not work now.)
