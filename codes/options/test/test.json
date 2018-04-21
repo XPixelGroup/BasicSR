@@ -18,7 +18,7 @@
     ,"pretrain_model_G": "/home/xtwang/Projects/torch_models_to_pytorch_models/pytorch_models/SRResNet_noBN_torch.pth"
   }
 
-  ,"network": {
+  ,"network_G": {
     "which_model_G": "sr_resnet_torch"
     ,"norm_type": null
     ,"mode": "NAC"

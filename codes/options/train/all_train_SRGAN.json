@@ -59,18 +59,26 @@
 //########################################
 //# define network
 //########################################
-  ,"network": {
+  ,"network_G": {
     "which_model_G": "sr_resnet_torch"
-    ,"norm_type": "batch" // "batch" | null
+    ,"norm_type": null // "batch" | null
     ,"mode": "NAC" // "NAC" | "CNA"
     ,"scale": 4
     ,"nf": 64
     ,"nb": 16
     ,"in_nc": 3
     ,"out_nc": 3
-    ,"groups": 1
+    ,"group": 1
   }
-
+  ,"network_D": {
+    "which_model_D": "discriminaotr_vgg_128"
+    ,"norm_type": "batch"
+    ,"act_type": "leakyrelu"
+    ,"mode": "CNA"
+    ,"nf": 64
+    ,"in_nc": 3
+    ,"out_nc": 3
+  }
 //########################################
 //# training
 //########################################
@@ -92,7 +100,7 @@
     ,"pixel_weight": 1.0
     ,"feature_criterion": "l1" // "l1" | "l2"
     ,"feature_weight": 1.0
-    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan"
+    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
     ,"gan_weight": 1.0
     ,"val_freq": 1e4
   }
