@@ -20,7 +20,7 @@ opt = option.parse(options_path, is_train=True)
 
 util.mkdir_and_rename(opt['path']['experiments_root'])  # rename old experiments if exists
 util.mkdirs((path for key, path in opt['path'].items() if not key == 'experiments_root' and \
-    not key == 'pretrain_model_G'))
+    not key == 'pretrain_model_G' and not key == 'pretrain_model_D'))
 option.save(opt) # save option file to the opt['path']['options']
 opt = option.dict_to_nonedict(opt)  # Convert to NoneDict, which return None for missing key.
 
@@ -109,13 +109,18 @@ def main():
             if current_step % opt['logger']['print_freq'] == 0:
                 losses = model.get_current_losses()
                 print_rlt = OrderedDict()
+                print_rlt['model'] = opt['model']
                 print_rlt['epoch'] = epoch
                 print_rlt['iters'] = current_step
                 print_rlt['time'] = train_elapsed
-                print_rlt['lr'] = model.get_current_learning_rate()
                 for k, v in losses.items():
                     print_rlt[k] = v
-                logger.print_results('train', print_rlt)
+                more_info = model.get_more_training_info()
+                if more_info is not None:
+                    for k, v in more_info.items():
+                        print_rlt[k] = v
+                print_rlt['lr'] = model.get_current_learning_rate()
+                logger.print_format_results('train', print_rlt)
 
             # save models
             if current_step % opt['logger']['save_checkpoint_freq'] == 0:
@@ -179,11 +184,12 @@ def validate(val_loader, model, logger, epoch, current_step, val_dataset_opt):
     val_elapsed = time.time() - val_start_time
     # Save to log
     print_rlt = OrderedDict()
+    print_rlt['model'] = opt['model']
     print_rlt['epoch'] = epoch
     print_rlt['iters'] = current_step
     print_rlt['time'] = val_elapsed
     print_rlt['psnr'] = avg_psnr
-    logger.print_results('val', print_rlt)
+    logger.print_format_results('val', print_rlt)
     model.train() # change back to train mode.
     print('-----------------------------------')
 
