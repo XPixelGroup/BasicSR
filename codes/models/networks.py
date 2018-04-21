@@ -2,8 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import init
 import functools
-import models.modules.generator as G
-import models.modules.perceptual_network as F
+import models.modules.architecture as Arch
 
 ####################
 # initialize
@@ -74,16 +73,17 @@ def init_weights(net, init_type='kaiming', scale=1, std=0.02):
 ####################
 # define network
 ####################
+# Generator
 def define_G(opt):
     gpu_ids = opt['gpu_ids']
-    opt = opt['network']
+    opt = opt['network_G']
     which_model = opt['which_model_G']
 
     if which_model == 'sr_resnet_torch':
-        netG = G.SRResNet_torch(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+        netG = Arch.SRResNet_torch(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
     elif which_model == 'degradation_net':
-        netG = G.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+        netG = Arch.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
 
     else:
@@ -96,15 +96,34 @@ def define_G(opt):
     return netG
 
 
+# Discriminator
+def define_D(opt):
+    gpu_ids = opt['gpu_ids']
+    opt = opt['network_D']
+    which_model = opt['which_model_D']
+
+    if which_model == 'discriminaotr_vgg_128':
+        netD = Arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
+    else:
+        raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
+    if opt['is_train']:
+        init_weights(netD, init_type='kaiming', scale=1)
+    if gpu_ids:
+        netD = nn.DataParallel(netD).cuda()
+    return netD
+
+
 def define_F(opt, use_bn=False):
     gpu_ids = opt['gpu_ids']
-    # pytorch pretrained VGG19, with BN
-    # VGG19-54, before ReLU.
+    tensor = torch.cuda.FloatTensor if gpu_ids else torch.FloatTensor
+    # pytorch pretrained VGG19-54, before ReLU.
     if use_bn:
         feature_layer = 49
     else:
         feature_layer = 34
-    netF = F.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, use_input_norm=True)
+    netF = Arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
+        use_input_norm=True, tensor=tensor)
     if gpu_ids:
         netF = nn.DataParallel(netF).cuda()
     netF.eval()  # No need to train

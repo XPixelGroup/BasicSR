@@ -7,12 +7,12 @@ from torch.autograd import Variable
 
 # helper selecting activation
 def act(act_type, inplace=True, neg_slope=0.2, n_prelu=1):
-    # neg_slope: for leaky_relu and init of prelu
+    # neg_slope: for leakyrelu and init of prelu
     # n_prelu: for p_relu num_parameters
     act_type = act_type.lower()
     if act_type == 'relu':
         layer = nn.ReLU(inplace)
-    elif act_type == 'leaky_relu':
+    elif act_type == 'leakyrelu':
         layer = nn.LeakyReLU(neg_slope, inplace)
     elif act_type == 'prelu':
         layer = nn.PReLU(num_parameters=n_prelu, init=neg_slope)
