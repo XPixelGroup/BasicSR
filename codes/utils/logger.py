@@ -26,36 +26,41 @@ class Logger(object):
         #     self.pavi_logger = PaviLogger(url, username, password=password)
         #     self.pavi_logger.setup(pavi_info)
 
-    def print_results(self, mode, results):
-        epoch = results.pop('epoch')
-        iters = results.pop('iters')
-        time = results.pop('time')
+    def print_format_results(self, mode, rlt):
+        epoch = rlt.pop('epoch')
+        iters = rlt.pop('iters')
+        time = rlt.pop('time')
+        model = rlt.pop('model')
+        message = '<epoch:{:3d}, iter:{:9,d}, time: {:.2f}> '.format(epoch, iters, time)
         if mode == 'train':
-            lr = results.pop('lr')
+            if model == 'sr':
+                loss_pixel = rlt['loss_pixel']  if 'loss_pixel' in rlt else -1
+                lr = rlt['lr']
+                format_str = '<loss: {:.2e}> lr: {:.2e}'.format(loss_pixel, lr)
+            elif model == 'srgan':
+                loss_g_pixel = rlt['loss_g_pixel']  if 'loss_g_pixel' in rlt else -1
+                loss_g_fea = rlt['loss_g_fea']  if 'loss_g_fea' in rlt else -1
+                loss_g_gan = rlt['loss_g_gan']  if 'loss_g_gan' in rlt else -1
+                loss_d_real = rlt['loss_d_real']  if 'loss_d_real' in rlt else -1
+                loss_d_fake = rlt['loss_d_fake'] if 'loss_d_fake' in rlt else -1
+                D_out_real = rlt['D_out_real']  if 'D_out_real' in rlt else -1
+                D_out_fake = rlt['D_out_fake']  if 'D_out_fake' in rlt else -1
+                lr = rlt['lr']
 
-        message = '(epoch:{:3d}, iter:{:9,d}, time: {:.3f}) '.format(epoch, iters, time)
-        for label, value in results.items():
-            message += '%s: %.2e ' % (label, value)
-            # if mode == 'loss':
-            #     train_loss = value
-            # else:
-            #     test_PSNR = value
-        if mode == 'train':
-            message += 'lr: %.2e' % lr
+                format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
+                    'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
+                    loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, D_out_real, \
+                    D_out_fake, lr))
+            message += format_str
+        else:
+            for label, value in rlt.items():
+                message += '%s: %.2e ' % (label, value)
         # print in console
         print(message)
         # write in log file
         if mode == 'train':
-            # if 'test' not in self.model_name:
-            #     send_data_train = {'loss':train_loss}
-            #     log_data = {'time':str(datetime.now()), 'flow_id':'train', 'iter_num':iters, 'outputs':send_data_train}
-            #     self.pavi_logger.log(log_data)
             with open(self.loss_log_path, "a") as log_file:
                 log_file.write('%s\n' % message)
         elif mode == 'val':
-            # if 'test' not in self.model_name:
-            #     send_data_test = {'acc_PSNR':test_PSNR}
-            #     log_data = {'time':str(datetime.now()), 'flow_id':'test', 'iter_num':iters, 'outputs':send_data_test}
-            #     self.pavi_logger.log(log_data)
             with open(self.val_log_path, "a") as log_file:
                 log_file.write('%s\n' % message)
