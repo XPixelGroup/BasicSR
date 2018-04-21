@@ -98,8 +98,11 @@ class SRModel(BaseModel):
 
     def get_current_losses(self):
         out_dict = OrderedDict()
-        out_dict['pixel'] = self.loss_pixel.data[0]
+        out_dict['loss_pixel'] = self.loss_pixel.data[0]
         return out_dict
+
+    def get_more_training_info(self):
+        return None
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
