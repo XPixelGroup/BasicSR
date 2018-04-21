@@ -16,6 +16,9 @@ def parse(opt_path, is_train=True):
             line = line.split('//')[0] + '\n'
             json_str += line
     opt = json.loads(json_str, object_pairs_hook=OrderedDict)
+    opt['timestamp'] = get_timestamp()
+    opt['is_train'] = is_train
+
     for key, path in opt['path'].items():
         opt['path'][key] = os.path.expanduser(path)
     for dataset in opt['datasets']:
@@ -25,8 +28,6 @@ def parse(opt_path, is_train=True):
             dataset['dataroot_LR'] = os.path.expanduser(dataset['dataroot_LR'])
         if dataset['phase'] == 'train' and dataset['subset_file'] is not None:
             dataset['subset_file'] = os.path.expanduser(dataset['subset_file'])
-    opt['timestamp'] = get_timestamp()
-    opt['is_train'] = is_train
 
     if is_train:
         experiments_root = os.path.join(opt['path']['root'], 'experiments', opt['name'])
