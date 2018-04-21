@@ -46,3 +46,4 @@ BasicSR repo mainly contains 3 parts:
 - [ ] SRGAN models
 - [ ] unpair SRGAN dataloader
 - [ ] support Y channel training and testing (the save_image function and metric may not work now.)
+- [ ] multi-GPU training (test whether the current codes are OK.)
