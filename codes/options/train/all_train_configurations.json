@@ -59,7 +59,7 @@
 //########################################
 //# define network
 //########################################
-  ,"network": {
+  ,"network_G": {
     "which_model_G": "sr_resnet_torch"
     ,"norm_type": "batch" // "batch" | null
     ,"mode": "NAC" // "NAC" | "CNA"

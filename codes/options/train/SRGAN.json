@@ -1,20 +1,22 @@
 {
-  "name":"debug_000_exp_name"
+  "name":"017_005ft_SRGAN_pixel0_fea1_adv1e-1_ImageNet_bilineardown"
   ,"model":"srgan"
   ,"gpu_ids": [0]
 
   ,"datasets": [{
-    "name": "DIV2K"
+    "name": "ImagNet"
     ,"data_type": "img"
     ,"mode": "LRHR_pair"
     ,"phase": "train"
     //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/HR_sub"
     //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/blur_gamma_sub_bicLRx4"
-    ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-    ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
-    ,"subset_file": null
+    // ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
+    // ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
+    ,"dataroot_HR": "/mnt/SSD/xtwang/ImageNet_train"
+    ,"dataroot_LR": null
+    ,"subset_file": "/mnt/SSD/xtwang/BasicSR_datasets/ImageNet_list.txt"
     ,"use_shuffle": true
-    ,"n_workers": 6
+    ,"n_workers": 10
     ,"batch_size": 16
     ,"HR_size": 128
     ,"scale": 4
@@ -22,14 +24,14 @@
     ,"use_rot": true
     //,"reverse": true // reverse LR and HR
   }, {
-    "name": "Set5"
+    "name": "Set14_part" // Set5 | Set14_part | GOPRO
     ,"data_type": "img"
     ,"mode": "LRHR_pair"
     ,"phase": "val"
     //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub"
     //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub_bicLRx4"
-    ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
-    ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLR"
+    ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14_part/Set14_part"
+    ,"dataroot_LR": null
     ,"scale": 4
     ,"metric_mode": "rgb"
     //,"reverse": true // reverse LR and HR
@@ -37,13 +39,14 @@
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    //,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/008_004c_DegradationNet_noBN_GOPRO/models/380000_G.pth"
+    ,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/005_001c_SRResNet_torch_DIV2K_bic_ft_halt/models/1000000_G.pth"
+    //,"pretrain_model_D": "xxx"
   }
 
-  ,"network": {
+  ,"network_G": {
     "which_model_G": "sr_resnet_torch"
     // "which_model_G": "degradation_net"
-    ,"norm_type": null
+    ,"norm_type": "batch"
     ,"mode": "NAC"
     ,"scale": 4
     ,"nf": 64
@@ -52,27 +55,35 @@
     ,"out_nc": 3
     ,"group": 1
   }
+  ,"network_D": {
+    "which_model_D": "discriminaotr_vgg_128"
+    ,"norm_type": "batch"
+    ,"act_type": "leakyrelu"
+    ,"mode": "CNA"
+    ,"nf": 64
+    ,"in_nc": 3
+  }
 
   ,"train": {
-    "manual_seed": 0
-    ,"niter": 1e6
-
-    ,"lr_G": 2e-4
+    "lr_G": 1e-4
     ,"weight_decay_G": 0
-    ,"beta1_G": 0.9
-    ,"lr_D": 2e-4
+    ,"beta1_G": 0.5
+    ,"lr_D": 1e-4
     ,"weight_decay_D": 0
-    ,"beta1_D": 0.9
+    ,"beta1_D": 0.5
     ,"lr_scheme": "MultiStepLR"
-    ,"lr_steps": [100000, 200000, 300000, 400000]
+    ,"lr_steps": [50000, 100000, 200000, 300000]
     ,"lr_gamma": 0.5
 
     ,"pixel_criterion": "l1" // "l1" | "l2"
-    ,"pixel_weight": 1.0
+    ,"pixel_weight": 0
     ,"feature_criterion": "l1" // "l1" | "l2"
-    ,"feature_weight": 1.0
-    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan"
-    ,"gan_weight": 1.0
+    ,"feature_weight": 1
+    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
+    ,"gan_weight": 1e-1
+
+    ,"manual_seed": 0
+    ,"niter": 1e6
     ,"val_freq": 1e4
   }
 
