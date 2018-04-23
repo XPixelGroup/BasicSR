@@ -54,8 +54,7 @@ def main():
     val_loader = None
     train_dataset_opt = None
     val_dataset_opt = None
-    for dataset_opt in opt['datasets']:
-        phase = dataset_opt['phase']
+    for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             train_dataset_opt = dataset_opt
             train_set = create_dataset(dataset_opt)

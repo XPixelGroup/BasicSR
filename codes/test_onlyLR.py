@@ -40,7 +40,7 @@ from models import create_model
 
 # Create test dataset and dataloader
 test_loaders = []
-for dataset_opt in opt['datasets']:
+for dataset_opt in opt['datasets'].items():
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
     test_size = len(test_set)
