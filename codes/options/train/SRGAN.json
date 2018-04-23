@@ -1,51 +1,55 @@
 {
-  "name":"017_005ft_SRGAN_pixel0_fea1_adv1e-1_ImageNet_bilineardown"
+  "name":"037_026ft_SRGAN_pixel1_fea0_adv1_DIV2Kbic_ISOunpair_DnoBN"
   ,"model":"srgan"
   ,"gpu_ids": [0]
 
-  ,"datasets": [{
-    "name": "ImagNet"
-    ,"data_type": "img"
-    ,"mode": "LRHR_pair"
-    ,"phase": "train"
-    //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/HR_sub"
-    //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/blur_gamma_sub_bicLRx4"
-    // ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-    // ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
-    ,"dataroot_HR": "/mnt/SSD/xtwang/ImageNet_train"
-    ,"dataroot_LR": null
-    ,"subset_file": "/mnt/SSD/xtwang/BasicSR_datasets/ImageNet_list.txt"
-    ,"use_shuffle": true
-    ,"n_workers": 10
-    ,"batch_size": 16
-    ,"HR_size": 128
-    ,"scale": 4
-    ,"use_flip": true
-    ,"use_rot": true
-    //,"reverse": true // reverse LR and HR
-  }, {
-    "name": "Set14_part" // Set5 | Set14_part | GOPRO
-    ,"data_type": "img"
-    ,"mode": "LRHR_pair"
-    ,"phase": "val"
-    //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub"
-    //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub_bicLRx4"
-    ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14_part/Set14_part"
-    ,"dataroot_LR": null
-    ,"scale": 4
-    ,"metric_mode": "rgb"
-    //,"reverse": true // reverse LR and HR
-  }]
+  ,"datasets": {
+    "train": { // training
+      "name": "DIV2K"
+      ,"data_type": "img"
+      ,"mode": "LRHRref"
+      ,"phase": "train"
+      //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/HR_sub"
+      //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/blur_gamma_sub_bicLRx4"
+      // ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
+      // ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
+      ,"dataroot_ref": "/mnt/SSD/xtwang/BasicSR_datasets/ISO/fusion_merge_bicLRx2_100"
+      ,"subset_file": null
+      ,"use_shuffle": true
+      ,"n_workers": 8
+      ,"batch_size": 16
+      ,"HR_size": 128
+      ,"scale": 4
+      ,"use_flip": true
+      ,"use_rot": true
+      ,"reverse": true // reverse LR and HR
+    }
+    , "val": { // evaluation
+      "name": "DSLR_val" // Set5 | Set14_part | GOPRO
+      ,"data_type": "img"
+      ,"mode": "LRHR_pair"
+      ,"phase": "val"
+      //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub"
+      //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub_bicLRx4"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DSLRPHONE/val_sub"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DSLRPHONE/val_sub_bicLRx4"
+      ,"scale": 4
+      ,"metric_mode": "rgb"
+      ,"reverse": true // reverse LR and HR
+    }
+  }
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/005_001c_SRResNet_torch_DIV2K_bic_ft_halt/models/1000000_G.pth"
+    ,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/026_009ft_SRGAN_pixel0_fea1_adv1e-1_DIV2Kbic_ISOunpair/models/190000_G.pth"
     //,"pretrain_model_D": "xxx"
   }
 
   ,"network_G": {
-    "which_model_G": "sr_resnet_torch"
-    // "which_model_G": "degradation_net"
+    // "which_model_G": "sr_resnet_torch"
+    "which_model_G": "degradation_net"
     ,"norm_type": "batch"
     ,"mode": "NAC"
     ,"scale": 4
@@ -56,8 +60,8 @@
     ,"group": 1
   }
   ,"network_D": {
-    "which_model_D": "discriminaotr_vgg_128"
-    ,"norm_type": "batch"
+    "which_model_D": "discriminaotr_vgg_32"
+    ,"norm_type": null
     ,"act_type": "leakyrelu"
     ,"mode": "CNA"
     ,"nf": 64
@@ -76,11 +80,11 @@
     ,"lr_gamma": 0.5
 
     ,"pixel_criterion": "l1" // "l1" | "l2"
-    ,"pixel_weight": 0
+    ,"pixel_weight": 1
     ,"feature_criterion": "l1" // "l1" | "l2"
-    ,"feature_weight": 1
+    ,"feature_weight": 0
     ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
-    ,"gan_weight": 1e-1
+    ,"gan_weight": 1
 
     ,"manual_seed": 0
     ,"niter": 1e6

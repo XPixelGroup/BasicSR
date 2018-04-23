@@ -120,7 +120,7 @@ class LRHRPairDataset(data.Dataset):
 
         if not self.paths_HR: # read only LR image in test phase
             return {'LR': img_LR, 'LR_path': LR_path}
-        elif  LR_path is None:
+        elif LR_path is None:
             LR_path = HR_path
         if self.opt['reverse']:
             img_LR, img_HR = img_HR, img_LR
