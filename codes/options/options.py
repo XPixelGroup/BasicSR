@@ -21,12 +21,12 @@ def parse(opt_path, is_train=True):
 
     for key, path in opt['path'].items():
         opt['path'][key] = os.path.expanduser(path)
-    for dataset in opt['datasets']:
+    for phase, dataset in opt['datasets'].items():
         if dataset['dataroot_HR'] is not None:
             dataset['dataroot_HR'] = os.path.expanduser(dataset['dataroot_HR'])
         if dataset['dataroot_LR'] is not None:
             dataset['dataroot_LR'] = os.path.expanduser(dataset['dataroot_LR'])
-        if dataset['phase'] == 'train' and dataset['subset_file'] is not None:
+        if phase == 'train' and dataset['subset_file'] is not None:
             dataset['subset_file'] = os.path.expanduser(dataset['subset_file'])
 
     if is_train:

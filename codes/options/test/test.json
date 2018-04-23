@@ -3,7 +3,8 @@
   ,"model": "sr"
   ,"gpu_ids": [0]
 
-  ,"datasets": [{
+  ,"datasets": {
+    "test": {
       "name": "test"
       ,"data_type": "img"
       ,"mode": "LRHR_pair"
@@ -11,7 +12,8 @@
       ,"dataroot_HR": null
       ,"dataroot_LR": "/home/xtwang/Projects/torch_models_to_pytorch_models/lr"
       ,"scale": 4
-  }]
+    }
+  }
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
