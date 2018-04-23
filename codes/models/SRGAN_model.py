@@ -22,6 +22,16 @@ class SRGANModel(BaseModel):
         self.input_H = self.Tensor()
         self.input_ref = self.Tensor() # for Discriminator
 
+        self.need_pixel_loss = True
+        self.need_feature_loss = True
+        if train_opt['pixel_weight'] == 0:
+            print('Set pixel loss to zero.')
+            self.need_pixel_loss = False
+        if train_opt['feature_weight'] == 0:
+            print('Set feature loss to zero.')
+            self.need_feature_loss = False
+        assert self.need_pixel_loss or self.need_feature_loss, 'pixel and feature loss are both 0.'
+
         # define network and load pretrained models
         # Generator - SR network
         self.netG = networks.define_G(opt)
@@ -30,8 +40,8 @@ class SRGANModel(BaseModel):
             # Discriminator
             self.netD = networks.define_D(opt)
             self.load_path_D = opt['path']['pretrain_model_D']
-            # For perceptual loss, use pytorch pretrained VGG-19
-            self.netF = networks.define_F(opt, use_bn=False)
+            if self.need_feature_loss:
+                self.netF = networks.define_F(opt, use_bn=False) # perceptual loss
         self.load() # load G and D if needed
         if self.is_train:
             # define loss function
@@ -101,18 +111,20 @@ class SRGANModel(BaseModel):
     def feed_data(self, data, volatile=False, need_HR=True):
         if need_HR:
             input_L = data['LR']
-            input_H = data['HR']
-            input_ref = data['HR'] # may need to modify # TODO
             self.input_L.resize_(input_L.size()).copy_(input_L)
+            self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
+
+            input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
+            self.real_H = Variable(self.input_H, volatile=volatile)  # in range [0,1]
+
+            input_ref = data['ref'] if 'ref' in data else data['HR']
             self.input_ref.resize_(input_ref.size()).copy_(input_ref)
-            self.real_L = Variable(self.input_L, volatile=volatile) # in range [0,1]
-            self.real_H = Variable(self.input_H, volatile=volatile) # in range [0,1]
             self.real_ref = Variable(self.input_ref, volatile=volatile)  # in range [0,1]
         else:
             input_L = data['LR']
             self.input_L.resize_(input_L.size()).copy_(input_L)
-            self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
+            self.real_L = Variable(self.input_L, volatile=volatile)
 
     def optimize_parameters(self):
         # G
@@ -120,23 +132,31 @@ class SRGANModel(BaseModel):
         # forward G
         # self.real_L: leaf, not requires_grad; self.fake_H: no leaf, requires_grad
         self.fake_H = self.netG(self.real_L)
+        if self.need_pixel_loss:
+            loss_g_pixel = self.loss_pixel_weight * self.criterion_pixel(self.fake_H, self.real_H)
         # forward F
-        # self.real_fea: leaf, not requires_grad (gt features, do not need bp)
-        real_fea = self.netF(self.real_H).detach()
-        # self.fake_fea: not leaf, requires_grad (need bp, in the graph)
-        # self.real_fea and self.fake_fea are not the same, since features is independent to conv
-        fake_fea = self.netF(self.fake_H)
+        if self.need_feature_loss:
+            # forward F
+            # self.real_fea: leaf, not requires_grad (gt features, do not need bp)
+            real_fea = self.netF(self.real_H).detach()
+            # self.fake_fea: not leaf, requires_grad (need bp, in the graph)
+            # self.real_fea and self.fake_fea are not the same, since features is independent to conv
+            fake_fea = self.netF(self.fake_H)
+            loss_g_fea = self.loss_feature_weight * self.criterion_feature(fake_fea, real_fea)
         # forward D
-        # self.netD.eval() # should D in val mode? official dcgan does not use val model.
         pred_g_fake = self.netD(self.fake_H)
-        # losses
-        loss_g_pixel = self.loss_pixel_weight * self.criterion_pixel(self.fake_H, self.real_H)
-        loss_g_fea = self.loss_feature_weight * self.criterion_feature(fake_fea, real_fea)
         loss_g_gan = self.loss_gan_weight * self.criterion_gan(pred_g_fake, True)
-        loss_g_total = loss_g_pixel + loss_g_fea + loss_g_gan
+
+        # total los
+        if self.need_pixel_loss:
+            if self.need_feature_loss:
+                loss_g_total = loss_g_pixel + loss_g_fea + loss_g_gan
+            else:
+                loss_g_total = loss_g_pixel + loss_g_gan
+        else:
+            loss_g_total = loss_g_fea + loss_g_gan
         loss_g_total.backward()
         self.optimizer_G.step()
-        # self.netD.train()
 
         # D
         self.optimizer_D.zero_grad()
@@ -158,8 +178,8 @@ class SRGANModel(BaseModel):
 
         # set losses
         self.loss_dict = OrderedDict()
-        self.loss_dict['loss_g_pixel'] = loss_g_pixel.data[0]
-        self.loss_dict['loss_g_fea'] = loss_g_fea.data[0]
+        self.loss_dict['loss_g_pixel'] = loss_g_pixel.data[0] if self.need_pixel_loss else 0
+        self.loss_dict['loss_g_fea'] = loss_g_fea.data[0] if self.need_feature_loss else 0
         self.loss_dict['loss_g_gan'] = loss_g_gan.data[0]
         self.loss_dict['loss_d_real'] = loss_d_real.data[0]
         self.loss_dict['loss_d_fake'] = loss_d_fake.data[0]
@@ -201,12 +221,13 @@ class SRGANModel(BaseModel):
             with open(network_path, 'a') as f:
                 f.write(message)
 
-            # Perceptual Features
-            s, n = self.get_network_decsription(self.netF)
-            print('Number of parameters in F: {:,d}'.format(n))
-            message = '\n\n\n-------------- Perceptual Network --------------\n' + s + '\n'
-            with open(network_path, 'a') as f:
-                f.write(message)
+            if self.need_feature_loss:
+                # Perceptual Features
+                s, n = self.get_network_decsription(self.netF)
+                print('Number of parameters in F: {:,d}'.format(n))
+                message = '\n\n\n-------------- Perceptual Network --------------\n' + s + '\n'
+                with open(network_path, 'a') as f:
+                    f.write(message)
 
     def load(self):
         if self.load_path_G is not None:
