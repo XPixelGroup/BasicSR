@@ -105,6 +105,12 @@ def define_D(opt):
     if which_model == 'discriminaotr_vgg_128':
         netD = Arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
             norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
+    elif which_model == 'discriminaotr_vgg_32':
+        netD = Arch.Discriminaotr_VGG_32(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
+    elif which_model == 'discriminaotr_vgg_32_y':
+        netD = Arch.Discriminaotr_VGG_32_Y(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
     else:
         raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
     if opt['is_train']:
