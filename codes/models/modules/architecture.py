@@ -10,6 +10,7 @@ from . import block as B
 ####################
 # Generator
 ####################
+
 """
 SRResNet from torch (w/ and w/o BN, pre-activation)
 """
@@ -45,7 +46,8 @@ class SRResNet_torch(nn.Module):
 
 class DegradationNet(nn.Module):
     def __init__(self, in_nc, out_nc, nf, nb, upscale=4, norm_type='batch', act_type='relu', \
-            mode='NAC', res_scale=1, upsample_mode='upconv'):
+            mode='NAC', res_scale=1):
+            # nb is not used here.
         super(DegradationNet, self).__init__()
         n_upscale = int(math.sqrt(upscale))
 
@@ -72,6 +74,7 @@ class DegradationNet(nn.Module):
 ####################
 # Discriminator
 ####################
+
 # VGG style Discriminator with input size 128*128
 class Discriminaotr_VGG_128(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
@@ -160,7 +163,8 @@ class Discriminaotr_VGG_32(nn.Module):
         x = self.classifier(x)
         return x
 
-# VGG style Discriminator with input size 32*32
+
+# VGG style Discriminator with input size 32*32 in Y channel
 class Discriminaotr_VGG_32_Y(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
         super(Discriminaotr_VGG_32_Y, self).__init__()
@@ -201,9 +205,11 @@ class Discriminaotr_VGG_32_Y(nn.Module):
         x = self.classifier(x)
         return x
 
+
 ####################
 # Perceptual Network
 ####################
+
 # Assume input range is [0, 1]
 class VGGFeatureExtractor(nn.Module):
     def __init__(self, feature_layer=34, use_bn=False, use_input_norm=True, tensor=torch.FloatTensor):

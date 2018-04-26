@@ -7,6 +7,7 @@ import models.modules.architecture as Arch
 ####################
 # initialize
 ####################
+
 def weights_init_normal(m, std=0.02):
     classname = m.__class__.__name__
     # print('initializing [%s] ...' % classname)
@@ -73,6 +74,7 @@ def init_weights(net, init_type='kaiming', scale=1, std=0.02):
 ####################
 # define network
 ####################
+
 # Generator
 def define_G(opt):
     gpu_ids = opt['gpu_ids']
@@ -85,7 +87,6 @@ def define_G(opt):
     elif which_model == 'degradation_net':
         netG = Arch.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
-
     else:
         raise NotImplementedError('Generator model [%s] is not recognized' % which_model)
     if opt['is_train']:
