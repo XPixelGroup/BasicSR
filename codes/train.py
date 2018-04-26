@@ -101,7 +101,7 @@ def main():
             # training
             train_start_time = time.time()
             model.feed_data(train_data)
-            model.optimize_parameters()
+            model.optimize_parameters(current_step)
             train_elapsed = time.time() - train_start_time
 
             # log

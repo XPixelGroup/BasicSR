@@ -1,8 +1,10 @@
+# folder
 .vscode
 experiments
+results
 
+# file type
 *.svg
-
 *.pyc
 *.t7
 *.pth
