@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
-from utils.util import get_timestamp
-# from utils.pavi_logger import PaviLogger
+from utils.util import get_timestamp=
 
 
 class Logger(object):
@@ -18,13 +17,6 @@ class Logger(object):
         with open(self.val_log_path, "a") as log_file:
             log_file.write('================ Time: ' + get_timestamp() + ' ===============\n')
             log_file.write('================ Validation Results ================\n')
-        # if 'test' not in opt.name:
-        #     # pavi logger
-        #     url = 'http://pavi.parrotsdnn.org/log'
-        #     username = 'NTIRE18'
-        #     password = '123455'
-        #     self.pavi_logger = PaviLogger(url, username, password=password)
-        #     self.pavi_logger.setup(pavi_info)
 
     def print_format_results(self, mode, rlt):
         epoch = rlt.pop('epoch')
@@ -50,14 +42,14 @@ class Logger(object):
                 if 'loss_d_gp' in rlt:
                     loss_d_gp = rlt['loss_d_gp']
                     format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
-                        'real: {:.2e} , fake: {:.2e}, gp: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
-                        loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, loss_d_gp, D_out_real, \
-                        D_out_fake, lr))
+                        'real: {:.2e} , fake: {:.2e}, gp: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> '
+                        'lr: {:.2e}'.format(loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, \
+                        loss_d_fake, loss_d_gp, D_out_real, D_out_fake, lr))
                 else:
                     format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
-                        'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
-                        loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, D_out_real, \
-                        D_out_fake, lr))
+                        'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> '
+                        'lr: {:.2e}'.format(loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, \
+                        loss_d_fake, D_out_real, D_out_fake, lr))
             message += format_str
         else:
             for label, value in rlt.items():

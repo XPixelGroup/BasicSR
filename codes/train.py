@@ -79,14 +79,6 @@ def main():
     model.train()
 
     # create logger
-    # import json
-    # pavi_info = {}
-    # pavi_info['session_file'] = options_path.split('/')[-1]
-    # pavi_info['session_text'] = json.dumps(opt)
-    # pavi_info['model_name'] = opt.name
-    # pavi_info['model_text'] = 'None'
-    # pavi_info['work_dir'] = opt.path.experiments_root
-
     logger = Logger(opt)
 
     current_step = 0

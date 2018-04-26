@@ -7,22 +7,22 @@
     "test": {
       "name": "test"
       ,"data_type": "img"
-      ,"mode": "LRHR_pair"
+      ,"mode": "LRHRref"
       ,"phase": "test"
       ,"dataroot_HR": null
-      ,"dataroot_LR": "/home/xtwang/Projects/torch_models_to_pytorch_models/lr"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
       ,"scale": 4
     }
   }
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "/home/xtwang/Projects/torch_models_to_pytorch_models/pytorch_models/SRResNet_noBN_torch.pth"
+    ,"pretrain_model_G": "../experiments/001_SRResNet_DIV2K_bic/models/280000_G.pth"
   }
 
   ,"network_G": {
     "which_model_G": "sr_resnet_torch"
-    ,"norm_type": null
+    ,"norm_type": "batch"
     ,"mode": "NAC"
     ,"scale": 4
     ,"nf": 64

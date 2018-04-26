@@ -1,29 +1,29 @@
 // support '//' comments
 // use 'null' for None
-// leading with comma, easier to comment lines.
+
 {
-  "name":"debug_000_exp_name" // experiment name, 'debug' denotes dubeg mode
-  ,"model":"sr"                // use which model
-  ,"gpu_ids": [0]              // please use `export CUDA_VISIBLE_DEVICES=0,1` in termimal
+  "name":"debug_000_exp_name"  // 'debug' denotes dubeg mode
+  ,"model":"sr"                // "sr" | "srgan"
+  ,"gpu_ids": [0]              // please use `export CUDA_VISIBLE_DEVICES=0` in termimal
   // auto generated
   ,"timestamp": "180420-024233"
   ,"is_train": true
+
 //########################################
-//# datasets: train and val
+//# datasets
 //########################################
   ,"datasets": [{ // training dataset
     "name": "ImageNet"
     ,"data_type": "img" // "img" | "bin"
-    ,"mode": "LRHR_pair"
-    ,"phase": "train"   // "train" | "val" | ("test")
+    ,"mode": "LRHRref"
+    ,"phase": "train"   // "train" | "val" | "test"
     ,"dataroot_HR": "/mnt/SSD/xtwang/ImageNet_train"
     ,"dataroot_LR": null
-    // if set "dataroot_LR" to null, down-sampling on-the-fly
-    // if set "dataroot_HR" to null, then only returns LR images (only use in test phase)
-    ,"subset_file": "/mnt/SSD/xtwang/BasicSR/ImageNet_list.txt"
-    // null | path to the subset txt file (only use in train phase)
+    ,"subset_file": "/mnt/SSD/xtwang/BasicSR_datasets/ImageNet_list.txt"
+    ,"dataroot_ref": null
+
     ,"use_shuffle": true
-    ,"n_workers": 10
+    ,"n_workers": 8
     ,"batch_size": 16
     ,"HR_size": 128
     ,"scale": 4
@@ -33,12 +33,12 @@
   }, { // validation dataset
     "name": "val"
     ,"data_type": "img"
-    ,"mode": "LRHR_pair"
+    ,"mode": "LRHRref"
     ,"phase": "val"
-    ,"dataroot_HR": "/mnt/SSD/xtwang/val"
-    ,"dataroot_LR": "/mnt/SSD/xtwang/val_bicLR"
+    ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val"
+    ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_bicLR"
     ,"scale": 4
-    ,"metric_mode": "rgb" // "rgb" | "y", calculate psnr and etc in y or color channels
+    ,"metric_mode": "rgb" // "rgb" | "y", calculate psnr and ssim in y or color channels
     ,"reverse": false     // reverse LR and HR
   }]
 
@@ -48,6 +48,7 @@
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
     ,"pretrain_model_G": null
+    ,"pretrain_model_D": null
     // auto generated
     ,"experiments_root": "/home/xtwang/Projects/BasicSR/experiments/exp_name"
     ,"options": "/home/xtwang/Projects/BasicSR/experiments/exp_name"
@@ -57,12 +58,12 @@
   }
 
 //########################################
-//# define network
+//# define networks
 //########################################
   ,"network_G": {
     "which_model_G": "sr_resnet_torch"
-    ,"norm_type": null // "batch" | null
-    ,"mode": "NAC" // "NAC" | "CNA"
+    ,"norm_type": null // "batch" | "instance" | null
+    ,"mode": "NAC"     // "NAC" | "CNA"
     ,"scale": 4
     ,"nf": 64
     ,"nb": 16
@@ -83,30 +84,35 @@
 //# training
 //########################################
   ,"train": {
-    "manual_seed": 0
-    ,"niter": 1e6
-
-    ,"lr_G": 2e-4
+    "lr_G": 1e-4
     ,"weight_decay_G": 0
-    ,"beta1_G": 0.9
-    ,"lr_D": 2e-4
+    ,"beta1_G": 0.5
+    ,"lr_D": 1e-4
     ,"weight_decay_D": 0
-    ,"beta1_D": 0.9
+    ,"beta1_D": 0.5
     ,"lr_scheme": "MultiStepLR"
-    ,"lr_steps": [100000, 200000, 300000, 400000]
+    ,"lr_steps": [50000, 100000, 200000, 300000]
     ,"lr_gamma": 0.5
 
-    ,"pixel_criterion": "l1" // "l1" | "l2"
-    ,"pixel_weight": 1.0
-    ,"feature_criterion": "l1" // "l1" | "l2"
-    ,"feature_weight": 1.0
+    ,"pixel_criterion": "l1"
+    ,"pixel_weight": 0
+    ,"feature_criterion": "l1"
+    ,"feature_weight": 1
     ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
-    ,"gan_weight": 1.0
-    ,"val_freq": 1e4
+    ,"gan_weight": 1e-2
+
+    //for wgan-gp
+    ,"D_update_ratio": 5
+    ,"D_init_iters": 50
+    ,"gp_weigth": 10
+
+    ,"manual_seed": 0
+    ,"niter": 1e6
+    ,"val_freq": 5e3
   }
 
   ,"logger": {
     "print_freq": 200
-    ,"save_checkpoint_freq": 1e4
+    ,"save_checkpoint_freq": 5e3
   }
 }
