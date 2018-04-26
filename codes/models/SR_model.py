@@ -84,7 +84,7 @@ class SRModel(BaseModel):
         self.loss_pixel = self.loss_pixel_weight * self.criterion_pixel(self.fake_H, self.real_H)
         self.loss_pixel.backward()
 
-    def optimize_parameters(self):
+    def optimize_parameters(self, step):
         self.forward_G()
         self.optimizer_G.zero_grad()
         self.backward_G()

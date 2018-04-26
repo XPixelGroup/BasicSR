@@ -47,9 +47,9 @@ class GANLoss(nn.Module):
 
 
 class GradientPenaltyLoss(nn.Module):
-    def __init__(self):
+    def __init__(self, tensor=torch.FloatTensor):
         super(GradientPenaltyLoss, self).__init__()
-        self.register_buffer('grad_outputs', torch.Tensor())
+        self.register_buffer('grad_outputs', tensor())
 
     def get_grad_outputs(self, input):
         if self.grad_outputs.size() != input.size():

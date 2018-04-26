@@ -40,7 +40,7 @@ from models import create_model
 
 # Create test dataset and dataloader
 test_loaders = []
-for dataset_opt in opt['datasets'].items():
+for phase, dataset_opt in opt['datasets'].items():
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
     test_size = len(test_set)
@@ -50,6 +50,7 @@ for dataset_opt in opt['datasets'].items():
 
 # Create model
 model = create_model(opt)
+model.eval()
 
 # Path for log file
 test_log_path = os.path.join(opt['path']['log'], 'test_log.txt')
@@ -63,14 +64,18 @@ for test_loader in test_loaders:
     test_set_name = test_loader.dataset.opt['name']
     print('Testing [%s]...' % test_set_name)
     test_start_time = time.time()
+    dataset_dir = os.path.join(opt['path']['results_root'], test_set_name)
+    util.mkdir(dataset_dir)
 
     for data in test_loader:
         need_HR = True
         if test_loader.dataset.opt['dataroot_HR'] is None:
             need_HR = False
         model.feed_data(data, volatile=True, need_HR=need_HR)
-        img_path = data['LR_path'][0] #????
-        img_name = os.path.splitext(os.path.basename(img_path))[0].split('_bc')[0]
+        img_path = data['LR_path'][0]
+
+        img_name = os.path.splitext(os.path.basename(img_path))[0]
+        print(img_name)
 
         model.test()  # test
         visuals = model.get_current_visuals(need_HR=need_HR)
@@ -84,5 +89,5 @@ for test_loader in test_loaders:
 
         # Save SR images for reference
         # exp_idx = opt.name.split('_')[0]
-        # save_img_path = os.path.join(dataset_dir, img_name+'_exp'+str(exp_idx)+'.png')
-        util.save_img_np(sr_img, 'test.png')
+        save_img_path = os.path.join(dataset_dir, img_name+'.png')
+        util.save_img_np(sr_img, save_img_path)

@@ -9,7 +9,7 @@ def get_timestamp():
 
 
 def parse(opt_path, is_train=True):
-    # remove comments start with '//'
+    # remove comments starting with '//'
     json_str = ''
     with open(opt_path, 'r') as f:
         for line in f:

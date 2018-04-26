@@ -6,9 +6,9 @@ from multiprocessing import Pool
 import time
 
 def worker(GT_paths, save_GT_dir):
-    crop_sz = 500
-    step  = 400
-    thres_sz = 100
+    crop_sz = 500//4
+    step  = 400//4
+    thres_sz = 50//4
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
@@ -44,8 +44,8 @@ def worker(GT_paths, save_GT_dir):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/test/blur_gamma'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/test/blur_gamma_sub'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/Semi_pair/PHONE'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/Semi_pair/PHONE_sub'
     n_thread = 20
 
     print('Parent process %s.' % os.getpid())
