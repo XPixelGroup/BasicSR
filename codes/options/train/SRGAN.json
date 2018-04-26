@@ -1,5 +1,5 @@
 {
-  "name":"debug_000_exp_name"
+  "name":"debug_002_SRGAN_DIV2K_pair_vanilla" //  please remove "debub_" during formal training
   ,"model":"srgan"
   ,"gpu_ids": [0]
 
@@ -8,9 +8,8 @@
       "name": "DIV2K"
       ,"data_type": "img"
       ,"mode": "LRHRref"
-      ,"phase": "train"
-      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4"
+      ,"dataroot_HR": "/mnt/SSD/BasicSR_datasets/DIV2K800/DIV2K800_sub"
+      ,"dataroot_LR": "/mnt/SSD/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4"
       ,"dataroot_ref": null
       ,"subset_file": null
       ,"use_shuffle": true
@@ -26,9 +25,8 @@
       "name": "Set14_part"
       ,"data_type": "img"
       ,"mode": "LRHRref"
-      ,"phase": "val"
-      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14_part/Set14_part"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14_part/Set14_part_bicLRx4"
+      ,"dataroot_HR": "/mnt/SSD/BasicSR_datasets/val_set14_part/Set14_part"
+      ,"dataroot_LR": "/mnt/SSD/BasicSR_datasets/val_set14_part/Set14_part_bicLRx4"
       ,"scale": 4
       ,"metric_mode": "rgb"
       ,"reverse": false
@@ -36,8 +34,8 @@
   }
 
   ,"path": {
-    "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "../experiments/001_SRResNet_DIV2K_bic/models/280000_G.pth"
+    "root": "/mnt/3TB/Projects/BasicSR"
+    ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet-torch.pth"
   }
 
   ,"network_G": {
@@ -76,7 +74,7 @@
     ,"feature_criterion": "l1"
     ,"feature_weight": 1
     ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
-    ,"gan_weight": 1e-2
+    ,"gan_weight": 5e-3
 
     //for wgan-gp
     ,"D_update_ratio": 1

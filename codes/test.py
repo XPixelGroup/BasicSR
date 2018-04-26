@@ -52,11 +52,11 @@ for phase, dataset_opt in opt['datasets'].items():
 model = create_model(opt)
 model.eval()
 
-# Path for log file
-test_log_path = os.path.join(opt['path']['log'], 'test_log.txt')
-if os.path.exists(test_log_path):
-    os.remove(test_log_path)
-    print('Old test log is removed.')
+# # Path for log file
+# test_log_path = os.path.join(opt['path']['log'], 'test_log.txt')
+# if os.path.exists(test_log_path):
+#     os.remove(test_log_path)
+#     print('Old test log is removed.')
 
 print('Start Testing ...')
 
@@ -67,6 +67,10 @@ for test_loader in test_loaders:
     dataset_dir = os.path.join(opt['path']['results_root'], test_set_name)
     util.mkdir(dataset_dir)
 
+    test_results = OrderedDict()
+    test_results['psnr'] = []
+    test_results['ssim'] = []
+
     for data in test_loader:
         need_HR = True
         if test_loader.dataset.opt['dataroot_HR'] is None:
@@ -75,12 +79,34 @@ for test_loader in test_loaders:
         img_path = data['LR_path'][0]
 
         img_name = os.path.splitext(os.path.basename(img_path))[0]
-        print(img_name)
 
         model.test()  # test
         visuals = model.get_current_visuals(need_HR=need_HR)
 
         sr_img = util.tensor2img_np(visuals['SR']) # uint8
 
+        if need_HR: # load GT image and calculate psnr
+            gt_img = util.tensor2img_np(visuals['HR'])
+            scale = test_loader.dataset.opt['scale']
+            crop_border = scale
+            cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]
+            cropped_gt_img = gt_img[crop_border:-crop_border, crop_border:-crop_border, :]
+            psnr = metric.psnr(cropped_sr_img, cropped_gt_img)
+            ssim = metric.ssim(cropped_sr_img, cropped_gt_img, multichannel=True)
+
+            test_results['psnr'].append(psnr)
+            test_results['ssim'].append(ssim)
+
+            print('{:20s} - PSNR: {:.2f} dB; SSIM: {:.2f}'.format(img_name, psnr, ssim))
+        else:
+            print(img_name)
+
         save_img_path = os.path.join(dataset_dir, img_name+'.png')
         util.save_img_np(sr_img, save_img_path)
+
+    # Average PSNR/SSIM results
+    ave_psnr = sum(test_results['psnr'])/len(test_results['psnr'])
+    ave_ssim = sum(test_results['ssim'])/len(test_results['ssim'])
+    print('-----\nAverage PSNR/SSIM results for {}\n\tPSNR: {:.2f} dB; SSIM: {:.2f}\n-----'.format(\
+        test_set_name, ave_psnr, ave_ssim))
+
