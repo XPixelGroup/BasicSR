@@ -47,10 +47,17 @@ class Logger(object):
                 D_out_fake = rlt['D_out_fake']  if 'D_out_fake' in rlt else -1
                 lr = rlt['lr']
 
-                format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
-                    'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
-                    loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, D_out_real, \
-                    D_out_fake, lr))
+                if 'loss_d_gp' in rlt:
+                    loss_d_gp = rlt['loss_d_gp']
+                    format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
+                        'real: {:.2e} , fake: {:.2e}, gp: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
+                        loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, loss_d_gp, D_out_real, \
+                        D_out_fake, lr))
+                else:
+                    format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
+                        'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> lr: {:.2e}'.format(\
+                        loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, loss_d_fake, D_out_real, \
+                        D_out_fake, lr))
             message += format_str
         else:
             for label, value in rlt.items():

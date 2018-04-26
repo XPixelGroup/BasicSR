@@ -1,5 +1,5 @@
 {
-  "name":"debug_010"
+  "name":"debug_000_exp_name"
   ,"model":"sr"
   ,"gpu_ids": [0]
 
@@ -9,10 +9,8 @@
       ,"data_type": "img"
       ,"mode": "LRHR_pair"
       ,"phase": "train"
-      //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/HR_sub"
-      //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/blur_gamma_sub_bicLRx4"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLR"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4"
       ,"subset_file": null
       ,"use_shuffle": true
       ,"n_workers": 6
@@ -21,32 +19,29 @@
       ,"scale": 4
       ,"use_flip": true
       ,"use_rot": true
-      ,"reverse": true // reverse LR and HR
+      //,"reverse": true
     }
     ,"val": {
-      "name": "Set5"
+      "name": "real_text"
       ,"data_type": "img"
       ,"mode": "LRHR_pair"
       ,"phase": "val"
-      //,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub"
-      //,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/GOPRO/val_blur_gamma_sub_bicLRx4"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
       ,"scale": 4
       ,"metric_mode": "rgb"
-      ,"reverse": true // reverse LR and HR
+      // ,"reverse": true
     }
   }
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "/home/xtwang/Projects/BasicSR/experiments/008_004c_DegradationNet_noBN_GOPRO/models/380000_G.pth"
+    // ,"pretrain_model_G": "../experiments/001_SRResNet_DIV2K_bic/models/280000_G.pth"
   }
 
   ,"network_G": {
-    //"which_model_G": "sr_resnet_torch"
-    "which_model_G": "degradation_net"
-    ,"norm_type": null
+    "which_model_G": "sr_resnet_torch"
+    ,"norm_type": "batch"
     ,"mode": "NAC"
     ,"scale": 4
     ,"nf": 64
