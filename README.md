@@ -25,9 +25,9 @@ The repo is still under development. There may be some bugs :-)
 
 ### Codes descriptions
 
-Please see [wiki pages](https://github.com/xinntao/BasicSR.wiki.git), which contains:
-- [data] instructions
-- [options] instructions (including all configuration descriptions)
+Please see Wiki pages(https://github.com/xinntao/BasicSR/wiki), which contains:
+- [[data] instructions](https://github.com/xinntao/BasicSR/wiki/%5Bdata%5D-instructions)
+- [[options] instructions](https://github.com/xinntao/BasicSR/wiki/%5Boptions%5D-instructions) (including all configuration descriptions)
 
 
 ### Getting Started
