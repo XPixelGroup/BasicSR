@@ -33,8 +33,8 @@ Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains
 ### Getting Started
 - How to test a model
 1. prepare your data and pretrained model
-    1. SRResNet pretrained model can be downloaded from [Google Drive](https://drive.google.com/file/d/18yHStj3INmQ7AD0JlcyedMJ1ENhoBtUl/view?usp=sharing)
-    The model is not the best and we may provide a new one later.
+    1. SRResNet pretrained model can be downloaded from [Google Drive](https://drive.google.com/file/d/18yHStj3INmQ7AD0JlcyedMJ1ENhoBtUl/view?usp=sharing).
+    The model is not the best and we may provide a new one later :-)
     1. Put the downloaded model in `BasicSR/experiments/pretrained_models/`.
 1. modify the corresponding testing json file in `options/test/test.json`
 1. test the model with the command `python3 test.py -opt options/test/test.json`
@@ -44,7 +44,10 @@ Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains
 1. modify the corresponding training json file in `options/train/SRResNet(or SRGAN).json`
 1. train the model with the command `python3 train.py -opt options/train/SRResNet.json`
 
+### Acknowlegement
 
+- Code architecture is inspired from [pytorch-cyclegan](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)
+- Thanks to **Wai Ho Kwok**, who develop the initial version.
 
 
 
