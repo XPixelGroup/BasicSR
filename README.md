@@ -15,25 +15,26 @@ The repo is under development. There may be some bugs :-)
 
 ### Introduction -->
 
-- Dependencies
+### Dependencies
 
-    python3 and pytorch 0.3.1
+python3 and pytorch 0.3.1
 
-- Codes descriptions
+### Codes descriptions
 
 Please see [wiki pages](https://github.com/xinntao/BasicSR.wiki.git), which contains:
 - [data] instructions
 - [options] instructions(all configuration descriptions)
 
 
-- How to train
-    1. prepare your data (it's better to test whether the data is ok using `test_dataloader`)
-    1. modify the corresponding training json file in `options/train/xxx.json`
-    1. train the model with the command `python3 train.py -opt options/train/SRResNet.json`
-- How to test
-    1. prepare your data and pretrained model.
-    1. modify the corresponding testing json file in `options/test/test.json`
-    1. test the model with the command `python3 test_LRinput.py -opt options/test/test.json`
+### How to train
+1. prepare your data (it's better to test whether the data is ok using `test_dataloader`)
+1. modify the corresponding training json file in `options/train/xxx.json`
+1. train the model with the command `python3 train.py -opt options/train/SRResNet.json`
+
+### How to test
+1. prepare your data and pretrained model.
+1. modify the corresponding testing json file in `options/test/test.json`
+1. test the model with the command `python3 test_LRinput.py -opt options/test/test.json`
 
 
 
