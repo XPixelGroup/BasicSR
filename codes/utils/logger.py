@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from utils.util import get_timestamp=
+from utils.util import get_timestamp
 
 
 class Logger(object):
