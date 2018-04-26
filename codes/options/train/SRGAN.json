@@ -79,8 +79,8 @@
     ,"gan_weight": 1e-2
 
     //for wgan-gp
-    ,"D_update_ratio": 5
-    ,"D_init_iters": 50
+    ,"D_update_ratio": 1
+    ,"D_init_iters": 0
     ,"gp_weigth": 10
 
     ,"manual_seed": 0
