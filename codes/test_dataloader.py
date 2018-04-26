@@ -33,6 +33,8 @@ train_set = create_dataset(opt)
 train_loader = create_dataloader(train_set, opt)
 
 for i, data in enumerate(train_loader):
+    if i > 5:
+        break
     print(i)
     LR = data['LR']
     HR = data['HR']
