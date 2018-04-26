@@ -1,5 +1,5 @@
 {
-  "name": "debug_000_exp_name"
+  "name": "pretrained_models"
   ,"model": "sr"
   ,"gpu_ids": [0]
 
@@ -8,16 +8,15 @@
       "name": "test"
       ,"data_type": "img"
       ,"mode": "LRHRref"
-      ,"phase": "test"
-      ,"dataroot_HR": null
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
+      ,"dataroot_HR": "/mnt/SSD/BasicSR_datasets/val_set5/Set5"
+      ,"dataroot_LR": "/mnt/SSD/BasicSR_datasets/val_set5/Set5_bicLRx4"
       ,"scale": 4
     }
   }
 
   ,"path": {
-    "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "../experiments/001_SRResNet_DIV2K_bic/models/280000_G.pth"
+    "root": "/mnt/3TB/Projects/BasicSR"
+    ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet-torch.pth"
   }
 
   ,"network_G": {
