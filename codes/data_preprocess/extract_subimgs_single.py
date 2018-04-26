@@ -6,9 +6,10 @@ from multiprocessing import Pool
 import time
 
 def worker(GT_paths, save_GT_dir):
-    crop_sz = 500//4
-    step  = 400//4
-    thres_sz = 50//4
+    crop_sz = 500
+    step  = 400
+    thres_sz = 50
+
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
@@ -39,13 +40,16 @@ def worker(GT_paths, save_GT_dir):
 
                 crop_img = np.ascontiguousarray(crop_img)
                 index_str = '{:03d}'.format(index)
-                cv2.imwrite(os.path.join(save_GT_dir, base_name.replace('.png', '_s'+index_str+'.png')), crop_img, \
-                            [cv2.IMWRITE_PNG_COMPRESSION, 0])
+                # var = np.var(crop_img / 255)
+                # if var > 0.008:
+                #     print(index_str, var)
+                cv2.imwrite(os.path.join(save_GT_dir, base_name.replace('.png', \
+                    '_s'+index_str+'.png')), crop_img, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/Semi_pair/PHONE'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/Semi_pair/PHONE_sub'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4'
     n_thread = 20
 
     print('Parent process %s.' % os.getpid())

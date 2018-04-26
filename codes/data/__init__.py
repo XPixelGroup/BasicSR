@@ -1,5 +1,6 @@
 import torch.utils.data
 
+
 def create_dataloader(dataset, dataset_opt):
     phase = dataset_opt['phase']
     if phase == 'train':
@@ -17,9 +18,7 @@ def create_dataloader(dataset, dataset_opt):
 
 def create_dataset(dataset_opt):
     mode = dataset_opt['mode']
-    if mode == 'LRHR_pair':
-        from data.LRHR_pair_dataset import LRHRPairDataset as D
-    elif mode == 'LRHRref':
+    if mode == 'LRHRref':
         from data.LRHRref_dataset import LRHRRefDataset as D
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
