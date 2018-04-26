@@ -20,7 +20,7 @@ parser.add_argument('-opt', type=str, required=True, help='Path to options JSON 
 args = parser.parse_args()
 options_path = args.opt
 opt = option.parse(options_path, is_train=False)
-util.mkdirs((path for key , path in opt['path'].items() if not key == 'pretrain_model_G')) #Make all directories needed
+util.mkdirs((path for key , path in opt['path'].items() if not key == 'pretrain_model_G'))
 opt = option.dict_to_nonedict(opt)
 
 # print to file and std_out simultaneously
@@ -80,14 +80,7 @@ for test_loader in test_loaders:
         model.test()  # test
         visuals = model.get_current_visuals(need_HR=need_HR)
 
-        # save intermediate numpy
-        # t = visuals['super-resolution'].clone()
-        # t = t.cpu().float().numpy()
-        # np.save(os.path.join(dataset_dir, img_name), t)
-
         sr_img = util.tensor2img_np(visuals['SR']) # uint8
 
-        # Save SR images for reference
-        # exp_idx = opt.name.split('_')[0]
         save_img_path = os.path.join(dataset_dir, img_name+'.png')
         util.save_img_np(sr_img, save_img_path)
