@@ -1,6 +1,9 @@
 # folder
 .vscode
 results
+tb_logger
+experiments/*
+!experiments/pretrained_models
 
 # file type
 *.svg
