@@ -209,8 +209,8 @@ class SRGANModel(BaseModel):
         # set losses
         self.loss_dict = OrderedDict()
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
-            self.loss_dict['loss_g_pixel'] = loss_g_pixel.data[0] if self.need_pixel_loss else 0
-            self.loss_dict['loss_g_fea'] = loss_g_fea.data[0] if self.need_feature_loss else 0
+            self.loss_dict['loss_g_pixel'] = loss_g_pixel.data[0] if self.need_pixel_loss else -1
+            self.loss_dict['loss_g_fea'] = loss_g_fea.data[0] if self.need_feature_loss else -1
             self.loss_dict['loss_g_gan'] = loss_g_gan.data[0]
         self.loss_dict['loss_d_real'] = loss_d_real.data[0]
         self.loss_dict['loss_d_fake'] = loss_d_fake.data[0]

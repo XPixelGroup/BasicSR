@@ -5,6 +5,8 @@ from utils.util import get_timestamp
 
 class Logger(object):
     def __init__(self, opt):
+        self.exp_name = opt['name']
+        self.use_tb_logger = opt['use_tb_logger']
         self.opt = opt['logger']
         self.log_dir = opt['path']['log']
         # loss log file
@@ -17,6 +19,9 @@ class Logger(object):
         with open(self.val_log_path, "a") as log_file:
             log_file.write('================ Time: ' + get_timestamp() + ' ===============\n')
             log_file.write('================ Validation Results ================\n')
+        if self.use_tb_logger and 'debug' not in self.exp_name:
+            from tensorboard_logger import Logger as TensorboardLogger
+            self.tb_logger = TensorboardLogger('../tb_logger/' + self.exp_name)
 
     def print_format_results(self, mode, rlt):
         epoch = rlt.pop('epoch')
@@ -29,6 +34,10 @@ class Logger(object):
                 loss_pixel = rlt['loss_pixel']  if 'loss_pixel' in rlt else -1
                 lr = rlt['lr']
                 format_str = '<loss: {:.2e}> lr: {:.2e}'.format(loss_pixel, lr)
+                # tensorboard logger
+                if self.use_tb_logger and 'debug' not in self.exp_name:
+                    self.tb_logger.log_value('loss_pixel', loss_pixel, iters)
+
             elif model == 'srgan':
                 loss_g_pixel = rlt['loss_g_pixel']  if 'loss_g_pixel' in rlt else -1
                 loss_g_fea = rlt['loss_g_fea']  if 'loss_g_fea' in rlt else -1
@@ -39,21 +48,45 @@ class Logger(object):
                 D_out_fake = rlt['D_out_fake']  if 'D_out_fake' in rlt else -1
                 lr = rlt['lr']
 
-                if 'loss_d_gp' in rlt:
+                # tensorboard logger - common
+                if self.use_tb_logger and 'debug' not in self.exp_name:
+                    if loss_g_pixel == -1 :
+                        self.tb_logger.log_value('loss_g_pixel', loss_g_pixel, iters)
+                    if loss_g_fea != -1:
+                        self.tb_logger.log_value('loss_g_fea', loss_g_fea, iters)
+                    self.tb_logger.log_value('loss_g_gan', loss_g_gan, iters)
+                    self.tb_logger.log_value('loss_d_real', loss_d_real, iters)
+                    self.tb_logger.log_value('loss_d_fake', loss_d_fake, iters)
+
+                if 'loss_d_gp' in rlt: # wgan-gp
                     loss_d_gp = rlt['loss_d_gp']
                     format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
                         'real: {:.2e} , fake: {:.2e}, gp: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> '
                         'lr: {:.2e}'.format(loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, \
                         loss_d_fake, loss_d_gp, D_out_real, D_out_fake, lr))
+                    # tensorboard logger - wgan-gp
+                    if self.use_tb_logger and 'debug' not in self.exp_name:
+                        self.tb_logger.log_value('loss_d_gp', loss_d_gp, iters)
+                        self.tb_logger.log_value('Wasserstein_dist', D_out_real - D_out_fake, iters)
+
                 else:
                     format_str = ('<loss_G: pixel: {:.2e}, fea: {:.2e}, gan: {:.2e}><loss_D: '
                         'real: {:.2e} , fake: {:.2e}><Dout: G: {:.2f}, D: {:.2f}> '
                         'lr: {:.2e}'.format(loss_g_pixel, loss_g_fea, loss_g_gan, loss_d_real, \
                         loss_d_fake, D_out_real, D_out_fake, lr))
+
+                    # tensorboard logger - vanilla gan | lsgan
+                    if self.use_tb_logger and 'debug' not in self.exp_name:
+                        self.tb_logger.log_value('D_out_real', D_out_real, iters)
+                        self.tb_logger.log_value('D_out_fake', D_out_fake, iters)
+
             message += format_str
         else:
             for label, value in rlt.items():
                 message += '%s: %.2e ' % (label, value)
+                # tensorboard logger
+                if self.use_tb_logger and 'debug' not in self.exp_name:
+                    self.tb_logger.log_value(label, value, iters)
         # print in console
         print(message)
         # write in log file
