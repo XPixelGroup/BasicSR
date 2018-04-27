@@ -1,5 +1,6 @@
 {
   "name":"debug_002_SRGAN_DIV2K_pair_vanilla" //  please remove "debub_" during formal training
+  ,"use_tb_logger": true
   ,"model":"srgan"
   ,"gpu_ids": [0]
 
