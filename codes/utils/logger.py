@@ -50,7 +50,7 @@ class Logger(object):
 
                 # tensorboard logger - common
                 if self.use_tb_logger and 'debug' not in self.exp_name:
-                    if loss_g_pixel == -1 :
+                    if loss_g_pixel != -1 :
                         self.tb_logger.log_value('loss_g_pixel', loss_g_pixel, iters)
                     if loss_g_fea != -1:
                         self.tb_logger.log_value('loss_g_fea', loss_g_fea, iters)
