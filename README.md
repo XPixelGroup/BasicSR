@@ -44,10 +44,15 @@ Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains
 1. modify the corresponding training json file in `options/train/SRResNet(or SRGAN).json`
 1. train the model with the command `python3 train.py -opt options/train/SRResNet.json`
 
-### Acknowlegement
+---
+## :satisfied: Image Viewer - [HandyViewer](https://github.com/xinntao/HandyViewer)
+If you have trouble in comparing image details, may have a try for [HandyViewer](https://github.com/xinntao/HandyViewer) - an image viewer that you can switch image with a fixed zoom ratio.
+
+---
+## Acknowlegement
 
 - Code architecture is inspired from [pytorch-cyclegan](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
-- Thanks to **Wai Ho Kwok**, who develop the initial version.
+- Thanks to *Wai Ho Kwok*, who develop the initial version.
 
 
 
