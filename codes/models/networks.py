@@ -89,8 +89,8 @@ def define_G(opt):
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
     else:
         raise NotImplementedError('Generator model [%s] is not recognized' % which_model)
-    if opt['is_train']:
-        init_weights(netG, init_type='kaiming', scale=1)
+
+    init_weights(netG, init_type='kaiming', scale=1)
     if gpu_ids:
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG).cuda()
@@ -114,8 +114,8 @@ def define_D(opt):
             norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
     else:
         raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
-    if opt['is_train']:
-        init_weights(netD, init_type='kaiming', scale=1)
+
+    init_weights(netD, init_type='kaiming', scale=1)
     if gpu_ids:
         netD = nn.DataParallel(netD).cuda()
     return netD
