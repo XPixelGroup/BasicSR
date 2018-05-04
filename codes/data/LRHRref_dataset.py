@@ -47,6 +47,7 @@ class LRHRRefDataset(data.Dataset):
 
     def __getitem__(self, index):
         HR_path, LR_path, ref_path = None, None, None
+        is_rgb = True
         scale = self.opt['scale']
         if self.paths_HR:
             # get HR image
@@ -57,6 +58,7 @@ class LRHRRefDataset(data.Dataset):
                 img_HR = self.HR_bin_list[index]
             img_HR = img_HR * 1.0 / 255 # numpy.ndarray(float64), [0,1], HWC, BGR
             if img_HR.ndim == 2: # gray image, add one dimension
+                is_rgb = False
                 img_HR = np.expand_dims(img_HR, axis=2)
             # get LR image
             if self.paths_LR:
@@ -124,8 +126,14 @@ class LRHRRefDataset(data.Dataset):
 
         # numpy to tensor, HWC to CHW, BGR to RGB
         if HR_path:
-            img_HR = torch.from_numpy(np.transpose(img_HR[:, :, [2,1,0]], (2, 0, 1))).float()
-        img_LR = torch.from_numpy(np.transpose(img_LR[:, :, [2,1,0]], (2, 0, 1))).float()
+            if is_rgb:
+                img_HR = torch.from_numpy(np.transpose(img_HR[:, :, [2,1,0]], (2, 0, 1))).float()
+            else:
+                img_HR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_HR, (2, 0, 1)))).float()
+        if is_rgb:
+            img_LR = torch.from_numpy(np.transpose(img_LR[:, :, [2,1,0]], (2, 0, 1))).float()
+        else:
+            img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()
 
         if not HR_path:  # read only LR image in test phase
             return {'LR': img_LR, 'LR_path': LR_path}

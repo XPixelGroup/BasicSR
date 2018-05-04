@@ -70,6 +70,8 @@ def tensor2img_np(tensor, out_type=np.uint8, min_max=(0, 1)):
 
 
 def save_img_np(img_np, img_path, mode='RGB'):
+    if img_np.ndim == 2:
+        mode = 'L'
     img_pil = Image.fromarray(img_np, mode=mode)
     img_pil.save(img_path)
 
@@ -118,6 +120,20 @@ def ycbcr2rgb(img):
 ####################
 # metric
 ####################
+
+def modcrop(img_in, scale):
+    img = np.copy(img_in)
+    if img.ndim == 2:
+        H, W = img.shape
+        H_r, W_r = H % scale, W % scale
+        img = img[::H-H_r, ::W-W_r]
+    else:
+        img.ndim == 3
+        C, H, W = img.shape
+        H_r, W_r = H % scale, W % scale
+        img = img[::H-H_r, ::W-W_r, :]
+    return img
+
 
 def psnr(img1, img2):
     assert img1.dtype == img2.dtype == np.uint8, 'np.uint8 is supposed.'
