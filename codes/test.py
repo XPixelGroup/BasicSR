@@ -1,17 +1,14 @@
 import os
 import sys
 import time
-import random
 import argparse
 import numpy as np
 from collections import OrderedDict
 
 import torch
-from torchvision.transforms import ToTensor
 
 import options.options as option
 import utils.util as util
-import utils.metric as metric
 
 
 # options
@@ -28,12 +25,14 @@ class PrintLogger(object):
     def __init__(self):
         self.terminal = sys.stdout
         self.log = open(os.path.join(opt['path']['log'], 'print_log.txt'), "a")
+        print('\n**********' + option.get_timestamp() + '**********')
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)
     def flush(self):
         pass
 sys.stdout = PrintLogger()
+
 
 from data import create_dataset, create_dataloader
 from models import create_model
@@ -83,16 +82,16 @@ for test_loader in test_loaders:
         model.test()  # test
         visuals = model.get_current_visuals(need_HR=need_HR)
 
-        sr_img = util.tensor2img_np(visuals['SR']) # uint8
+        sr_img = util.tensor2img_np(visuals['SR'])  # uint8
 
         if need_HR: # load GT image and calculate psnr
             gt_img = util.tensor2img_np(visuals['HR'])
             scale = test_loader.dataset.opt['scale']
-            crop_border = scale
+            crop_border = scale + 2
             cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]
             cropped_gt_img = gt_img[crop_border:-crop_border, crop_border:-crop_border, :]
-            psnr = metric.psnr(cropped_sr_img, cropped_gt_img)
-            ssim = metric.ssim(cropped_sr_img, cropped_gt_img, multichannel=True)
+            psnr = util.psnr(cropped_sr_img, cropped_gt_img)
+            ssim = util.ssim(cropped_sr_img, cropped_gt_img, multichannel=True)
 
             test_results['psnr'].append(psnr)
             test_results['ssim'].append(ssim)
@@ -109,4 +108,3 @@ for test_loader in test_loaders:
     ave_ssim = sum(test_results['ssim'])/len(test_results['ssim'])
     print('-----\nAverage PSNR/SSIM results for {}\n\tPSNR: {:.2f} dB; SSIM: {:.2f}\n-----'.format(\
         test_set_name, ave_psnr, ave_ssim))
-
