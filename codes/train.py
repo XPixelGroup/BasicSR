@@ -9,7 +9,7 @@ from collections import OrderedDict
 import torch
 
 import options.options as option
-from utils import util, metric
+from utils import util
 
 # options
 parser = argparse.ArgumentParser()
@@ -165,10 +165,10 @@ def validate(val_loader, model, logger, epoch, current_step, val_dataset_opt):
 
         metric_mode = val_dataset_opt['metric_mode']
         if metric_mode == 'y':
-            cropped_sr_img = util.rgb2y(cropped_sr_img)
-            cropped_gt_img = util.rgb2y(cropped_gt_img)
+            cropped_sr_img = util.rgb2ycbcr(cropped_sr_img, only_y=True)
+            cropped_gt_img = util.rgb2ycbcr(cropped_gt_img, only_y=True)
 
-        avg_psnr += metric.psnr(cropped_sr_img, cropped_gt_img)
+        avg_psnr += util.psnr(cropped_sr_img, cropped_gt_img)
 
     avg_psnr = avg_psnr / idx
 

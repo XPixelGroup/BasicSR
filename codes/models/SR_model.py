@@ -77,6 +77,10 @@ class SRModel(BaseModel):
             self.input_L.resize_(input_L.size()).copy_(input_L)
             self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
 
+        # import torchvision.utils
+        # torchvision.utils.save_image(input_L, 'LR.png', nrow=4, padding=2, normalize=False)
+        # torchvision.utils.save_image(input_H, 'HR.png', nrow=4, padding=2, normalize=False)
+
     def forward_G(self):
         self.fake_H = self.netG(self.real_L)
 
