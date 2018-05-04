@@ -83,7 +83,7 @@ class Logger(object):
             message += format_str
         else:
             for label, value in rlt.items():
-                message += '%s: %.2e ' % (label, value)
+                message += '%s: %.4e ' % (label, value)
                 # tensorboard logger
                 if self.use_tb_logger and 'debug' not in self.exp_name:
                     self.tb_logger.log_value(label, value, iters)
