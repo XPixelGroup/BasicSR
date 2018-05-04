@@ -25,8 +25,8 @@ def weights_init_normal(m, std=0.02):
 
 def weights_init_kaiming(m, scale=1):
     classname = m.__class__.__name__
-    # print('initializing [%s] ...' % classname)
     if classname.find('Conv') != -1:
+        print('initializing [%s] ...' % classname)
         init.kaiming_normal(m.weight.data, a=0, mode='fan_in')
         m.weight.data *= scale
         if m.bias is not None:
@@ -82,15 +82,19 @@ def define_G(opt):
     which_model = opt['which_model_G']
 
     if which_model == 'sr_resnet_torch':
-        netG = Arch.SRResNet_torch(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+        netG = Arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
+    elif which_model == 'sr_resnet':
+        netG = Arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'],\
+            upsample_mode='pixelshuffle')
     elif which_model == 'degradation_net':
         netG = Arch.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
     else:
         raise NotImplementedError('Generator model [%s] is not recognized' % which_model)
 
-    init_weights(netG, init_type='kaiming', scale=1)
+    # init_weights(netG, init_type='orthogonal') # need to investigate, the original is better?
     if gpu_ids:
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG).cuda()
@@ -115,7 +119,7 @@ def define_D(opt):
     else:
         raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
 
-    init_weights(netD, init_type='kaiming', scale=1)
+    # init_weights(netD, init_type='kaiming', scale=1)
     if gpu_ids:
         netD = nn.DataParallel(netD).cuda()
     return netD

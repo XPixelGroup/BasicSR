@@ -25,14 +25,13 @@ class PrintLogger(object):
     def __init__(self):
         self.terminal = sys.stdout
         self.log = open(os.path.join(opt['path']['log'], 'print_log.txt'), "a")
-        print('\n**********' + option.get_timestamp() + '**********')
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)
     def flush(self):
         pass
 sys.stdout = PrintLogger()
-
+print('\n**********' + option.get_timestamp() + '**********')
 
 from data import create_dataset, create_dataloader
 from models import create_model
