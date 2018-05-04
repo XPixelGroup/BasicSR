@@ -116,7 +116,7 @@ mode: CNA --> Conv -> Norm -> Act
 """
 def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=True,
                pad_type='zero', norm_type=None, act_type='relu', mode='CNA'):
-    assert mode in ['CNA', 'NAC'], 'Wong conv mode [%s]' % mode
+    assert mode in ['CNA', 'NAC', 'CNAC'], 'Wong conv mode [%s]' % mode
     padding = get_valid_padding(kernel_size, dilation)
     p = pad(pad_type, padding) if pad_type and pad_type != 'zero' else None
     padding = padding if pad_type == 'zero' else 0
@@ -124,7 +124,7 @@ def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=
     c = nn.Conv2d(in_nc, out_nc, kernel_size=kernel_size, stride=stride, padding=padding, \
             dilation=dilation, bias=bias, groups=groups)
     a = act(act_type) if act_type else None
-    if mode == 'CNA':
+    if 'CNA' in mode:
         n = norm(norm_type, out_nc) if norm_type else None
         return sequential(p, c, n, a)
     elif mode == 'NAC':
@@ -158,6 +158,9 @@ class ResNetBlock(nn.Module):
             norm_type, act_type, mode)
         if mode == 'CNA':
             act_type = None
+        if mode == 'CNAC': # Residual path: |-CNAC-|
+            act_type = None
+            norm_type = None
         conv1 = conv_block(mid_nc, out_nc, kernel_size, stride, dilation, groups, bias, pad_type, \
             norm_type, act_type, mode)
         # if in_nc != out_nc:
@@ -183,10 +186,15 @@ class ResNetBlock(nn.Module):
 #   Neural Network, CVPR17)
 def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True,
                         pad_type='zero', norm_type=None, act_type='relu'):
+
     conv = conv_block(in_nc, out_nc*(upscale_factor**2), kernel_size, stride, bias=bias,
-                        pad_type=pad_type, norm_type=norm_type, act_type=act_type)
+                        pad_type=pad_type, norm_type=None, act_type=None)
     pixel_shuffle = nn.PixelShuffle(upscale_factor)
-    return sequential(conv, pixel_shuffle)
+
+
+    n = norm(norm_type, out_nc * (upscale_factor**2)) if norm_type else None
+    a = act(act_type) if act_type else None
+    return sequential(conv, pixel_shuffle, n, a)
 
 
 # Up conv

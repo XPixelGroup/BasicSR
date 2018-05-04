@@ -14,11 +14,13 @@ from . import block as B
 """
 SRResNet from torch (w/ and w/o BN, pre-activation)
 """
-class SRResNet_torch(nn.Module):
+class SRResNet(nn.Module):
     def __init__(self, in_nc, out_nc, nf, nb, upscale=4, norm_type='batch', act_type='relu', \
             mode='NAC', res_scale=1, upsample_mode='upconv'):
-        super(SRResNet_torch, self).__init__()
-        n_upscale = int(math.sqrt(upscale))
+        super(SRResNet, self).__init__()
+        n_upscale = int(math.log(upscale, 2))
+        if upscale == 3:
+            n_upscale = 1
 
         fea_conv = B.conv_block(in_nc, nf, kernel_size=3, norm_type=None, act_type=None)
         resnet_blocks = [B.ResNetBlock(nf, nf, nf, norm_type=norm_type, act_type=act_type,\
@@ -31,8 +33,10 @@ class SRResNet_torch(nn.Module):
             upsample_block = B.pixelshuffle_block
         else:
             raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
-
-        upsampler = [upsample_block(nf, nf, act_type=act_type) for _ in range(n_upscale)]
+        if upscale == 3:
+            upsampler = upsample_block(nf, nf, 3, act_type=act_type)
+        else:
+            upsampler = [upsample_block(nf, nf, act_type=act_type) for _ in range(n_upscale)]
         HR_conv0 = B.conv_block(nf, nf, kernel_size=3, norm_type=None, act_type=act_type)
         HR_conv1 = B.conv_block(nf, out_nc, kernel_size=3, norm_type=None, act_type=None)
 

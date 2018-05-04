@@ -154,14 +154,20 @@ def validate(val_loader, model, logger, epoch, current_step, val_dataset_opt):
 
         sr_img = util.tensor2img_np(visuals['SR']) # uint8
         gt_img = util.tensor2img_np(visuals['HR']) # uint8
+        # # modcrop
+        # gt_img = util.modcrop(gt_img, val_dataset_opt['scale'])
+        h_min = min(sr_img.shape[0], gt_img.shape[0])
+        w_min = min(sr_img.shape[1], gt_img.shape[1])
+        sr_img = sr_img[0:h_min, 0:w_min, :]
+        gt_img = gt_img[0:h_min, 0:w_min, :]
 
-        crop_size = val_dataset_opt['scale']
+        crop_size = val_dataset_opt['scale'] + 2
         cropped_sr_img = sr_img[crop_size:-crop_size, crop_size:-crop_size, :]
         cropped_gt_img = gt_img[crop_size:-crop_size, crop_size:-crop_size, :]
 
         # Save SR images for reference
         save_img_path = os.path.join(img_dir, '%s_%s.png' % (img_name,current_step))
-        util.save_img_np(sr_img, save_img_path)
+        util.save_img_np(sr_img.squeeze(), save_img_path)
 
         metric_mode = val_dataset_opt['metric_mode']
         if metric_mode == 'y':
