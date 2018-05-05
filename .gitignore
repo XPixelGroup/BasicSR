@@ -9,7 +9,6 @@ experiments/*
 *.svg
 *.pyc
 *.t7
-*.pth
 *.caffemodel
 *.mat
 *.npy
