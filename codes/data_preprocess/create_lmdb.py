@@ -5,8 +5,8 @@ import glob
 import cv2
 
 # img_path should contains glob matching pattern
-img_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_y/*'
-lmdb_save_path = './DIV2K800_sub_y.lmdb'
+img_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx2/*'
+lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx2.lmdb'
 
 file_list = sorted(glob.glob(img_path))
 dataset = []
