@@ -36,9 +36,16 @@ def worker(GT_paths, save_GT_dir):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx2'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx2_y'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx8'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx8_y'
     n_thread = 20
+
+    if not os.path.exists(save_GT_dir):
+        os.makedirs(save_GT_dir)
+        print('mkdir ... ' + save_GT_dir)
+    else:
+        print('File [%s] already exists. Exit.' % save_GT_dir)
+        sys.exit(1)
 
     print('Parent process %s.' % os.getpid())
     start = time.time()
