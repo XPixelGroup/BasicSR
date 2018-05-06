@@ -1,29 +1,37 @@
 {
-  "name": "pretrained_models"
+  "name": "SRResNet_bicx4_in3nf64nb16"
   ,"model": "sr"
+  ,"scale": 4
   ,"gpu_ids": [0]
 
   ,"datasets": {
-    "test": {
-      "name": "test"
+    "test_1": { // the 1st test dataset
+      "name": "val_set5"
       ,"data_type": "img"
       ,"mode": "LRHRref"
-      ,"dataroot_HR": "/mnt/SSD/BasicSR_datasets/val_set5/Set5"
-      ,"dataroot_LR": "/mnt/SSD/BasicSR_datasets/val_set5/Set5_bicLRx4"
-      ,"scale": 4
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
+      ,"reverse": false
+    }
+    ,"test_2": { // the 2nd test dataset
+      "name": "val_set14"
+      ,"data_type": "img"
+      ,"mode": "LRHRref"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14_bicLRx4"
+      ,"reverse": false
     }
   }
 
   ,"path": {
-    "root": "/mnt/3TB/Projects/BasicSR"
-    ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet-torch.pth"
+    "root": "/home/xtwang/Projects/BasicSR"
+    ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet_bicx4_in3nf64nb16.pth"
   }
 
   ,"network_G": {
-    "which_model_G": "sr_resnet_torch"
-    ,"norm_type": "batch"
-    ,"mode": "NAC"
-    ,"scale": 4
+    "which_model_G": "sr_resnet"
+    ,"norm_type": null
+    ,"mode": "CNA"
     ,"nf": 64
     ,"nb": 16
     ,"in_nc": 3
