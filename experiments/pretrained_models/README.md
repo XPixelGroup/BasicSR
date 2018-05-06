@@ -26,7 +26,7 @@ All these classical SR datasets can be downloaded from [Google Drive](https://dr
 |  |   |   | 26.885 | 27.070 | 24.996 | | |
 | SRResNet_bicx2_in1nf64nb16 | 2 | Y |  |  |  | | |
 | SRResNet_bicx3_in1nf64nb16 | 3 | Y |  |  |  | | |
-| SRResNet_bicx4_in1nf64nb16 | 4 | Y |  |  |  | | |
+| SRResNet_bicx4_in1nf64nb16 | 4 | Y | 30.224<sup>4</sup> | 32.038 | 28.494 | | |
 | SRResNet_bicx8_in1nf64nb16 | 8 | Y |  |  |  | | |
 
 <sup>1</sup> **bic**: MATLAB bicubic downsampling; **in3**: input has 3 channels; **nf64**: 64 feature maps; **nb16**: 16 residual blocks.
@@ -34,3 +34,5 @@ All these classical SR datasets can be downloaded from [Google Drive](https://dr
 <sup>2</sup> DIV2K 0801 ~ 0900 validation images.
 
 <sup>3</sup> The first row is evaluated on RGB channels, while the secone row is evaluate on Y channel (of YCbCr).
+
+<sup>3</sup> It is a bit strange that PSNR trained on Y is lower than PSNR trained on RGB and evaluated on Y. We will inspect it later.
