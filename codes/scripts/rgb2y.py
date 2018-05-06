@@ -1,10 +1,10 @@
 import os
-import sys
 import os.path
-import cv2
-import numpy as np
-from multiprocessing import Pool
+import sys
 import time
+from multiprocessing import Pool
+import numpy as np
+import cv2
 
 
 def rgb2ycbcr(img, only_y=True):
@@ -23,7 +23,6 @@ def rgb2ycbcr(img, only_y=True):
 
 
 def worker(GT_paths, save_GT_dir):
-
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
@@ -36,8 +35,8 @@ def worker(GT_paths, save_GT_dir):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx8'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx8_y'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_y'
     n_thread = 20
 
     if not os.path.exists(save_GT_dir):

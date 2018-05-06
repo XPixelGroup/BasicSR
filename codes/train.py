@@ -169,10 +169,11 @@ def validate(val_loader, model, logger, epoch, current_step, val_dataset_opt):
         save_img_path = os.path.join(img_dir, '%s_%s.png' % (img_name,current_step))
         util.save_img_np(sr_img.squeeze(), save_img_path)
 
-        metric_mode = val_dataset_opt['metric_mode']
-        if metric_mode == 'y':
-            cropped_sr_img = util.rgb2ycbcr(cropped_sr_img, only_y=True)
-            cropped_gt_img = util.rgb2ycbcr(cropped_gt_img, only_y=True)
+        # TODO need to modify
+        # metric_mode = val_dataset_opt['metric_mode']
+        # if metric_mode == 'y':
+        #     cropped_sr_img = util.rgb2ycbcr(cropped_sr_img, only_y=True)
+        #     cropped_gt_img = util.rgb2ycbcr(cropped_gt_img, only_y=True)
 
         avg_psnr += util.psnr(cropped_sr_img, cropped_gt_img)
 
