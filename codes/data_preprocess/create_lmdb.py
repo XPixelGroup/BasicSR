@@ -1,12 +1,11 @@
 import os.path
-import lmdb
-import numpy as np
 import glob
+import lmdb
 import cv2
 
 # img_path should contains glob matching pattern
-img_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx2/*'
-lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx2.lmdb'
+img_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub/*'
+lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
 
 file_list = sorted(glob.glob(img_path))
 dataset = []
@@ -21,7 +20,7 @@ for i in range(len(file_list)):
 map_size = data_size * 10
 env = lmdb.open(lmdb_save_path, map_size=map_size)
 
-print('Finish reading image.\nWrite to lmdb')
+print('Finish reading image.\nWrite to lmdb...')
 with env.begin(write=True) as txn:
     # txn is a Transaction object
     for i in range(len(file_list)):
@@ -40,7 +39,7 @@ with env.begin(write=True) as txn:
         # The encode is only essential in Python 3
         txn.put(key, data)
         txn.put(meta_key, meta.encode('ascii'))
-
+print('Finish.')
 
 # test lmdb
 '''
