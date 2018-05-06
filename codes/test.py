@@ -24,7 +24,7 @@ opt = option.dict_to_nonedict(opt)
 class PrintLogger(object):
     def __init__(self):
         self.terminal = sys.stdout
-        self.log = open(os.path.join(opt['path']['log'], 'print_log.txt'), "a")
+        self.log = open(os.path.join(opt['path']['log'], 'test_log.txt'), "a")
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)
@@ -38,7 +38,7 @@ from models import create_model
 
 # Create test dataset and dataloader
 test_loaders = []
-for phase, dataset_opt in opt['datasets'].items():
+for phase, dataset_opt in sorted(opt['datasets'].items()):
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
     test_size = len(test_set)
@@ -50,13 +50,7 @@ for phase, dataset_opt in opt['datasets'].items():
 model = create_model(opt)
 model.eval()
 
-# # Path for log file
-# test_log_path = os.path.join(opt['path']['log'], 'test_log.txt')
-# if os.path.exists(test_log_path):
-#     os.remove(test_log_path)
-#     print('Old test log is removed.')
-
-print('Start Testing ...')
+print('\nStart Testing ...')
 
 for test_loader in test_loaders:
     test_set_name = test_loader.dataset.opt['name']

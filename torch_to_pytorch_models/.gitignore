@@ -1,0 +1,16 @@
+
+*.pth
+*.svg
+*.pyc
+*.t7
+*.caffemodel
+*.mat
+*.npy
+
+# latex
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
