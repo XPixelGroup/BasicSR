@@ -39,7 +39,7 @@ with env.begin(write=True) as txn:
         # The encode is only essential in Python 3
         txn.put(key, data)
         txn.put(meta_key, meta.encode('ascii'))
-print('Finish.')
+print('Finish - {}'.format(len(file_list)))
 
 # test lmdb
 '''
