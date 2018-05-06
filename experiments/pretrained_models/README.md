@@ -14,7 +14,7 @@ are the best network settings.
 #### Qualitative results [PSNR/dB] 
 All these classical SR datasets can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing).
 
-| Model | Scale | Channel | DIV2K<sup>2</sup> | <a href="http://people.rennes.inria.fr/Aline.Roumy/results/SR_BMVC12.html" target="_blank">Set5</a> | Set14 | BSD100 | Urban100 |
+| Model | Scale | Channel | DIV2K<sup>2</sup> | Set5| Set14 | BSD100 | Urban100 |
 |--- |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | SRResNet_bicx2_in3nf64nb16<sup>1</sup> | 2 | RGB | 34.720<sup>3</sup> | 35.835 | 31.643 | | |
 |  |   |   | 36.143<sup>3</sup> | 37.947 | 33.682 | | |
