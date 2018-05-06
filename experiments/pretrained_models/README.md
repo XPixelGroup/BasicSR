@@ -24,7 +24,7 @@ All these classical SR datasets can be downloaded from [Google Drive](https://dr
 |  |   |   | 30.486 | 32.180 | 28.645 | | |
 | SRResNet_bicx8_in3nf64nb16 | 8 | RGB | 25.429 | 25.357 | 23.348 | | |
 |  |   |   | 26.885 | 27.070 | 24.996 | | |
-| SRResNet_bicx2_in1nf64nb16 | 2 | Y |  |  |  | | |
+| SRResNet_bicx2_in1nf64nb16 | 2 | Y | 35.870 | 37.864 | 33.581 | | |
 | SRResNet_bicx3_in1nf64nb16 | 3 | Y |  |  |  | | |
 | SRResNet_bicx4_in1nf64nb16 | 4 | Y | 30.224 | 32.038<sup>4</sup> | 28.494 | | |
 | SRResNet_bicx8_in1nf64nb16 | 8 | Y | 26.660 | 26.621 | 24.804 | | |
