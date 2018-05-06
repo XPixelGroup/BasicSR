@@ -110,15 +110,16 @@ for test_loader in test_loaders:
             print(img_name)
 
         save_img_path = os.path.join(dataset_dir, img_name+'.png')
-        util.save_img_np(sr_img, save_img_path)
+        util.save_img_np(sr_img.squeeze(), save_img_path)
 
-    # Average PSNR/SSIM results
-    ave_psnr = sum(test_results['psnr'])/len(test_results['psnr'])
-    ave_ssim = sum(test_results['ssim'])/len(test_results['ssim'])
-    print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.4f} dB; SSIM: {:.4f}\n'\
-            .format(test_set_name, ave_psnr, ave_ssim))
-    if test_results['psnr_y'] and test_results['ssim_y']:
-        ave_psnr_y = sum(test_results['psnr_y']) / len(test_results['psnr_y'])
-        ave_ssim_y = sum(test_results['ssim_y']) / len(test_results['ssim_y'])
-        print('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.4f} dB; SSIM_Y: {:.4f}\n'\
-            .format(ave_psnr_y, ave_ssim_y))
+    if need_HR: # metrics
+        # Average PSNR/SSIM results
+        ave_psnr = sum(test_results['psnr'])/len(test_results['psnr'])
+        ave_ssim = sum(test_results['ssim'])/len(test_results['ssim'])
+        print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.4f} dB; SSIM: {:.4f}\n'\
+                .format(test_set_name, ave_psnr, ave_ssim))
+        if test_results['psnr_y'] and test_results['ssim_y']:
+            ave_psnr_y = sum(test_results['psnr_y']) / len(test_results['psnr_y'])
+            ave_ssim_y = sum(test_results['ssim_y']) / len(test_results['ssim_y'])
+            print('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.4f} dB; SSIM_Y: {:.4f}\n'\
+                .format(ave_psnr_y, ave_ssim_y))
