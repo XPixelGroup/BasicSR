@@ -18,11 +18,16 @@ def parse(opt_path, is_train=True):
     opt = json.loads(json_str, object_pairs_hook=OrderedDict)
     opt['timestamp'] = get_timestamp()
     opt['is_train'] = is_train
+    scale = opt['scale']
 
     for key, path in opt['path'].items():
         opt['path'][key] = os.path.expanduser(path)
+
+    # datasets
     for phase, dataset in opt['datasets'].items():
+        phase = phase.split('_')[0]
         dataset['phase'] = phase
+        dataset['scale'] = scale
         if dataset['dataroot_HR'] is not None:
             dataset['dataroot_HR'] = os.path.expanduser(dataset['dataroot_HR'])
         if dataset['dataroot_LR'] is not None:
@@ -30,6 +35,7 @@ def parse(opt_path, is_train=True):
         if phase == 'train' and dataset['subset_file'] is not None:
             dataset['subset_file'] = os.path.expanduser(dataset['subset_file'])
 
+    # path
     if is_train:
         experiments_root = os.path.join(opt['path']['root'], 'experiments', opt['name'])
         opt['path']['experiments_root'] = experiments_root
@@ -49,6 +55,9 @@ def parse(opt_path, is_train=True):
         opt['path']['results_root'] = results_root
         opt['path']['options'] = results_root
         opt['path']['log'] = results_root
+
+    # network
+    opt['network_G']['scale'] = scale
     return opt
 
 def save(opt):

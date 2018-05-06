@@ -1,13 +1,14 @@
 import os
 import os.path
-import cv2
-import numpy as np
 from multiprocessing import Pool
 import time
+import numpy as np
+import cv2
+
 
 def worker(GT_paths, save_GT_dir):
     crop_sz = 480
-    step  = 240
+    step = 240
     thres_sz = 48
 
     for GT_path in GT_paths:
@@ -48,8 +49,8 @@ def worker(GT_paths, save_GT_dir):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
     n_thread = 20
 
     print('Parent process %s.' % os.getpid())
