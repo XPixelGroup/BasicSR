@@ -1,5 +1,6 @@
 import torchvision.utils
 from data import create_dataloader, create_dataset
+import time
 
 
 opt = {}
@@ -11,20 +12,20 @@ opt = {}
 # opt['subset_file'] = '/mnt/SSD/xtwang/BasicSR_datasets/ImageNet_list.txt'
 
 opt['name'] = 'DIV2K'
-opt['dataroot_HR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
-opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4'
+opt['dataroot_HR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
+opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb'
 opt['subset_file'] = None
 
 opt['dataroot_ref'] = None
 opt['reverse'] = False
 
-opt['data_type'] = 'img'
+opt['data_type'] = 'lmdb'
 opt['mode'] = 'LRHRref'
 opt['phase'] = 'train'
 opt['use_shuffle'] = True
-opt['n_workers'] = 3
-opt['batch_size'] = 64
-opt['HR_size'] = 128
+opt['n_workers'] = 8
+opt['batch_size'] = 16
+opt['HR_size'] = 192
 opt['scale'] = 4
 opt['use_flip'] = True
 opt['use_rot'] = True
@@ -33,6 +34,12 @@ train_set = create_dataset(opt)
 train_loader = create_dataloader(train_set, opt)
 
 for i, data in enumerate(train_loader):
+    # test dataloader time
+    # if i == 1:
+    #     start_time = time.time()
+    # if i == 500:
+    #     print(time.time() - start_time)
+    #     break
     if i > 5:
         break
     print(i)
