@@ -35,8 +35,8 @@ def worker(GT_paths, save_GT_dir):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_y'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_y'
     n_thread = 20
 
     if not os.path.exists(save_GT_dir):
