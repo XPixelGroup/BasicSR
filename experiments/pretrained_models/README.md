@@ -25,7 +25,7 @@ All these classical SR datasets can be downloaded from [Google Drive](https://dr
 | SRResNet_bicx8_in3nf64nb16 | 8 | RGB | 25.429 | 25.357 | 23.348 | | |
 |  |   |   | 26.885 | 27.070 | 24.996 | | |
 | SRResNet_bicx2_in1nf64nb16 | 2 | Y | 35.870 | 37.864 | 33.581 | | |
-| SRResNet_bicx3_in1nf64nb16 | 3 | Y |  |  |  | | |
+| SRResNet_bicx3_in1nf64nb16 | 3 | Y | 32.182 | 34.263 | 30.186 | | |
 | SRResNet_bicx4_in1nf64nb16 | 4 | Y | 30.224 | 32.038<sup>4</sup> | 28.494 | | |
 | SRResNet_bicx8_in1nf64nb16 | 8 | Y | 26.660 | 26.621 | 24.804 | | |
 
@@ -33,6 +33,6 @@ All these classical SR datasets can be downloaded from [Google Drive](https://dr
 
 <sup>2</sup> DIV2K 0801 ~ 0900 validation images.
 
-<sup>3</sup> The first row is evaluated on RGB channels, while the secone row is evaluate on Y channel (of YCbCr).
+<sup>3</sup> The first row is evaluated on RGB channels, while the secone row is evaluated on Y channel (of YCbCr).
 
 <sup>4</sup> (31.901, 29.711)
