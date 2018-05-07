@@ -20,6 +20,8 @@ def create_dataset(dataset_opt):
     mode = dataset_opt['mode']
     if mode == 'LRHRref':
         from data.LRHRref_dataset import LRHRRefDataset as D
+    elif mode == 'NoiseHR':
+        from data.NoiseHR_dataset import NoiseHRDataset as D
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
     dataset = D(dataset_opt)

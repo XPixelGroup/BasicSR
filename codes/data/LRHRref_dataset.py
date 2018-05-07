@@ -10,6 +10,10 @@ from data.util import get_image_paths
 
 
 class LRHRRefDataset(data.Dataset):
+
+    def name(self):
+        return 'LRHRRefDataset'
+
     def __init__(self, opt):
         super(LRHRRefDataset, self).__init__()
         self.opt = opt
@@ -180,6 +184,3 @@ class LRHRRefDataset(data.Dataset):
             return len(self.paths_LR)
         else:
             return len(self.paths_HR)
-
-    def name(self):
-        return 'LRHRRefDataset'

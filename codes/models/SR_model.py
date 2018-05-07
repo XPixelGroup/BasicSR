@@ -65,17 +65,15 @@ class SRModel(BaseModel):
         print('-----------------------------------------------')
 
     def feed_data(self, data, volatile=False, need_HR=True):
+        # LR
+        input_L = data['LR']
+        self.input_L.resize_(input_L.size()).copy_(input_L)
+        self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
+
         if need_HR:
-            input_L = data['LR']
             input_H = data['HR']
-            self.input_L.resize_(input_L.size()).copy_(input_L)
             self.input_H.resize_(input_H.size()).copy_(input_H)
-            self.real_L = Variable(self.input_L, volatile=volatile) # in range [0,1]
             self.real_H = Variable(self.input_H, volatile=volatile) # in range [0,1]
-        else:
-            input_L = data['LR']
-            self.input_L.resize_(input_L.size()).copy_(input_L)
-            self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
 
         # import torchvision.utils
         # torchvision.utils.save_image(input_L, 'LR.png', nrow=4, padding=2, normalize=False)
