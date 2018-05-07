@@ -12,6 +12,8 @@ Through experiments, we found that
 are the best network settings.
 
 #### Qualitative results [PSNR/dB] 
+`SRResNet_bicx4_in3nf64nb16.pth` is provided here and other pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1vg_baYuagOXEhpwQgu54lJOyU8u1DsMW?usp=sharing).
+
 All these classical SR datasets can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing).
 
 | Model | Scale | Channel | DIV2K<sup>2</sup> | Set5| Set14 | BSD100 | Urban100 |
