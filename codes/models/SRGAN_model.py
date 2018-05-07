@@ -125,11 +125,12 @@ class SRGANModel(BaseModel):
         print('-----------------------------------------------')
 
     def feed_data(self, data, volatile=False, need_HR=True):
-        if need_HR:
-            input_L = data['LR']
-            self.input_L.resize_(input_L.size()).copy_(input_L)
-            self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
+        # LR
+        input_L = data['LR']
+        self.input_L.resize_(input_L.size()).copy_(input_L)
+        self.real_L = Variable(self.input_L, volatile=volatile)
 
+        if need_HR: # train or val
             input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
             self.real_H = Variable(self.input_H, volatile=volatile)  # in range [0,1]
@@ -137,10 +138,6 @@ class SRGANModel(BaseModel):
             input_ref = data['ref'] if 'ref' in data else data['HR']
             self.input_ref.resize_(input_ref.size()).copy_(input_ref)
             self.real_ref = Variable(self.input_ref, volatile=volatile)  # in range [0,1]
-        else:
-            input_L = data['LR']
-            self.input_L.resize_(input_L.size()).copy_(input_L)
-            self.real_L = Variable(self.input_L, volatile=volatile)
 
     def optimize_parameters(self, step):
         # G

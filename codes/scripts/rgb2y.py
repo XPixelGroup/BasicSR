@@ -22,14 +22,32 @@ def rgb2ycbcr(img, only_y=True):
         return img_ycbcr.astype(in_img_type)
 
 
-def worker(GT_paths, save_GT_dir):
+def rgb2gray(img):
+    '''
+    rgb2gray is the Y component of YUV;
+    the same as matlab rgb2gray where coefficients are [0.2989, 0.587, 0.114]
+    Input: image Numpy array, [0,255], HWC, RGB
+    Output: image Numpy array, [0, 255], HW
+    '''
+    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
+    in_img_type = img.dtype
+    img.astype(np.float64)
+    img_gray = np.dot(img[..., :3], [0.2989, 0.587, 0.114]).round()
+    return img_gray.astype(in_img_type)
+
+
+def worker(GT_paths, save_GT_dir, mode):
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
         img_GT = cv2.imread(GT_path, cv2.IMREAD_UNCHANGED)
         img_GT = img_GT[:, :, [2, 1, 0]]
 
-        img_y = rgb2ycbcr(img_GT)
+        if mode == 'gray':
+            func = rgb2gray
+        else:
+            func = rgb2ycbcr
+        img_y = func(img_GT)
         cv2.imwrite(os.path.join(save_GT_dir, base_name), img_y, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 
@@ -37,6 +55,7 @@ if __name__=='__main__':
 
     GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
     save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_y'
+    mode = 'gray' # 'y'
     n_thread = 20
 
     if not os.path.exists(save_GT_dir):
@@ -61,7 +80,7 @@ if __name__=='__main__':
     sub_lists = chunkify(all_files, n_thread)
     # call workers
     for i in range(n_thread):
-        p.apply_async(worker, args=(sub_lists[i], save_GT_dir))
+        p.apply_async(worker, args=(sub_lists[i], save_GT_dir, mode))
     print('Waiting for all subprocesses done...')
     p.close()
     p.join()
