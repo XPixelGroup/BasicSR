@@ -33,7 +33,7 @@ Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains
 ## Getting Started
 ### How to test a model
 1. prepare your data and pretrained model
-    1. there are some pretrained models in [**experiments/pretrained_models**](https://github.com/xinntao/BasicSR/tree/master/experiments/pretrained_models).
+    1. `SRResNet_bicx4_in3nf64nb16.pth` is provided in [**experiments/pretrained_models**](https://github.com/xinntao/BasicSR/tree/master/experiments/pretrained_models) and other pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1vg_baYuagOXEhpwQgu54lJOyU8u1DsMW?usp=sharing).
 1. modify the corresponding testing json file in `options/test/test.json`
 1. test the model with the command `python3 test.py -opt options/test/test.json`
 
