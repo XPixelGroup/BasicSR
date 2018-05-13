@@ -1,7 +1,9 @@
 import os.path
 import glob
+import pickle
 import lmdb
 import cv2
+
 
 # img_path should contains glob matching pattern
 img_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub/*'
@@ -20,7 +22,7 @@ for i in range(len(file_list)):
 map_size = data_size * 10
 env = lmdb.open(lmdb_save_path, map_size=map_size)
 
-print('Finish reading image.\nWrite to lmdb...')
+print('Finish reading image - {}.\nWrite to lmdb...'.format(len(file_list)))
 with env.begin(write=True) as txn:
     # txn is a Transaction object
     for i in range(len(file_list)):
@@ -39,7 +41,16 @@ with env.begin(write=True) as txn:
         # The encode is only essential in Python 3
         txn.put(key, data)
         txn.put(meta_key, meta.encode('ascii'))
-print('Finish - {}'.format(len(file_list)))
+print('Finish writing to lmdb - {}.'.format(len(file_list)))
+
+# create keys cache
+keys_cache_file = os.path.join(lmdb_save_path, '_keys_cache.p')
+env = lmdb.open(lmdb_save_path, readonly=True, lock=False, readahead=False, meminit=False)
+with env.begin(write=False) as txn:
+    print('creating lmdb keys cache: {}'.format(keys_cache_file))
+    keys = [key.decode('ascii') for key, _ in txn.cursor()]
+    pickle.dump(keys, open(keys_cache_file, "wb"))
+print('Fiish creating lmdb keys.')
 
 # test lmdb
 '''
