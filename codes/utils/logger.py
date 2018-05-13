@@ -30,15 +30,7 @@ class Logger(object):
         model = rlt.pop('model')
         message = '<epoch:{:3d}, iter:{:9,d}, time: {:.2f}> '.format(epoch, iters, time)
         if mode == 'train':
-            if model == 'sr':
-                loss_pixel = rlt['loss_pixel']  if 'loss_pixel' in rlt else -1
-                lr = rlt['lr']
-                format_str = '<loss: {:.2e}> lr: {:.2e}'.format(loss_pixel, lr)
-                # tensorboard logger
-                if self.use_tb_logger and 'debug' not in self.exp_name:
-                    self.tb_logger.log_value('loss_pixel', loss_pixel, iters)
-
-            elif model == 'srgan':
+            if model == 'srgan':
                 loss_g_pixel = rlt['loss_g_pixel']  if 'loss_g_pixel' in rlt else -1
                 loss_g_fea = rlt['loss_g_fea']  if 'loss_g_fea' in rlt else -1
                 loss_g_gan = rlt['loss_g_gan']  if 'loss_g_gan' in rlt else -1
@@ -79,6 +71,14 @@ class Logger(object):
                     if self.use_tb_logger and 'debug' not in self.exp_name:
                         self.tb_logger.log_value('D_out_real', D_out_real, iters)
                         self.tb_logger.log_value('D_out_fake', D_out_fake, iters)
+
+            else: # sr and others
+                loss_pixel = rlt['loss_pixel']  if 'loss_pixel' in rlt else -1
+                lr = rlt['lr']
+                format_str = '<loss: {:.2e}> lr: {:.2e}'.format(loss_pixel, lr)
+                # tensorboard logger
+                if self.use_tb_logger and 'debug' not in self.exp_name:
+                    self.tb_logger.log_value('loss_pixel', loss_pixel, iters)
 
             message += format_str
         else:
