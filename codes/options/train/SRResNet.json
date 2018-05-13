@@ -10,8 +10,8 @@
       "name": "DIV2K"
       ,"data_type": "lmdb"
       ,"mode": "LRHRref"
-      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub.lmdb"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800_new/DIV2K800_sub_bicLRx4.lmdb"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb"
+      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb"
       ,"subset_file": null
       ,"use_shuffle": true
       ,"n_workers": 8
@@ -33,7 +33,7 @@
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "./pretrained_tmp.pth"
+    // ,"pretrain_model_G": "./pretrained_tmp.pth"
   }
 
   ,"network_G": {
