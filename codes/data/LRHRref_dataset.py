@@ -1,6 +1,7 @@
 import os.path
 import random
 import time
+import pickle
 import cv2
 import numpy as np
 
@@ -26,14 +27,30 @@ class LRHRRefDataset(data.Dataset):
             if opt['dataroot_LR'] is not None:
                 self.LR_env = lmdb.open(opt['dataroot_LR'], readonly=True, \
                         lock=False, readahead=False, meminit=False)
-                with self.LR_env.begin(write=False) as txn:
-                    keys = [key.decode('ascii') for key, _ in txn.cursor()]
+                # get keys
+                keys_cache_file = os.path.join(opt['dataroot_LR'], '_keys_cache.p')
+                if os.path.isfile(keys_cache_file):
+                    print('read lmdb keys from cache: {}'.format(keys_cache_file))
+                    keys = pickle.load(open(keys_cache_file, "rb"))
+                else:
+                    with self.LR_env.begin(write=False) as txn:
+                        print('creating lmdb keys cache: {}'.format(keys_cache_file))
+                        keys = [key.decode('ascii') for key, _ in txn.cursor()]
+                        pickle.dump(keys, open(keys_cache_file, "wb"))
                 self.paths_LR = sorted([key for key in keys if not key.endswith('.meta')])
             if opt['dataroot_HR'] is not None:
                 self.HR_env = lmdb.open(opt['dataroot_HR'], readonly=True, \
                         lock=False, readahead=False, meminit=False)
-                with self.HR_env.begin(write=False) as txn:
-                    keys = [key.decode('ascii') for key, _ in txn.cursor()]
+                # get keys
+                keys_cache_file = os.path.join(opt['dataroot_HR'], '_keys_cache.p')
+                if os.path.isfile(keys_cache_file):
+                    print('read lmdb keys from cache: {}'.format(keys_cache_file))
+                    keys = pickle.load(open(keys_cache_file, "rb"))
+                else:
+                    with self.HR_env.begin(write=False) as txn:
+                        print('creating lmdb keys cache: {}'.format(keys_cache_file))
+                        keys = [key.decode('ascii') for key, _ in txn.cursor()]
+                        pickle.dump(keys, open(keys_cache_file, "wb"))
                 self.paths_HR = sorted([key for key in keys if not key.endswith('.meta')])
             if self.paths_LR and self.paths_HR:
                 assert len(self.paths_LR) == len(self.paths_HR), \
