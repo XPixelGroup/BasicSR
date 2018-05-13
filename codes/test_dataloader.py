@@ -1,6 +1,7 @@
+import time
+import math
 import torchvision.utils
 from data import create_dataloader, create_dataset
-import time
 
 
 opt = {}
@@ -32,7 +33,7 @@ opt['use_rot'] = True
 
 train_set = create_dataset(opt)
 train_loader = create_dataloader(train_set, opt)
-
+nrow = int(math.sqrt(opt['batch_size']))
 for i, data in enumerate(train_loader):
     # test dataloader time
     # if i == 1:
@@ -47,7 +48,7 @@ for i, data in enumerate(train_loader):
     HR = data['HR']
     if 'ref' in data:
         ref = data['ref']
-        torchvision.utils.save_image(ref, 'ref_{:03d}.png'.format(i), nrow=8, padding=2, \
+        torchvision.utils.save_image(ref, 'ref_{:03d}.png'.format(i), nrow=nrow, padding=2, \
             normalize=False)
-    torchvision.utils.save_image(LR, 'LR_{:03d}.png'.format(i), nrow=8, padding=2, normalize=False)
-    torchvision.utils.save_image(HR, 'HR_{:03d}.png'.format(i), nrow=8, padding=2, normalize=False)
+    torchvision.utils.save_image(LR, 'LR_{:03d}.png'.format(i), nrow=nrow, padding=2, normalize=False)
+    torchvision.utils.save_image(HR, 'HR_{:03d}.png'.format(i), nrow=nrow, padding=2, normalize=False)
