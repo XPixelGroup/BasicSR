@@ -13,6 +13,7 @@ class LRHRDataset(data.Dataset):
     If only HR image is provided, generate LR image on-the-fly.
     The pair relation is ensured by 'sorted' function, so please check the name convention.
     '''
+
     def name(self):
         return 'LRHRDataset'
 
@@ -43,7 +44,7 @@ class LRHRDataset(data.Dataset):
                 if opt['dataroot_HR'] is not None:
                     self.paths_HR = sorted(util.get_image_paths(opt['dataroot_HR']))
 
-        assert self.paths_HR, 'Error: HR paths are empty.' # must have HR paths.
+        assert self.paths_HR, 'Error: HR paths are empty.'  # must have HR paths.
         if self.paths_LR and self.paths_HR:
             assert len(self.paths_LR) == len(self.paths_HR), \
                 'HR and LR datasets have different number of images - {}, {}.'.format(\
@@ -75,7 +76,7 @@ class LRHRDataset(data.Dataset):
         else:
             H, W, _ = img_HR.shape
             # using INTER_LINEAR now
-            img_LR = cv2.resize(img_HR, (W//scale, H//scale), interpolation=cv2.INTER_LINEAR)
+            img_LR = cv2.resize(img_HR, (W // scale, H // scale), interpolation=cv2.INTER_LINEAR)
         if img_LR.ndim == 2:
             img_LR = np.expand_dims(img_LR, axis=2)
 
@@ -85,21 +86,23 @@ class LRHRDataset(data.Dataset):
             LR_size = HR_size // scale
 
             # randomly crop
-            rnd_h = random.randint(0, max(0, H-LR_size))
-            rnd_w = random.randint(0, max(0, W-LR_size))
-            img_LR = img_LR[rnd_h:rnd_h+LR_size, rnd_w:rnd_w+LR_size, :]
-            rnd_h_HR, rnd_w_HR = int(rnd_h*scale), int(rnd_w*scale)
-            img_HR = img_HR[rnd_h_HR:rnd_h_HR+HR_size, rnd_w_HR:rnd_w_HR+HR_size, :]
+            rnd_h = random.randint(0, max(0, H - LR_size))
+            rnd_w = random.randint(0, max(0, W - LR_size))
+            img_LR = img_LR[rnd_h:rnd_h + LR_size, rnd_w:rnd_w + LR_size, :]
+            rnd_h_HR, rnd_w_HR = int(rnd_h * scale), int(rnd_w * scale)
+            img_HR = img_HR[rnd_h_HR:rnd_h_HR + HR_size, rnd_w_HR:rnd_w_HR + HR_size, :]
 
             # augmentation - flip, rotation
             hflip = self.opt['use_flip'] and random.random() > 0.5
             vflip = self.opt['use_rot'] and random.random() > 0.5
             rot90 = self.opt['use_rot'] and random.random() > 0.5
+
             def _augment(img):
                 if hflip: img = img[:, ::-1, :]
                 if vflip: img = img[::-1, :, :]
                 if rot90: img = img.transpose(1, 0, 2)
                 return img
+
             img_HR = _augment(img_HR)
             img_LR = _augment(img_LR)
 
@@ -110,8 +113,10 @@ class LRHRDataset(data.Dataset):
             img_HR = np.expand_dims(img_HR, axis=2)
             img_LR = np.expand_dims(img_LR, axis=2)
         elif C == 3 and self.opt['color'] == 'y':  # RGB to y
-            img_HR = np.dot(img_HR[..., :3], [65.481/255, 128.553/255, 24.966/255]) + 16.0/255
-            img_LR = np.dot(img_LR[..., :3], [65.481/255, 128.553/255, 24.966/255]) + 16.0/255
+            img_HR = np.dot(img_HR[..., :3],
+                            [65.481 / 255, 128.553 / 255, 24.966 / 255]) + 16.0 / 255
+            img_LR = np.dot(img_LR[..., :3],
+                            [65.481 / 255, 128.553 / 255, 24.966 / 255]) + 16.0 / 255
             img_HR = np.expand_dims(img_HR, axis=2)
             img_LR = np.expand_dims(img_LR, axis=2)
         elif C == 1 and self.opt['color'] == 'RGB':  # gray/y to RGB
@@ -120,8 +125,8 @@ class LRHRDataset(data.Dataset):
 
         # numpy to tensor, HWC to CHW, BGR to RGB
         if img_HR.shape[2] == 3:
-            img_HR = torch.from_numpy(np.transpose(img_HR[:, :, [2,1,0]], (2, 0, 1))).float()
-            img_LR = torch.from_numpy(np.transpose(img_LR[:, :, [2,1,0]], (2, 0, 1))).float()
+            img_HR = torch.from_numpy(np.transpose(img_HR[:, :, [2, 1, 0]], (2, 0, 1))).float()
+            img_LR = torch.from_numpy(np.transpose(img_LR[:, :, [2, 1, 0]], (2, 0, 1))).float()
         else:
             img_HR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_HR, (2, 0, 1)))).float()
             img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()
