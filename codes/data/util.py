@@ -1,25 +1,54 @@
 import os
 import math
+import pickle
+import lmdb
+import numpy as np
 import torch
 
 IMG_EXTENSIONS = [
     '.jpg', '.JPG', '.jpeg', '.JPEG',
-    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP',
+    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP'
 ]
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
+
 def get_image_paths(path):
     assert os.path.isdir(path), '%s is not a valid directory' % path
     images = []
     for dirpath, _, fnames in sorted(os.walk(path)):
-        for fname in fnames:
+        for fname in sorted(fnames):
             if is_image_file(fname):
                 img_path = os.path.join(dirpath, fname)
                 images.append(img_path)
     assert images, '%s has no valid image file' % path
     return images
+
+
+def get_paths_from_lmdb(dataroot):
+    env = lmdb.open(dataroot, readonly=True, lock=False, readahead=False, meminit=False)
+    keys_cache_file = os.path.join(dataroot, '_keys_cache.p')
+    if os.path.isfile(keys_cache_file):
+        print('read lmdb keys from cache: {}'.format(keys_cache_file))
+        keys = pickle.load(open(keys_cache_file, "rb"))
+    else:
+        with env.begin(write=False) as txn:
+            print('creating lmdb keys cache: {}'.format(keys_cache_file))
+            keys = [key.decode('ascii') for key, _ in txn.cursor()]
+        pickle.dump(keys, open(keys_cache_file, 'wb'))
+    paths = sorted([key for key in keys if not key.endswith('.meta')])
+    return env, paths
+
+
+def read_lmdb_img(env, path):
+    with env.begin(write=False) as txn:
+        buf = txn.get(path.encode('ascii'))
+        buf_meta = txn.get((path + '.meta').encode('ascii')).decode('ascii')
+    img_flat = np.frombuffer(buf, dtype=np.uint8)
+    H, W, C = [int(s) for s in buf_meta.split(',')]
+    img = img_flat.reshape(H, W, C)
+    return img
 
 
 # matlab 'imresize' function
