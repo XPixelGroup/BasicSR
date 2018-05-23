@@ -22,6 +22,8 @@ def create_dataset(dataset_opt):
         from data.LRHRref_dataset import LRHRRefDataset as D
     if mode == 'LRHR':
         from data.LRHR_dataset import LRHRDataset as D
+    if mode == 'LR':
+        from data.LR_dataset import LRDataset as D
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
     dataset = D(dataset_opt)
