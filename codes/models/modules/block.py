@@ -1,9 +1,7 @@
-import collections
 from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 
 
 ####################
