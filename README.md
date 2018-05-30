@@ -6,6 +6,16 @@ BasicSR mainly contains 3 parts:
 1. [SRGAN model](https://arxiv.org/abs/1609.04802)
 1. [SFTGAN model](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
 
+:sun_with_face:
+
+add sft-gan testing codes. See [seg_arch and sft_arch files](https://github.com/xinntao/BasicSR/blob/master/codes/models/modules/). 
+
+The sft-gan testing codes and models are just from the torch version without much testing. Later, we will improve it and add training codes. (before June 10)
+
+The sft-gan models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1o2J8SwWaDZ69w3tyTevtakU6QrMHcYPk?usp=sharing).
+
+:sun_with_face:
+
 Now it supports 1 and 2.
 
 The repo is still under development. There may be some bugs :-)
