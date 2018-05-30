@@ -3,7 +3,7 @@ from torch.utils.serialization import load_lua
 from torch.autograd import Variable
 
 
-# SRResNet w/o BN
+# # SRResNet w/o BN
 # net = load_lua('torch_models/04_SRResNet_noBN_nnCPU.t7')
 # py_model = torch.load('pytorch_models/SRResNet_noBN.pth')
 
