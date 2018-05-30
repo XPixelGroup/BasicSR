@@ -41,7 +41,7 @@ lookup_table = torch.from_numpy(np.array([
     [106, 168, 79], # 6, plant
     [224, 102, 102], # 7, animal
     [255, 255, 255], # 8/255, void
-    ])).float()
+])).float()
 lookup_table /= 255
 
 idx = 0
