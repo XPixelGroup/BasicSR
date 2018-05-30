@@ -3,8 +3,8 @@ architecture for segmentation
 """
 import torch
 import torch.nn as nn
-# from . import block as B
-import block as B
+from . import block as B
+# import block as B # use for unit test
 
 
 class Res131(nn.Module):
