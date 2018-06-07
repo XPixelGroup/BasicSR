@@ -86,9 +86,9 @@ class LRHRDataset(data.Dataset):
                 img_HR = cv2.resize(img_HR, (W_s, H_s), interpolation=cv2.INTER_LINEAR)
 
             H, W, _ = img_HR.shape
-            # using INTER_LINEAR now
-            # TODO support matlab resize
-            img_LR = cv2.resize(img_HR, (W // scale, H // scale), interpolation=cv2.INTER_LINEAR)
+            # using matlab imresize
+            img_LR = util.imresize_np(img_HR, 1 / scale, True)
+            # img_LR = cv2.resize(img_HR, (W // scale, H // scale), interpolation=cv2.INTER_LINEAR)
         if img_LR.ndim == 2:
             img_LR = np.expand_dims(img_LR, axis=2)
 
