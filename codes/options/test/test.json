@@ -8,7 +8,7 @@
     "test_1": { // the 1st test dataset
       "name": "val_set5"
       ,"data_type": "img"
-      ,"mode": "LRHRref"
+      ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
       ,"reverse": false
@@ -16,7 +16,7 @@
     ,"test_2": { // the 2nd test dataset
       "name": "val_set14"
       ,"data_type": "img"
-      ,"mode": "LRHRref"
+      ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14_bicLRx4"
       ,"reverse": false
