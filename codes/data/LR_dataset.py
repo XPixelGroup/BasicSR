@@ -8,7 +8,7 @@ import data.util as util
 
 class LRDataset(data.Dataset):
     '''
-    Read LR only for testing.
+    Read LR images only for testing.
     '''
 
     def name(self):
@@ -19,12 +19,12 @@ class LRDataset(data.Dataset):
         self.opt = opt
         self.paths_LR = []
 
-        # read lmdb files
+        # read image list from lmdb or image files
         if opt['data_type'] == 'lmdb':
             self.LR_env, self.paths_LR = util.get_paths_from_lmdb(opt['dataroot_LR'])
-        else:  # read image files
+        else:
             self.paths_LR = sorted(util.get_image_paths(opt['dataroot_LR']))
-        assert self.paths_LR, 'Error: LR paths are empty.'  # must have LR paths.
+        assert self.paths_LR, 'Error: LR paths are empty.'
 
     def __getitem__(self, index):
         LR_path = None
@@ -33,26 +33,21 @@ class LRDataset(data.Dataset):
         LR_path = self.paths_LR[index]
         if self.opt['data_type'] == 'img':
             img_LR = cv2.imread(LR_path, cv2.IMREAD_UNCHANGED)
-        else:  # lmdb
+        else:
             img_LR = util.read_lmdb_img(self.LR_env, LR_path)
-        img_LR = img_LR * 1.0 / 255
+        img_LR = img_LR.astype(np.float32) / 255.
+        if img_LR.ndim == 2:
+            img_LR = np.expand_dims(img_LR, axis=2)
         H, W, C = img_LR.shape
 
         # channel conversion
-        if C == 3 and self.opt['color'] == 'gray':  # RGB to gray
-            img_LR = np.dot(img_LR[..., :3], [0.2989, 0.587, 0.114])
-            img_LR = np.expand_dims(img_LR, axis=2)
-        elif C == 3 and self.opt['color'] == 'y':  # RGB to y
-            img_LR = np.dot(img_LR[..., :3],
-                            [65.481 / 255, 128.553 / 255, 24.966 / 255]) + 16.0 / 255
-            img_LR = np.expand_dims(img_LR, axis=2)
-            img_LR = np.repeat(img_LR, 3, axis=2)
+        if self.opt['color']:
+            img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
 
-        # numpy to tensor, HWC to CHW, BGR to RGB
+        # HWC to CHW, BGR to RGB, numpy to tensor
         if img_LR.shape[2] == 3:
-            img_LR = torch.from_numpy(np.transpose(img_LR[:, :, [2, 1, 0]], (2, 0, 1))).float()
-        else:
-            img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()
+            img_LR = cv2.cvtColor(img_LR, cv2.COLOR_BGR2RGB)
+        img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()
 
         return {'LR': img_LR, 'LR_path': LR_path}
 
