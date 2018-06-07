@@ -28,10 +28,17 @@ def parse(opt_path, is_train=True):
         phase = phase.split('_')[0]
         dataset['phase'] = phase
         dataset['scale'] = scale
+        is_lmdb = False
         if dataset['dataroot_HR'] is not None:
             dataset['dataroot_HR'] = os.path.expanduser(dataset['dataroot_HR'])
+            if dataset['dataroot_HR'].endswith('lmdb'):
+                is_lmdb = True
         if dataset['dataroot_LR'] is not None:
             dataset['dataroot_LR'] = os.path.expanduser(dataset['dataroot_LR'])
+            if dataset['dataroot_LR'].endswith('lmdb'):
+                is_lmdb = True
+        dataset['data_type'] = 'lmdb' if is_lmdb else 'img'
+
         if phase == 'train' and dataset['subset_file'] is not None:
             dataset['subset_file'] = os.path.expanduser(dataset['subset_file'])
 

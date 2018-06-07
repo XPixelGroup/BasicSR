@@ -13,17 +13,16 @@ def create_dataloader(dataset, dataset_opt):
         num_workers = 1
     return torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=True)
-    # Use paged-locked memory. Much faster CPU <--> GPU data IO but consume more physical memory.
 
 
 def create_dataset(dataset_opt):
     mode = dataset_opt['mode']
-    if mode == 'LRHRref':
-        from data.LRHRref_dataset import LRHRRefDataset as D
-    if mode == 'LRHR':
-        from data.LRHR_dataset import LRHRDataset as D
     if mode == 'LR':
         from data.LR_dataset import LRDataset as D
+    elif mode == 'LRHR':
+        from data.LRHR_dataset import LRHRDataset as D
+    elif mode == 'LRHRseg':
+        from data.LRHRseg_dataset import LRHRSegDataset as D
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
     dataset = D(dataset_opt)

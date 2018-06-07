@@ -9,7 +9,7 @@
     "train": {
       "name": "DIV2K"
       ,"data_type": "lmdb"
-      ,"mode": "LRHRref"
+      ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb"
       ,"subset_file": null
@@ -24,7 +24,7 @@
     ,"val": {
       "name": "val_set5"
       ,"data_type": "img"
-      ,"mode": "LRHRref"
+      ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
       ,"reverse": false
