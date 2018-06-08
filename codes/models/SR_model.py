@@ -109,10 +109,10 @@ class SRModel(BaseModel):
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.real_L.data[0].float().cpu().squeeze(0)
-        out_dict['SR'] = self.fake_H.data[0].float().cpu().squeeze(0)
+        out_dict['LR'] = self.real_L.data[0].float().cpu()
+        out_dict['SR'] = self.fake_H.data[0].float().cpu()
         if need_HR:
-            out_dict['HR'] = self.real_H.data[0].float().cpu().squeeze(0)
+            out_dict['HR'] = self.real_H.data[0].float().cpu()
         return out_dict
 
     def print_network(self):
