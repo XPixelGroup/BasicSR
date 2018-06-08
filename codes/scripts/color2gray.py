@@ -7,54 +7,48 @@ import numpy as np
 import cv2
 
 
-def rgb2ycbcr(img, only_y=True):
-    # the same as matlab rgb2ycbcr
-    # TODO support double [0, 1]
-    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
+def bgr2ycbcr(img, only_y=True):
+    '''bgr version of rgb2ycbcr
+    only_y: only return Y channel
+    Input:
+        uint8, [0, 255]
+        float, [0, 1]
+    '''
     in_img_type = img.dtype
-    img.astype(np.float64)
-    if only_y:  # only return Y channel
-        img_y = (np.dot(img[..., :3], [65.481, 128.553, 24.966]) / 255.0 + 16.0).round()
-        return img_y.astype(in_img_type)
+    img.astype(np.float32)
+    if in_img_type != np.uint8:
+        img *= 255.
+    # convert
+    if only_y:
+        rlt = np.dot(img, [24.966, 128.553, 65.481]) / 255.0 + 16.0
     else:
-        img_ycbcr = (np.matmul(img[..., :3], [[65.481, -37.797, 112.0], \
-        [128.553, -74.203, -93.786], [24.966, 112.0, -18.214]]) / 255.0 + [16, 128, 128]).round()
-        return img_ycbcr.astype(in_img_type)
-
-
-def rgb2gray(img):
-    '''
-    rgb2gray is the Y component of YUV;
-    the same as matlab rgb2gray where coefficients are [0.2989, 0.587, 0.114]
-    Input: image Numpy array, [0,255], HWC, RGB
-    Output: image Numpy array, [0, 255], HW
-    '''
-    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
-    in_img_type = img.dtype
-    img.astype(np.float64)
-    img_gray = np.dot(img[..., :3], [0.2989, 0.587, 0.114]).round()
-    return img_gray.astype(in_img_type)
+        rlt = np.matmul(img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
+                              [65.481, -37.797, 112.0]]) / 255.0 + [16, 128, 128]
+    if in_img_type == np.uint8:
+        rlt = rlt.round()
+    else:
+        rlt /= 255.
+    return rlt.astype(in_img_type)
 
 
 def worker(GT_paths, save_GT_dir, mode):
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
-        img_GT = cv2.imread(GT_path, cv2.IMREAD_UNCHANGED)
-        img_GT = img_GT[:, :, [2, 1, 0]]
+        img_GT = cv2.imread(GT_path, cv2.IMREAD_UNCHANGED) # BGR
 
         if mode == 'gray':
-            func = rgb2gray
+            img_y = cv2.cvtColor(img_GT, cv2.COLOR_BGR2GRAY)
         else:
-            func = rgb2ycbcr
-        img_y = func(img_GT)
+            img_y = bgr2ycbcr(img_GT, only_y=True)
+
         cv2.imwrite(os.path.join(save_GT_dir, base_name), img_y, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_y'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/BSD200'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/BSD200_gray'
     mode = 'gray' # 'y'
     n_thread = 20
 
