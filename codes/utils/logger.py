@@ -1,6 +1,20 @@
 import os
-from datetime import datetime
+import sys
 from utils.util import get_timestamp
+
+
+# print to file and std_out simultaneously
+class PrintLogger(object):
+    def __init__(self, log_path):
+        self.terminal = sys.stdout
+        self.log = open(os.path.join(log_path, 'print_log.txt'), 'a')
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        pass
 
 
 class Logger(object):
@@ -87,6 +101,7 @@ class Logger(object):
                 # tensorboard logger
                 if self.use_tb_logger and 'debug' not in self.exp_name:
                     self.tb_logger.log_value(label, value, iters)
+
         # print in console
         print(message)
         # write in log file

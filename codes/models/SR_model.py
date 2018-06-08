@@ -22,10 +22,11 @@ class SRModel(BaseModel):
 
         # define network and load pretrained models
         self.netG = networks.define_G(opt)
-        self.load_path_G = opt['path']['pretrain_model_G']
         self.load()
 
         if self.is_train:
+            self.netG.train()
+
             # define loss function
             loss_type = train_opt['pixel_criterion']
             if loss_type == 'l1':
@@ -37,6 +38,7 @@ class SRModel(BaseModel):
             if self.use_gpu:
                 self.criterion_pixel.cuda()
             self.loss_pixel_weight = train_opt['pixel_weight']
+
             # initialize optimizers
             self.optimizers = []
             self.lr_G = train_opt['lr_G']
@@ -68,12 +70,12 @@ class SRModel(BaseModel):
         # LR
         input_L = data['LR']
         self.input_L.resize_(input_L.size()).copy_(input_L)
-        self.real_L = Variable(self.input_L, volatile=volatile)  # in range [0,1]
+        self.real_L = Variable(self.input_L, volatile=volatile)
 
         if need_HR:
             input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
-            self.real_H = Variable(self.input_H, volatile=volatile) # in range [0,1]
+            self.real_H = Variable(self.input_H, volatile=volatile)
 
         # import torchvision.utils
         # torchvision.utils.save_image(input_L, 'LR.png', nrow=4, padding=2, normalize=False)
@@ -92,11 +94,10 @@ class SRModel(BaseModel):
         self.backward_G()
         self.optimizer_G.step()
 
-    def val(self):
-        self.fake_H = self.netG(self.real_L)
-
     def test(self):
+        self.netG.eval()
         self.fake_H = self.netG(self.real_L)
+        self.netG.train()
 
     def get_current_losses(self):
         out_dict = OrderedDict()
@@ -108,10 +109,10 @@ class SRModel(BaseModel):
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.real_L.data[0]
-        out_dict['SR'] = self.fake_H.data[0]
+        out_dict['LR'] = self.real_L.data[0].float().cpu().squeeze(0)
+        out_dict['SR'] = self.fake_H.data[0].float().cpu().squeeze(0)
         if need_HR:
-            out_dict['HR'] = self.real_H.data[0]
+            out_dict['HR'] = self.real_H.data[0].float().cpu().squeeze(0)
         return out_dict
 
     def print_network(self):
@@ -124,15 +125,10 @@ class SRModel(BaseModel):
                 f.write(message)
 
     def load(self):
-        if self.load_path_G is not None:
-            print('loading model for G [%s] ...' % self.load_path_G)
-            self.load_network(self.load_path_G, self.netG)
+        load_path_G = self.opt['path']['pretrain_model_G']
+        if load_path_G is not None:
+            print('loading model for G [%s] ...' % load_path_G)
+            self.load_network(load_path_G, self.netG)
 
     def save(self, iter_label):
         self.save_network(self.save_dir, self.netG, 'G', iter_label)
-
-    def train(self):
-        self.netG.train()
-
-    def eval(self):
-        self.netG.eval()
