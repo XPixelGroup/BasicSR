@@ -63,6 +63,9 @@ class LRHRDataset(data.Dataset):
         img_HR = img_HR.astype(np.float32) / 255.
         if img_HR.ndim == 2:
             img_HR = np.expand_dims(img_HR, axis=2)
+        # modcrop in validation phase
+        if self.opt['phase'] != 'train':
+            img_HR = util.modcrop(img_HR, scale)
 
         # get LR image
         if self.paths_LR:
@@ -94,6 +97,7 @@ class LRHRDataset(data.Dataset):
 
         H, W, C = img_LR.shape
         if self.opt['phase'] == 'train':
+            HR_size = self.opt['HR_size']
             LR_size = HR_size // scale
 
             # randomly crop
@@ -118,7 +122,7 @@ class LRHRDataset(data.Dataset):
         img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()
 
         if LR_path is None:
-            LR_path = 'on-the-fly'
+            LR_path = HR_path
         return {'LR': img_LR, 'HR': img_HR, 'LR_path': LR_path, 'HR_path': HR_path}
 
     def __len__(self):
