@@ -155,6 +155,21 @@ def ycbcr2rgb(img):
     return rlt.astype(in_img_type)
 
 
+def modcrop(img_in, scale):
+    img = np.copy(img_in)
+    if img.ndim == 2:
+        H, W = img.shape
+        H_r, W_r = H % scale, W % scale
+        img = img[:H - H_r, :W - W_r]
+    elif img.ndim == 3:
+        H, W, C = img.shape
+        H_r, W_r = H % scale, W % scale
+        img = img[:H - H_r, :W - W_r, :]
+    else:
+        raise ValueError('Wrong img ndim: [%d].' % img.ndim)
+    return img
+
+
 ####################
 # Functions
 ####################

@@ -1,5 +1,5 @@
 {
-  "name":"debug_SRResNet_bicx4_in3nf64nb16" //  please remove "debub_" during formal training
+  "name":"300_SRResNet_bicx4_NAC_in3nf64nb16_DIV2K800" //  please remove "debub_" during formal training
   ,"use_tb_logger": true
   ,"model":"sr"
   ,"scale": 4
@@ -8,7 +8,6 @@
   ,"datasets": {
     "train": {
       "name": "DIV2K"
-      ,"data_type": "lmdb"
       ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb"
@@ -19,15 +18,12 @@
       ,"HR_size": 192
       ,"use_flip": true
       ,"use_rot": true
-      ,"reverse": false
     }
     ,"val": {
       "name": "val_set5"
-      ,"data_type": "img"
       ,"mode": "LRHR"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
       ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
-      ,"reverse": false
     }
   }
 
@@ -38,8 +34,8 @@
 
   ,"network_G": {
     "which_model_G": "sr_resnet"
-    ,"norm_type": null
-    ,"mode": "CNA"
+    ,"norm_type": "batch"
+    ,"mode": "NAC"
     ,"nf": 64
     ,"nb": 16
     ,"in_nc": 3
@@ -53,7 +49,7 @@
 
     ,"lr_G": 2e-4
     ,"lr_scheme": "MultiStepLR"
-    ,"lr_steps": [50000, 200000, 400000, 600000, 800000]
+    ,"lr_steps": [200000, 400000, 600000, 800000]
     ,"lr_gamma": 0.5
 
     ,"pixel_criterion": "l1"

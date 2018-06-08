@@ -1,11 +1,10 @@
 import os
 import math
-import numpy as np
 from datetime import datetime
+import numpy as np
 from PIL import Image
 from skimage.measure import compare_ssim
 
-import torch
 from torchvision.utils import make_grid
 
 
@@ -62,7 +61,7 @@ def tensor2img_np(tensor, out_type=np.uint8, min_max=(0, 1)):
         img_np = tensor.numpy()
     else:
         raise TypeError(
-            'Only support 4D, 3D and 2D tensor. But receieved tensor with dimension: %d' % n_dim)
+            'Only support 4D, 3D and 2D tensor. But received tensor with dimension: %d' % n_dim)
     if out_type == np.uint8:
         img_np = (img_np * 255.0).round()
         # Important. Unlike matlab, numpy.unit8() WILL NOT round by default.
@@ -76,64 +75,9 @@ def save_img_np(img_np, img_path, mode='RGB'):
     img_pil.save(img_path)
 
 
-def rgb2gray(img):
-    '''
-    rgb2gray is the Y component of YUV;
-    the same as matlab rgb2gray where coefficients are [0.2989, 0.587, 0.114]
-    Input: image Numpy array, [0,255], HWC, RGB
-    Output: image Numpy array, [0, 255], HW
-    '''
-    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
-    in_img_type = img.dtype
-    img.astype(np.float64)
-    img_gray = np.dot(img[..., :3], [0.2989, 0.587, 0.114]).round()
-    return img_gray.astype(in_img_type)
-
-
-def rgb2ycbcr(img, only_y=True):
-    # the same as matlab rgb2ycbcr
-    # TODO support double [0, 1]
-    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
-    in_img_type = img.dtype
-    img.astype(np.float64)
-    if only_y: # only return Y channel
-        img_y = (np.dot(img[..., :3], [65.481, 128.553, 24.966]) / 255.0 + 16.0).round()
-        return img_y.astype(in_img_type)
-    else:
-        img_ycbcr = (np.matmul(img[..., :3], [[65.481, -37.797, 112.0], \
-        [128.553, -74.203, -93.786], [24.966, 112.0, -18.214]]) / 255.0 + [16, 128, 128]).round()
-        return img_ycbcr.astype(in_img_type)
-
-
-def ycbcr2rgb(img):
-    # the same as matlab ycbcr2rgb
-    # TODO support double [0, 1]
-    assert img.dtype == np.uint8, 'np.uint8 is supposed. But received img dtype: %s.' % img.dtype
-    in_img_type = img.dtype
-    img.astype(np.float64)
-    img_rgb = (np.matmul(img[..., :3], [[0.00456621, 0.00456621, 0.00456621], \
-        [0, -0.00153632, 0.00791071], [0.00625893, -0.00318811, 0]]) * 255.0 + \
-        [-222.921, 135.576, -276.836]).round()
-    return img_rgb.astype(in_img_type)
-
-
 ####################
 # metric
 ####################
-
-def modcrop(img_in, scale):
-    img = np.copy(img_in)
-    if img.ndim == 2:
-        H, W = img.shape
-        H_r, W_r = H % scale, W % scale
-        img = img[::H-H_r, ::W-W_r]
-    else:
-        img.ndim == 3
-        C, H, W = img.shape
-        H_r, W_r = H % scale, W % scale
-        img = img[::H-H_r, ::W-W_r, :]
-    return img
-
 
 def psnr(img1, img2):
     assert img1.dtype == img2.dtype == np.uint8, 'np.uint8 is supposed.'
@@ -148,21 +92,3 @@ def psnr(img1, img2):
 def ssim(img1, img2, multichannel=False):
     assert img1.dtype == img2.dtype == np.uint8, 'np.uint8 is supposed.'
     return compare_ssim(img1, img2, multichannel=multichannel)
-
-
-# test
-if __name__ == '__main__':
-    import cv2
-    img_test = cv2.imread('butterfly.png', cv2.IMREAD_UNCHANGED)
-    img_test = img_test[:, :, [2, 1, 0]]
-    # rgb2gray
-    img_gray = rgb2gray(img_test)
-    save_img_np(img_gray, 'test_gray.png', mode='L')
-    # rgb2ycbcr
-    img_y = rgb2ycbcr(img_test)
-    save_img_np(img_y, 'test_y.png', mode='L')
-    img_ycbcr = rgb2ycbcr(img_test, only_y=False)
-    import scipy.io as sio
-    sio.savemat('ycbcr.mat', {'ycbcr': img_ycbcr})
-    img_rgb = ycbcr2rgb(img_ycbcr)
-    save_img_np(img_rgb, 'test_rgb.png', mode='RGB')

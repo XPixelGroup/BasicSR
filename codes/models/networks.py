@@ -92,15 +92,8 @@ def define_G(opt):
         netG = Arch.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
 
-    # noise sr
-    elif which_model == 'noisesr_basex4':
-        import models.modules.architecture2 as Arch2
-        netG = Arch2.NoiseSRx4_Unet3()
-    else:
-        raise NotImplementedError('Generator model [%s] is not recognized' % which_model)
-
-    if which_model != 'sr_resnet':  # need to investigate, the original is better?
-        init_weights(netG, init_type='orthogonal')
+    # if which_model != 'sr_resnet':  # need to investigate, the original is better?
+    #     init_weights(netG, init_type='orthogonal')
     if gpu_ids:
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG).cuda()
