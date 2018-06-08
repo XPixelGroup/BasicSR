@@ -1,0 +1,57 @@
+{
+  "name":"400_SRCNN3group_linear_C64" //  please remove "debub_" during formal training
+  ,"use_tb_logger": true
+  ,"model":"sr"
+  ,"scale": 2
+  ,"gpu_ids": [0]
+
+  ,"datasets": {
+    "train": {
+      "name": "BSD200_gray"
+      ,"mode": "enlargedLRHR"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/BSD/BSD200_gray.lmdb"
+      ,"dataroot_LR": null
+      ,"subset_file": null
+      ,"use_shuffle": true
+      ,"n_workers": 8
+      ,"batch_size": 16
+      ,"HR_size": 192
+      ,"use_flip": true
+      ,"use_rot": true
+    }
+    ,"val": {
+      "name": "val_set5_gray"
+      ,"mode": "enlargedLRHR"
+      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_gray"
+      ,"dataroot_LR": null
+    }
+  }
+
+  ,"path": {
+    "root": "/home/xtwang/Projects/BasicSR"
+  }
+
+  ,"network_G": {
+    "which_model_G": "sr_explore"
+    ,"nf": 64
+  }
+
+  ,"train": {
+    "manual_seed": 0
+    ,"niter": 5e5
+
+    ,"lr_G": 2e-4
+    ,"lr_scheme": "MultiStepLR"
+    ,"lr_steps": [100000, 200000, 300000, 400000]
+    ,"lr_gamma": 0.5
+
+    ,"pixel_criterion": "l2"
+    ,"pixel_weight": 1.0
+    ,"val_freq": 5e3
+  }
+
+  ,"logger": {
+    "print_freq": 200
+    ,"save_checkpoint_freq": 5e3
+  }
+}

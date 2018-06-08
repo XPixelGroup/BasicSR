@@ -88,9 +88,10 @@ def define_G(opt):
         netG = Arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'],\
             upsample_mode='pixelshuffle')
-    elif which_model == 'degradation_net':
-        netG = Arch.DegradationNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
-            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
+
+    elif which_model == 'sr_explore':
+        import models.modules.sr_explore_arch as sr_explore_arch
+        netG = sr_explore_arch.SRCNN3group_linear(opt['nf'])
 
     # if which_model != 'sr_resnet':  # need to investigate, the original is better?
     #     init_weights(netG, init_type='orthogonal')
