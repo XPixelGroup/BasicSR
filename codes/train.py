@@ -42,8 +42,7 @@ def main():
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             train_set = create_dataset(dataset_opt)
-            batch_size = dataset_opt['batch_size']
-            train_size = int(math.ceil(len(train_set) / batch_size))
+            train_size = int(math.ceil(len(train_set) / dataset_opt['batch_size']))
             print('Number of train images: {:,d}, iters: {:,d}'.format(len(train_set), train_size))
             total_iters = int(opt['train']['niter'])
             total_epoches = int(math.ceil(total_iters / train_size))

@@ -2,55 +2,36 @@ import os
 import sys
 import time
 import argparse
-import numpy as np
 from collections import OrderedDict
-
-import torch
 
 import options.options as option
 import utils.util as util
-
+from data.util import rgb2ycbcr
+from data import create_dataset, create_dataloader
+from models import create_model
+from utils.logger import PrintLogger
 
 # options
 parser = argparse.ArgumentParser()
 parser.add_argument('-opt', type=str, required=True, help='Path to options JSON file.')
-args = parser.parse_args()
-options_path = args.opt
-opt = option.parse(options_path, is_train=False)
+opt = option.parse(parser.parse_args().opt, is_train=False)
 util.mkdirs((path for key , path in opt['path'].items() if not key == 'pretrain_model_G'))
 opt = option.dict_to_nonedict(opt)
 
 # print to file and std_out simultaneously
-class PrintLogger(object):
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = open(os.path.join(opt['path']['log'], 'test_log.txt'), "a")
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-    def flush(self):
-        pass
-sys.stdout = PrintLogger()
-print('\n**********' + option.get_timestamp() + '**********')
-
-from data import create_dataset, create_dataloader
-from models import create_model
+sys.stdout = PrintLogger(opt['path']['log'])
+print('\n**********' + util.get_timestamp() + '**********')
 
 # Create test dataset and dataloader
 test_loaders = []
 for phase, dataset_opt in sorted(opt['datasets'].items()):
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
-    test_size = len(test_set)
-    test_set_name = dataset_opt['name']
-    print('Number of test images in [%s]: %d' % (test_set_name, test_size))
+    print('Number of test images in [%s]: %d' % (dataset_opt['name'], len(test_set)))
     test_loaders.append(test_loader)
 
 # Create model
 model = create_model(opt)
-model.eval()
-
-print('\nStart Testing ...')
 
 for test_loader in test_loaders:
     test_set_name = test_loader.dataset.opt['name']
@@ -66,12 +47,10 @@ for test_loader in test_loaders:
     test_results['ssim_y'] = []
 
     for data in test_loader:
-        need_HR = True
-        if test_loader.dataset.opt['dataroot_HR'] is None:
-            need_HR = False
+        need_HR = False if test_loader.dataset.opt['dataroot_HR'] is None else True
+
         model.feed_data(data, volatile=True, need_HR=need_HR)
         img_path = data['LR_path'][0]
-
         img_name = os.path.splitext(os.path.basename(img_path))[0]
 
         model.test()  # test
@@ -82,10 +61,10 @@ for test_loader in test_loaders:
         if need_HR: # load GT image and calculate psnr
             gt_img = util.tensor2img_np(visuals['HR'])
 
-            h_min = min(sr_img.shape[0], gt_img.shape[0])
-            w_min = min(sr_img.shape[1], gt_img.shape[1])
-            sr_img = sr_img[0:h_min, 0:w_min, :]
-            gt_img = gt_img[0:h_min, 0:w_min, :]
+            # h_min = min(sr_img.shape[0], gt_img.shape[0])
+            # w_min = min(sr_img.shape[1], gt_img.shape[1])
+            # sr_img = sr_img[0:h_min, 0:w_min, :]
+            # gt_img = gt_img[0:h_min, 0:w_min, :]
 
             scale = test_loader.dataset.opt['scale']
             crop_border = scale + 2
@@ -96,8 +75,8 @@ for test_loader in test_loaders:
             test_results['psnr'].append(psnr)
             test_results['ssim'].append(ssim)
             if gt_img.shape[2] == 3: # RGB image
-                cropped_sr_img_y = util.rgb2ycbcr(cropped_sr_img, only_y=True)
-                cropped_gt_img_y = util.rgb2ycbcr(cropped_gt_img, only_y=True)
+                cropped_sr_img_y = rgb2ycbcr(cropped_sr_img, only_y=True)
+                cropped_gt_img_y = rgb2ycbcr(cropped_gt_img, only_y=True)
                 psnr_y = util.psnr(cropped_sr_img_y, cropped_gt_img_y)
                 ssim_y = util.ssim(cropped_sr_img_y, cropped_gt_img_y, multichannel=False)
                 test_results['psnr_y'].append(psnr_y)
