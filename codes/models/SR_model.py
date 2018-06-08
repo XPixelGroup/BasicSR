@@ -49,7 +49,7 @@ class SRModel(BaseModel):
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    print('params [%s] will not optimize.' % k)
+                    print('WARNING: params [%s] will not optimize.' % k)
             self.optimizer_G = torch.optim.Adam(optim_params, lr=self.lr_G, weight_decay=self.wd_G)
             self.optimizers.append(self.optimizer_G)
 

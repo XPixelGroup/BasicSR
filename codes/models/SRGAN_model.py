@@ -26,7 +26,7 @@ class SRGANModel(BaseModel):
         # define network and load pretrained models
         # Generator - SR network
         self.netG = networks.define_G(opt)
-        self.load_path_G = opt['path']['pretrain_model_G']
+
         if self.is_train:
             self.need_pixel_loss = True
             self.need_feature_loss = True
@@ -39,9 +39,11 @@ class SRGANModel(BaseModel):
             assert self.need_pixel_loss or self.need_feature_loss, 'pixel and feature loss are both 0.'
             # Discriminator
             self.netD = networks.define_D(opt)
-            self.load_path_D = opt['path']['pretrain_model_D']
+
             if self.need_feature_loss:
                 self.netF = networks.define_F(opt, use_bn=False) # perceptual loss
+            self.netG.train()
+            self.netD.train()
         self.load() # load G and D if needed
 
         if self.is_train:
@@ -100,7 +102,7 @@ class SRGANModel(BaseModel):
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    print('WARN: params [%s] will not optimize.' % k)
+                    print('WARNING: params [%s] will not optimize.' % k)
             self.optimizer_G = torch.optim.Adam(optim_params, lr=self.lr_G, weight_decay=self.wd_G,\
                 betas=(train_opt['beta1_G'], 0.999))
             self.optimizers.append(self.optimizer_G)
@@ -119,6 +121,10 @@ class SRGANModel(BaseModel):
                         train_opt['lr_steps'], train_opt['lr_gamma']))
             else:
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
+
+
+            self.loss_dict = OrderedDict()
+            self.Dout_dict = OrderedDict()
 
         print('---------- Model initialized ------------------')
         self.print_network()
@@ -143,7 +149,6 @@ class SRGANModel(BaseModel):
         # G
         self.optimizer_G.zero_grad()
         # forward G
-        # self.real_L: leaf, not requires_grad; self.fake_H: no leaf, requires_grad
         self.fake_H = self.netG(self.real_L)
 
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
@@ -152,10 +157,7 @@ class SRGANModel(BaseModel):
             # forward F
             if self.need_feature_loss:
                 # forward F
-                # self.real_fea: leaf, not requires_grad (gt features, do not need bp)
                 real_fea = self.netF(self.real_H).detach()
-                # self.fake_fea: not leaf, requires_grad (need bp, in the graph)
-                # self.real_fea and self.fake_fea are not the same, since features is independent to conv
                 fake_fea = self.netF(self.fake_H)
                 loss_g_fea = self.loss_feature_weight * self.criterion_feature(fake_fea, real_fea)
             # forward D
@@ -199,12 +201,10 @@ class SRGANModel(BaseModel):
         self.optimizer_D.step()
 
         # set D outputs
-        self.Dout_dict = OrderedDict()
         self.Dout_dict['D_out_real'] = torch.mean(pred_d_real.data)
         self.Dout_dict['D_out_fake'] = torch.mean(pred_d_fake.data)
 
         # set losses
-        self.loss_dict = OrderedDict()
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
             self.loss_dict['loss_g_pixel'] = loss_g_pixel.data[0] if self.need_pixel_loss else -1
             self.loss_dict['loss_g_fea'] = loss_g_fea.data[0] if self.need_feature_loss else -1
@@ -214,11 +214,10 @@ class SRGANModel(BaseModel):
         if self.opt['train']['gan_type'] == 'wgan-gp':
             self.loss_dict['loss_d_gp'] = loss_d_gp.data[0]
 
-    def val(self):
-        self.fake_H = self.netG(self.real_L)
-
     def test(self):
+        self.netG.eval()
         self.fake_H = self.netG(self.real_L)
+        self.netG.train()
 
     def get_current_losses(self):
         return self.loss_dict
@@ -228,10 +227,10 @@ class SRGANModel(BaseModel):
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.real_L.data[0]
-        out_dict['SR'] = self.fake_H.data[0]
+        out_dict['LR'] = self.real_L.data[0].float().cpu()
+        out_dict['SR'] = self.fake_H.data[0].float().cpu()
         if need_HR:
-            out_dict['HR'] = self.real_H.data[0]
+            out_dict['HR'] = self.real_H.data[0].float().cpu()
         return out_dict
 
     def print_network(self):
@@ -260,22 +259,15 @@ class SRGANModel(BaseModel):
                     f.write(message)
 
     def load(self):
-        if self.load_path_G is not None:
-            print('loading model for G [%s] ...' % self.load_path_G)
-            self.load_network(self.load_path_G, self.netG)
-        if self.opt['is_train'] and self.load_path_D is not None:
-            print('loading model for D [%s] ...' % self.load_path_D)
-            self.load_network(self.load_path_D, self.netD)
+        load_path_G = self.opt['path']['pretrain_model_G']
+        if load_path_G is not None:
+            print('loading model for G [%s] ...' % load_path_G)
+            self.load_network(load_path_G, self.netG)
+        load_path_D = self.opt['path']['pretrain_model_D']
+        if self.opt['is_train'] and load_path_D is not None:
+            print('loading model for D [%s] ...' % load_path_D)
+            self.load_network(load_path_D, self.netD)
 
     def save(self, iter_label):
         self.save_network(self.save_dir, self.netG, 'G', iter_label)
         self.save_network(self.save_dir, self.netD, 'D', iter_label)
-
-    def train(self):
-        self.netG.train()
-        self.netD.train()
-
-    def eval(self):
-        self.netG.eval()
-        if self.opt['is_train']:
-            self.netD.eval()
