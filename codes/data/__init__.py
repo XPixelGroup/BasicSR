@@ -23,8 +23,6 @@ def create_dataset(dataset_opt):
         from data.LRHR_dataset import LRHRDataset as D
     elif mode == 'LRHRseg':
         from data.LRHR_seg_dataset import LRHRSegDataset as D
-    elif mode == 'enlargedLRHR':
-        from data.enlargedLRHR_dataset import EnlargedLRHRDataset as D
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
     dataset = D(dataset_opt)
