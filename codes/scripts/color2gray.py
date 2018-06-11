@@ -47,8 +47,8 @@ def worker(GT_paths, save_GT_dir, mode):
 
 if __name__=='__main__':
 
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/BSD200'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/BSD200_gray'
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_gray'
     mode = 'gray' # 'y'
     n_thread = 20
 

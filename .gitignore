@@ -8,6 +8,10 @@ experiments/pretrained_models/*
 !experiments/pretrained_models/SRResNet_bicx4_in3nf64nb16.pth
 !experiments/pretrained_models/README.md
 
+data/samples_byteimg
+data/samples_colorimg
+data/samples_segprob
+
 # file type
 *.svg
 *.pyc
