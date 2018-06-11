@@ -1,44 +1,56 @@
 # BasicSR
 
-BasicSR mainly contains 3 parts:
+**BasicSR** wants to provide some basic deep-learning based models for super-resolution, including:
 
-1. general SR models
-1. [SRGAN model](https://arxiv.org/abs/1609.04802)
-1. [SFTGAN model](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
+1. PSNR-oriented SR models (e.g., SRCNN, VDSR, SRResNet and etc)
+   1. want to compare more structures for SR. e.g. ResNet Block, ResNeXt Block, Dense Block, Residual Dense Block, Poly Block, Dual Path Block, Squeeze-and-Excitation Block and etc.
+   1. want to provide some useful tricks for training SR networks.
+   <!--1. We are also curious to know what is the upper bound of PSNR for bicubic downsampling kernel by using an extremely large model.-->
+1. GAN-based models for more visual-pleasing performance, especially textures.
+    1. [SRGAN](https://arxiv.org/abs/1609.04802)
+    1. [SFTGAN](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
+
+The codes will be explained in each folder with README.md and the exploration will be put in Wiki. 
+
+For more details about codes, models and results. Please see [`codes/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes)
 
 :sun_with_face:
 
-add sft-gan testing codes. See [seg_arch and sft_arch files](https://github.com/xinntao/BasicSR/blob/master/codes/models/modules/). 
+- It now supports a framework to train and test PSNR-oriented SR models. And we will gradually train and compare other models and try other techniques (e.g., intermediate loss for large model). 
 
-The sft-gan testing codes and models are just from the torch version without much testing. Later, we will improve it and add training codes. (before June 10)
+- For SRGAN, we reproduce the results using DIV2K dataset (No BatchNorm in the generator).
 
-The sft-gan models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1o2J8SwWaDZ69w3tyTevtakU6QrMHcYPk?usp=sharing).
+<p align="center">
+  <img src="https://c1.staticflickr.com/2/1730/27869068197_bf631fa9fc.jpg" height="400">
+  <img src="https://c1.staticflickr.com/2/1735/27869206717_9fd4813c5e.jpg" height="400">
+</p>
 
-:sun_with_face:
+- For SFTGAN, we provide the training codes. However, it is still a bit different from the model in the paper. For example, 1) it does not have background category now; 2) we do not use BN when pretraining the SRGAN model. We now are improving it.
 
-Now it supports 1 and 2.
-
-The repo is still under development. There may be some bugs :-)
+Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not so expert at coding, but I will try to keep the codes tidy. 
 
 <!-- ### Table of Contents
 1. [Introduction](#introduction)
 1. [Introduction](#introduction)
 
-### Introduction -->
+### Introduction 
+-->
 
 ### Prerequisites
 
 - Linux
 - Python3
 - Pytorch 0.3.1
-- NVIDIA GPU + CUDA CuDNN
+- NVIDIA GPU + CUDA
 
-### Codes descriptions
+### Datasets
+There are some **classical SR datasets**, for example:
+- training datasets: BSD200, T91, General100;
+- testing datasets: Set5, Set14, urban100, BSD100, manga109, historical
 
-Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains:
-- [[data] instructions](https://github.com/xinntao/BasicSR/wiki/%5Bdata%5D-instructions)
-- [[options] instructions](https://github.com/xinntao/BasicSR/wiki/%5Boptions%5D-instructions) (including all configuration descriptions)
+You can download these classical SR datasets from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing) or [Baidu Drive](). 
 
+Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/).
 
 ## Getting Started
 ### How to test a model
@@ -48,9 +60,11 @@ Please see [Wiki pages](https://github.com/xinntao/BasicSR/wiki), which contains
 1. test the model with the command `python3 test.py -opt options/test/test.json`
 
 ### How to train a model
-1. prepare your data (it's better to test whether the data is ok using `test_dataloader`)
-1. modify the corresponding training json file in `options/train/SRResNet(or SRGAN).json`
-1. train the model with the command `python3 train.py -opt options/train/SRResNet.json`
+1. prepare your data, please see [`codes/data/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes/data) (it's better to test whether the data is ok using `test_dataloader`)
+1. modify the corresponding training json file in `options/train/xxx.json`
+1. train the model with the command `python3 train.py -opt options/train/xxx.json`
+
+For more training details, please see [`codes/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes).
 
 ---
 ## :satisfied: Image Viewer - [HandyViewer](https://github.com/xinntao/HandyViewer)
@@ -88,8 +102,15 @@ See more details in [**experiments/pretrained_models**](https://github.com/xinnt
 
 - Code architecture is inspired from [pytorch-cyclegan](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
 - Thanks to *Wai Ho Kwok*, who develop the initial version.
+<!--
+:sun_with_face:
 
+add sft-gan testing codes. See [seg_arch and sft_arch files](https://github.com/xinntao/BasicSR/blob/master/codes/models/modules/). 
 
+The sft-gan testing codes and models are just from the torch version without much testing. Later, we will improve it and add training codes. (before June 10)
+
+The sft-gan models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1o2J8SwWaDZ69w3tyTevtakU6QrMHcYPk?usp=sharing).
+-->
 
 
 
