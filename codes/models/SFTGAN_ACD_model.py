@@ -7,29 +7,30 @@ from torch.autograd import Variable
 from torch.optim import lr_scheduler
 
 import models.networks as networks
-from .base_model import BaseModel
 from models.modules.loss import GANLoss, GradientPenaltyLoss
+from .base_model import BaseModel
 
 
-class SRGANModel(BaseModel):
+class SFTGAN_ACD_Model(BaseModel):
     def name(self):
-        return 'SRGANModel'
+        return 'SFTGAN_ACD_Model'
 
     def __init__(self, opt):
-        super(SRGANModel, self).__init__(opt)
+        super(SFTGAN_ACD_Model, self).__init__(opt)
         train_opt = opt['train']
 
         self.input_L = self.Tensor()
         self.input_H = self.Tensor()
-        self.input_ref = self.Tensor() # for Discriminator reference
+        self.input_seg = self.Tensor()
+        self.input_cat = self.Tensor().long() # category
 
         # define networks and load pretrained models
-        self.netG = networks.define_G(opt)  # G
+        self.netG = networks.define_G(opt) # G
         if self.is_train:
-            self.netD = networks.define_D(opt)  # D
+            self.netD = networks.define_D(opt) # D
             self.netG.train()
             self.netD.train()
-        self.load()  # load G and D if needed
+        self.load() # load G and D if needed
 
         # define losses, optimizer and scheduler
         if self.is_train:
@@ -60,7 +61,7 @@ class SRGANModel(BaseModel):
             else:
                 print('Remove feature loss.')
                 self.cri_fea = None
-            if self.cri_fea:  # load VGG perceptual loss
+            if self.cri_fea: # load VGG perceptual loss
                 self.netF = networks.define_F(opt, use_bn=False)
 
             # GD gan loss
@@ -75,21 +76,25 @@ class SRGANModel(BaseModel):
                 self.cri_gp = GradientPenaltyLoss(tensor=self.Tensor)
                 self.l_gp_w = train_opt['gp_weigth']
 
+            # D cls loss
+            self.cri_ce = nn.CrossEntropyLoss()
+
             if self.use_gpu:
                 if self.cri_pix:
                     self.cri_pix.cuda()
                 if self.cri_fea:
                     self.cri_fea.cuda()
                 self.cri_gan.cuda()
+                self.cri_ce.cuda()
                 if train_opt['gan_type'] == 'wgan-gp':
                     self.cri_gp.cuda()
 
             # optimizers
-            self.optimizers = []  # G and D
+            self.optimizers = [] # G and D
             # G
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
             optim_params = []
-            for k, v in self.netG.named_parameters():  # can optimize for a part of the model
+            for k, v in self.netG.named_parameters(): # can optimize for a part of the model
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
@@ -123,20 +128,24 @@ class SRGANModel(BaseModel):
         input_L = data['LR']
         self.input_L.resize_(input_L.size()).copy_(input_L)
         self.var_L = Variable(self.input_L, volatile=volatile)
+        # seg
+        input_seg = data['seg']
+        self.input_seg.resize_(input_seg.size()).copy_(input_seg)
+        self.var_seg = Variable(self.input_seg, volatile=volatile)
+        # category
+        input_cat = data['category']
+        self.input_cat.resize_(input_cat.size()).copy_(input_cat)
+        self.var_cat = Variable(self.input_cat, volatile=volatile)
 
         if need_HR: # train or val
             input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
             self.var_H = Variable(self.input_H, volatile=volatile)
 
-            input_ref = data['ref'] if 'ref' in data else data['HR']
-            self.input_ref.resize_(input_ref.size()).copy_(input_ref)
-            self.var_ref = Variable(self.input_ref, volatile=volatile)
-
     def optimize_parameters(self, step):
         # G
         self.optimizer_G.zero_grad()
-        self.fake_H = self.netG(self.var_L)
+        self.fake_H = self.netG((self.var_L, self.var_seg))
 
         l_g_total = 0
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
@@ -149,9 +158,11 @@ class SRGANModel(BaseModel):
                 l_g_fea = self.l_fea_w * self.cri_fea(fake_fea, real_fea)
                 l_g_total += l_g_fea
             # G gan + cls loss
-            pred_g_fake = self.netD(self.fake_H)
+            pred_g_fake, cls_g_fake = self.netD(self.fake_H)
             l_g_gan = self.l_gan_w * self.cri_gan(pred_g_fake, True)
+            l_g_cls = self.l_gan_w * self.cri_ce(cls_g_fake, self.var_cat) # * 5
             l_g_total += l_g_gan
+            l_g_total += l_g_cls
 
             l_g_total.backward()
             self.optimizer_G.step()
@@ -160,23 +171,25 @@ class SRGANModel(BaseModel):
         self.optimizer_D.zero_grad()
         l_d_total = 0
         # real data
-        pred_d_real = self.netD(self.var_ref)
+        pred_d_real, cls_d_real = self.netD(self.var_H)
         l_d_real = self.cri_gan(pred_d_real, True)
+        l_d_cls_real = self.cri_ce(cls_d_real, self.var_cat) # * 5
         # fake data
-        pred_d_fake = self.netD(self.fake_H.detach())  # detach to avoid BP to G
+        pred_d_fake, cls_d_fake = self.netD(self.fake_H.detach())  # detach to avoid BP to G
         l_d_fake = self.cri_gan(pred_d_fake, False)
+        l_d_cls_fake = self.cri_ce(cls_d_fake, self.var_cat) # * 5
 
-        l_d_total = l_d_real + l_d_fake
+        l_d_total = l_d_real + l_d_cls_real + l_d_fake + l_d_cls_fake
 
         if self.opt['train']['gan_type'] == 'wgan-gp':
-            batch_size = self.var_ref.size(0)
+            batch_size = self.var_H.size(0)
             if self.random_pt.size(0) != batch_size:
                 self.random_pt.data.resize_(batch_size, 1, 1, 1)
             self.random_pt.data.uniform_()  # Draw random interpolation points
-            interp = (self.random_pt * self.fake_H + (1 - self.random_pt) * self.var_ref).detach()
+            interp = (self.random_pt * self.fake_H + (1 - self.random_pt) * self.var_H).detach()
             interp.requires_grad = True
             interp_crit, _ = self.netD(interp)
-            l_d_gp = self.l_gp_w * self.cri_gp(interp, interp_crit)  # maybe wrong in cls?
+            l_d_gp = self.l_gp_w * self.cri_gp(interp, interp_crit) # maybe wrong in cls?
             l_d_total += l_d_gp
 
         l_d_total.backward()
@@ -193,7 +206,8 @@ class SRGANModel(BaseModel):
         # D
         self.log_dict['l_d_real'] = l_d_real.data[0]
         self.log_dict['l_d_fake'] = l_d_fake.data[0]
-
+        self.log_dict['l_d_cls_real'] = l_d_cls_real.data[0]
+        self.log_dict['l_d_cls_fake'] = l_d_cls_fake.data[0]
         if self.opt['train']['gan_type'] == 'wgan-gp':
             self.log_dict['l_d_gp'] = l_d_gp.data[0]
         # D outputs
@@ -202,7 +216,7 @@ class SRGANModel(BaseModel):
 
     def test(self):
         self.netG.eval()
-        self.fake_H = self.netG(self.var_L)
+        self.fake_H = self.netG((self.var_L, self.var_seg))
         self.netG.train()
 
     def get_current_log(self):
@@ -217,7 +231,7 @@ class SRGANModel(BaseModel):
         return out_dict
 
     def print_network(self):
-        # Generator
+        # G
         s, n = self.get_network_description(self.netG)
         print('Number of parameters in G: {:,d}'.format(n))
         if self.is_train:
@@ -226,7 +240,7 @@ class SRGANModel(BaseModel):
             with open(network_path, 'w') as f:
                 f.write(message)
 
-            # Discriminator
+            # D
             s, n = self.get_network_description(self.netD)
             print('Number of parameters in D: {:,d}'.format(n))
             message = '\n\n\n-------------- Discriminator --------------\n' + s + '\n'
