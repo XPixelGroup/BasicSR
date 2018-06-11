@@ -48,9 +48,9 @@ There are some **classical SR datasets**, for example:
 - training datasets: BSD200, T91, General100;
 - testing datasets: Set5, Set14, urban100, BSD100, manga109, historical
 
-You can download these classical SR datasets from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing) or [Baidu Drive](). 
+You can download these classical SR datasets from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing) or [Baidu Drive](https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q). 
 
-Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/).
+Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/), or from [Baidu Drive](https://pan.baidu.com/s/1LUj90_skqlVw4rjRVeEoiw).
 
 ## Getting Started
 ### How to test a model
