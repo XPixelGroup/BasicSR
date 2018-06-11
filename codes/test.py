@@ -61,11 +61,6 @@ for test_loader in test_loaders:
         if need_HR: # load GT image and calculate psnr
             gt_img = util.tensor2img_np(visuals['HR'])
 
-            # h_min = min(sr_img.shape[0], gt_img.shape[0])
-            # w_min = min(sr_img.shape[1], gt_img.shape[1])
-            # sr_img = sr_img[0:h_min, 0:w_min, :]
-            # gt_img = gt_img[0:h_min, 0:w_min, :]
-
             scale = test_loader.dataset.opt['scale']
             crop_border = scale + 2
             cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]

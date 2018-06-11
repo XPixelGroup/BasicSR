@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.nn import init
 import functools
 import models.modules.architecture as Arch
+import models.modules.sft_arch as sft_arch
 
 ####################
 # initialize
@@ -89,9 +90,8 @@ def define_G(opt):
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'],\
             upsample_mode='pixelshuffle')
 
-    elif which_model == 'sr_explore':
-        import models.modules.sr_explore_arch as sr_explore_arch
-        netG = sr_explore_arch.SRCNN3group_linear(opt['nf'])
+    elif which_model == 'sft_arch':
+        netG = sft_arch.SFT_Net()
 
     # if which_model != 'sr_resnet':  # need to investigate, the original is better?
     #     init_weights(netG, init_type='orthogonal')
@@ -110,12 +110,11 @@ def define_D(opt):
     if which_model == 'discriminaotr_vgg_128':
         netD = Arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
             norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
-    elif which_model == 'discriminaotr_vgg_32':
-        netD = Arch.Discriminaotr_VGG_32(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
-    elif which_model == 'discriminaotr_vgg_32_y':
-        netD = Arch.Discriminaotr_VGG_32_Y(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
+
+    elif which_model == 'dis_acd':
+        netD = sft_arch.ACD_VGG_BN_96()
+    elif which_model == 'dis_acd_sn':
+        netD = sft_arch.ACD_VGG_BN_128_SN()
     else:
         raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
 

@@ -1,5 +1,5 @@
 {
-  "name":"304_300ft_SRGAN_pixel0_fea1_adv5e-3_DIV2K" //  please remove "debub_" during formal training
+  "name": "debug_001_SRGANx4_DIV2K" //  please remove "debub_" during formal training
   ,"use_tb_logger": true
   ,"model":"srgan"
   ,"scale": 4
@@ -29,13 +29,13 @@
 
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": "../experiments/300_SRResNet_bicx4_NAC_in3nf64nb16_DIV2K800/models/220000_G.pth"
+    ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet_bicx4_in3nf64nb16.pth"
   }
 
   ,"network_G": {
     "which_model_G": "sr_resnet"
-    ,"norm_type": "batch"
-    ,"mode": "NAC"
+    ,"norm_type": null
+    ,"mode": "CNA"
     ,"nf": 64
     ,"nb": 16
     ,"in_nc": 3
@@ -66,16 +66,16 @@
     ,"pixel_weight": 0
     ,"feature_criterion": "l1"
     ,"feature_weight": 1
-    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
+    ,"gan_type": "vanilla"
     ,"gan_weight": 5e-3
 
-    //for wgan-gp
     ,"D_update_ratio": 1
     ,"D_init_iters": 0
-    ,"gp_weigth": 10
+
+    // ,"gp_weigth": 10 //for wgan-gp
 
     ,"manual_seed": 0
-    ,"niter": 1e6
+    ,"niter": 6e5
     ,"val_freq": 5e3
   }
 
