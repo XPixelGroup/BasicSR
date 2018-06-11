@@ -43,7 +43,7 @@ class BaseModel():
         return self.optimizers[0].param_groups[0]['lr']
 
     # helper printing function that can be used by subclasses
-    def get_network_decsription(self, network):
+    def get_network_description(self, network):
         if isinstance(network, nn.DataParallel):
             network = network.module
         s = str(network)
