@@ -2,12 +2,12 @@ function generate_mod_LR_bic()
 
 %% set parameters
 % comment the unnecessary line
-input_path = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/GT';
-% save_mod_path = '/SSD/xtwang/BasicSR_datasets/BSD200/GT_mod8';
-save_LR_path = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/GT_bicLRx2';
-save_bic_path = '/mnt/SSD/xtwang/BasicSR_datasets/BSD200/GT_bicx2';
+input_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800';
+% save_mod_path = '';
+save_LR_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_bicLRx4';
+% save_bic_path = '';
 
-up_scale = 2;
+up_scale = 4;
 mod_scale = 8;
 
 
@@ -55,7 +55,7 @@ for i = 1 : length(filepaths)
         % LR
         im_LR = imresize(img, 1/up_scale, 'bicubic');
         if exist('save_LR_path', 'var')
-            imwrite(im_LR, fullfile(save_LR_path, [imname, '_bicLRx2.png']));
+            imwrite(im_LR, fullfile(save_LR_path, [imname, '_bicLRx4.png']));
         end
         %         im_B = double(im_B)/255;
         %         im_B = rgb2ycbcr(im_B);
@@ -63,8 +63,8 @@ for i = 1 : length(filepaths)
         % Bicubic
         if exist('save_bic_path', 'var')
             im_B = imresize(im_LR, up_scale, 'bicubic');
-            imwrite(im_B, fullfile(save_bic_path, [imname, '_bicx2.png']));
-        end   
+            imwrite(im_B, fullfile(save_bic_path, [imname, '_bicx4.png']));
+        end
     end
 end
 end
