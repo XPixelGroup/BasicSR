@@ -5,6 +5,33 @@ import time
 import numpy as np
 import cv2
 
+def main():
+    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800'
+    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
+    n_thread = 20
+
+    print('Parent process %s.' % os.getpid())
+    start = time.time()
+
+    p = Pool(n_thread)
+    # read all files to a list
+    all_files = []
+    for root, _, fnames in sorted(os.walk(GT_dir)):
+        full_path = [os.path.join(root, x) for x in fnames]
+        all_files.extend(full_path)
+    # cut into subtasks
+    def chunkify(lst, n): # for non-continuous chunks
+        return [lst[i::n] for i in range(n)]
+    sub_lists = chunkify(all_files, n_thread)
+    # call workers
+    for i in range(n_thread):
+        p.apply_async(worker, args=(sub_lists[i], save_GT_dir))
+    print('Waiting for all subprocesses done...')
+    p.close()
+    p.join()
+    end = time.time()
+    print('All subprocesses done. Using time {} sec.'.format(end - start))
+
 
 def worker(GT_paths, save_GT_dir):
     crop_sz = 480
@@ -48,29 +75,4 @@ def worker(GT_paths, save_GT_dir):
                     '_s'+index_str+'.png')), crop_img, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 if __name__=='__main__':
-
-    GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800'
-    save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
-    n_thread = 20
-
-    print('Parent process %s.' % os.getpid())
-    start = time.time()
-
-    p = Pool(n_thread)
-    # read all files to a list
-    all_files = []
-    for root, _, fnames in sorted(os.walk(GT_dir)):
-        full_path = [os.path.join(root, x) for x in fnames]
-        all_files.extend(full_path)
-    # cut into subtasks
-    def chunkify(lst, n): # for non-continuous chunks
-        return [lst[i::n] for i in range(n)]
-    sub_lists = chunkify(all_files, n_thread)
-    # call workers
-    for i in range(n_thread):
-        p.apply_async(worker, args=(sub_lists[i], save_GT_dir))
-    print('Waiting for all subprocesses done...')
-    p.close()
-    p.join()
-    end = time.time()
-    print('All subprocesses done. Using time {} sec.'.format(end - start))
+    main()
