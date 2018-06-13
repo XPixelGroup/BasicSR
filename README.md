@@ -25,7 +25,7 @@ For more details about codes, models and results. Please see [`codes/README.md`]
   <img src="https://c1.staticflickr.com/2/1735/27869206717_9fd4813c5e.jpg" height="400">
 </p>
 
-- For SFTGAN, we provide the training codes. However, it is still a bit different from the model in the paper. For example, 1) it does not have background category now; 2) we do not use BN when pretraining the SRGAN model. We now are improving it.
+- For SFTGAN, we provide the training codes. However, there are still some problems. I need another several days to figure out.
 
 Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not so expert at coding, but I will try to keep the codes tidy. 
 
