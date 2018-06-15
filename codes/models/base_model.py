@@ -4,9 +4,6 @@ import torch.nn as nn
 
 
 class BaseModel():
-    def name(self):
-        return 'BaseModel'
-
     def __init__(self, opt):
         self.opt = opt
         self.save_dir = opt['path']['models']  # save models

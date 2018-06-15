@@ -7,10 +7,10 @@ from skimage.measure import compare_ssim
 
 from torchvision.utils import make_grid
 
-
 ####################
 # miscellaneous
 ####################
+
 
 def get_timestamp():
     return datetime.now().strftime('%y%m%d-%H%M%S')
@@ -40,6 +40,7 @@ def mkdir_and_rename(path):
 ####################
 # image convert
 ####################
+
 
 def tensor2img_np(tensor, out_type=np.uint8, min_max=(0, 1)):
     '''
@@ -78,6 +79,7 @@ def save_img_np(img_np, img_path, mode='RGB'):
 ####################
 # metric
 ####################
+
 
 def psnr(img1, img2):
     assert img1.dtype == img2.dtype == np.uint8, 'np.uint8 is supposed.'

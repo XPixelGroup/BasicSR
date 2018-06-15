@@ -1,64 +1,64 @@
 {
   "name":"debug_000_SRResNetx4_DIV2K" //  please remove "debub_" during formal training
-  ,"use_tb_logger": true
-  ,"model":"sr"
-  ,"scale": 4
-  ,"gpu_ids": [0]
+  , "use_tb_logger": true
+  , "model":"sr"
+  , "scale": 4
+  , "gpu_ids": [0]
 
-  ,"datasets": {
+  , "datasets": {
     "train": {
       "name": "DIV2K"
-      ,"mode": "LRHR"
-      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4"
-      ,"subset_file": null
-      ,"use_shuffle": true
-      ,"n_workers": 8
-      ,"batch_size": 16
-      ,"HR_size": 128
-      ,"use_flip": true
-      ,"use_rot": true
+      , "mode": "LRHR"
+      , "dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
+      , "dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4"
+      , "subset_file": null
+      , "use_shuffle": true
+      , "n_workers": 8
+      , "batch_size": 16
+      , "HR_size": 128
+      , "use_flip": true
+      , "use_rot": true
     }
-    ,"val": {
+    , "val": {
       "name": "val_set5"
-      ,"mode": "LRHR"
-      ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
-      ,"dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
+      , "mode": "LRHR"
+      , "dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5"
+      , "dataroot_LR": "/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4"
     }
   }
 
-  ,"path": {
+  , "path": {
     "root": "/home/xtwang/Projects/BasicSR"
-    ,"pretrain_model_G": null
+    , "pretrain_model_G": null
   }
 
-  ,"network_G": {
+  , "network_G": {
     "which_model_G": "sr_resnet"
-    ,"norm_type": null
-    ,"mode": "CNA"
-    ,"nf": 64
-    ,"nb": 16
-    ,"in_nc": 3
-    ,"out_nc": 3
-    ,"group": 1
+    , "norm_type": null
+    , "mode": "CNA"
+    , "nf": 64
+    , "nb": 16
+    , "in_nc": 3
+    , "out_nc": 3
+    , "group": 1
   }
 
-  ,"train": {
+  , "train": {
     "manual_seed": 0
-    ,"niter": 1e6
+    , "niter": 1e6
 
-    ,"lr_G": 2e-4
-    ,"lr_scheme": "MultiStepLR"
-    ,"lr_steps": [200000, 400000, 600000, 800000]
-    ,"lr_gamma": 0.5
+    , "lr_G": 2e-4
+    , "lr_scheme": "MultiStepLR"
+    , "lr_steps": [200000, 400000, 600000, 800000]
+    , "lr_gamma": 0.5
 
-    ,"pixel_criterion": "l1"
-    ,"pixel_weight": 1.0
-    ,"val_freq": 5e3
+    , "pixel_criterion": "l1"
+    , "pixel_weight": 1.0
+    , "val_freq": 5e3
   }
 
-  ,"logger": {
+  , "logger": {
     "print_freq": 200
-    ,"save_checkpoint_freq": 5e3
+    , "save_checkpoint_freq": 5e3
   }
 }

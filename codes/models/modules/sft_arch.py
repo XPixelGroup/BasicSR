@@ -35,7 +35,7 @@ class ResBlock_SFT(nn.Module):
         fea = F.relu(self.conv0(fea), inplace=True)
         fea = self.sft1((fea, x[1]))
         fea = self.conv1(fea)
-        return (x[0] + fea, x[1]) # return a tuple containing features and conditions
+        return (x[0] + fea, x[1])  # return a tuple containing features and conditions
 
 
 class SFT_Net(nn.Module):
@@ -147,6 +147,7 @@ class ACD_VGG_BN_96(nn.Module):
 # below is the sft arch for the torch version
 #############################################
 
+
 class SFTLayer_torch(nn.Module):
     def __init__(self):
         super(SFTLayer_torch, self).__init__()
@@ -176,7 +177,7 @@ class ResBlock_SFT_torch(nn.Module):
         fea = self.conv0(fea)
         fea = F.relu(self.sft1((fea, x[1])), inplace=True)
         fea = self.conv1(fea)
-        return (x[0] + fea, x[1]) # return a tuple containing features and conditions
+        return (x[0] + fea, x[1])  # return a tuple containing features and conditions
 
 
 class SFT_Net_torch(nn.Module):

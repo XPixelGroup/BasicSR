@@ -1,8 +1,9 @@
+import functools
 import torch
 import torch.nn as nn
 from torch.nn import init
-import functools
-import models.modules.architecture as Arch
+
+import models.modules.architecture as arch
 import models.modules.sft_arch as sft_arch
 
 ####################
@@ -82,11 +83,8 @@ def define_G(opt):
     opt = opt['network_G']
     which_model = opt['which_model_G']
 
-    if which_model == 'sr_resnet_torch':
-        netG = Arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
-            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'])
-    elif which_model == 'sr_resnet':
-        netG = Arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+    if which_model == 'sr_resnet':
+        netG = arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'],\
             upsample_mode='pixelshuffle')
 
@@ -108,8 +106,8 @@ def define_D(opt):
     which_model = opt['which_model_D']
 
     if which_model == 'discriminaotr_vgg_128':
-        netD = Arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'] ,act_type=opt['act_type'])
+        netD = arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
 
     elif which_model == 'dis_acd':
         netD = sft_arch.ACD_VGG_BN_96()
@@ -130,7 +128,7 @@ def define_F(opt, use_bn=False):
         feature_layer = 49
     else:
         feature_layer = 34
-    netF = Arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
+    netF = arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
         use_input_norm=True, tensor=tensor)
     if gpu_ids:
         netF = nn.DataParallel(netF).cuda()

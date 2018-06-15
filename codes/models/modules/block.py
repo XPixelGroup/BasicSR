@@ -3,13 +3,13 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 
-
 ####################
 # Basic blocks
 ####################
 
-# helper selecting activation
+
 def act(act_type, inplace=True, neg_slope=0.2, n_prelu=1):
+    # helper selecting activation
     # neg_slope: for leakyrelu and init of prelu
     # n_prelu: for p_relu num_parameters
     act_type = act_type.lower()
@@ -24,8 +24,8 @@ def act(act_type, inplace=True, neg_slope=0.2, n_prelu=1):
     return layer
 
 
-# helper selecting normalization layer
 def norm(norm_type, nc):
+    # helper selecting normalization layer
     norm_type = norm_type.lower()
     if norm_type == 'batch':
         layer = nn.BatchNorm2d(nc, affine=True)
@@ -36,9 +36,9 @@ def norm(norm_type, nc):
     return layer
 
 
-# helper selecting padding layer
-# if padding is 'zero', do by conv layers
 def pad(pad_type, padding):
+    # helper selecting padding layer
+    # if padding is 'zero', do by conv layers
     pad_type = pad_type.lower()
     if padding == 0:
         return None
@@ -57,8 +57,8 @@ def get_valid_padding(kernel_size, dilation):
     return padding
 
 
-# Concat the output of a submodule to its input
 class ConcatBlock(nn.Module):
+    # Concat the output of a submodule to its input
     def __init__(self, submodule):
         super(ConcatBlock, self).__init__()
         self.sub = submodule
@@ -74,8 +74,8 @@ class ConcatBlock(nn.Module):
         return tmpstr
 
 
-#Elementwise sum the output of a submodule to its input
 class ShortcutBlock(nn.Module):
+    #Elementwise sum the output of a submodule to its input
     def __init__(self, submodule):
         super(ShortcutBlock, self).__init__()
         self.sub = submodule
@@ -91,12 +91,12 @@ class ShortcutBlock(nn.Module):
         return tmpstr
 
 
-# Flatten Sequential. It unwraps nn.Sequential.
 def sequential(*args):
+    # Flatten Sequential. It unwraps nn.Sequential.
     if len(args) == 1:
         if isinstance(args[0], OrderedDict):
             raise NotImplementedError('sequential does not support OrderedDict input.')
-        return args[0] # No sequential is needed.
+        return args[0]  # No sequential is needed.
     modules = []
     for module in args:
         if isinstance(module, nn.Sequential):
@@ -107,13 +107,13 @@ def sequential(*args):
     return nn.Sequential(*modules)
 
 
-"""
-Conv layer with padding, normalization, activation
-mode: CNA --> Conv -> Norm -> Act
-      NAC --> Norm -> Act --> Conv (Identity Mappings in Deep Residual Networks, ECCV16)
-"""
 def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=True,
                pad_type='zero', norm_type=None, act_type='relu', mode='CNA'):
+    """
+    Conv layer with padding, normalization, activation
+    mode: CNA --> Conv -> Norm -> Act
+        NAC --> Norm -> Act --> Conv (Identity Mappings in Deep Residual Networks, ECCV16)
+    """
     assert mode in ['CNA', 'NAC', 'CNAC'], 'Wong conv mode [%s]' % mode
     padding = get_valid_padding(kernel_size, dilation)
     p = pad(pad_type, padding) if pad_type and pad_type != 'zero' else None
@@ -136,19 +136,20 @@ def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=
         return sequential(n, a, p, c)
 
 
-# TODO: add deconv_block
-
+# TODO: add deconv block
 
 ####################
 # Useful blocks
 ####################
 
-"""
-ResNet Block, 3-3 style
-with extra residual scaling used in EDSR
-(Enhanced Deep Residual Networks for Single Image Super-Resolution, CVPRW 17)
-"""
+
 class ResNetBlock(nn.Module):
+    """
+    ResNet Block, 3-3 style
+    with extra residual scaling used in EDSR
+    (Enhanced Deep Residual Networks for Single Image Super-Resolution, CVPRW 17)
+    """
+
     def __init__(self, in_nc, mid_nc, out_nc, kernel_size=3, stride=1, dilation=1, groups=1, \
             bias=True, pad_type='zero', norm_type=None, act_type='relu', mode='CNA', res_scale=1):
         super(ResNetBlock, self).__init__()
@@ -156,7 +157,7 @@ class ResNetBlock(nn.Module):
             norm_type, act_type, mode)
         if mode == 'CNA':
             act_type = None
-        if mode == 'CNAC': # Residual path: |-CNAC-|
+        if mode == 'CNAC':  # Residual path: |-CNAC-|
             act_type = None
             norm_type = None
         conv1 = conv_block(mid_nc, out_nc, kernel_size, stride, dilation, groups, bias, pad_type, \
@@ -175,30 +176,32 @@ class ResNetBlock(nn.Module):
         return x + res
 
 
+
 ####################
 # Upsampler
 ####################
 
-# Pixel shuffle layer
-# (Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional \
-#   Neural Network, CVPR17)
+
 def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True,
                         pad_type='zero', norm_type=None, act_type='relu'):
-
-    conv = conv_block(in_nc, out_nc*(upscale_factor**2), kernel_size, stride, bias=bias,
+    """
+    Pixel shuffle layer
+    (Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional
+    Neural Network, CVPR17)
+    """
+    conv = conv_block(in_nc, out_nc * (upscale_factor ** 2), kernel_size, stride, bias=bias,
                         pad_type=pad_type, norm_type=None, act_type=None)
     pixel_shuffle = nn.PixelShuffle(upscale_factor)
-
 
     n = norm(norm_type, out_nc * (upscale_factor**2)) if norm_type else None
     a = act(act_type) if act_type else None
     return sequential(conv, pixel_shuffle, n, a)
 
 
-# Up conv
-# described in https://distill.pub/2016/deconv-checkerboard/
 def upconv_blcok(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True,
-                        pad_type='zero', norm_type=None, act_type='relu', mode='nearest'):
+                pad_type='zero', norm_type=None, act_type='relu', mode='nearest'):
+    # Up conv
+    # described in https://distill.pub/2016/deconv-checkerboard/
     upsample = nn.Upsample(scale_factor=upscale_factor, mode=mode)
     conv = conv_block(in_nc, out_nc, kernel_size, stride, bias=bias,
                         pad_type=pad_type, norm_type=norm_type, act_type=act_type)

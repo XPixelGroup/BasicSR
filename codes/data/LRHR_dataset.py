@@ -14,15 +14,12 @@ class LRHRDataset(data.Dataset):
     The pair is ensured by 'sorted' function, so please check the name convention.
     '''
 
-    def name(self):
-        return 'LRHRDataset'
-
     def __init__(self, opt):
         super(LRHRDataset, self).__init__()
         self.opt = opt
         self.paths_LR = None
         self.paths_HR = None
-        self.LR_env = None # environment for lmdb
+        self.LR_env = None  # environment for lmdb
         self.HR_env = None
 
         # read image list from subset list txt
@@ -36,7 +33,7 @@ class LRHRDataset(data.Dataset):
         self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
         self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
 
-        assert self.paths_HR, 'Error: HR paths are empty.'
+        assert self.paths_HR, 'Error: HR path is empty.'
         if self.paths_LR and self.paths_HR:
             assert len(self.paths_LR) == len(self.paths_HR), \
                 'HR and LR datasets have different number of images - {}, {}.'.format(\
@@ -65,10 +62,12 @@ class LRHRDataset(data.Dataset):
             if self.opt['phase'] == 'train':
                 random_scale = random.choice(self.random_scale_list)
                 H_s, W_s, _ = img_HR.shape
+
                 def _mod(n, random_scale, scale, thres):
                     rlt = int(n * random_scale)
                     rlt = (rlt // scale) * scale
                     return thres if rlt < thres else rlt
+
                 H_s = _mod(H_s, random_scale, scale, HR_size)
                 W_s = _mod(W_s, random_scale, scale, HR_size)
                 img_HR = cv2.resize(np.copy(img_HR), (W_s, H_s), interpolation=cv2.INTER_LINEAR)
@@ -98,7 +97,7 @@ class LRHRDataset(data.Dataset):
         if self.opt['color']:
             img_LR, img_HR = util.channel_convert(C, self.opt['color'], [img_LR, img_HR])
 
-        # HWC to CHW, BGR to RGB, numpy to tensor
+        # BGR to RGB, HWC to CHW, numpy to tensor
         if img_HR.shape[2] == 3:
             img_HR = img_HR[:, :, [2, 1, 0]]
             img_LR = img_LR[:, :, [2, 1, 0]]

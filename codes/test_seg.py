@@ -12,14 +12,13 @@ import models.modules.seg_arch as seg_arch
 from data.util import imresize, modcrop
 import utils.util as util
 
-
 # options
-test_img_folder_name = 'samples' # image folder name
+test_img_folder_name = 'samples'  # image folder name
 
 test_img_folder = '../data/' + test_img_folder_name  # HR images
 save_prob_path = '../data/' + test_img_folder_name + '_segprob'  # probability maps
 save_byteimg_path = '../data/' + test_img_folder_name + '_byteimg'  # segmentation annotations
-save_colorimg_path = '../data/' + test_img_folder_name + '_colorimg' # segmentaion color results
+save_colorimg_path = '../data/' + test_img_folder_name + '_colorimg'  # segmentaion color results
 
 # make dirs
 util.mkdirs([save_prob_path, save_byteimg_path, save_colorimg_path])
@@ -32,17 +31,18 @@ seg_model.eval()
 seg_model = seg_model.cuda()
 
 # look_up table # RGB
-lookup_table = torch.from_numpy(np.array([
-    [153, 153, 153], # 0, background
-    [0, 255, 255], # 1, sky
-    [109, 158, 235], # 2, water
-    [183, 225, 205], # 3, grass
-    [153, 0, 255], # 4, mountain
-    [17, 85, 204], # 5, building
-    [106, 168, 79], # 6, plant
-    [224, 102, 102], # 7, animal
-    [255, 255, 255], # 8/255, void
-])).float()
+lookup_table = torch.from_numpy(
+    np.array([
+        [153, 153, 153],  # 0, background
+        [0, 255, 255],  # 1, sky
+        [109, 158, 235],  # 2, water
+        [183, 225, 205],  # 3, grass
+        [153, 0, 255],  # 4, mountain
+        [17, 85, 204],  # 5, building
+        [106, 168, 79],  # 6, plant
+        [224, 102, 102],  # 7, animal
+        [255, 255, 255],  # 8/255, void
+    ])).float()
 lookup_table /= 255
 
 print('seg testing...')
@@ -62,7 +62,7 @@ for path in glob.glob(test_img_folder + '/*'):
 
     # matlab imresize
     # the implementation is slower than matlab, can use matlab to generate first
-    img_LR = imresize(img/255, 1/4, antialiasing=True)
+    img_LR = imresize(img / 255, 1 / 4, antialiasing=True)
     img = imresize(img_LR, 4, antialiasing=True) * 255
 
     img[0] -= 103.939
@@ -73,25 +73,25 @@ for path in glob.glob(test_img_folder + '/*'):
     output = seg_model(Variable(img, volatile=True)).data.float().cpu()
 
     # prob
-    torch.save(output, os.path.join(save_prob_path, base+'_bic.pth'))  # 1x8xHxW
+    torch.save(output, os.path.join(save_prob_path, base + '_bic.pth'))  # 1x8xHxW
 
     # byte img
     _, argmax = torch.max(output.squeeze_(), 0)
     argmax = argmax.squeeze().byte()
-    cv2.imwrite(os.path.join(save_byteimg_path, base+'.png'), argmax.numpy())
+    cv2.imwrite(os.path.join(save_byteimg_path, base + '.png'), argmax.numpy())
 
     # color img
     im_h, im_w = argmax.size()
-    color = torch.FloatTensor(3, im_h, im_w).fill_(0) # black
+    color = torch.FloatTensor(3, im_h, im_w).fill_(0)  # black
     for i in range(8):
         mask = torch.eq(argmax, i)
-        color.select(0, 0).masked_fill_(mask, lookup_table[i][0]) # R
-        color.select(0, 1).masked_fill_(mask, lookup_table[i][1]) # G
-        color.select(0, 2).masked_fill_(mask, lookup_table[i][2]) # B
+        color.select(0, 0).masked_fill_(mask, lookup_table[i][0])  # R
+        color.select(0, 1).masked_fill_(mask, lookup_table[i][1])  # G
+        color.select(0, 2).masked_fill_(mask, lookup_table[i][2])  # B
     # void
     mask = torch.eq(argmax, 255)
-    color.select(0, 0).masked_fill_(mask, lookup_table[8][0]) # R
-    color.select(0, 1).masked_fill_(mask, lookup_table[8][1]) # G
-    color.select(0, 2).masked_fill_(mask, lookup_table[8][2]) # B
+    color.select(0, 0).masked_fill_(mask, lookup_table[8][0])  # R
+    color.select(0, 1).masked_fill_(mask, lookup_table[8][1])  # G
+    color.select(0, 2).masked_fill_(mask, lookup_table[8][2])  # B
     torchvision.utils.save_image(color, os.path.join(save_colorimg_path, base+'.png'), padding=0, \
         normalize=False)

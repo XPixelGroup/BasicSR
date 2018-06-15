@@ -86,7 +86,6 @@ class Logger(object):
     #                     self.tb_logger.log_value('D_out_real', D_out_real, iters)
     #                     self.tb_logger.log_value('D_out_fake', D_out_fake, iters)
 
-
     #         else: # sr and others
     #             loss_pixel = rlt['loss_pixel']  if 'loss_pixel' in rlt else -1
     #             lr = rlt['lr']
@@ -120,7 +119,8 @@ class Logger(object):
         model = rlt.pop('model')
         if 'lr' in rlt:
             lr = rlt.pop('lr')
-            message = '<epoch:{:3d}, iter:{:8,d}, time:{:.2f}, lr:{:.1e}> '.format(epoch, iters, time, lr)
+            message = '<epoch:{:3d}, iter:{:8,d}, time:{:.2f}, lr:{:.1e}> '.format(
+                epoch, iters, time, lr)
         else:
             message = '<epoch:{:3d}, iter:{:8,d}, time:{:.2f}> '.format(epoch, iters, time)
 
