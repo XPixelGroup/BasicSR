@@ -1,19 +1,15 @@
 import math
-from collections import OrderedDict
 import torch
 import torch.nn as nn
 import torchvision
 from torch.autograd import Variable
 from . import block as B
 
-
 ####################
 # Generator
 ####################
 
-"""
-SRResNet from torch (w/ and w/o BN, pre-activation)
-"""
+
 class SRResNet(nn.Module):
     def __init__(self, in_nc, out_nc, nf, nb, upscale=4, norm_type='batch', act_type='relu', \
             mode='NAC', res_scale=1, upsample_mode='upconv'):
@@ -51,6 +47,7 @@ class SRResNet(nn.Module):
 ####################
 # Discriminator
 ####################
+
 
 # VGG style Discriminator with input size 128*128
 class Discriminaotr_VGG_128(nn.Module):
@@ -105,9 +102,14 @@ class Discriminaotr_VGG_128(nn.Module):
 # Perceptual Network
 ####################
 
+
 # Assume input range is [0, 1]
 class VGGFeatureExtractor(nn.Module):
-    def __init__(self, feature_layer=34, use_bn=False, use_input_norm=True, tensor=torch.FloatTensor):
+    def __init__(self,
+                 feature_layer=34,
+                 use_bn=False,
+                 use_input_norm=True,
+                 tensor=torch.FloatTensor):
         super(VGGFeatureExtractor, self).__init__()
         if use_bn:
             model = torchvision.models.vgg19_bn(pretrained=True)

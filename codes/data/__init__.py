@@ -30,5 +30,5 @@ def create_dataset(dataset_opt):
     else:
         raise NotImplementedError("Dataset [%s] is not recognized." % mode)
     dataset = D(dataset_opt)
-    print('Dataset [%s - %s] is created.' % (dataset.name(), dataset_opt['name']))
+    print('Dataset [%s - %s] is created.' % (dataset.__class__.__name__, dataset_opt['name']))
     return dataset

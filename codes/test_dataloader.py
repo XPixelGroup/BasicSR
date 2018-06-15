@@ -18,7 +18,7 @@ opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bic
 
 opt['subset_file'] = None
 opt['mode'] = 'LRHR'  # 'LRHR' | 'LRHRseg_bg'
-opt['phase'] = 'train' # 'train' | 'val'
+opt['phase'] = 'train'  # 'train' | 'val'
 opt['use_shuffle'] = True
 opt['n_workers'] = 8
 opt['batch_size'] = 16
@@ -28,7 +28,7 @@ opt['use_flip'] = True
 opt['use_rot'] = True
 opt['color'] = 'RGB'
 
-opt['data_type'] = 'lmdb' # img lmdb
+opt['data_type'] = 'lmdb'  # img lmdb
 
 # for segmentation
 # look_up table # RGB
@@ -45,6 +45,7 @@ lookup_table = torch.from_numpy(
         [255, 255, 255],  # 8/255, void
     ])).float()
 lookup_table /= 255
+
 
 def render(seg):
     _, argmax = torch.max(seg, 0)

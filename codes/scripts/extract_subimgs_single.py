@@ -5,6 +5,7 @@ import time
 import numpy as np
 import cv2
 
+
 def main():
     GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800'
     save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
@@ -20,8 +21,9 @@ def main():
         full_path = [os.path.join(root, x) for x in fnames]
         all_files.extend(full_path)
     # cut into subtasks
-    def chunkify(lst, n): # for non-continuous chunks
+    def chunkify(lst, n):  # for non-continuous chunks
         return [lst[i::n] for i in range(n)]
+
     sub_lists = chunkify(all_files, n_thread)
     # call workers
     for i in range(n_thread):
@@ -51,20 +53,20 @@ def worker(GT_paths, save_GT_dir):
         else:
             raise ValueError('Wrong image shape - {}'.format(n_channels))
 
-        h_space = np.arange(0, h-crop_sz+1, step)
+        h_space = np.arange(0, h - crop_sz + 1, step)
         if h - (h_space[-1] + crop_sz) > thres_sz:
-            h_space = np.append(h_space, h-crop_sz)
-        w_space = np.arange(0, w-crop_sz+1, step)
+            h_space = np.append(h_space, h - crop_sz)
+        w_space = np.arange(0, w - crop_sz + 1, step)
         if w - (w_space[-1] + crop_sz) > thres_sz:
-            w_space = np.append(w_space, w-crop_sz)
+            w_space = np.append(w_space, w - crop_sz)
         index = 0
         for x in h_space:
             for y in w_space:
                 index += 1
                 if n_channels == 2:
-                    crop_img = img_GT[x:x+crop_sz, y:y+crop_sz]
+                    crop_img = img_GT[x:x + crop_sz, y:y + crop_sz]
                 else:
-                    crop_img = img_GT[x:x+crop_sz, y:y+crop_sz, :]
+                    crop_img = img_GT[x:x + crop_sz, y:y + crop_sz, :]
 
                 crop_img = np.ascontiguousarray(crop_img)
                 index_str = '{:03d}'.format(index)
@@ -74,5 +76,6 @@ def worker(GT_paths, save_GT_dir):
                 cv2.imwrite(os.path.join(save_GT_dir, base_name.replace('.png', \
                     '_s'+index_str+'.png')), crop_img, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main()

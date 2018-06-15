@@ -14,6 +14,7 @@ from data import create_dataloader, create_dataset
 from models import create_model
 from utils.logger import Logger, PrintLogger
 
+
 def main():
     # options
     parser = argparse.ArgumentParser()
@@ -112,8 +113,8 @@ def main():
                     model.test()
 
                     visuals = model.get_current_visuals()
-                    sr_img = util.tensor2img_np(visuals['SR']) # uint8
-                    gt_img = util.tensor2img_np(visuals['HR']) # uint8
+                    sr_img = util.tensor2img_np(visuals['SR'])  # uint8
+                    gt_img = util.tensor2img_np(visuals['HR'])  # uint8
 
                     # Save SR images for reference
                     save_img_path = os.path.join(img_dir, '%s_%s.png' % (img_name, current_step))

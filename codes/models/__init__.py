@@ -10,5 +10,5 @@ def create_model(opt):
     else:
         raise NotImplementedError('Model [%s] not recognized.' % model)
     m = M(opt)
-    print('Model [%s] is created.' % m.name())
+    print('Model [%s] is created.' % m.__class__.__name__)
     return m
