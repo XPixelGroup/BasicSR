@@ -10,24 +10,24 @@
     1. [SRGAN](https://arxiv.org/abs/1609.04802)
     1. [SFTGAN](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
 
-The codes will be explained in each folder with README.md and the exploration will be put in Wiki. 
+The codes will be explained in each folder with README.md and the exploration will be put in [Wiki](https://github.com/xinntao/BasicSR/wiki). 
 
-For more details about codes, models and results. Please see [`codes/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes)
+**Testing** and **Training** can be found in [`codes/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes).
 
 :sun_with_face:
 
-- It now supports a framework to train and test PSNR-oriented SR models. And we will gradually train and compare other models and try other techniques (e.g., intermediate loss for large model). 
+- It now supports a framework to train and test PSNR-oriented SR models. And we will gradually train and compare other models and try other techniques. <!--(e.g., intermediate loss for large model). -->
 
-- For SRGAN, we reproduce the results using DIV2K dataset (No BatchNorm in the generator).
+- For SRGAN, we reproduce the results using DIV2K dataset (w/o BatchNorm in the generator).
 
 <p align="center">
   <img src="https://c1.staticflickr.com/2/1730/27869068197_bf631fa9fc.jpg" height="400">
   <img src="https://c1.staticflickr.com/2/1735/27869206717_9fd4813c5e.jpg" height="400">
 </p>
 
-- For SFTGAN, we provide the training codes. However, there are still some problems. I need another several days to figure out.
+- For SFTGAN, we provide the training and testing codes.
 
-Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not so expert at coding, but I will try to keep the codes tidy. 
+Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not expert at coding, but I will try to keep the codes tidy. 
 
 <!-- ### Table of Contents
 1. [Introduction](#introduction)
@@ -36,14 +36,14 @@ Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute
 ### Introduction 
 -->
 
-### Prerequisites
+## Prerequisites
 
 - Linux
 - Python3
 - Pytorch 0.3.1
 - NVIDIA GPU + CUDA
 
-### Datasets
+## Datasets
 There are some **classical SR datasets**, for example:
 - training datasets: BSD200, T91, General100;
 - testing datasets: Set5, Set14, urban100, BSD100, manga109, historical
@@ -52,6 +52,13 @@ You can download these classical SR datasets from [Google Drive](https://drive.g
 
 Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/), or from [Baidu Drive](https://pan.baidu.com/s/1LUj90_skqlVw4rjRVeEoiw).
 
+## Pretrained models
+Pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1WR2X4_gwiQ9REb5fHfNnBfXOdeuDS8BA?usp=sharing). You can put them in `experiments/pretrained_models` folder.
+
+More details about the pretrained models, please see [`experiments/pretrained_models`](https://github.com/xinntao/BasicSR/tree/master/experiments/pretrained_models).
+
+
+<!--
 ## Getting Started
 ### How to test a model
 1. prepare your data and pretrained model
@@ -96,22 +103,9 @@ See more details in [**experiments/pretrained_models**](https://github.com/xinnt
 <sup>2</sup> DIV2K 0801 ~ 0900 validation images.
 
 <sup>3</sup> The first row is evaluated on RGB channels, while the secone row is evaluated on Y channel (of YCbCr).
-
+-->
 
 ## Acknowlegement
 
 - Code architecture is inspired from [pytorch-cyclegan](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
-- Thanks to *Wai Ho Kwok*, who develop the initial version.
-<!--
-:sun_with_face:
-
-add sft-gan testing codes. See [seg_arch and sft_arch files](https://github.com/xinntao/BasicSR/blob/master/codes/models/modules/). 
-
-The sft-gan testing codes and models are just from the torch version without much testing. Later, we will improve it and add training codes. (before June 10)
-
-The sft-gan models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1o2J8SwWaDZ69w3tyTevtakU6QrMHcYPk?usp=sharing).
--->
-
-
-
-
+- Thanks to *Wai Ho Kwok*, who develops the initial version.
