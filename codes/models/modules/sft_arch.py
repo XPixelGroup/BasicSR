@@ -141,5 +141,3 @@ class ACD_VGG_BN_96(nn.Module):
         gan = self.gan(fea)
         cls = self.cls(fea)
         return [gan, cls]
-
-
