@@ -7,8 +7,8 @@ from torch.autograd import Variable
 from torch.optim import lr_scheduler
 
 import models.networks as networks
-from models.modules.loss import GANLoss, GradientPenaltyLoss
 from .base_model import BaseModel
+from models.modules.loss import GANLoss, GradientPenaltyLoss
 
 
 class SFTGAN_ACD_Model(BaseModel):
@@ -25,12 +25,12 @@ class SFTGAN_ACD_Model(BaseModel):
         self.input_cat = self.Tensor().long() # category
 
         # define networks and load pretrained models
-        self.netG = networks.define_G(opt) # G
+        self.netG = networks.define_G(opt)  # G
         if self.is_train:
-            self.netD = networks.define_D(opt) # D
+            self.netD = networks.define_D(opt)  # D
             self.netG.train()
             self.netD.train()
-        self.load() # load G and D if needed
+        self.load()  # load G and D if needed
 
         # define losses, optimizer and scheduler
         if self.is_train:
@@ -61,7 +61,7 @@ class SFTGAN_ACD_Model(BaseModel):
             else:
                 print('Remove feature loss.')
                 self.cri_fea = None
-            if self.cri_fea: # load VGG perceptual loss
+            if self.cri_fea:  # load VGG perceptual loss
                 self.netF = networks.define_F(opt, use_bn=False)
 
             # GD gan loss
@@ -77,7 +77,8 @@ class SFTGAN_ACD_Model(BaseModel):
                 self.l_gp_w = train_opt['gp_weigth']
 
             # D cls loss
-            self.cri_ce = nn.CrossEntropyLoss()
+            self.cri_ce = nn.CrossEntropyLoss(ignore_index=0)
+            # ignore background, since bg images may conflict with other classes
 
             if self.use_gpu:
                 if self.cri_pix:
@@ -90,18 +91,22 @@ class SFTGAN_ACD_Model(BaseModel):
                     self.cri_gp.cuda()
 
             # optimizers
-            self.optimizers = [] # G and D
+            self.optimizers = []  # G and D
             # G
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
-            optim_params = []
+            optim_params_SFT = []
+            optim_params_other = []
             for k, v in self.netG.named_parameters(): # can optimize for a part of the model
-                if v.requires_grad:
-                    optim_params.append(v)
+                if 'SFT' in k or 'Cond' in k:
+                    optim_params_SFT.append(v)
                 else:
-                    print('WARNING: params [%s] will not optimize.' % k)
-            self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'], \
+                    optim_params_other.append(v)
+            self.optimizer_G_SFT = torch.optim.Adam(optim_params_SFT, lr=train_opt['lr_G']*5, \
                 weight_decay=wd_G, betas=(train_opt['beta1_G'], 0.999))
-            self.optimizers.append(self.optimizer_G)
+            self.optimizer_G_other = torch.optim.Adam(optim_params_other, lr=train_opt['lr_G'], \
+                weight_decay=wd_G, betas=(train_opt['beta1_G'], 0.999))
+            self.optimizers.append(self.optimizer_G_SFT)
+            self.optimizers.append(self.optimizer_G_other)
             # D
             wd_D = train_opt['weight_decay_D'] if train_opt['weight_decay_D'] else 0
             self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=train_opt['lr_D'], \
@@ -144,7 +149,8 @@ class SFTGAN_ACD_Model(BaseModel):
 
     def optimize_parameters(self, step):
         # G
-        self.optimizer_G.zero_grad()
+        self.optimizer_G_SFT.zero_grad()
+        self.optimizer_G_other.zero_grad()
         self.fake_H = self.netG((self.var_L, self.var_seg))
 
         l_g_total = 0
@@ -165,7 +171,9 @@ class SFTGAN_ACD_Model(BaseModel):
             l_g_total += l_g_cls
 
             l_g_total.backward()
-            self.optimizer_G.step()
+            self.optimizer_G_SFT.step()
+        if step > 20000:
+            self.optimizer_G_other.step()
 
         # D
         self.optimizer_D.zero_grad()
