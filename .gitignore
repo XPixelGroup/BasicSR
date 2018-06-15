@@ -11,6 +11,7 @@ experiments/pretrained_models/*
 data/samples_byteimg
 data/samples_colorimg
 data/samples_segprob
+data/samples_result
 
 # file type
 *.svg
