@@ -42,8 +42,7 @@ class LRHRDataset(data.Dataset):
                 'HR and LR datasets have different number of images - {}, {}.'.format(\
                 len(self.paths_LR), len(self.paths_HR))
 
-        # self.random_scale_list = [1, 0.9, 0.8, 0.7, 0.6, 0.5]
-        self.random_scale_list = None
+        self.random_scale_list = [1]
 
     def __getitem__(self, index):
         HR_path, LR_path = None, None
@@ -63,7 +62,7 @@ class LRHRDataset(data.Dataset):
             img_LR = util.read_img(self.LR_env, LR_path)
         else:  # down-sampling on-the-fly
             # randomly scale during training
-            if self.opt['phase'] == 'train' and self.random_scale_list:
+            if self.opt['phase'] == 'train':
                 random_scale = random.choice(self.random_scale_list)
                 H_s, W_s, _ = img_HR.shape
                 def _mod(n, random_scale, scale, thres):
@@ -72,7 +71,7 @@ class LRHRDataset(data.Dataset):
                     return thres if rlt < thres else rlt
                 H_s = _mod(H_s, random_scale, scale, HR_size)
                 W_s = _mod(W_s, random_scale, scale, HR_size)
-                img_HR = cv2.resize(img_HR, (W_s, H_s), interpolation=cv2.INTER_LINEAR)
+                img_HR = cv2.resize(np.copy(img_HR), (W_s, H_s), interpolation=cv2.INTER_LINEAR)
 
             H, W, _ = img_HR.shape
             # using matlab imresize
