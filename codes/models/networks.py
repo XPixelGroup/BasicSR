@@ -113,12 +113,10 @@ def define_D(opt):
 
     elif which_model == 'dis_acd':
         netD = sft_arch.ACD_VGG_BN_96()
-    elif which_model == 'dis_acd_sn':
-        netD = sft_arch.ACD_VGG_BN_128_SN()
     else:
         raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
 
-    # init_weights(netD, init_type='kaiming', scale=1)
+    init_weights(netD, init_type='kaiming', scale=1)
     if gpu_ids:
         netD = nn.DataParallel(netD).cuda()
     return netD
