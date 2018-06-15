@@ -22,7 +22,7 @@ class SFTGAN_ACD_Model(BaseModel):
         self.input_L = self.Tensor()
         self.input_H = self.Tensor()
         self.input_seg = self.Tensor()
-        self.input_cat = self.Tensor().long() # category
+        self.input_cat = self.Tensor().long()  # category
 
         # define networks and load pretrained models
         self.netG = networks.define_G(opt)  # G
@@ -96,7 +96,7 @@ class SFTGAN_ACD_Model(BaseModel):
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
             optim_params_SFT = []
             optim_params_other = []
-            for k, v in self.netG.named_parameters(): # can optimize for a part of the model
+            for k, v in self.netG.named_parameters():  # can optimize for a part of the model
                 if 'SFT' in k or 'Cond' in k:
                     optim_params_SFT.append(v)
                 else:
@@ -142,7 +142,7 @@ class SFTGAN_ACD_Model(BaseModel):
         self.input_cat.resize_(input_cat.size()).copy_(input_cat)
         self.var_cat = Variable(self.input_cat, volatile=volatile)
 
-        if need_HR: # train or val
+        if need_HR:  # train or val
             input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
             self.var_H = Variable(self.input_H, volatile=volatile)
@@ -155,10 +155,10 @@ class SFTGAN_ACD_Model(BaseModel):
 
         l_g_total = 0
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
-            if self.cri_pix: # pixel loss
+            if self.cri_pix:  # pixel loss
                 l_g_pix = self.l_pix_w * self.cri_pix(self.fake_H, self.var_H)
                 l_g_total += l_g_pix
-            if self.cri_fea: # feature loss
+            if self.cri_fea:  # feature loss
                 real_fea = self.netF(self.var_H).detach()
                 fake_fea = self.netF(self.fake_H)
                 l_g_fea = self.l_fea_w * self.cri_fea(fake_fea, real_fea)
@@ -197,7 +197,7 @@ class SFTGAN_ACD_Model(BaseModel):
             interp = (self.random_pt * self.fake_H + (1 - self.random_pt) * self.var_H).detach()
             interp.requires_grad = True
             interp_crit, _ = self.netD(interp)
-            l_d_gp = self.l_gp_w * self.cri_gp(interp, interp_crit) # maybe wrong in cls?
+            l_d_gp = self.l_gp_w * self.cri_gp(interp, interp_crit)  # maybe wrong in cls?
             l_d_total += l_d_gp
 
         l_d_total.backward()

@@ -1,18 +1,18 @@
 import os
 import math
 import pickle
-import lmdb
 import random
+import lmdb
 import numpy as np
 import torch
 import cv2
 
 IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP']
 
-
 ####################
 # Files & IO
 ####################
+
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
@@ -70,7 +70,7 @@ def _read_lmdb_img(env, path):
 def read_img(env, path):
     # read image by cv2 or from lmdb
     # return: Numpy float32, HWC, BGR, [0,1]
-    if env is None: # img
+    if env is None:  # img
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     else:
         img = _read_lmdb_img(env, path)
@@ -80,11 +80,11 @@ def read_img(env, path):
     return img
 
 
-
 ####################
 # image processing
 # process on numpy image
 ####################
+
 
 def augment(img_list, hflip=True, rot=True):
     # horizontal flip OR rotate
@@ -100,6 +100,7 @@ def augment(img_list, hflip=True, rot=True):
 
     return [_augment(img) for img in img_list]
 
+
 def channel_convert(in_c, tar_type, img_list):
     # conversion among BGR, gray and y
     if in_c == 3 and tar_type == 'gray':  # BGR to gray
@@ -112,6 +113,7 @@ def channel_convert(in_c, tar_type, img_list):
         return [cv2.cvtColor(img, cv2.COLOR_GRAY2BGR) for img in img_list]
     else:
         return img_list
+
 
 def rgb2ycbcr(img, only_y=True):
     '''same as matlab rgb2ycbcr
@@ -129,7 +131,7 @@ def rgb2ycbcr(img, only_y=True):
         rlt = np.dot(img, [65.481, 128.553, 24.966]) / 255.0 + 16.0
     else:
         rlt = np.matmul(img, [[65.481, -37.797, 112.0], [128.553, -74.203, -93.786],
-                                [24.966, 112.0, -18.214]]) / 255.0 + [16, 128, 128]
+                              [24.966, 112.0, -18.214]]) / 255.0 + [16, 128, 128]
     if in_img_type == np.uint8:
         rlt = rlt.round()
     else:
@@ -153,7 +155,7 @@ def bgr2ycbcr(img, only_y=True):
         rlt = np.dot(img, [24.966, 128.553, 65.481]) / 255.0 + 16.0
     else:
         rlt = np.matmul(img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
-                                [65.481, -37.797, 112.0]]) / 255.0 + [16, 128, 128]
+                              [65.481, -37.797, 112.0]]) / 255.0 + [16, 128, 128]
     if in_img_type == np.uint8:
         rlt = rlt.round()
     else:
@@ -173,7 +175,7 @@ def ycbcr2rgb(img):
         img *= 255.
     # convert
     rlt = np.matmul(img, [[0.00456621, 0.00456621, 0.00456621], [0, -0.00153632, 0.00791071],
-                           [0.00625893, -0.00318811, 0]]) * 255.0 + [-222.921, 135.576, -276.836]
+                          [0.00625893, -0.00318811, 0]]) * 255.0 + [-222.921, 135.576, -276.836]
     if in_img_type == np.uint8:
         rlt = rlt.round()
     else:
@@ -182,6 +184,7 @@ def ycbcr2rgb(img):
 
 
 def modcrop(img_in, scale):
+    # img_in: Numpy, HWC or HW
     img = np.copy(img_in)
     if img.ndim == 2:
         H, W = img.shape
@@ -200,8 +203,8 @@ def modcrop(img_in, scale):
 # Functions
 ####################
 
-# matlab 'imresize' function
-# now only support 'bicubic'
+
+# matlab 'imresize' function, now only support 'bicubic'
 def cubic(x):
     absx = torch.abs(x)
     absx2 = absx**2
@@ -274,12 +277,12 @@ def imresize(img, scale, antialiasing=True):
     out_C, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
     kernel_width = 4
     kernel = 'cubic'
-    '''
-    Return the desired dimension order for performing the resize.  The
-    strategy is to perform the resize first along the dimension with the
-    smallest scale factor.
-    Now we do not support this.
-    '''
+
+    # Return the desired dimension order for performing the resize.  The
+    # strategy is to perform the resize first along the dimension with the
+    # smallest scale factor.
+    # Now we do not support this.
+
     # get weights and indices
     weights_H, indices_H, sym_len_Hs, sym_len_He = calculate_weights_indices(
         in_H, out_H, scale, kernel, kernel_width, antialiasing)
@@ -333,6 +336,7 @@ def imresize(img, scale, antialiasing=True):
 
     return out_2
 
+
 def imresize_np(img, scale, antialiasing=True):
     # Now the scale should be the same for H and W
     # input: img: Numpy, HWC BGR [0,1]
@@ -343,12 +347,12 @@ def imresize_np(img, scale, antialiasing=True):
     out_C, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
     kernel_width = 4
     kernel = 'cubic'
-    '''
-    Return the desired dimension order for performing the resize.  The
-    strategy is to perform the resize first along the dimension with the
-    smallest scale factor.
-    Now we do not support this.
-    '''
+
+    # Return the desired dimension order for performing the resize.  The
+    # strategy is to perform the resize first along the dimension with the
+    # smallest scale factor.
+    # Now we do not support this.
+
     # get weights and indices
     weights_H, indices_H, sym_len_Hs, sym_len_He = calculate_weights_indices(
         in_H, out_H, scale, kernel, kernel_width, antialiasing)
@@ -404,14 +408,13 @@ def imresize_np(img, scale, antialiasing=True):
 
 
 if __name__ == '__main__':
+    # test imresize function
     # read images
-    import numpy as np
-    import cv2
     img = cv2.imread('test.png')
     img = img * 1.0 / 255
     img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
     # imresize
-    scale = 1/4
+    scale = 1 / 4
     import time
     total_time = 0
     for i in range(10):
@@ -419,21 +422,8 @@ if __name__ == '__main__':
         rlt = imresize(img, scale, antialiasing=True)
         use_time = time.time() - start_time
         total_time += use_time
-    print('average time: {}'.format(total_time/10))
+    print('average time: {}'.format(total_time / 10))
 
     import torchvision.utils
-    torchvision.utils.save_image((rlt*255).round() / 255, 'rlt.png', nrow=1, padding=0, normalize=False)
-
-# matlab imresize(better use im2double before)
-# 1404*2040 (DIV2K, 0001.png)
-# x1/2: 0.109s, err 11, 0.028s
-# x1/3: 0.0800s, err 0, 0.0204s
-# x1/3.2: 0.0792s, err 68, 0.0202s
-# x1/4: 0.0630s, err 6, 0.0194s
-# x1/8: 0.0438s, err 0, 0.0152s
-# 256*256, butterfly (Set5)
-# x2: 0.0267s, err 3, 0.0094s
-# x3: 0.0497s, err 3, 0.0112s
-# x3.2: 0.0544s, err 9, 0.0109s
-# x4: 0.0777s, err 31, 0.0137s
-# x8: 0.287s, err 101, 0.0372s
+    torchvision.utils.save_image(
+        (rlt * 255).round() / 255, 'rlt.png', nrow=1, padding=0, normalize=False)

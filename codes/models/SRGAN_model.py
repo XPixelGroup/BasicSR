@@ -21,7 +21,7 @@ class SRGANModel(BaseModel):
 
         self.input_L = self.Tensor()
         self.input_H = self.Tensor()
-        self.input_ref = self.Tensor() # for Discriminator reference
+        self.input_ref = self.Tensor()  # for Discriminator reference
 
         # define networks and load pretrained models
         self.netG = networks.define_G(opt)  # G
@@ -124,7 +124,7 @@ class SRGANModel(BaseModel):
         self.input_L.resize_(input_L.size()).copy_(input_L)
         self.var_L = Variable(self.input_L, volatile=volatile)
 
-        if need_HR: # train or val
+        if need_HR:  # train or val
             input_H = data['HR']
             self.input_H.resize_(input_H.size()).copy_(input_H)
             self.var_H = Variable(self.input_H, volatile=volatile)
@@ -140,10 +140,10 @@ class SRGANModel(BaseModel):
 
         l_g_total = 0
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
-            if self.cri_pix: # pixel loss
+            if self.cri_pix:  # pixel loss
                 l_g_pix = self.l_pix_w * self.cri_pix(self.fake_H, self.var_H)
                 l_g_total += l_g_pix
-            if self.cri_fea: # feature loss
+            if self.cri_fea:  # feature loss
                 real_fea = self.netF(self.var_H).detach()
                 fake_fea = self.netF(self.fake_H)
                 l_g_fea = self.l_fea_w * self.cri_fea(fake_fea, real_fea)

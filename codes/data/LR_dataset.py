@@ -1,5 +1,4 @@
 import os.path
-import cv2
 import numpy as np
 import torch
 import torch.utils.data as data
@@ -10,9 +9,6 @@ class LRDataset(data.Dataset):
     '''
     Read LR images only in test phase.
     '''
-
-    def name(self):
-        return 'LRDataset'
 
     def __init__(self, opt):
         super(LRDataset, self).__init__()
@@ -36,7 +32,7 @@ class LRDataset(data.Dataset):
         if self.opt['color']:
             img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
 
-        # HWC to CHW, BGR to RGB, numpy to tensor
+        # BGR to RGB, HWC to CHW, numpy to tensor
         if img_LR.shape[2] == 3:
             img_LR = img_LR[:, :, [2, 1, 0]]
         img_LR = torch.from_numpy(np.ascontiguousarray(np.transpose(img_LR, (2, 0, 1)))).float()

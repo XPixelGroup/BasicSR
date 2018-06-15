@@ -8,21 +8,21 @@ import numpy as np
 root = '/home/xtwang/Projects/BasicSR/codes/scripts/'
 save_dir = './tmp/'
 image_names = [
-    'baby.png',
-    'baby_x2.png',
-    'baby_x4.png',
+    'baby.png'
+    , 'baby_x2.png'
+    , 'baby_x4.png'
 ]
 text_lists = [
-    'baby',
-    'baby_x2',
-    'baby_x4'
+    'baby'
+    , 'baby_x2'
+    , 'baby_x4'
 ]
 h_start, h_len = 10, 400
 w_start, w_len = 10, 400
 enlarge = 1
-txt_pos = (1, 10) # w, h
+txt_pos = (1, 10)  # w, h
 front_size = 30
-duration = 0.8 # second
+duration = 0.8  # second
 
 images = []
 font = ImageFont.truetype("/usr/share/fonts/dejavu/DejaVuSans.ttf", front_size)
@@ -46,9 +46,9 @@ for filename, write_txt in zip(image_names, text_lists):
     W, H = img_pil.size
     img_pil = img_pil.resize((W * enlarge, H * enlarge), Image.BICUBIC)
     # add text
-    txt = Image.new('RGBA', img_pil.size, (255,255,255,0))
+    txt = Image.new('RGBA', img_pil.size, (255, 255, 255, 0))
     d = ImageDraw.Draw(txt)
-    d.text(txt_pos, write_txt, font=font, fill=(255,0,0,255))
+    d.text(txt_pos, write_txt, font=font, fill=(255, 0, 0, 255))
 
     out_pil = Image.alpha_composite(img_pil, txt).convert('RGB')
     out = np.array(out_pil)

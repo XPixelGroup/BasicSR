@@ -11,9 +11,6 @@ from .base_model import BaseModel
 
 
 class SRModel(BaseModel):
-    def name(self):
-        return 'SRModel'
-
     def __init__(self, opt):
         super(SRModel, self).__init__(opt)
         train_opt = opt['train']
@@ -48,7 +45,8 @@ class SRModel(BaseModel):
                     optim_params.append(v)
                 else:
                     print('WARNING: params [%s] will not optimize.' % k)
-            self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'], weight_decay=wd_G)
+            self.optimizer_G = torch.optim.Adam(optim_params,
+                                                lr=train_opt['lr_G'], weight_decay=wd_G)
             self.optimizers.append(self.optimizer_G)
 
             # schedulers
