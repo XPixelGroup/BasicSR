@@ -1,10 +1,9 @@
 import torch
 from torch.nn import init
 
-pretrained_net = torch.load('/home/xtwang/Projects/BasicSR/codes/scripts/303_340k.pth')
+pretrained_net = torch.load('../../experiments/pretrained_models/SRGAN_bicx4_noBN_DIV2K.pth')
 # should run train debug mode first to get an initial model
-crt_net = torch.load('/home/xtwang/Projects/BasicSR/codes/scripts/sft_net_s.pth')
-
+crt_net = torch.load('../../experiments/pretrained_models/sft_net_raw.pth')
 
 
 for k, v in crt_net.items():
@@ -38,5 +37,5 @@ crt_net['HR_branch.6.bias'] = pretrained_net['model.8.bias']
 crt_net['HR_branch.8.weight'] = pretrained_net['model.10.weight']
 crt_net['HR_branch.8.bias'] = pretrained_net['model.10.bias']
 
-print('OK')
-torch.save(crt_net, './sft_net_raw.pth')
+print('OK. \n Saving model...')
+torch.save(crt_net, '../../experiments/pretrained_models/sft_net_ini.pth')
