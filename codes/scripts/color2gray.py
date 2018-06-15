@@ -35,7 +35,7 @@ def worker(GT_paths, save_GT_dir, mode):
     for GT_path in GT_paths:
         base_name = os.path.basename(GT_path)
         print(base_name, os.getpid())
-        img_GT = cv2.imread(GT_path, cv2.IMREAD_UNCHANGED) # BGR
+        img_GT = cv2.imread(GT_path, cv2.IMREAD_UNCHANGED)  # BGR
 
         if mode == 'gray':
             img_y = cv2.cvtColor(img_GT, cv2.COLOR_BGR2GRAY)
@@ -45,11 +45,11 @@ def worker(GT_paths, save_GT_dir, mode):
         cv2.imwrite(os.path.join(save_GT_dir, base_name), img_y, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
 
     GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
     save_GT_dir = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_gray'
-    mode = 'gray' # 'y'
+    mode = 'gray'  # 'y'
     n_thread = 20
 
     if not os.path.exists(save_GT_dir):
@@ -69,8 +69,9 @@ if __name__=='__main__':
         full_path = [os.path.join(root, x) for x in fnames]
         all_files.extend(full_path)
     # cut into subtasks
-    def chunkify(lst, n): # for non-continuous chunks
+    def chunkify(lst, n):  # for non-continuous chunks
         return [lst[i::n] for i in range(n)]
+
     sub_lists = chunkify(all_files, n_thread)
     # call workers
     for i in range(n_thread):

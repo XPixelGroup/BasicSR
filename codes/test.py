@@ -15,7 +15,7 @@ from utils.logger import PrintLogger
 parser = argparse.ArgumentParser()
 parser.add_argument('-opt', type=str, required=True, help='Path to options JSON file.')
 opt = option.parse(parser.parse_args().opt, is_train=False)
-util.mkdirs((path for key , path in opt['path'].items() if not key == 'pretrain_model_G'))
+util.mkdirs((path for key, path in opt['path'].items() if not key == 'pretrain_model_G'))
 opt = option.dict_to_nonedict(opt)
 
 # print to file and std_out simultaneously
@@ -58,7 +58,7 @@ for test_loader in test_loaders:
 
         sr_img = util.tensor2img_np(visuals['SR'])  # uint8
 
-        if need_HR: # load GT image and calculate psnr
+        if need_HR:  # load GT image and calculate psnr
             gt_img = util.tensor2img_np(visuals['HR'])
 
             scale = test_loader.dataset.opt['scale']
@@ -69,7 +69,7 @@ for test_loader in test_loaders:
             ssim = util.ssim(cropped_sr_img, cropped_gt_img, multichannel=True)
             test_results['psnr'].append(psnr)
             test_results['ssim'].append(ssim)
-            if gt_img.shape[2] == 3: # RGB image
+            if gt_img.shape[2] == 3:  # RGB image
                 cropped_sr_img_y = rgb2ycbcr(cropped_sr_img, only_y=True)
                 cropped_gt_img_y = rgb2ycbcr(cropped_gt_img, only_y=True)
                 psnr_y = util.psnr(cropped_sr_img_y, cropped_gt_img_y)
@@ -83,13 +83,13 @@ for test_loader in test_loaders:
         else:
             print(img_name)
 
-        save_img_path = os.path.join(dataset_dir, img_name+'.png')
+        save_img_path = os.path.join(dataset_dir, img_name + '.png')
         util.save_img_np(sr_img.squeeze(), save_img_path)
 
-    if need_HR: # metrics
+    if need_HR:  # metrics
         # Average PSNR/SSIM results
-        ave_psnr = sum(test_results['psnr'])/len(test_results['psnr'])
-        ave_ssim = sum(test_results['ssim'])/len(test_results['ssim'])
+        ave_psnr = sum(test_results['psnr']) / len(test_results['psnr'])
+        ave_ssim = sum(test_results['ssim']) / len(test_results['ssim'])
         print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.4f} dB; SSIM: {:.4f}\n'\
                 .format(test_set_name, ave_psnr, ave_ssim))
         if test_results['psnr_y'] and test_results['ssim_y']:

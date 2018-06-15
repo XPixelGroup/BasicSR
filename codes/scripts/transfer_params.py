@@ -4,14 +4,12 @@ pretrained_net = torch.load('../../experiments/pretrained_models/SRResNet_bicx2_
 # should run train debug mode first to get an initial model
 crt_net = torch.load('../../experiments/debug_SRResNet_bicx4_in3nf64nb16/models/8_G.pth')
 
-
 for k, v in crt_net.items():
     print(k)
 for k, v in crt_net.items():
     if k in pretrained_net:
         crt_net[k] = pretrained_net[k]
         print('replace ... ', k)
-
 
 # x2 -> x4
 crt_net['model.5.weight'] = pretrained_net['model.2.weight']

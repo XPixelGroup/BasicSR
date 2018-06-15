@@ -9,17 +9,17 @@ import utils.util as util
 import models.modules.sft_arch as sft
 
 # model_path = '../experiments/pretrained_models/sft_net_torch.pth' # torch version
-model_path = '../experiments/pretrained_models/SFTGAN_bicx4_noBN_OST_bg.pth' # pytorch training
+model_path = '../experiments/pretrained_models/SFTGAN_bicx4_noBN_OST_bg.pth'  # pytorch training
 
 test_img_folder_name = 'samples'  # image folder name
 test_img_folder = '../data/' + test_img_folder_name  # HR images
 test_prob_path = '../data/' + test_img_folder_name + '_segprob'  # probability maps
-save_result_path = '../data/' + test_img_folder_name + '_result' # results
+save_result_path = '../data/' + test_img_folder_name + '_result'  # results
 
 # make dirs
 util.mkdirs([save_result_path])
 
-if 'torch' in model_path: # torch version
+if 'torch' in model_path:  # torch version
     model = sft.SFT_Net_torch()
 else:
     model = sft.SFT_Net()
@@ -56,5 +56,5 @@ for path in glob.glob(test_img_folder + '/*'):
     seg = Variable(seg, volatile=True).cuda()
 
     output = model((Variable(img_LR, volatile=True), seg)).data
-    output = util.tensor2img_np(output)
-    util.save_img_np(output.squeeze(), os.path.join(save_result_path, base + '_rlt.png'))
+    output = util.tensor2img_np(output.squeeze())
+    util.save_img_np(output, os.path.join(save_result_path, base + '_rlt.png'))

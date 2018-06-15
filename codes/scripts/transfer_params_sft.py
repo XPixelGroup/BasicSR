@@ -5,7 +5,6 @@ pretrained_net = torch.load('../../experiments/pretrained_models/SRGAN_bicx4_noB
 # should run train debug mode first to get an initial model
 crt_net = torch.load('../../experiments/pretrained_models/sft_net_raw.pth')
 
-
 for k, v in crt_net.items():
     if 'weight' in k:
         print(k, 'weight')
