@@ -6,6 +6,7 @@ import torch
 from torch.autograd import Variable
 from data.util import imresize, modcrop
 import utils.util as util
+import models.modules.sft_arch as sft
 
 # model_path = '../experiments/pretrained_models/sft_net_torch.pth' # torch version
 model_path = '../experiments/pretrained_models/SFTGAN_bicx4_noBN_OST_bg.pth' # pytorch training
@@ -19,10 +20,8 @@ save_result_path = '../data/' + test_img_folder_name + '_result' # results
 util.mkdirs([save_result_path])
 
 if 'torch' in model_path: # torch version
-    import models.modules.sft_arch_torch as sft_torch
-    model = sft_torch.SFT_Net_torch()
+    model = sft.SFT_Net_torch()
 else:
-    import models.modules.sft_arch as sft
     model = sft.SFT_Net()
 model.load_state_dict(torch.load(model_path), strict=True)
 model.eval()
