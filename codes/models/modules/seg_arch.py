@@ -70,35 +70,3 @@ class OutdoorSceneSeg(nn.Module):
         x = self.deconv(x)
         x = self.softmax(x)
         return x
-
-
-if __name__ == '__main__':
-    import os.path
-    import cv2
-    import numpy as np
-    from torch.autograd import Variable
-
-    # save model(for further transfer weights from t7 to pth)
-    # save_path = '/home/xtwang/Projects/BasicSR/torch_to_pytorch/pytorch_models/OutdoorSceneSeg_bic_iter_30000.pth'
-    # state_dict = net.state_dict()
-    # torch.save(state_dict, save_path)
-
-    # load network
-    net = OutdoorSceneSeg()
-    load_path = '../../../experiments/pretrained_models/OutdoorSceneSeg_bic.pth'
-    net.load_state_dict(torch.load(load_path), strict=True)
-    net.eval()
-
-    # test
-    net = net.cuda()
-    # read image
-    img = cv2.imread('../../../data/examples/OST_013.png', cv2.IMREAD_UNCHANGED)
-    img = torch.from_numpy(np.transpose(img, (2, 0, 1))).float()  # BGR, [0, 255]
-    img[0] -= 103.939
-    img[1] -= 116.779
-    img[2] -= 123.68
-    img = img.unsqueeze(0)
-    img = img.cuda()
-    img_input = Variable(img, volatile=True)
-    output = net(img_input)
-    print(output)
