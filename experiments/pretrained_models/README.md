@@ -1,6 +1,15 @@
 # Pretrained models
 
-Here are some pretrained models.
+Pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1WR2X4_gwiQ9REb5fHfNnBfXOdeuDS8BA?usp=sharing). You can put them in `experiments/pretrained_models` folder.
+
+- **SRResNet_bicx4_in3nf64nb16**.pth: SRResNet x4 model, trained on DIV2K, w/o BN, bicubic downsampling.
+- **SRGAN_bicx4_303_505**.pth: SRGAN x4 model, trained on DIV2K, w/o BN, bicubic downsampling.
+- **segmentation_OST_bic**.pth: segmentation model for bicubiced images, outdoor scenes.
+- **sft_net_torch**.pth: torch version of SFTGAN model.
+- **sft_net_ini**.pth: initialized SFTGAN model, initializing the sr generator with SRGAN_bicx4_303_505 parameters.
+- **SFTGAN_bicx4_noBN_OST_bg**.pth: SFTGAN model, trained on OST dataset and use DIV2K as background images, w/o BN, bicubic downsampling.
+
+
 
 ## SRResNet (EDSR)
 
@@ -13,8 +22,6 @@ are the best network settings.
 
 #### Qualitative results [PSNR/dB] 
 `SRResNet_bicx4_in3nf64nb16.pth` is provided here and other pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1vg_baYuagOXEhpwQgu54lJOyU8u1DsMW?usp=sharing).
-
-All these classical SR datasets can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing).
 
 | Model | Scale | Channel | DIV2K<sup>2</sup> | Set5| Set14 | BSD100 | Urban100 |
 |--- |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
