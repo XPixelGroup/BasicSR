@@ -91,7 +91,8 @@ class LRHRDataset(data.Dataset):
             img_HR = img_HR[rnd_h_HR:rnd_h_HR + HR_size, rnd_w_HR:rnd_w_HR + HR_size, :]
 
             # augmentation - flip, rotate
-            img_LR, img_HR = util.augment([img_LR, img_HR], self.opt['use_flip'], self.opt['use_rot'])
+            img_LR, img_HR = util.augment([img_LR, img_HR], self.opt['use_flip'], \
+                self.opt['use_rot'])
 
         # channel conversion
         if self.opt['color']:
