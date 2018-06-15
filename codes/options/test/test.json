@@ -1,6 +1,6 @@
 {
   "name": "SRResNet_bicx4_in3nf64nb16"
-  ,"model": "sr"
+  ,"model": "sr" // 'sr' | 'srgan'
   ,"scale": 4
   ,"gpu_ids": [0]
 
@@ -23,6 +23,7 @@
   ,"path": {
     "root": "/home/xtwang/Projects/BasicSR"
     ,"pretrain_model_G": "../experiments/pretrained_models/SRResNet_bicx4_in3nf64nb16.pth"
+    // , "pretrain_model_G": "../experiments/pretrained_models/SRGAN_bicx4_303_505.pth"
   }
 
   ,"network_G": {
