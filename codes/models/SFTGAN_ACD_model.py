@@ -166,7 +166,7 @@ class SFTGAN_ACD_Model(BaseModel):
             # G gan + cls loss
             pred_g_fake, cls_g_fake = self.netD(self.fake_H)
             l_g_gan = self.l_gan_w * self.cri_gan(pred_g_fake, True)
-            l_g_cls = self.l_gan_w * self.cri_ce(cls_g_fake, self.var_cat) # * 5
+            l_g_cls = self.l_gan_w * self.cri_ce(cls_g_fake, self.var_cat)
             l_g_total += l_g_gan
             l_g_total += l_g_cls
 
@@ -181,11 +181,11 @@ class SFTGAN_ACD_Model(BaseModel):
         # real data
         pred_d_real, cls_d_real = self.netD(self.var_H)
         l_d_real = self.cri_gan(pred_d_real, True)
-        l_d_cls_real = self.cri_ce(cls_d_real, self.var_cat) # * 5
+        l_d_cls_real = self.cri_ce(cls_d_real, self.var_cat)
         # fake data
         pred_d_fake, cls_d_fake = self.netD(self.fake_H.detach())  # detach to avoid BP to G
         l_d_fake = self.cri_gan(pred_d_fake, False)
-        l_d_cls_fake = self.cri_ce(cls_d_fake, self.var_cat) # * 5
+        l_d_cls_fake = self.cri_ce(cls_d_fake, self.var_cat)
 
         l_d_total = l_d_real + l_d_cls_real + l_d_fake + l_d_cls_fake
 

@@ -4,7 +4,6 @@ architecture for sft
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .spectral_norm import spectral_norm
 
 
 class SFTLayer(nn.Module):

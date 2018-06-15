@@ -1,15 +1,16 @@
 {
   "name": "debug_002_SFTGANx4_OST" //  please remove "debub_" during formal training
   ,"use_tb_logger": true
-  ,"model":"sftgan"
+  ,"model": "sftgan"
   ,"scale": 4
   ,"gpu_ids": [0]
 
   ,"datasets": {
     "train": {
       "name": "OST"
-      ,"mode": "LRHRseg"
+      ,"mode": "LRHRseg_bg"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/OST/train/img"
+      ,"dataroot_HR_bg": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
       ,"dataroot_LR": null
       ,"subset_file": null
       ,"use_shuffle": true
@@ -21,7 +22,7 @@
     }
     , "val": {
       "name": "val_OST300_part"
-      ,"mode": "LRHRseg"
+      ,"mode": "LRHRseg_bg"
       ,"dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/OST/val/img"
       ,"dataroot_LR": null
     }
@@ -47,18 +48,18 @@
     ,"weight_decay_D": 0
     ,"beta1_D": 0.9
     ,"lr_scheme": "MultiStepLR"
-    ,"lr_steps": [100000, 200000, 300000, 400000]
+    ,"lr_steps": [50000, 100000, 150000, 200000]
     ,"lr_gamma": 0.5
 
     ,"pixel_criterion": "l1"
     ,"pixel_weight": 0
     ,"feature_criterion": "l1"
     ,"feature_weight": 1
-    ,"gan_type": "vanilla" // "vanilla" | "lsgan" | "wgan-gp"
-    ,"gan_weight": 1e-2
+    ,"gan_type": "vanilla"
+    ,"gan_weight": 5e-3
 
     ,"D_update_ratio": 1
-    ,"D_init_iters":0
+    ,"D_init_iters": 0
 
     // ,"gp_weigth": 10 //for wgan-gp
 

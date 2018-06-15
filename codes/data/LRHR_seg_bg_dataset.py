@@ -48,12 +48,13 @@ class LRHRSeg_BG_Dataset(data.Dataset):
         HR_size = self.opt['HR_size']
 
         # get HR image
-        if random.choice(list(range(self.ration))) == 0:  # read bg image
+        if self.opt['phase'] == 'train' and \
+                random.choice(list(range(self.ration))) == 0:  # read bg image
             bg_index = random.randint(0, len(self.paths_HR_bg) - 1)
             HR_path = self.paths_HR_bg[bg_index]
             img_HR = util.read_img(self.HR_env_bg, HR_path)
             seg = torch.FloatTensor(8, img_HR.shape[0], img_HR.shape[1]).fill_(0)
-            seg[0,:,:] = 1 # background
+            seg[0, :, :] = 1 # background
         else:
             HR_path = self.paths_HR[index]
             img_HR = util.read_img(self.HR_env, HR_path)
@@ -100,7 +101,7 @@ class LRHRSeg_BG_Dataset(data.Dataset):
 
             # augmentation - flip, rotate
             img_LR, img_HR, seg = util.augment([img_LR, img_HR, seg], self.opt['use_flip'],
-                                          self.opt['use_rot'])
+                self.opt['use_rot'])
 
             # category
             if 'building' in HR_path:
