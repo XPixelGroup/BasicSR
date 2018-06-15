@@ -7,26 +7,31 @@ import torch.utils.data as data
 import data.util as util
 
 
-class LRHRSegDataset(data.Dataset):
+class LRHRSeg_BG_Dataset(data.Dataset):
     '''
-    Read HR, seg; generate LR, category
+    Read HR image, seg map; generate LR image, category
     for SFT-GAN
+    also sample general scenes for background
     '''
 
     def name(self):
-        return 'LRHRSegDataset'
+        return 'LRHRSeg_BG_Dataset'
 
     def __init__(self, opt):
-        super(LRHRSegDataset, self).__init__()
+        super(LRHRSeg_BG_Dataset, self).__init__()
         self.opt = opt
         self.paths_LR = None
         self.paths_HR = None
-        self.LR_env = None  # environment for lmdb
+        self.paths_HR_bg = None
+        self.LR_env = None # environment for lmdb
         self.HR_env = None
+        self.HR_env_bg = None
 
         # read image list from lmdb or image files
         self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
         self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
+        self.HR_env_bg, self.paths_HR_bg = util.get_image_paths(opt['data_type'], \
+            opt['dataroot_HR_bg'])
 
         assert self.paths_HR, 'Error: HR paths are empty.'
         if self.paths_LR and self.paths_HR:
@@ -34,9 +39,8 @@ class LRHRSegDataset(data.Dataset):
                 'HR and LR datasets have different number of images - {}, {}.'.format(\
                 len(self.paths_LR), len(self.paths_HR))
 
-        # randomly scale list
         self.random_scale_list = [1, 0.9, 0.8, 0.7, 0.6, 0.5]
-
+        self.ration = 10  # 10 OST data and 1 DIV2K general data
 
     def __getitem__(self, index):
         HR_path, LR_path = None, None
@@ -44,14 +48,19 @@ class LRHRSegDataset(data.Dataset):
         HR_size = self.opt['HR_size']
 
         # get HR image
-        HR_path = self.paths_HR[index]
-        img_HR = util.read_img(self.HR_env, HR_path)
+        if random.choice(list(range(self.ration))) == 0:  # read bg image
+            bg_index = random.randint(0, len(self.paths_HR_bg) - 1)
+            HR_path = self.paths_HR_bg[bg_index]
+            img_HR = util.read_img(self.HR_env_bg, HR_path)
+            seg = torch.FloatTensor(8, img_HR.shape[0], img_HR.shape[1]).fill_(0)
+            seg[0,:,:] = 1 # background
+        else:
+            HR_path = self.paths_HR[index]
+            img_HR = util.read_img(self.HR_env, HR_path)
+            seg = torch.load(HR_path.replace('/img/', '/bicseg/').replace('.png', '.pth'))
         # modcrop in validation phase
         if self.opt['phase'] != 'train':
             img_HR = util.modcrop(img_HR, 8)
-
-        # get segmentation probability map
-        seg = torch.load(HR_path.replace('/img/', '/bicseg/').replace('.png', '.pth'))
         seg = np.transpose(seg.numpy(), (1, 2, 0))
 
         # get LR image
@@ -95,21 +104,21 @@ class LRHRSegDataset(data.Dataset):
 
             # category
             if 'building' in HR_path:
-                category = 0
-            elif 'plant' in HR_path:
                 category = 1
-            elif 'mountain' in HR_path:
+            elif 'plant' in HR_path:
                 category = 2
-            elif 'water' in HR_path:
+            elif 'mountain' in HR_path:
                 category = 3
-            elif 'sky' in HR_path:
+            elif 'water' in HR_path:
                 category = 4
-            elif 'grass' in HR_path:
+            elif 'sky' in HR_path:
                 category = 5
-            elif 'animal' in HR_path:
+            elif 'grass' in HR_path:
                 category = 6
+            elif 'animal' in HR_path:
+                category = 7
             else:
-                category = 7 # background
+                category = 0 # background
         else:
             category = -1 # during val, useless
 
