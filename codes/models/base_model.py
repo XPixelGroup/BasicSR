@@ -7,9 +7,7 @@ class BaseModel():
     def __init__(self, opt):
         self.opt = opt
         self.save_dir = opt['path']['models']  # save models
-        self.use_gpu = opt['gpu_ids'] is not None
-        self.Tensor = torch.cuda.FloatTensor if self.use_gpu else torch.FloatTensor ##remove
-        self.device = torch.device('cuda' if self.use_gpu else 'cpu' )
+        self.device = torch.device('cuda' if opt['gpu_ids'] is not None else 'cpu' )
         self.is_train = opt['is_train']
 
     def feed_data(self, data):
