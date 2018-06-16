@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 from torch.optim import lr_scheduler
 
 import models.networks as networks
@@ -14,8 +13,6 @@ class SRModel(BaseModel):
     def __init__(self, opt):
         super(SRModel, self).__init__(opt)
         train_opt = opt['train']
-        self.input_L = self.Tensor()
-        self.input_H = self.Tensor()
 
         # define network and load pretrained models
         self.netG = networks.define_G(opt)
@@ -65,15 +62,10 @@ class SRModel(BaseModel):
         print('-----------------------------------------------')
 
     def feed_data(self, data, volatile=False, need_HR=True):
-        # LR
-        input_L = data['LR']
-        self.input_L.resize_(input_L.size()).copy_(input_L)
-        self.var_L = Variable(self.input_L, volatile=volatile)
+        self.var_L = data['LR'].to(self.device) # LR
 
         if need_HR:
-            input_H = data['HR']
-            self.input_H.resize_(input_H.size()).copy_(input_H)
-            self.real_H = Variable(self.input_H, volatile=volatile)
+            self.real_H = data['HR'].to(self.device) # HR
 
     def optimize_parameters(self, step):
         self.optimizer_G.zero_grad()
@@ -83,7 +75,7 @@ class SRModel(BaseModel):
         self.optimizer_G.step()
 
         # set log
-        self.log_dict['l_pix'] = l_pix.data[0]
+        self.log_dict['l_pix'] = l_pix.item()
 
     def test(self):
         self.netG.eval()
@@ -95,10 +87,10 @@ class SRModel(BaseModel):
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.var_L.data[0].float().cpu()
-        out_dict['SR'] = self.fake_H.data[0].float().cpu()
+        out_dict['LR'] = self.var_L.detach()[0].float().cpu()
+        out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
         if need_HR:
-            out_dict['HR'] = self.real_H.data[0].float().cpu()
+            out_dict['HR'] = self.real_H.detach()[0].float().cpu()
         return out_dict
 
     def print_network(self):
