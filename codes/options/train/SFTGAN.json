@@ -1,6 +1,6 @@
 {
   "name": "debug_002_SFTGANx4_OST" //  please remove "debub_" during formal training
-  , "use_tb_logger": true
+  , "use_tb_logger": false
   , "model": "sftgan"
   , "scale": 4
   , "gpu_ids": [0]
