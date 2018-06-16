@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 from torch.optim import lr_scheduler
 
 import models.networks as networks
@@ -18,11 +17,6 @@ class SFTGAN_ACD_Model(BaseModel):
     def __init__(self, opt):
         super(SFTGAN_ACD_Model, self).__init__(opt)
         train_opt = opt['train']
-
-        self.input_L = self.Tensor()
-        self.input_H = self.Tensor()
-        self.input_seg = self.Tensor()
-        self.input_cat = self.Tensor().long()  # category
 
         # define networks and load pretrained models
         self.netG = networks.define_G(opt)  # G
@@ -65,13 +59,13 @@ class SFTGAN_ACD_Model(BaseModel):
                 self.netF = networks.define_F(opt, use_bn=False)
 
             # GD gan loss
-            self.cri_gan = GANLoss(train_opt['gan_type'], 1.0, 0.0, self.Tensor)
+            self.cri_gan = GANLoss(train_opt['gan_type'], 1.0, 0.0)
             self.l_gan_w = train_opt['gan_weight']
             self.D_update_ratio = train_opt['D_update_ratio'] if train_opt['D_update_ratio'] else 1
             self.D_init_iters = train_opt['D_init_iters'] if train_opt['D_init_iters'] else 0
 
             if train_opt['gan_type'] == 'wgan-gp':
-                self.random_pt = Variable(self.Tensor(1, 1, 1, 1))
+                self.random_pt = torch.Tensor(1, 1, 1, 1).to(self.device)
                 # gradient penalty loss
                 self.cri_gp = GradientPenaltyLoss(tensor=self.Tensor)
                 self.l_gp_w = train_opt['gp_weigth']
@@ -130,22 +124,14 @@ class SFTGAN_ACD_Model(BaseModel):
 
     def feed_data(self, data, volatile=False, need_HR=True):
         # LR
-        input_L = data['LR']
-        self.input_L.resize_(input_L.size()).copy_(input_L)
-        self.var_L = Variable(self.input_L, volatile=volatile)
+        self.var_L = data['LR'].to(self.device)
         # seg
-        input_seg = data['seg']
-        self.input_seg.resize_(input_seg.size()).copy_(input_seg)
-        self.var_seg = Variable(self.input_seg, volatile=volatile)
+        self.var_seg = data['seg'].to(self.device)
         # category
-        input_cat = data['category']
-        self.input_cat.resize_(input_cat.size()).copy_(input_cat)
-        self.var_cat = Variable(self.input_cat, volatile=volatile)
+        self.var_cat = data['category'].long().to(self.device)
 
         if need_HR:  # train or val
-            input_H = data['HR']
-            self.input_H.resize_(input_H.size()).copy_(input_H)
-            self.var_H = Variable(self.input_H, volatile=volatile)
+            self.var_H = data['HR'].to(self.device)
 
     def optimize_parameters(self, step):
         # G
@@ -192,8 +178,8 @@ class SFTGAN_ACD_Model(BaseModel):
         if self.opt['train']['gan_type'] == 'wgan-gp':
             batch_size = self.var_H.size(0)
             if self.random_pt.size(0) != batch_size:
-                self.random_pt.data.resize_(batch_size, 1, 1, 1)
-            self.random_pt.data.uniform_()  # Draw random interpolation points
+                self.random_pt.detach().resize_(batch_size, 1, 1, 1)
+            self.random_pt.detach().uniform_()  # Draw random interpolation points
             interp = (self.random_pt * self.fake_H + (1 - self.random_pt) * self.var_H).detach()
             interp.requires_grad = True
             interp_crit, _ = self.netD(interp)
@@ -207,20 +193,20 @@ class SFTGAN_ACD_Model(BaseModel):
         if step % self.D_update_ratio == 0 and step > self.D_init_iters:
             # G
             if self.cri_pix:
-                self.log_dict['l_g_pix'] = l_g_pix.data[0]
+                self.log_dict['l_g_pix'] = l_g_pix.item()
             if self.cri_fea:
-                self.log_dict['l_g_fea'] = l_g_fea.data[0]
-            self.log_dict['l_g_gan'] = l_g_gan.data[0]
+                self.log_dict['l_g_fea'] = l_g_fea.item()
+            self.log_dict['l_g_gan'] = l_g_gan.item()
         # D
-        self.log_dict['l_d_real'] = l_d_real.data[0]
-        self.log_dict['l_d_fake'] = l_d_fake.data[0]
-        self.log_dict['l_d_cls_real'] = l_d_cls_real.data[0]
-        self.log_dict['l_d_cls_fake'] = l_d_cls_fake.data[0]
+        self.log_dict['l_d_real'] = l_d_real.item()
+        self.log_dict['l_d_fake'] = l_d_fake.item()
+        self.log_dict['l_d_cls_real'] = l_d_cls_real.item()
+        self.log_dict['l_d_cls_fake'] = l_d_cls_fake.item()
         if self.opt['train']['gan_type'] == 'wgan-gp':
-            self.log_dict['l_d_gp'] = l_d_gp.data[0]
+            self.log_dict['l_d_gp'] = l_d_gp.item()
         # D outputs
-        self.log_dict['D_real'] = torch.mean(pred_d_real.data)
-        self.log_dict['D_fake'] = torch.mean(pred_d_fake.data)
+        self.log_dict['D_real'] = torch.mean(pred_d_real.detach())
+        self.log_dict['D_fake'] = torch.mean(pred_d_fake.detach())
 
     def test(self):
         self.netG.eval()
@@ -232,10 +218,10 @@ class SFTGAN_ACD_Model(BaseModel):
 
     def get_current_visuals(self, need_HR=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.var_L.data[0].float().cpu()
-        out_dict['SR'] = self.fake_H.data[0].float().cpu()
+        out_dict['LR'] = self.var_L.detach()[0].float().cpu()
+        out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
         if need_HR:
-            out_dict['HR'] = self.var_H.data[0].float().cpu()
+            out_dict['HR'] = self.var_H.detach()[0].float().cpu()
         return out_dict
 
     def print_network(self):

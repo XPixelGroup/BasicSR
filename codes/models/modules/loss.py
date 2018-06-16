@@ -1,20 +1,14 @@
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 
 
 # Define GAN loss: [vanilla | lsgan | wgan-gp]
 class GANLoss(nn.Module):
-    def __init__(self, gan_type, real_label_val=1.0, fake_label_val=0.0, tensor=torch.FloatTensor):
+    def __init__(self, gan_type, real_label_val=1.0, fake_label_val=0.0):
         super(GANLoss, self).__init__()
         self.gan_type = gan_type.lower()
         self.real_label_val = real_label_val
         self.fake_label_val = fake_label_val
-        self.Tensor = tensor
-
-        if self.gan_type in ['vanilla', 'lsgan']:
-            self.register_buffer('real_label', self.Tensor())
-            self.register_buffer('fake_label', self.Tensor())
 
         if self.gan_type == 'vanilla':
             self.loss = nn.BCEWithLogitsLoss()
@@ -34,13 +28,9 @@ class GANLoss(nn.Module):
         if self.gan_type == 'wgan-gp':
             return target_is_real
         if target_is_real:
-            if self.real_label.size() != input.size():  # check if new label needed
-                self.real_label.resize_(input.size()).fill_(self.real_label_val)
-            return Variable(self.real_label, requires_grad=False)
+            return torch.zeros_like(input).fill_(self.real_label_val)
         else:
-            if self.fake_label.size() != input.size():  # check if new label needed
-                self.fake_label.resize_(input.size()).fill_(self.fake_label_val)
-            return Variable(self.fake_label, requires_grad=False)
+            return torch.zeros_like(input).fill_(self.fake_label_val)
 
     def forward(self, input, target_is_real):
         target_label = self.get_target_label(input, target_is_real)

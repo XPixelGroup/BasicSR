@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 
 import torch
-from torch.autograd import Variable
 import torchvision.utils
 
 import models.modules.seg_arch as seg_arch
@@ -70,7 +69,7 @@ for path in glob.glob(test_img_folder + '/*'):
     img[2] -= 123.68
     img = img.unsqueeze(0)
     img = img.cuda()
-    output = seg_model(Variable(img, volatile=True)).data.float().cpu()
+    output = seg_model(img).detach().float().cpu()
 
     # prob
     torch.save(output, os.path.join(save_prob_path, base + '_bic.pth'))  # 1x8xHxW

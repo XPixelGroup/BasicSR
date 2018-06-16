@@ -3,7 +3,6 @@ import glob
 import cv2
 import numpy as np
 import torch
-from torch.autograd import Variable
 from data.util import imresize, modcrop
 import utils.util as util
 import models.modules.sft_arch as sft
@@ -53,8 +52,8 @@ for path in glob.glob(test_img_folder + '/*'):
     # seg.fill_(0)
     # seg[:,5].fill_(1)
 
-    seg = Variable(seg, volatile=True).cuda()
+    seg = seg.cuda()
 
-    output = model((Variable(img_LR, volatile=True), seg)).data
+    output = model((img_LR, seg)).data
     output = util.tensor2img_np(output.squeeze())
     util.save_img_np(output, os.path.join(save_result_path, base + '_rlt.png'))
