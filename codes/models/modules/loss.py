@@ -28,9 +28,9 @@ class GANLoss(nn.Module):
         if self.gan_type == 'wgan-gp':
             return target_is_real
         if target_is_real:
-            return torch.zeros_like(input).fill_(self.real_label_val)
+            return torch.empty_like(input).fill_(self.real_label_val)
         else:
-            return torch.zeros_like(input).fill_(self.fake_label_val)
+            return torch.empty_like(input).fill_(self.fake_label_val)
 
     def forward(self, input, target_is_real):
         target_label = self.get_target_label(input, target_is_real)
@@ -39,9 +39,10 @@ class GANLoss(nn.Module):
 
 
 class GradientPenaltyLoss(nn.Module):
-    def __init__(self, tensor=torch.FloatTensor):
+    def __init__(self, device=torch.device('cpu')):
         super(GradientPenaltyLoss, self).__init__()
-        self.register_buffer('grad_outputs', tensor())
+        self.register_buffer('grad_outputs', torch.Tensor())
+        self.grad_outputs = self.grad_outputs.to(device)
 
     def get_grad_outputs(self, input):
         if self.grad_outputs.size() != input.size():

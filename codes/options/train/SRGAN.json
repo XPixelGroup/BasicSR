@@ -1,6 +1,6 @@
 {
-  "name": "debug_001_SRGANx4_DIV2K" //  please remove "debub_" during formal training
-  , "use_tb_logger": true
+  "name": "debug_001_pt4_SRGANx4_DIV2K" //  please remove "debub_" during formal training
+  , "use_tb_logger": false
   , "model":"srgan"
   , "scale": 4
   , "gpu_ids": [0]
