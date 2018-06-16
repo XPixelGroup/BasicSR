@@ -1,5 +1,7 @@
 # BasicSR
 
+pytorch 0.4 version
+
 **BasicSR** wants to provide some basic deep-learning based models for super-resolution, including:
 
 1. PSNR-oriented SR models (e.g., SRCNN, VDSR, SRResNet and etc)
@@ -10,7 +12,7 @@
     1. [SRGAN](https://arxiv.org/abs/1609.04802)
     1. [SFTGAN](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
 
-The codes will be explained in each folder with README.md and the exploration will be put in [Wiki](https://github.com/xinntao/BasicSR/wiki). 
+The codes will be explained in each folder with README.md and the exploration will be put in [Wiki](https://github.com/xinntao/BasicSR/wiki).
 
 **Testing** and **Training** can be found in [`codes/README.md`](https://github.com/xinntao/BasicSR/tree/master/codes).
 
@@ -27,13 +29,13 @@ The codes will be explained in each folder with README.md and the exploration wi
 
 - For SFTGAN, we provide the training and testing codes.
 
-Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not expert at coding, but I will try to keep the codes tidy. 
+Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute to this repo :stuck_out_tongue_winking_eye: . I am not expert at coding, but I will try to keep the codes tidy.
 
 <!-- ### Table of Contents
 1. [Introduction](#introduction)
 1. [Introduction](#introduction)
 
-### Introduction 
+### Introduction
 -->
 
 ## Prerequisites
@@ -48,7 +50,7 @@ There are some **classical SR datasets**, for example:
 - training datasets: BSD200, T91, General100;
 - testing datasets: Set5, Set14, urban100, BSD100, manga109, historical
 
-You can download these classical SR datasets from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing) or [Baidu Drive](https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q). 
+You can download these classical SR datasets from [Google Drive](https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing) or [Baidu Drive](https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q).
 
 Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/), or from [Baidu Drive](https://pan.baidu.com/s/1LUj90_skqlVw4rjRVeEoiw).
 
