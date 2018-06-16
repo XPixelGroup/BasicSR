@@ -2,7 +2,6 @@ import math
 import torch
 import torch.nn as nn
 import torchvision
-from torch.autograd import Variable
 from . import block as B
 
 ####################
@@ -109,7 +108,7 @@ class VGGFeatureExtractor(nn.Module):
                  feature_layer=34,
                  use_bn=False,
                  use_input_norm=True,
-                 tensor=torch.FloatTensor):
+                 device=torch.device('cpu')):
         super(VGGFeatureExtractor, self).__init__()
         if use_bn:
             model = torchvision.models.vgg19_bn(pretrained=True)
@@ -117,9 +116,9 @@ class VGGFeatureExtractor(nn.Module):
             model = torchvision.models.vgg19(pretrained=True)
         self.use_input_norm = use_input_norm
         if self.use_input_norm:
-            mean = Variable(tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1), requires_grad=False)
+            mean = torch.Tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).to(device)
             # [0.485-1, 0.456-1, 0.406-1] if input in range [-1,1]
-            std = Variable(tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1), requires_grad=False)
+            std = torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).to(device)
             # [0.229*2, 0.224*2, 0.225*2] if input in range [-1,1]
             self.register_buffer('mean', mean)
             self.register_buffer('std', std)
