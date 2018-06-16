@@ -95,7 +95,7 @@ def define_G(opt):
     #     init_weights(netG, init_type='orthogonal')
     if gpu_ids:
         assert torch.cuda.is_available()
-        netG = nn.DataParallel(netG).cuda()
+        netG = nn.DataParallel(netG)
     return netG
 
 
@@ -116,7 +116,7 @@ def define_D(opt):
 
     init_weights(netD, init_type='kaiming', scale=1)
     if gpu_ids:
-        netD = nn.DataParallel(netD).cuda()
+        netD = nn.DataParallel(netD)
     return netD
 
 
@@ -131,6 +131,6 @@ def define_F(opt, use_bn=False):
     netF = arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
         use_input_norm=True, device=device)
     if gpu_ids:
-        netF = nn.DataParallel(netF).cuda()
+        netF = nn.DataParallel(netF)
     netF.eval()  # No need to train
     return netF

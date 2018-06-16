@@ -15,7 +15,7 @@ class SRModel(BaseModel):
         train_opt = opt['train']
 
         # define network and load pretrained models
-        self.netG = networks.define_G(opt)
+        self.netG = networks.define_G(opt).to(self.device)
         self.load()
 
         if self.is_train:
@@ -24,13 +24,11 @@ class SRModel(BaseModel):
             # loss
             loss_type = train_opt['pixel_criterion']
             if loss_type == 'l1':
-                self.cri_pix = nn.L1Loss()
+                self.cri_pix = nn.L1Loss().to(self.device)
             elif loss_type == 'l2':
-                self.cri_pix = nn.MSELoss()
+                self.cri_pix = nn.MSELoss().to(self.device)
             else:
                 raise NotImplementedError('Loss type [%s] is not recognized.' % loss_type)
-            if self.use_gpu:
-                self.cri_pix.cuda()
             self.l_pix_w = train_opt['pixel_weight']
 
             # optimizers
@@ -61,7 +59,7 @@ class SRModel(BaseModel):
         self.print_network()
         print('-----------------------------------------------')
 
-    def feed_data(self, data, volatile=False, need_HR=True):
+    def feed_data(self, data, need_HR=True):
         self.var_L = data['LR'].to(self.device) # LR
 
         if need_HR:
