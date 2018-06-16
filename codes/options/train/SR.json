@@ -1,6 +1,6 @@
 {
   "name":"debug_000_SRResNetx4_DIV2K" //  please remove "debub_" during formal training
-  , "use_tb_logger": true
+  , "use_tb_logger": false
   , "model":"sr"
   , "scale": 4
   , "gpu_ids": [0]
