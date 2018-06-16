@@ -1,6 +1,5 @@
 import torch
 from torch.utils.serialization import load_lua
-from torch.autograd import Variable
 
 
 # # SRResNet w/o BN
