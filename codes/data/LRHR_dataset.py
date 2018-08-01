@@ -29,9 +29,9 @@ class LRHRDataset(data.Dataset):
                         for line in f])
             if opt['dataroot_LR'] is not None:
                 raise NotImplementedError('Now subset only supports generating LR on-the-fly.')
-        # read image list from lmdb or image files
-        self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
-        self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
+        else: # read image list from lmdb or image files
+            self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
+            self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
 
         assert self.paths_HR, 'Error: HR path is empty.'
         if self.paths_LR and self.paths_HR:
@@ -71,6 +71,9 @@ class LRHRDataset(data.Dataset):
                 H_s = _mod(H_s, random_scale, scale, HR_size)
                 W_s = _mod(W_s, random_scale, scale, HR_size)
                 img_HR = cv2.resize(np.copy(img_HR), (W_s, H_s), interpolation=cv2.INTER_LINEAR)
+                # force to 3 channels
+                if img_HR.ndim == 2:
+                    img_HR = cv2.cvtColor(img_HR, cv2.COLOR_GRAY2BGR)
 
             H, W, _ = img_HR.shape
             # using matlab imresize
@@ -78,8 +81,18 @@ class LRHRDataset(data.Dataset):
             if img_LR.ndim == 2:
                 img_LR = np.expand_dims(img_LR, axis=2)
 
-        H, W, C = img_LR.shape
         if self.opt['phase'] == 'train':
+            # if the image size is too small
+            H, W, _ = img_HR.shape
+            if H < HR_size or W < HR_size:
+                img_HR = cv2.resize(
+                    np.copy(img_HR), (HR_size, HR_size), interpolation=cv2.INTER_LINEAR)
+                # using matlab imresize
+                img_LR = util.imresize_np(img_HR, 1 / scale, True)
+                if img_LR.ndim == 2:
+                    img_LR = np.expand_dims(img_LR, axis=2)
+            H, W, C = img_LR.shape
+
             LR_size = HR_size // scale
 
             # randomly crop
