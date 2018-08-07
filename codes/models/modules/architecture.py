@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torchvision
 from . import block as B
+from . import spectral_norm as SN
 
 ####################
 # Generator
@@ -43,12 +44,129 @@ class SRResNet(nn.Module):
         return x
 
 
+class RRDB_Net(nn.Module):
+    def __init__(self, in_nc, out_nc, nf, nb, gc=32, upscale=4, norm_type=None, act_type='leakyrelu', \
+            mode='CNA', res_scale=1, upsample_mode='upconv'):
+        super(RRDB_Net, self).__init__()
+        n_upscale = int(math.log(upscale, 2))
+        if upscale == 3:
+            n_upscale = 1
+
+        fea_conv = B.conv_block(in_nc, nf, kernel_size=3, norm_type=None, act_type=None)
+        rb_blocks = [B.RRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
+            norm_type=norm_type, act_type=act_type, mode='CNA') for _ in range(nb)]
+        LR_conv = B.conv_block(nf, nf, kernel_size=3, norm_type=norm_type, act_type=None, mode=mode)
+
+        if upsample_mode == 'upconv':
+            upsample_block = B.upconv_blcok
+        elif upsample_mode == 'pixelshuffle':
+            upsample_block = B.pixelshuffle_block
+        else:
+            raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
+        if upscale == 3:
+            upsampler = upsample_block(nf, nf, 3, act_type=act_type)
+        else:
+            upsampler = [upsample_block(nf, nf, act_type=act_type) for _ in range(n_upscale)]
+        HR_conv0 = B.conv_block(nf, nf, kernel_size=3, norm_type=None, act_type=act_type)
+        HR_conv1 = B.conv_block(nf, out_nc, kernel_size=3, norm_type=None, act_type=None)
+
+        self.model = B.sequential(fea_conv, B.ShortcutBlock(B.sequential(*rb_blocks, LR_conv)),\
+            *upsampler, HR_conv0, HR_conv1)
+
+    def forward(self, x):
+        x = self.model(x)
+        return x
+
+
+class RRRDB_Net(nn.Module):
+    def __init__(self, in_nc, out_nc, nf, nb, gc=32, upscale=4, norm_type=None, act_type='leakyrelu', \
+            mode='CNA', res_scale=1, upsample_mode='upconv'):
+        super(RRRDB_Net, self).__init__()
+        n_upscale = int(math.log(upscale, 2))
+        if upscale == 3:
+            n_upscale = 1
+
+        fea_conv = B.conv_block(in_nc, nf, kernel_size=3, norm_type=None, act_type=None)
+        rb_blocks = [B.RRRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
+            norm_type=norm_type, act_type=act_type, mode='CNA') for _ in range(nb)]
+        rb_blocks.append(B.RRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
+            norm_type=norm_type, act_type=act_type, mode='CNA'))
+        rb_blocks.append(B.RRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
+            norm_type=norm_type, act_type=act_type, mode='CNA'))
+        LR_conv = B.conv_block(nf, nf, kernel_size=3, norm_type=norm_type, act_type=None, mode=mode)
+
+        if upsample_mode == 'upconv':
+            upsample_block = B.upconv_blcok
+        elif upsample_mode == 'pixelshuffle':
+            upsample_block = B.pixelshuffle_block
+        else:
+            raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
+        if upscale == 3:
+            upsampler = upsample_block(nf, nf, 3, act_type=act_type)
+        else:
+            upsampler = [upsample_block(nf, nf, act_type=act_type) for _ in range(n_upscale)]
+        HR_conv0 = B.conv_block(nf, nf, kernel_size=3, norm_type=None, act_type=act_type)
+        HR_conv1 = B.conv_block(nf, out_nc, kernel_size=3, norm_type=None, act_type=None)
+
+        self.model = B.sequential(fea_conv, B.ShortcutBlock(B.sequential(*rb_blocks, LR_conv)),\
+            *upsampler, HR_conv0, HR_conv1)
+
+    def forward(self, x):
+        x = self.model(x)
+        return x
+
 ####################
 # Discriminator
 ####################
 
 
 # VGG style Discriminator with input size 128*128
+class Discriminaotr_VGG_128_SN(nn.Module):
+    def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
+        super(Discriminaotr_VGG_128_SN, self).__init__()
+        # features
+        # hxw, c
+        # 128, 64
+        self.lrelu = nn.LeakyReLU(0.2, True)
+
+        self.conv0 = SN.spectral_norm(nn.Conv2d(3, 64, 3, 1, 1))
+        self.conv1 = SN.spectral_norm(nn.Conv2d(64, 64, 4, 2, 1))
+        # 64, 64
+        self.conv2 = SN.spectral_norm(nn.Conv2d(64, 128, 3, 1, 1))
+        self.conv3 = SN.spectral_norm(nn.Conv2d(128, 128, 4, 2, 1))
+        # 32, 128
+        self.conv4 = SN.spectral_norm(nn.Conv2d(128, 256, 3, 1, 1))
+        self.conv5 = SN.spectral_norm(nn.Conv2d(256, 256, 4, 2, 1))
+        # 16, 256
+        self.conv6 = SN.spectral_norm(nn.Conv2d(256, 512, 3, 1, 1))
+        self.conv7 = SN.spectral_norm(nn.Conv2d(512, 512, 4, 2, 1))
+        # 8, 512
+        self.conv8 = SN.spectral_norm(nn.Conv2d(512, 512, 3, 1, 1))
+        self.conv9 = SN.spectral_norm(nn.Conv2d(512, 512, 4, 2, 1))
+        # 4, 512
+
+        # classifier
+        self.linear0 = SN.spectral_norm(nn.Linear(512 * 4 * 4, 100))
+        self.linear1 = SN.spectral_norm(nn.Linear(100, 1))
+
+    def forward(self, x):
+        x = self.lrelu(self.conv0(x))
+        x = self.lrelu(self.conv1(x))
+        x = self.lrelu(self.conv2(x))
+        x = self.lrelu(self.conv3(x))
+        x = self.lrelu(self.conv4(x))
+        x = self.lrelu(self.conv5(x))
+        x = self.lrelu(self.conv6(x))
+        x = self.lrelu(self.conv7(x))
+        x = self.lrelu(self.conv8(x))
+        x = self.lrelu(self.conv9(x))
+        x = x.view(x.size(0), -1)
+        x = self.lrelu(self.linear0(x))
+        x = self.linear1(x)
+        return x
+
+
+# VGG style Discriminator with input size 128*128, Spectral Normalization
 class Discriminaotr_VGG_128(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
         super(Discriminaotr_VGG_128, self).__init__()
@@ -85,7 +203,7 @@ class Discriminaotr_VGG_128(nn.Module):
 
         # classifier
         self.classifier = nn.Sequential(
-            nn.Linear(512*4*4, 100),
+            nn.Linear(512 * 4 * 4, 100),
             nn.LeakyReLU(0.2, True),
             nn.Linear(100, 1)
         )
@@ -132,3 +250,87 @@ class VGGFeatureExtractor(nn.Module):
             x = (x - self.mean) / self.std
         output = self.features(x)
         return output
+
+
+class minc(nn.Module):
+    def __init__(self):
+        super(minc, self).__init__()
+        self.ReLU = nn.ReLU(True)
+        self.conv11 = nn.Conv2d(3, 64, 3, 1, 1)
+        self.conv12 = nn.Conv2d(64, 64, 3, 1, 1)
+        self.maxpool1 = nn.MaxPool2d(2, stride=2, padding=0, ceil_mode=True)
+        self.conv21 = nn.Conv2d(64, 128, 3, 1, 1)
+        self.conv22 = nn.Conv2d(128, 128, 3, 1, 1)
+        self.maxpool2 = nn.MaxPool2d(2, stride=2, padding=0, ceil_mode=True)
+        self.conv31 = nn.Conv2d(128, 256, 3, 1, 1)
+        self.conv32 = nn.Conv2d(256, 256, 3, 1, 1)
+        self.conv33 = nn.Conv2d(256, 256, 3, 1, 1)
+        self.maxpool3 = nn.MaxPool2d(2, stride=2, padding=0, ceil_mode=True)
+        self.conv41 = nn.Conv2d(256, 512, 3, 1, 1)
+        self.conv42 = nn.Conv2d(512, 512, 3, 1, 1)
+        self.conv43 = nn.Conv2d(512, 512, 3, 1, 1)
+        self.maxpool4 = nn.MaxPool2d(2, stride=2, padding=0, ceil_mode=True)
+        self.conv51 = nn.Conv2d(512, 512, 3, 1, 1)
+        self.conv52 = nn.Conv2d(512, 512, 3, 1, 1)
+        self.conv53 = nn.Conv2d(512, 512, 3, 1, 1)
+
+    def forward(self, x):
+        out = self.ReLU(self.conv11(x))
+        out = self.ReLU(self.conv12(out))
+        out = self.maxpool1(out)
+        out = self.ReLU(self.conv21(out))
+        out = self.ReLU(self.conv22(out))
+        out = self.maxpool2(out)
+        out = self.ReLU(self.conv31(out))
+        out = self.ReLU(self.conv32(out))
+        out = self.ReLU(self.conv33(out))
+        out = self.maxpool3(out)
+        out = self.ReLU(self.conv41(out))
+        out = self.ReLU(self.conv42(out))
+        out = self.ReLU(self.conv43(out))
+        out = self.maxpool4(out)
+        out = self.ReLU(self.conv51(out))
+        out = self.ReLU(self.conv52(out))
+        out = self.conv53(out)
+        return out
+
+
+# Assume input range is [0, 1]
+class MincFeatureExtractor(nn.Module):
+    def __init__(self,
+                 feature_layer=34,
+                 use_bn=False,
+                 use_input_norm=True,
+                 device=torch.device('cpu')):
+        super(MincFeatureExtractor, self).__init__()
+
+        self.features = minc()
+        self.features.load_state_dict(
+            torch.load('../experiments/pretrained_models/VGG16minc_53.pth'), strict=True)
+        self.features.eval()
+        # No need to BP to variable
+        for k, v in self.features.named_parameters():
+            v.requires_grad = False
+
+    def forward(self, x):
+        output = self.features(x)
+        return output
+
+
+if __name__ == '__main__':
+    net = minc()
+    net.load_state_dict(torch.load('VGG16minc_53.pth'), strict=True)
+    net.eval()
+    net = net.cuda()
+
+    import cv2
+    import numpy as np
+    img = cv2.imread('/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4/butterfly_bicLRx4.png',
+                     cv2.IMREAD_UNCHANGED)
+    img = img.astype(np.float32) / 255.
+    img = img[:, :, [2, 1, 0]]
+    img = torch.from_numpy(np.ascontiguousarray(np.transpose(img, (2, 0, 1)))).float()
+    input = img.unsqueeze(0).cuda()
+    out = net.forward(input)
+    print(out.float())
+    print(out.shape)
