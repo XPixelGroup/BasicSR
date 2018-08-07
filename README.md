@@ -42,7 +42,7 @@ Welcome to report bugs :stuck_out_tongue_winking_eye:  and welcome to contribute
 
 - Linux
 - Python3
-- Pytorch 0.3.1
+- Pytorch 0.4
 - NVIDIA GPU + CUDA
 
 ## Datasets
