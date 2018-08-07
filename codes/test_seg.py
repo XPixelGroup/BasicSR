@@ -69,13 +69,13 @@ for path in glob.glob(test_img_folder + '/*'):
     img[2] -= 123.68
     img = img.unsqueeze(0)
     img = img.cuda()
-    output = seg_model(img).detach().float().cpu()
+    output = seg_model(img).detach().float().cpu().squeeze_()
 
     # prob
     torch.save(output, os.path.join(save_prob_path, base + '_bic.pth'))  # 1x8xHxW
 
     # byte img
-    _, argmax = torch.max(output.squeeze_(), 0)
+    _, argmax = torch.max(output, 0)
     argmax = argmax.squeeze().byte()
     cv2.imwrite(os.path.join(save_byteimg_path, base + '.png'), argmax.numpy())
 

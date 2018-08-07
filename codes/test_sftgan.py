@@ -48,6 +48,7 @@ for path in glob.glob(test_img_folder + '/*'):
 
     # read seg
     seg = torch.load(os.path.join(test_prob_path, base + '_bic.pth'))
+    seg = seg.unsqueeze(0)
     # change probability
     # seg.fill_(0)
     # seg[:,5].fill_(1)
