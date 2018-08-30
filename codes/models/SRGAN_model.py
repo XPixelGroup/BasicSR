@@ -183,7 +183,11 @@ class SRGANModel(BaseModel):
 
     def test(self):
         self.netG.eval()
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = False
         self.fake_H = self.netG(self.var_L)
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = True
         self.netG.train()
 
     def get_current_log(self):
