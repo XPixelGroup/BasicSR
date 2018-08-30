@@ -83,6 +83,45 @@ class SRModel(BaseModel):
         for k, v in self.netG.named_parameters():
             v.requires_grad = True
         self.netG.train()
+
+    def test_x8(self):
+        self.netG.eval()
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = False
+
+        def _transform(v, op):
+            # if self.precision != 'single': v = v.float()
+            v2np = v.data.cpu().numpy()
+            if op == 'v':
+                tfnp = v2np[:, :, :, ::-1].copy()
+            elif op == 'h':
+                tfnp = v2np[:, :, ::-1, :].copy()
+            elif op == 't':
+                tfnp = v2np.transpose((0, 1, 3, 2)).copy()
+
+            ret = torch.Tensor(tfnp).to(self.device)
+            # if self.precision == 'half': ret = ret.half()
+
+            return ret
+
+        lr_list = [self.var_L]
+        for tf in 'v', 'h', 't':
+            lr_list.extend([_transform(t, tf) for t in lr_list])
+        sr_list = [self.netG(aug) for aug in lr_list]
+        for i in range(len(sr_list)):
+            if i > 3:
+                sr_list[i] = _transform(sr_list[i], 't')
+            if i % 4 > 1:
+                sr_list[i] = _transform(sr_list[i], 'h')
+            if (i % 4) % 2 == 1:
+                sr_list[i] = _transform(sr_list[i], 'v')
+
+        output_cat = torch.cat(sr_list, dim=0)
+        self.fake_H = output_cat.mean(dim=0, keepdim=True)
+
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = True
+        self.netG.train()
         self.netG.train()
 
     def get_current_log(self):
