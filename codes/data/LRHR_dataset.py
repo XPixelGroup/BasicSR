@@ -53,6 +53,9 @@ class LRHRDataset(data.Dataset):
         if self.opt['phase'] != 'train':
             img_HR = util.modcrop(img_HR, scale)
 
+        if self.opt['color']:
+            img_HR = util.channel_convert(img_HR.shape[2], self.opt['color'], [img_HR])[0]
+
         # get LR image
         if self.paths_LR:
             LR_path = self.paths_LR[index]
@@ -74,6 +77,9 @@ class LRHRDataset(data.Dataset):
                 # force to 3 channels
                 if img_HR.ndim == 2:
                     img_HR = cv2.cvtColor(img_HR, cv2.COLOR_GRAY2BGR)
+                # some images have 4 channels
+                if img_HR.ndim == 3:
+                    img_HR = img_HR[:, :, :3]
 
             H, W, _ = img_HR.shape
             # using matlab imresize
@@ -108,7 +114,7 @@ class LRHRDataset(data.Dataset):
 
         # channel conversion
         if self.opt['color']:
-            img_LR, img_HR = util.channel_convert(C, self.opt['color'], [img_LR, img_HR])
+            img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
 
         # BGR to RGB, HWC to CHW, numpy to tensor
         if img_HR.shape[2] == 3:
