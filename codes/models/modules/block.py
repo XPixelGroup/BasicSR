@@ -273,7 +273,7 @@ def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1,
                         pad_type=pad_type, norm_type=None, act_type=None)
     pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
-    n = norm(norm_type, out_nc * (upscale_factor**2)) if norm_type else None
+    n = norm(norm_type, out_nc) if norm_type else None
     a = act(act_type) if act_type else None
     return sequential(conv, pixel_shuffle, n, a)
 
