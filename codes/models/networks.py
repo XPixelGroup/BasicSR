@@ -91,8 +91,14 @@ def define_G(opt):
     elif which_model == 'sft_arch':
         netG = sft_arch.SFT_Net()
 
+    elif which_model == 'RRDB_Net':
+        netG = arch.RRDB_Net(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+            nb=opt['nb'], gc=opt['gc'], upscale=opt['scale'], norm_type=opt['norm_type'], \
+            act_type='leakyrelu', mode=opt['mode'], res_scale=1, upsample_mode='upconv')
     # if which_model != 'sr_resnet':  # need to investigate, the original is better?
     #     init_weights(netG, init_type='orthogonal')
+    if opt['is_train']:
+        init_weights(netG, init_type='kaiming', scale = 0.1)
     if gpu_ids:
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG)
@@ -107,6 +113,16 @@ def define_D(opt):
 
     if which_model == 'discriminaotr_vgg_128':
         netD = arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
+    elif which_model == 'discriminaotr_vgg_192':
+        netD = arch.Discriminaotr_VGG_192(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
+    elif which_model == 'discriminaotr_vgg_96':
+        netD = arch.Discriminaotr_VGG_96(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
+
+    elif which_model == 'discriminaotr_vgg_128_SN':
+        netD = arch.Discriminaotr_VGG_128_SN(in_nc=opt['in_nc'], base_nf=opt['nf'], \
             norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
 
     elif which_model == 'dis_acd':
@@ -130,6 +146,7 @@ def define_F(opt, use_bn=False):
         feature_layer = 34
     netF = arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
         use_input_norm=True, device=device)
+    # netF = arch.ResNet101FeatureExtractor(use_input_norm=True, device=device)
     if gpu_ids:
         netF = nn.DataParallel(netF)
     netF.eval()  # No need to train
