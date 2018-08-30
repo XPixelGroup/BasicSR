@@ -77,9 +77,6 @@ class LRHRDataset(data.Dataset):
                 # force to 3 channels
                 if img_HR.ndim == 2:
                     img_HR = cv2.cvtColor(img_HR, cv2.COLOR_GRAY2BGR)
-                # some images have 4 channels
-                if img_HR.ndim == 3:
-                    img_HR = img_HR[:, :, :3]
 
             H, W, _ = img_HR.shape
             # using matlab imresize
