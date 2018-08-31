@@ -125,7 +125,10 @@ class Logger(object):
             message = '<epoch:{:3d}, iter:{:8,d}, time:{:.2f}> '.format(epoch, iters, time)
 
         for label, value in rlt.items():
-            message += '%s: %.2e ' % (label, value)
+            if mode == 'train':
+                message += '%s: %.2e ' % (label, value)
+            elif mode == 'val':
+                message += '%s: %.4e ' % (label, value)
             # tensorboard logger
             if self.use_tb_logger and 'debug' not in self.exp_name:
                 self.tb_logger.log_value(label, value, iters)
