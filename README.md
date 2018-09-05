@@ -20,7 +20,7 @@ An image super-resolution toolkit flexible for development. It now provides:
     @article{wang2018esrgan,
         author={Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Loy, Chen Change and Qiao, Yu and Tang, Xiaoou},
         title={ESRGAN: Enhanced super-resolution generative adversarial networks},
-        journal={arXiv preprint arXiv: TODOTODOTODOTODO},
+        journal={arXiv preprint arXiv:1809.00219},
         year={2018}
     }
     @inproceedings{wang2018sftgan,
