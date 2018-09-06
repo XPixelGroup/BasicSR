@@ -1,40 +1,41 @@
 function generate_mod_LR_bic()
+%% matlab code to genetate mod images, bicubic-downsampled LR,
+%% bicubic_upsampled images.
 
 %% set parameters
 % comment the unnecessary line
-input_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800';
-% save_mod_path = '';
-save_LR_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_bicLRx4';
-% save_bic_path = '';
+input_folder = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800';
+% save_mod_folder = '';
+save_LR_folder = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_bicLRx4';
+% save_bic_folder = '';
 
 up_scale = 4;
-mod_scale = 8;
+mod_scale = 4;
 
-
-if exist('save_mod_path', 'var')
-    if exist(save_mod_path, 'dir')
-        disp(['It will cover ', save_mod_path]);
+if exist('save_mod_folder', 'var')
+    if exist(save_mod_folder, 'dir')
+        disp(['It will cover ', save_mod_folder]);
     else
-        mkdir(save_mod_path);
+        mkdir(save_mod_folder);
     end
 end
-if exist('save_LR_path', 'var')
-    if exist(save_LR_path, 'dir')
-        disp(['It will cover ', save_LR_path]);
+if exist('save_LR_folder', 'var')
+    if exist(save_LR_folder, 'dir')
+        disp(['It will cover ', save_LR_folder]);
     else
-        mkdir(save_LR_path);
+        mkdir(save_LR_folder);
     end
 end
-if exist('save_bic_path', 'var')
-    if exist(save_bic_path, 'dir')
-        disp(['It will cover ', save_bic_path]);
+if exist('save_bic_folder', 'var')
+    if exist(save_bic_folder, 'dir')
+        disp(['It will cover ', save_bic_folder]);
     else
-        mkdir(save_bic_path);
+        mkdir(save_bic_folder);
     end
 end
 
 idx = 0;
-filepaths = dir(fullfile(input_path,'*.*'));
+filepaths = dir(fullfile(input_folder,'*.*'));
 for i = 1 : length(filepaths)
     [paths,imname,ext] = fileparts(filepaths(i).name);
     if isempty(imname)
@@ -46,39 +47,39 @@ for i = 1 : length(filepaths)
         str_rlt = sprintf('%d\t%s.\n', idx, imname);
         fprintf(str_rlt);
         % read image
-        img = imread(fullfile(input_path, [imname, ext]));
+        img = imread(fullfile(input_folder, [imname, ext]));
         % modcrop
         img = modcrop(img, mod_scale);
-        if exist('save_mod_path', 'var')
-            imwrite(img, fullfile(save_mod_path, [imname, '.png']));
+        if exist('save_mod_folder', 'var')
+            imwrite(img, fullfile(save_mod_folder, [imname, '.png']));
         end
         % LR
         im_LR = imresize(img, 1/up_scale, 'bicubic');
-        if exist('save_LR_path', 'var')
-            imwrite(im_LR, fullfile(save_LR_path, [imname, '_bicLRx4.png']));
+        if exist('save_LR_folder', 'var')
+            imwrite(im_LR, fullfile(save_LR_folder, [imname, '_bicLRx4.png']));
         end
         %         im_B = double(im_B)/255;
         %         im_B = rgb2ycbcr(im_B);
         %         im_B = im_B(:,:,1);
         % Bicubic
-        if exist('save_bic_path', 'var')
+        if exist('save_bic_folder', 'var')
             im_B = imresize(im_LR, up_scale, 'bicubic');
-            imwrite(im_B, fullfile(save_bic_path, [imname, '_bicx4.png']));
+            imwrite(im_B, fullfile(save_bic_folder, [imname, '_bicx4.png']));
         end
     end
 end
 end
 
 %% modcrop
-function imgs = modcrop(imgs, modulo)
-if size(imgs,3)==1
-    sz = size(imgs);
+function img = modcrop(img, modulo)
+if size(img,3) == 1
+    sz = size(img);
     sz = sz - mod(sz, modulo);
-    imgs = imgs(1:sz(1), 1:sz(2));
+    img = img(1:sz(1), 1:sz(2));
 else
-    tmpsz = size(imgs);
+    tmpsz = size(img);
     sz = tmpsz(1:2);
     sz = sz - mod(sz, modulo);
-    imgs = imgs(1:sz(1), 1:sz(2),:);
+    img = img(1:sz(1), 1:sz(2),:);
 end
 end
