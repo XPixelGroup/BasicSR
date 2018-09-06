@@ -44,6 +44,7 @@ class ProgressBar(object):
             mark_width = int(self.bar_width * percentage)
             bar_chars = '█' * mark_width + '-' * (self.bar_width - mark_width)
             sys.stdout.write('\033[2F')  # cursor up 2 lines
+            sys.stdout.write('\033[J')  # clean the output (remove extra chars since last display)
             sys.stdout.write('[{}] {}/{}, {:.1f} task/s, elapsed: {}s, ETA: {:5}s\n{}\n'.format(
                 bar_chars, self.completed, self.task_num, fps, int(elapsed + 0.5), eta, msg))
         else:
