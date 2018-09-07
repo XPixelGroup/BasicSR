@@ -1,58 +1,83 @@
-import imageio
-import os.path
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-import numpy as np
+"""
+make gif from images, also add texts to images.
+Since the created gif has low quality with color issues, use this script to generate image with
+text and then use gifski.
+"""
 
-root = '/home/xtwang/Projects/BasicSR/codes/scripts/'
-save_dir = './tmp/'
-image_names = [
-    'baby.png'
-    , 'baby_x2.png'
-    , 'baby_x4.png'
-]
-text_lists = [
-    'baby'
-    , 'baby_x2'
-    , 'baby_x4'
-]
-h_start, h_len = 10, 400
-w_start, w_len = 10, 400
-enlarge = 1
-txt_pos = (1, 10)  # w, h
-front_size = 30
+import os.path
+import numpy as np
+import cv2
+import imageio
+
+crt_path = os.path.dirname(os.path.realpath(__file__))
+
+# configurations
+img_name_list = ['x1', 'x2', 'x3', 'x4', 'x5']
+ext = '.png'
+text_list = ['1', '2', '3', '4', '5']
+h_start, h_len = 0, 576
+w_start, w_len = 10, 352
+enlarge_ratio = 1
+txt_pos = (10, 50)  # w, h
+font_size = 1.5
+font_thickness = 4
+color = 'red'
 duration = 0.8  # second
 
-images = []
-font = ImageFont.truetype("/usr/share/fonts/dejavu/DejaVuSans.ttf", front_size)
+is_crop = True
+if h_start == 0 or w_start == 0:
+    is_crop = False # do not crop
+
+img_name_list = [x + ext for x in img_name_list]
+input_folder = os.path.join(crt_path, './ori')
+save_folder = os.path.join(crt_path, './ori')
+color_tb = {}
+color_tb['yellow'] = (0, 255, 255)
+color_tb['green'] = (0, 255, 0)
+color_tb['red'] = (0, 0, 255)
+color_tb['magenta'] = (255, 0, 255)
+color_tb['matlab_blue'] = (189, 114, 0)
+color_tb['matlab_orange'] = (25, 83, 217)
+color_tb['matlab_yellow'] = (32, 177, 237)
+color_tb['matlab_purple'] = (142, 47, 126)
+color_tb['matlab_green'] = (48, 172, 119)
+color_tb['matlab_liblue'] = (238, 190, 77)
+color_tb['matlab_brown'] = (47, 20, 162)
+color = color_tb[color]
+
+img_list = []
 
 # make temp dir
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
-    print('mkdir ... ' + save_dir)
+if not os.path.exists(save_folder):
+    os.makedirs(save_folder)
+    print('mkdir [{}] ...'.format(save_folder))
 
-for filename, write_txt in zip(image_names, text_lists):
-    img = imageio.imread(os.path.join(root, filename))
+for img_name, write_txt in zip(img_name_list, text_list):
+
+    img = cv2.imread(os.path.join(input_folder, img_name), cv2.IMREAD_UNCHANGED)
+    base_name = os.path.splitext(img_name)[0]
+    print(base_name)
     # crop image
-    if img.ndim == 2:
-        img = img[h_start:h_start + h_len, w_start:w_start + w_len]
-    elif img.ndim == 3:
-        img = img[h_start:h_start + h_len, w_start:w_start + w_len, :]
-    else:
-        raise ValueError('Wrong image dim [%d]' % img.ndim)
-    # enlarge image if necessary
-    img_pil = Image.fromarray(img).convert('RGBA')
-    W, H = img_pil.size
-    img_pil = img_pil.resize((W * enlarge, H * enlarge), Image.BICUBIC)
-    # add text
-    txt = Image.new('RGBA', img_pil.size, (255, 255, 255, 0))
-    d = ImageDraw.Draw(txt)
-    d.text(txt_pos, write_txt, font=font, fill=(255, 0, 0, 255))
+    if is_crop:
+        print('Crop image ...')
+        if img.ndim == 2:
+            img = img[h_start:h_start + h_len, w_start:w_start + w_len]
+        elif img.ndim == 3:
+            img = img[h_start:h_start + h_len, w_start:w_start + w_len, :]
+        else:
+            raise ValueError('Wrong image dim [%d]' % img.ndim)
 
-    out_pil = Image.alpha_composite(img_pil, txt).convert('RGB')
-    out = np.array(out_pil)
-    # make gif
-    images.append(out)
-    imageio.imwrite(os.path.join(save_dir, filename), out)
-imageio.mimsave(os.path.join(save_dir, 'out.gif'), images, format='GIF', duration=duration)
+    # enlarge img if necessary
+    if enlarge_ratio > 1:
+        H, W, _ = img.shape
+        img = cv2.resize(img, (W * enlarge_ratio, H * enlarge_ratio), \
+            interpolation=cv2.INTER_CUBIC)
+
+    # add text
+    font = cv2.FONT_HERSHEY_COMPLEX
+    cv2.putText(img, write_txt, txt_pos, font, font_size, color, font_thickness, cv2.LINE_AA)
+    cv2.imwrite(os.path.join(save_folder, base_name + '_text.png'), img)
+
+    img = np.ascontiguousarray(img[:, :, [2, 1, 0]])
+    img_list.append(img)
+imageio.mimsave(os.path.join(save_folder, 'out.gif'), img_list, format='GIF', duration=duration)
