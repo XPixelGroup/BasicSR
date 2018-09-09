@@ -4,9 +4,9 @@ import time
 
 
 class ProgressBar(object):
-    """A progress bar which can print the progress
+    '''A progress bar which can print the progress
     modified from https://github.com/hellock/cvbase/blob/master/cvbase/progress.py
-    """
+    '''
 
     def __init__(self, task_num=0, bar_width=50, start=True):
         self.task_num = task_num
@@ -21,7 +21,7 @@ class ProgressBar(object):
         max_bar_width = min(int(terminal_width * 0.6), terminal_width - 50)
         if max_bar_width < 10:
             print('terminal width is too small ({}), please consider widen the terminal for better '
-                'progressbar visualization'.format(terminal_width))
+                  'progressbar visualization'.format(terminal_width))
             max_bar_width = 10
         return max_bar_width
 
