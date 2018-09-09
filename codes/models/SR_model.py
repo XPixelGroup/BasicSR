@@ -28,24 +28,22 @@ class SRModel(BaseModel):
             elif loss_type == 'l2':
                 self.cri_pix = nn.MSELoss().to(self.device)
             else:
-                raise NotImplementedError('Loss type [%s] is not recognized.' % loss_type)
+                raise NotImplementedError('Loss type [{:s}] is not recognized.'.format(loss_type))
             self.l_pix_w = train_opt['pixel_weight']
 
             # optimizers
-            self.optimizers = []
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
             optim_params = []
             for k, v in self.netG.named_parameters():  # can optimize for a part of the model
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    print('WARNING: params [%s] will not optimize.' % k)
-            self.optimizer_G = torch.optim.Adam(optim_params,
-                                                lr=train_opt['lr_G'], weight_decay=wd_G)
+                    print('WARNING: params [{:s}] will not optimize.'.format(k))
+            self.optimizer_G = torch.optim.Adam(
+                optim_params, lr=train_opt['lr_G'], weight_decay=wd_G)
             self.optimizers.append(self.optimizer_G)
 
             # schedulers
-            self.schedulers = []
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
                     self.schedulers.append(lr_scheduler.MultiStepLR(optimizer, \
@@ -60,10 +58,9 @@ class SRModel(BaseModel):
         print('-----------------------------------------------')
 
     def feed_data(self, data, need_HR=True):
-        self.var_L = data['LR'].to(self.device) # LR
-
+        self.var_L = data['LR'].to(self.device)  # LR
         if need_HR:
-            self.real_H = data['HR'].to(self.device) # HR
+            self.real_H = data['HR'].to(self.device)  # HR
 
     def optimize_parameters(self, step):
         self.optimizer_G.zero_grad()
@@ -85,6 +82,7 @@ class SRModel(BaseModel):
         self.netG.train()
 
     def test_x8(self):
+        # from https://github.com/thstkdgus35/EDSR-PyTorch
         self.netG.eval()
         for k, v in self.netG.named_parameters():
             v.requires_grad = False
@@ -122,7 +120,6 @@ class SRModel(BaseModel):
         for k, v in self.netG.named_parameters():
             v.requires_grad = True
         self.netG.train()
-        self.netG.train()
 
     def get_current_log(self):
         return self.log_dict
@@ -147,7 +144,7 @@ class SRModel(BaseModel):
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            print('loading model for G [%s] ...' % load_path_G)
+            print('loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
 
     def save(self, iter_label):

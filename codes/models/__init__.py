@@ -10,7 +10,7 @@ def create_model(opt):
     elif model == 'sftgan':
         from .SFTGAN_ACD_model import SFTGAN_ACD_Model as M
     else:
-        raise NotImplementedError('Model [%s] not recognized.' % model)
+        raise NotImplementedError('Model [{:s}] not recognized.'.format(model))
     m = M(opt)
-    print('Model [%s] is created.' % m.__class__.__name__)
+    print('Model [{:s}] is created.'.format(m.__class__.__name__))
     return m
