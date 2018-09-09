@@ -49,7 +49,7 @@ for i, path in enumerate(img_list):
     elif img.ndim == 3:
         patch = img[h_start:h_start + h_len, w_start:w_start + w_len, :]
     else:
-        raise ValueError('Wrong image dim [%d]' % img.ndim)
+        raise ValueError('Wrong image dim [{:d}]'.format(img.ndim))
 
     # enlarge patch if necessary
     if enlarge_ratio > 1:
