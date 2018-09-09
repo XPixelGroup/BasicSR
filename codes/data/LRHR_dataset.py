@@ -1,7 +1,7 @@
 import os.path
 import random
-import cv2
 import numpy as np
+import cv2
 import torch
 import torch.utils.data as data
 import data.util as util
@@ -9,7 +9,7 @@ import data.util as util
 
 class LRHRDataset(data.Dataset):
     '''
-    Read LR and HR image pair.
+    Read LR and HR image pairs.
     If only HR image is provided, generate LR image on-the-fly.
     The pair is ensured by 'sorted' function, so please check the name convention.
     '''
@@ -29,7 +29,7 @@ class LRHRDataset(data.Dataset):
                         for line in f])
             if opt['dataroot_LR'] is not None:
                 raise NotImplementedError('Now subset only supports generating LR on-the-fly.')
-        else: # read image list from lmdb or image files
+        else:  # read image list from lmdb or image files
             self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
             self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
 
@@ -49,10 +49,10 @@ class LRHRDataset(data.Dataset):
         # get HR image
         HR_path = self.paths_HR[index]
         img_HR = util.read_img(self.HR_env, HR_path)
-        # modcrop in validation phase
+        # modcrop in the validation / test phase
         if self.opt['phase'] != 'train':
             img_HR = util.modcrop(img_HR, scale)
-
+        # change color space if necessary
         if self.opt['color']:
             img_HR = util.channel_convert(img_HR.shape[2], self.opt['color'], [img_HR])[0]
 
@@ -94,8 +94,8 @@ class LRHRDataset(data.Dataset):
                 img_LR = util.imresize_np(img_HR, 1 / scale, True)
                 if img_LR.ndim == 2:
                     img_LR = np.expand_dims(img_LR, axis=2)
-            H, W, C = img_LR.shape
 
+            H, W, C = img_LR.shape
             LR_size = HR_size // scale
 
             # randomly crop
@@ -109,7 +109,7 @@ class LRHRDataset(data.Dataset):
             img_LR, img_HR = util.augment([img_LR, img_HR], self.opt['use_flip'], \
                 self.opt['use_rot'])
 
-        # channel conversion
+        # change color space if necessary
         if self.opt['color']:
             img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
 

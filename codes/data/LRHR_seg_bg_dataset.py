@@ -1,7 +1,7 @@
 import os.path
 import random
-import cv2
 import numpy as np
+import cv2
 import torch
 import torch.utils.data as data
 import data.util as util
@@ -9,9 +9,9 @@ import data.util as util
 
 class LRHRSeg_BG_Dataset(data.Dataset):
     '''
-    Read HR image, segmentation probability map; generate LR image, category
-    for SFTGAN
+    Read HR image, segmentation probability map; generate LR image, category for SFTGAN
     also sample general scenes for background
+    need to generate LR images on-the-fly
     '''
 
     def __init__(self, opt):
@@ -19,7 +19,7 @@ class LRHRSeg_BG_Dataset(data.Dataset):
         self.opt = opt
         self.paths_LR = None
         self.paths_HR = None
-        self.paths_HR_bg = None
+        self.paths_HR_bg = None  # HR images for background scenes
         self.LR_env = None  # environment for lmdb
         self.HR_env = None
         self.HR_env_bg = None
@@ -37,7 +37,7 @@ class LRHRSeg_BG_Dataset(data.Dataset):
                 len(self.paths_LR), len(self.paths_HR))
 
         self.random_scale_list = [1, 0.9, 0.8, 0.7, 0.6, 0.5]
-        self.ration = 10  # 10 OST data and 1 DIV2K general data
+        self.ratio = 10  # 10 OST data samples and 1 DIV2K general data samples(background)
 
     def __getitem__(self, index):
         HR_path, LR_path = None, None
@@ -46,7 +46,7 @@ class LRHRSeg_BG_Dataset(data.Dataset):
 
         # get HR image
         if self.opt['phase'] == 'train' and \
-                random.choice(list(range(self.ration))) == 0:  # read bg image
+                random.choice(list(range(self.ratio))) == 0:  # read background images
             bg_index = random.randint(0, len(self.paths_HR_bg) - 1)
             HR_path = self.paths_HR_bg[bg_index]
             img_HR = util.read_img(self.HR_env_bg, HR_path)
@@ -56,9 +56,12 @@ class LRHRSeg_BG_Dataset(data.Dataset):
             HR_path = self.paths_HR[index]
             img_HR = util.read_img(self.HR_env, HR_path)
             seg = torch.load(HR_path.replace('/img/', '/bicseg/').replace('.png', '.pth'))
-        # modcrop in validation phase
+            # read segmentatin files, you should change it to your settings.
+
+        # modcrop in the validation / test phase
         if self.opt['phase'] != 'train':
             img_HR = util.modcrop(img_HR, 8)
+
         seg = np.transpose(seg.numpy(), (1, 2, 0))
 
         # get LR image

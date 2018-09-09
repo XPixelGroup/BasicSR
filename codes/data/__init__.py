@@ -24,7 +24,8 @@ def create_dataset(dataset_opt):
     elif mode == 'LRHRseg_bg':
         from data.LRHR_seg_bg_dataset import LRHRSeg_BG_Dataset as D
     else:
-        raise NotImplementedError("Dataset [%s] is not recognized." % mode)
+        raise NotImplementedError('Dataset [{:s}] is not recognized.'.format(mode))
     dataset = D(dataset_opt)
-    print('Dataset [%s - %s] is created.' % (dataset.__class__.__name__, dataset_opt['name']))
+    print('Dataset [{:s} - {:s}] is created.'.format(dataset.__class__.__name__,
+                                                     dataset_opt['name']))
     return dataset
