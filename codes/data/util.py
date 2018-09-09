@@ -2,8 +2,8 @@ import os
 import math
 import pickle
 import random
-import lmdb
 import numpy as np
+import lmdb
 import torch
 import cv2
 

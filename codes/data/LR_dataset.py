@@ -1,4 +1,3 @@
-import os.path
 import numpy as np
 import torch
 import torch.utils.data as data
@@ -6,9 +5,7 @@ import data.util as util
 
 
 class LRDataset(data.Dataset):
-    '''
-    Read LR images only in test phase.
-    '''
+    '''Read LR images only in the test phase.'''
 
     def __init__(self, opt):
         super(LRDataset, self).__init__()
@@ -28,7 +25,7 @@ class LRDataset(data.Dataset):
         img_LR = util.read_img(self.LR_env, LR_path)
         H, W, C = img_LR.shape
 
-        # channel conversion
+        # change color space if necessary
         if self.opt['color']:
             img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
 
