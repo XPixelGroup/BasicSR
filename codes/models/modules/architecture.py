@@ -4,7 +4,6 @@ import torch.nn as nn
 import torchvision
 from . import block as B
 from . import spectral_norm as SN
-# import block as B
 
 ####################
 # Generator
@@ -45,10 +44,10 @@ class SRResNet(nn.Module):
         return x
 
 
-class RRDB_Net(nn.Module):
-    def __init__(self, in_nc, out_nc, nf, nb, gc=32, upscale=4, norm_type=None, act_type='leakyrelu', \
-            mode='CNA', res_scale=1, upsample_mode='upconv'):
-        super(RRDB_Net, self).__init__()
+class RRDBNet(nn.Module):
+    def __init__(self, in_nc, out_nc, nf, nb, gc=32, upscale=4, norm_type=None, \
+            act_type='leakyrelu', mode='CNA', upsample_mode='upconv'):
+        super(RRDBNet, self).__init__()
         n_upscale = int(math.log(upscale, 2))
         if upscale == 3:
             n_upscale = 1
@@ -79,49 +78,58 @@ class RRDB_Net(nn.Module):
         return x
 
 
-class RRRDB_Net(nn.Module):
-    def __init__(self, in_nc, out_nc, nf, nb, gc=32, upscale=4, norm_type=None, act_type='leakyrelu', \
-            mode='CNA', res_scale=1, upsample_mode='upconv'):
-        super(RRRDB_Net, self).__init__()
-        n_upscale = int(math.log(upscale, 2))
-        if upscale == 3:
-            n_upscale = 1
-
-        fea_conv = B.conv_block(in_nc, nf, kernel_size=3, norm_type=None, act_type=None)
-        rb_blocks = [B.RRRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
-            norm_type=norm_type, act_type=act_type, mode='CNA') for _ in range(nb)]
-        rb_blocks.append(B.RRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
-            norm_type=norm_type, act_type=act_type, mode='CNA'))
-        rb_blocks.append(B.RRDB(nf, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
-            norm_type=norm_type, act_type=act_type, mode='CNA'))
-        LR_conv = B.conv_block(nf, nf, kernel_size=3, norm_type=norm_type, act_type=None, mode=mode)
-
-        if upsample_mode == 'upconv':
-            upsample_block = B.upconv_blcok
-        elif upsample_mode == 'pixelshuffle':
-            upsample_block = B.pixelshuffle_block
-        else:
-            raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
-        if upscale == 3:
-            upsampler = upsample_block(nf, nf, 3, act_type=act_type)
-        else:
-            upsampler = [upsample_block(nf, nf, act_type=act_type) for _ in range(n_upscale)]
-        HR_conv0 = B.conv_block(nf, nf, kernel_size=3, norm_type=None, act_type=act_type)
-        HR_conv1 = B.conv_block(nf, out_nc, kernel_size=3, norm_type=None, act_type=None)
-
-        self.model = B.sequential(fea_conv, B.ShortcutBlock(B.sequential(*rb_blocks, LR_conv)),\
-            *upsampler, HR_conv0, HR_conv1)
-
-    def forward(self, x):
-        x = self.model(x)
-        return x
-
 ####################
 # Discriminator
 ####################
 
 
 # VGG style Discriminator with input size 128*128
+class Discriminaotr_VGG_128(nn.Module):
+    def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
+        super(Discriminaotr_VGG_128, self).__init__()
+        # features
+        # hxw, c
+        # 128, 64
+        conv0 = B.conv_block(in_nc, base_nf, kernel_size=3, norm_type=None, act_type=act_type, \
+            mode=mode)
+        conv1 = B.conv_block(base_nf, base_nf, kernel_size=4, stride=2, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        # 64, 64
+        conv2 = B.conv_block(base_nf, base_nf*2, kernel_size=3, stride=1, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        conv3 = B.conv_block(base_nf*2, base_nf*2, kernel_size=4, stride=2, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        # 32, 128
+        conv4 = B.conv_block(base_nf*2, base_nf*4, kernel_size=3, stride=1, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        conv5 = B.conv_block(base_nf*4, base_nf*4, kernel_size=4, stride=2, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        # 16, 256
+        conv6 = B.conv_block(base_nf*4, base_nf*8, kernel_size=3, stride=1, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        conv7 = B.conv_block(base_nf*8, base_nf*8, kernel_size=4, stride=2, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        # 8, 512
+        conv8 = B.conv_block(base_nf*8, base_nf*8, kernel_size=3, stride=1, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        conv9 = B.conv_block(base_nf*8, base_nf*8, kernel_size=4, stride=2, norm_type=norm_type, \
+            act_type=act_type, mode=mode)
+        # 4, 512
+        self.features = B.sequential(conv0, conv1, conv2, conv3, conv4, conv5, conv6, conv7, conv8,\
+            conv9)
+
+        # classifier
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 4 * 4, 100), nn.LeakyReLU(0.2, True), nn.Linear(100, 1))
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+
+# VGG style Discriminator with input size 128*128, Spectral Normalization
 class Discriminaotr_VGG_128_SN(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
         super(Discriminaotr_VGG_128_SN, self).__init__()
@@ -164,55 +172,6 @@ class Discriminaotr_VGG_128_SN(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.lrelu(self.linear0(x))
         x = self.linear1(x)
-        return x
-
-
-# VGG style Discriminator with input size 128*128, Spectral Normalization
-class Discriminaotr_VGG_128(nn.Module):
-    def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
-        super(Discriminaotr_VGG_128, self).__init__()
-        # features
-        # hxw, c
-        # 128, 64
-        conv0 = B.conv_block(in_nc, base_nf, kernel_size=3, norm_type=None, act_type=act_type, \
-            mode=mode)
-        conv1 = B.conv_block(base_nf, base_nf, kernel_size=4, stride=2, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        # 64, 64
-        conv2 = B.conv_block(base_nf, base_nf*2, kernel_size=3, stride=1, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        conv3 = B.conv_block(base_nf*2, base_nf*2, kernel_size=4, stride=2, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        # 32, 128
-        conv4 = B.conv_block(base_nf*2, base_nf*4, kernel_size=3, stride=1, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        conv5 = B.conv_block(base_nf*4, base_nf*4, kernel_size=4, stride=2, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        # 16, 256
-        conv6 = B.conv_block(base_nf*4, base_nf*8, kernel_size=3, stride=1, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        conv7 = B.conv_block(base_nf*8, base_nf*8, kernel_size=4, stride=2, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        # 8, 512
-        conv8 = B.conv_block(base_nf*8, base_nf*8, kernel_size=3, stride=1, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        conv9 = B.conv_block(base_nf*8, base_nf*8, kernel_size=4, stride=2, norm_type=norm_type, \
-            act_type=act_type, mode=mode)
-        # 4, 512
-        self.features = B.sequential(conv0, conv1, conv2, conv3, conv4, conv5, conv6, conv7, conv8,\
-            conv9)
-
-        # classifier
-        self.classifier = nn.Sequential(
-            nn.Linear(512 * 4 * 4, 100),
-            nn.LeakyReLU(0.2, True),
-            nn.Linear(100, 1)
-        )
-
-    def forward(self, x):
-        x = self.features(x)
-        x = x.view(x.size(0), -1)
-        x = self.classifier(x)
         return x
 
 
@@ -310,6 +269,7 @@ class Discriminaotr_VGG_192(nn.Module):
         x = self.classifier(x)
         return x
 
+
 ####################
 # Perceptual Network
 ####################
@@ -347,6 +307,7 @@ class VGGFeatureExtractor(nn.Module):
         return output
 
 
+# Assume input range is [0, 1]
 class ResNet101FeatureExtractor(nn.Module):
     def __init__(self, use_input_norm=True, device=torch.device('cpu')):
         super(ResNet101FeatureExtractor, self).__init__()
@@ -371,9 +332,9 @@ class ResNet101FeatureExtractor(nn.Module):
         return output
 
 
-class minc(nn.Module):
+class MINCNet(nn.Module):
     def __init__(self):
-        super(minc, self).__init__()
+        super(MINCNet, self).__init__()
         self.ReLU = nn.ReLU(True)
         self.conv11 = nn.Conv2d(3, 64, 3, 1, 1)
         self.conv12 = nn.Conv2d(64, 64, 3, 1, 1)
@@ -415,15 +376,12 @@ class minc(nn.Module):
 
 
 # Assume input range is [0, 1]
-class MincFeatureExtractor(nn.Module):
-    def __init__(self,
-                 feature_layer=34,
-                 use_bn=False,
-                 use_input_norm=True,
-                 device=torch.device('cpu')):
-        super(MincFeatureExtractor, self).__init__()
+class MINCFeatureExtractor(nn.Module):
+    def __init__(self, feature_layer=34, use_bn=False, use_input_norm=True, \
+                device=torch.device('cpu')):
+        super(MINCFeatureExtractor, self).__init__()
 
-        self.features = minc()
+        self.features = MINCNet()
         self.features.load_state_dict(
             torch.load('../experiments/pretrained_models/VGG16minc_53.pth'), strict=True)
         self.features.eval()
@@ -434,22 +392,3 @@ class MincFeatureExtractor(nn.Module):
     def forward(self, x):
         output = self.features(x)
         return output
-
-
-if __name__ == '__main__':
-    net = minc()
-    net.load_state_dict(torch.load('VGG16minc_53.pth'), strict=True)
-    net.eval()
-    net = net.cuda()
-
-    import cv2
-    import numpy as np
-    img = cv2.imread('/mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4/butterfly_bicLRx4.png',
-                     cv2.IMREAD_UNCHANGED)
-    img = img.astype(np.float32) / 255.
-    img = img[:, :, [2, 1, 0]]
-    img = torch.from_numpy(np.ascontiguousarray(np.transpose(img, (2, 0, 1)))).float()
-    input = img.unsqueeze(0).cuda()
-    out = net.forward(input)
-    print(out.float())
-    print(out.shape)
