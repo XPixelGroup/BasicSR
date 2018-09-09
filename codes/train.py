@@ -119,7 +119,7 @@ def main():
                     # Save SR images for reference
                     save_img_path = os.path.join(img_dir, '{:s}_{:s}.png'.format(\
                         img_name, current_step))
-                    util.save_img(sr_img.squeeze(), save_img_path)
+                    util.save_img(sr_img, save_img_path)
 
                     # calculate PSNR
                     crop_size = opt['scale']
