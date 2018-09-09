@@ -19,7 +19,7 @@ def act(act_type, inplace=True, neg_slope=0.2, n_prelu=1):
     elif act_type == 'prelu':
         layer = nn.PReLU(num_parameters=n_prelu, init=neg_slope)
     else:
-        raise NotImplementedError('activation layer [%s] is not found' % act_type)
+        raise NotImplementedError('activation layer [{:s}] is not found'.format(act_type))
     return layer
 
 
@@ -31,7 +31,7 @@ def norm(norm_type, nc):
     elif norm_type == 'instance':
         layer = nn.InstanceNorm2d(nc, affine=False)
     else:
-        raise NotImplementedError('normalization layer [%s] is not found' % norm_type)
+        raise NotImplementedError('normalization layer [{:s}] is not found'.format(norm_type))
     return layer
 
 
@@ -46,7 +46,7 @@ def pad(pad_type, padding):
     elif pad_type == 'replicate':
         layer = nn.ReplicationPad2d(padding)
     else:
-        raise NotImplementedError('padding layer [%s] is not implemented' % pad_type)
+        raise NotImplementedError('padding layer [{:s}] is not implemented'.format(pad_type))
     return layer
 
 
@@ -113,7 +113,7 @@ def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=
     mode: CNA --> Conv -> Norm -> Act
         NAC --> Norm -> Act --> Conv (Identity Mappings in Deep Residual Networks, ECCV16)
     '''
-    assert mode in ['CNA', 'NAC', 'CNAC'], 'Wong conv mode [%s]' % mode
+    assert mode in ['CNA', 'NAC', 'CNAC'], 'Wong conv mode [{:s}]'.format(mode)
     padding = get_valid_padding(kernel_size, dilation)
     p = pad(pad_type, padding) if pad_type and pad_type != 'zero' else None
     padding = padding if pad_type == 'zero' else 0

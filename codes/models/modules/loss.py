@@ -22,7 +22,7 @@ class GANLoss(nn.Module):
 
             self.loss = wgan_loss
         else:
-            raise NotImplementedError('GAN type [%s] is not found' % self.gan_type)
+            raise NotImplementedError('GAN type [{:s}] is not found'.format(self.gan_type))
 
     def get_target_label(self, input, target_is_real):
         if self.gan_type == 'wgan-gp':

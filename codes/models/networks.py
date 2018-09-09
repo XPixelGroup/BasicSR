@@ -10,9 +10,9 @@ import models.modules.sft_arch as sft_arch
 # initialize
 ####################
 
+
 def weights_init_normal(m, std=0.02):
     classname = m.__class__.__name__
-    # print('initializing [%s] ...' % classname)
     if classname.find('Conv') != -1:
         init.normal_(m.weight.data, 0.0, std)
         if m.bias is not None:
@@ -22,13 +22,13 @@ def weights_init_normal(m, std=0.02):
         if m.bias is not None:
             m.bias.data.zero_()
     elif classname.find('BatchNorm2d') != -1:
-        init.normal_(m.weight.data, 1.0, std)
+        init.normal_(m.weight.data, 1.0, std)  # BN also uses norm
         init.constant_(m.bias.data, 0.0)
+
 
 def weights_init_kaiming(m, scale=1):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
-        # print('initializing [%s] ...' % classname)
         init.kaiming_normal_(m.weight.data, a=0, mode='fan_in')
         m.weight.data *= scale
         if m.bias is not None:
@@ -40,12 +40,11 @@ def weights_init_kaiming(m, scale=1):
             m.bias.data.zero_()
     elif classname.find('BatchNorm2d') != -1:
         init.constant_(m.weight.data, 1.0)
-        m.weight.data *= scale
         init.constant_(m.bias.data, 0.0)
+
 
 def weights_init_orthogonal(m):
     classname = m.__class__.__name__
-    # print('initializing [%s] ...' % classname)
     if classname.find('Conv') != -1:
         init.orthogonal_(m.weight.data, gain=1)
         if m.bias is not None:
@@ -55,12 +54,13 @@ def weights_init_orthogonal(m):
         if m.bias is not None:
             m.bias.data.zero_()
     elif classname.find('BatchNorm2d') != -1:
-        init.normal_(m.weight.data, 1.0, 0.02)
+        init.constant_(m.weight.data, 1.0)
         init.constant_(m.bias.data, 0.0)
+
 
 def init_weights(net, init_type='kaiming', scale=1, std=0.02):
     # scale for 'kaiming', std for 'normal'.
-    print('initialization method [%s]' % init_type)
+    print('initialization method [{:s}]'.format(init_type))
     if init_type == 'normal':
         weights_init_normal_ = functools.partial(weights_init_normal, std=std)
         net.apply(weights_init_normal_)
@@ -70,12 +70,13 @@ def init_weights(net, init_type='kaiming', scale=1, std=0.02):
     elif init_type == 'orthogonal':
         net.apply(weights_init_orthogonal)
     else:
-        raise NotImplementedError('initialization method [%s] is not implemented' % init_type)
+        raise NotImplementedError('initialization method [{:s}] not implemented'.format(init_type))
 
 
 ####################
 # define network
 ####################
+
 
 # Generator
 def define_G(opt):
@@ -83,22 +84,23 @@ def define_G(opt):
     opt = opt['network_G']
     which_model = opt['which_model_G']
 
-    if which_model == 'sr_resnet':
+    if which_model == 'sr_resnet':  # SRResNet
         netG = arch.SRResNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
-            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], mode=opt['mode'],\
-            upsample_mode='pixelshuffle')
+            nb=opt['nb'], upscale=opt['scale'], norm_type=opt['norm_type'], act_type='relu', \
+            mode=opt['mode'], upsample_mode='pixelshuffle')
 
-    elif which_model == 'sft_arch':
+    elif which_model == 'sft_arch':  # SFT-GAN
         netG = sft_arch.SFT_Net()
 
-    elif which_model == 'RRDB_Net':
-        netG = arch.RRDB_Net(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
+    elif which_model == 'RRDB_net':  # RRDB
+        netG = arch.RRDBNet(in_nc=opt['in_nc'], out_nc=opt['out_nc'], nf=opt['nf'], \
             nb=opt['nb'], gc=opt['gc'], upscale=opt['scale'], norm_type=opt['norm_type'], \
-            act_type='leakyrelu', mode=opt['mode'], res_scale=1, upsample_mode='upconv')
-    # if which_model != 'sr_resnet':  # need to investigate, the original is better?
-    #     init_weights(netG, init_type='orthogonal')
+            act_type='leakyrelu', mode=opt['mode'], upsample_mode='upconv')
+    else:
+        raise NotImplementedError('Generator model [{:s}] not recognized'.format(which_model))
+
     if opt['is_train']:
-        init_weights(netG, init_type='kaiming', scale = 0.1)
+        init_weights(netG, init_type='kaiming', scale=0.1)
     if gpu_ids:
         assert torch.cuda.is_available()
         netG = nn.DataParallel(netG)
@@ -111,24 +113,23 @@ def define_D(opt):
     opt = opt['network_D']
     which_model = opt['which_model_D']
 
-    if which_model == 'discriminaotr_vgg_128':
-        netD = arch.Discriminaotr_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
-    elif which_model == 'discriminaotr_vgg_192':
-        netD = arch.Discriminaotr_VGG_192(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
-    elif which_model == 'discriminaotr_vgg_96':
-        netD = arch.Discriminaotr_VGG_96(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+    if which_model == 'discriminator_vgg_128':
+        netD = arch.Discriminator_VGG_128(in_nc=opt['in_nc'], base_nf=opt['nf'], \
             norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
 
-    elif which_model == 'discriminaotr_vgg_128_SN':
-        netD = arch.Discriminaotr_VGG_128_SN(in_nc=opt['in_nc'], base_nf=opt['nf'], \
-            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
-
-    elif which_model == 'dis_acd':
+    elif which_model == 'dis_acd':  # sft-gan, Auxiliary Classifier Discriminator
         netD = sft_arch.ACD_VGG_BN_96()
+
+    elif which_model == 'discriminator_vgg_96':
+        netD = arch.Discriminator_VGG_96(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
+    elif which_model == 'discriminator_vgg_192':
+        netD = arch.Discriminator_VGG_192(in_nc=opt['in_nc'], base_nf=opt['nf'], \
+            norm_type=opt['norm_type'], mode=opt['mode'], act_type=opt['act_type'])
+    elif which_model == 'discriminator_vgg_128_SN':
+        netD = arch.Discriminator_VGG_128_SN()
     else:
-        raise NotImplementedError('Discriminator model [%s] is not recognized' % which_model)
+        raise NotImplementedError('Discriminator model [{:s}] not recognized'.format(which_model))
 
     init_weights(netD, init_type='kaiming', scale=1)
     if gpu_ids:

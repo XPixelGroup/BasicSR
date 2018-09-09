@@ -11,9 +11,6 @@ from models.modules.loss import GANLoss, GradientPenaltyLoss
 
 
 class SRRaGANModel(BaseModel):
-    def name(self):
-        return 'SRRaGANModel'
-
     def __init__(self, opt):
         super(SRRaGANModel, self).__init__(opt)
         train_opt = opt['train']
@@ -36,7 +33,7 @@ class SRRaGANModel(BaseModel):
                 elif l_pix_type == 'l2':
                     self.cri_pix = nn.MSELoss().to(self.device)
                 else:
-                    raise NotImplementedError('Loss type [%s] is not recognized.' % l_pix_type)
+                    raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_pix_type))
                 self.l_pix_w = train_opt['pixel_weight']
             else:
                 print('Remove pixel loss.')
@@ -50,7 +47,7 @@ class SRRaGANModel(BaseModel):
                 elif l_fea_type == 'l2':
                     self.cri_fea = nn.MSELoss().to(self.device)
                 else:
-                    raise NotImplementedError('Loss type [%s] is not recognized.' % l_fea_type)
+                    raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_fea_type))
                 self.l_fea_w = train_opt['feature_weight']
             else:
                 print('Remove feature loss.')
@@ -61,6 +58,7 @@ class SRRaGANModel(BaseModel):
             # GD gan loss
             self.cri_gan = GANLoss(train_opt['gan_type'], 1.0, 0.0).to(self.device)
             self.l_gan_w = train_opt['gan_weight']
+            # D_update_ratio and D_init_iters are for WGAN
             self.D_update_ratio = train_opt['D_update_ratio'] if train_opt['D_update_ratio'] else 1
             self.D_init_iters = train_opt['D_init_iters'] if train_opt['D_init_iters'] else 0
 
@@ -71,7 +69,6 @@ class SRRaGANModel(BaseModel):
                 self.l_gp_w = train_opt['gp_weigth']
 
             # optimizers
-            self.optimizers = []  # G and D
             # G
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
             optim_params = []
@@ -79,7 +76,7 @@ class SRRaGANModel(BaseModel):
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    print('WARNING: params [%s] will not optimize.' % k)
+                    print('WARNING: params [{:s}] will not optimize.'.format(k))
             self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'], \
                 weight_decay=wd_G, betas=(train_opt['beta1_G'], 0.999))
             self.optimizers.append(self.optimizer_G)
@@ -90,7 +87,6 @@ class SRRaGANModel(BaseModel):
             self.optimizers.append(self.optimizer_D)
 
             # schedulers
-            self.schedulers = []
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
                     self.schedulers.append(lr_scheduler.MultiStepLR(optimizer, \
@@ -236,11 +232,11 @@ class SRRaGANModel(BaseModel):
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            print('loading model for G [%s] ...' % load_path_G)
+            print('loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
         load_path_D = self.opt['path']['pretrain_model_D']
         if self.opt['is_train'] and load_path_D is not None:
-            print('loading model for D [%s] ...' % load_path_D)
+            print('loading model for D [{:s}] ...'.format(load_path_D))
             self.load_network(load_path_D, self.netD)
 
     def save(self, iter_label):
