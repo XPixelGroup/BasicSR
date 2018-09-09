@@ -54,7 +54,7 @@ def main():
             val_loader = create_dataloader(val_set, dataset_opt)
             print('Number of val images in [{:s}]: {:d}'.format(dataset_opt['name'], len(val_set)))
         else:
-            raise NotImplementedError('Phase [{:s}] is not recognized.'.formata(phase))
+            raise NotImplementedError('Phase [{:s}] is not recognized.'.format(phase))
     assert train_loader is not None
 
     # Create model
@@ -113,15 +113,16 @@ def main():
                     model.test()
 
                     visuals = model.get_current_visuals()
-                    sr_img = util.tensor2img_np(visuals['SR'])  # uint8
-                    gt_img = util.tensor2img_np(visuals['HR'])  # uint8
+                    sr_img = util.tensor2img(visuals['SR'])  # uint8
+                    gt_img = util.tensor2img(visuals['HR'])  # uint8
 
                     # Save SR images for reference
-                    save_img_path = os.path.join(img_dir, '{:s}_{:s}.png'.format(img_name, current_step))
-                    util.save_img_np(sr_img.squeeze(), save_img_path)
+                    save_img_path = os.path.join(img_dir, '{:s}_{:s}.png'.format(\
+                        img_name, current_step))
+                    util.save_img(sr_img.squeeze(), save_img_path)
 
                     # calculate PSNR
-                    crop_size = opt['scale'] + 2
+                    crop_size = opt['scale']
                     cropped_sr_img = sr_img[crop_size:-crop_size, crop_size:-crop_size, :]
                     cropped_gt_img = gt_img[crop_size:-crop_size, crop_size:-crop_size, :]
                     avg_psnr += util.psnr(cropped_sr_img, cropped_gt_img)
@@ -143,7 +144,7 @@ def main():
 
     print('Saving the final model.')
     model.save('latest')
-    print('End of Training \t Time taken: {:.2f} sec'.format(time.time() - start_time))
+    print('End of training.')
 
 
 if __name__ == '__main__':
