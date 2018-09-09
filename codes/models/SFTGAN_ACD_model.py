@@ -11,9 +11,6 @@ from models.modules.loss import GANLoss, GradientPenaltyLoss
 
 
 class SFTGAN_ACD_Model(BaseModel):
-    def name(self):
-        return 'SFTGAN_ACD_Model'
-
     def __init__(self, opt):
         super(SFTGAN_ACD_Model, self).__init__(opt)
         train_opt = opt['train']
@@ -36,7 +33,7 @@ class SFTGAN_ACD_Model(BaseModel):
                 elif l_pix_type == 'l2':
                     self.cri_pix = nn.MSELoss().to(self.device)
                 else:
-                    raise NotImplementedError('Loss type [%s] is not recognized.' % l_pix_type)
+                    raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_pix_type))
                 self.l_pix_w = train_opt['pixel_weight']
             else:
                 print('Remove pixel loss.')
@@ -50,7 +47,7 @@ class SFTGAN_ACD_Model(BaseModel):
                 elif l_fea_type == 'l2':
                     self.cri_fea = nn.MSELoss().to(self.device)
                 else:
-                    raise NotImplementedError('Loss type [%s] is not recognized.' % l_fea_type)
+                    raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_fea_type))
                 self.l_fea_w = train_opt['feature_weight']
             else:
                 print('Remove feature loss.')
@@ -61,6 +58,7 @@ class SFTGAN_ACD_Model(BaseModel):
             # GD gan loss
             self.cri_gan = GANLoss(train_opt['gan_type'], 1.0, 0.0).to(self.device)
             self.l_gan_w = train_opt['gan_weight']
+            # D_update_ratio and D_init_iters are for WGAN
             self.D_update_ratio = train_opt['D_update_ratio'] if train_opt['D_update_ratio'] else 1
             self.D_init_iters = train_opt['D_init_iters'] if train_opt['D_init_iters'] else 0
 
@@ -75,7 +73,6 @@ class SFTGAN_ACD_Model(BaseModel):
             # ignore background, since bg images may conflict with other classes
 
             # optimizers
-            self.optimizers = []  # G and D
             # G
             wd_G = train_opt['weight_decay_G'] if train_opt['weight_decay_G'] else 0
             optim_params_SFT = []
@@ -98,7 +95,6 @@ class SFTGAN_ACD_Model(BaseModel):
             self.optimizers.append(self.optimizer_D)
 
             # schedulers
-            self.schedulers = []
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
                     self.schedulers.append(lr_scheduler.MultiStepLR(optimizer, \
@@ -200,7 +196,11 @@ class SFTGAN_ACD_Model(BaseModel):
 
     def test(self):
         self.netG.eval()
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = False
         self.fake_H = self.netG((self.var_L, self.var_seg))
+        for k, v in self.netG.named_parameters():
+            v.requires_grad = True
         self.netG.train()
 
     def get_current_log(self):
@@ -241,11 +241,11 @@ class SFTGAN_ACD_Model(BaseModel):
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            print('loading model for G [%s] ...' % load_path_G)
+            print('loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
         load_path_D = self.opt['path']['pretrain_model_D']
         if self.opt['is_train'] and load_path_D is not None:
-            print('loading model for D [%s] ...' % load_path_D)
+            print('loading model for D [{:s}] ...'.format(load_path_D))
             self.load_network(load_path_D, self.netD)
 
     def save(self, iter_label):

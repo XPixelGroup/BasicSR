@@ -28,7 +28,7 @@ class SRResNet(nn.Module):
         elif upsample_mode == 'pixelshuffle':
             upsample_block = B.pixelshuffle_block
         else:
-            raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
+            raise NotImplementedError('upsample mode [{:s}] is not found'.format(upsample_mode))
         if upscale == 3:
             upsampler = upsample_block(nf, nf, 3, act_type=act_type)
         else:
@@ -62,7 +62,7 @@ class RRDBNet(nn.Module):
         elif upsample_mode == 'pixelshuffle':
             upsample_block = B.pixelshuffle_block
         else:
-            raise NotImplementedError('upsample mode [%s] is not found' % upsample_mode)
+            raise NotImplementedError('upsample mode [{:s}] is not found'.format(upsample_mode))
         if upscale == 3:
             upsampler = upsample_block(nf, nf, 3, act_type=act_type)
         else:
@@ -84,9 +84,9 @@ class RRDBNet(nn.Module):
 
 
 # VGG style Discriminator with input size 128*128
-class Discriminaotr_VGG_128(nn.Module):
+class Discriminator_VGG_128(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
-        super(Discriminaotr_VGG_128, self).__init__()
+        super(Discriminator_VGG_128, self).__init__()
         # features
         # hxw, c
         # 128, 64
@@ -130,9 +130,9 @@ class Discriminaotr_VGG_128(nn.Module):
 
 
 # VGG style Discriminator with input size 128*128, Spectral Normalization
-class Discriminaotr_VGG_128_SN(nn.Module):
-    def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
-        super(Discriminaotr_VGG_128_SN, self).__init__()
+class Discriminator_VGG_128_SN(nn.Module):
+    def __init__(self):
+        super(Discriminator_VGG_128_SN, self).__init__()
         # features
         # hxw, c
         # 128, 64
@@ -175,9 +175,9 @@ class Discriminaotr_VGG_128_SN(nn.Module):
         return x
 
 
-class Discriminaotr_VGG_96(nn.Module):
+class Discriminator_VGG_96(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
-        super(Discriminaotr_VGG_96, self).__init__()
+        super(Discriminator_VGG_96, self).__init__()
         # features
         # hxw, c
         # 96, 64
@@ -220,9 +220,9 @@ class Discriminaotr_VGG_96(nn.Module):
         return x
 
 
-class Discriminaotr_VGG_192(nn.Module):
+class Discriminator_VGG_192(nn.Module):
     def __init__(self, in_nc, base_nf, norm_type='batch', act_type='leakyrelu', mode='CNA'):
-        super(Discriminaotr_VGG_192, self).__init__()
+        super(Discriminator_VGG_192, self).__init__()
         # features
         # hxw, c
         # 192, 64
