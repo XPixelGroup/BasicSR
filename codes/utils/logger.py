@@ -25,18 +25,17 @@ class Logger(object):
         self.log_dir = opt['path']['log']
         # loss log file
         self.loss_log_path = os.path.join(self.log_dir, 'loss_log.txt')
-        with open(self.loss_log_path, "a") as log_file:
+        with open(self.loss_log_path, 'a') as log_file:
             log_file.write('=============== Time: ' + get_timestamp() + ' =============\n')
             log_file.write('================ Training Losses ================\n')
         # val results log file
         self.val_log_path = os.path.join(self.log_dir, 'val_log.txt')
-        with open(self.val_log_path, "a") as log_file:
+        with open(self.val_log_path, 'a') as log_file:
             log_file.write('================ Time: ' + get_timestamp() + ' ===============\n')
             log_file.write('================ Validation Results ================\n')
         if self.use_tb_logger and 'debug' not in self.exp_name:
             from tensorboard_logger import Logger as TensorboardLogger
             self.tb_logger = TensorboardLogger('../tb_logger/' + self.exp_name)
-
 
     def print_format_results(self, mode, rlt):
         epoch = rlt.pop('epoch')
@@ -63,8 +62,8 @@ class Logger(object):
         print(message)
         # write in log file
         if mode == 'train':
-            with open(self.loss_log_path, "a") as log_file:
-                log_file.write(message + '\n)
+            with open(self.loss_log_path, 'a') as log_file:
+                log_file.write(message + '\n')
         elif mode == 'val':
-            with open(self.val_log_path, "a") as log_file:
-                log_file.write(message + '\n)
+            with open(self.val_log_path, 'a') as log_file:
+                log_file.write(message + '\n')
