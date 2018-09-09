@@ -51,7 +51,7 @@ class GradientPenaltyLoss(nn.Module):
 
     def forward(self, interp, interp_crit):
         grad_outputs = self.get_grad_outputs(interp_crit)
-        grad_interp = torch.autograd.grad(outputs=interp_crit, inputs=interp,
+        grad_interp = torch.autograd.grad(outputs=interp_crit, inputs=interp, \
             grad_outputs=grad_outputs, create_graph=True, retain_graph=True, only_inputs=True)[0]
         grad_interp = grad_interp.view(grad_interp.size(0), -1)
         grad_interp_norm = grad_interp.norm(2, dim=1)

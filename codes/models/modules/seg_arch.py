@@ -1,7 +1,6 @@
-"""
+'''
 architecture for segmentation
-"""
-import torch
+'''
 import torch.nn as nn
 from . import block as B
 

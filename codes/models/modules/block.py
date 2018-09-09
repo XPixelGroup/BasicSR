@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 import torch
 import torch.nn as nn
 
@@ -107,13 +106,13 @@ def sequential(*args):
     return nn.Sequential(*modules)
 
 
-def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=True,
+def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=True, \
                pad_type='zero', norm_type=None, act_type='relu', mode='CNA'):
-    """
+    '''
     Conv layer with padding, normalization, activation
     mode: CNA --> Conv -> Norm -> Act
         NAC --> Norm -> Act --> Conv (Identity Mappings in Deep Residual Networks, ECCV16)
-    """
+    '''
     assert mode in ['CNA', 'NAC', 'CNAC'], 'Wong conv mode [%s]' % mode
     padding = get_valid_padding(kernel_size, dilation)
     p = pad(pad_type, padding) if pad_type and pad_type != 'zero' else None
@@ -136,19 +135,17 @@ def conv_block(in_nc, out_nc, kernel_size, stride=1, dilation=1, groups=1, bias=
         return sequential(n, a, p, c)
 
 
-# TODO: add deconv block
-
 ####################
 # Useful blocks
 ####################
 
 
 class ResNetBlock(nn.Module):
-    """
+    '''
     ResNet Block, 3-3 style
     with extra residual scaling used in EDSR
     (Enhanced Deep Residual Networks for Single Image Super-Resolution, CVPRW 17)
-    """
+    '''
 
     def __init__(self, in_nc, mid_nc, out_nc, kernel_size=3, stride=1, dilation=1, groups=1, \
             bias=True, pad_type='zero', norm_type=None, act_type='relu', mode='CNA', res_scale=1):
@@ -177,11 +174,11 @@ class ResNetBlock(nn.Module):
 
 
 class ResidualDenseBlock_5C(nn.Module):
-    """
+    '''
     Residual Dense Block
     style: 5 convs
     The core module of paper: (Residual Dense Network for Image Super-Resolution, CVPR 18)
-    """
+    '''
 
     def __init__(self, nc, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
             norm_type=None, act_type='leakyrelu', mode='CNA'):
@@ -212,9 +209,10 @@ class ResidualDenseBlock_5C(nn.Module):
 
 
 class RRDB(nn.Module):
-    """
+    '''
     Residual in Residual Dense Block
-    """
+    (ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks)
+    '''
 
     def __init__(self, nc, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
             norm_type=None, act_type='leakyrelu', mode='CNA'):
@@ -233,43 +231,19 @@ class RRDB(nn.Module):
         return out.mul(0.2) + x
 
 
-class RRRDB(nn.Module):
-    """
-    Residual in Residual Dense Block
-    """
-
-    def __init__(self, nc, kernel_size=3, gc=32, stride=1, bias=True, pad_type='zero', \
-            norm_type=None, act_type='leakyrelu', mode='CNA'):
-        super(RRRDB, self).__init__()
-        self.RRDB1 = RRDB(nc, kernel_size, gc, stride, bias, pad_type, \
-            norm_type, act_type, mode)
-        self.RRDB2 = RRDB(nc, kernel_size, gc, stride, bias, pad_type, \
-            norm_type, act_type, mode)
-        self.RRDB3 = RRDB(nc, kernel_size, gc, stride, bias, pad_type, \
-            norm_type, act_type, mode)
-        self.RRDB4 = RRDB(nc, kernel_size, gc, stride, bias, pad_type, \
-            norm_type, act_type, mode)
-
-    def forward(self, x):
-        out = self.RRDB1(x)
-        out = self.RRDB2(out)
-        out = self.RRDB3(out)
-        out = self.RRDB4(out)
-        return out.mul(0.2) + x
-
 ####################
 # Upsampler
 ####################
 
 
-def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True,
+def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True, \
                         pad_type='zero', norm_type=None, act_type='relu'):
-    """
+    '''
     Pixel shuffle layer
     (Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional
     Neural Network, CVPR17)
-    """
-    conv = conv_block(in_nc, out_nc * (upscale_factor ** 2), kernel_size, stride, bias=bias,
+    '''
+    conv = conv_block(in_nc, out_nc * (upscale_factor ** 2), kernel_size, stride, bias=bias, \
                         pad_type=pad_type, norm_type=None, act_type=None)
     pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
@@ -278,11 +252,11 @@ def pixelshuffle_block(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1,
     return sequential(conv, pixel_shuffle, n, a)
 
 
-def upconv_blcok(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True,
+def upconv_blcok(in_nc, out_nc, upscale_factor=2, kernel_size=3, stride=1, bias=True, \
                 pad_type='zero', norm_type=None, act_type='relu', mode='nearest'):
     # Up conv
     # described in https://distill.pub/2016/deconv-checkerboard/
     upsample = nn.Upsample(scale_factor=upscale_factor, mode=mode)
-    conv = conv_block(in_nc, out_nc, kernel_size, stride, bias=bias,
+    conv = conv_block(in_nc, out_nc, kernel_size, stride, bias=bias, \
                         pad_type=pad_type, norm_type=norm_type, act_type=act_type)
     return sequential(upsample, conv)
