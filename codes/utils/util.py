@@ -32,7 +32,7 @@ def mkdirs(paths):
 def mkdir_and_rename(path):
     if os.path.exists(path):
         new_name = path + '_archived_' + get_timestamp()
-        print('Path already exists. Rename it to [%s]' % new_name)
+        print('Path already exists. Rename it to [{:s}]'.format(new_name))
         os.rename(path, new_name)
     os.makedirs(path)
 
@@ -62,7 +62,7 @@ def tensor2img_np(tensor, out_type=np.uint8, min_max=(0, 1)):
         img_np = tensor.numpy()
     else:
         raise TypeError(
-            'Only support 4D, 3D and 2D tensor. But received tensor with dimension: %d' % n_dim)
+            'Only support 4D, 3D and 2D tensor. But received dimension: {:d}'.format(n_dim))
     if out_type == np.uint8:
         img_np = (img_np * 255.0).round()
         # Important. Unlike matlab, numpy.unit8() WILL NOT round by default.
