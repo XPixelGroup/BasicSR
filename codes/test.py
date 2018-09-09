@@ -27,7 +27,7 @@ test_loaders = []
 for phase, dataset_opt in sorted(opt['datasets'].items()):
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
-    print('Number of test images in [%s]: %d' % (dataset_opt['name'], len(test_set)))
+    print('Number of test images in [{:s}]: {:d}'.format(dataset_opt['name'], len(test_set)))
     test_loaders.append(test_loader)
 
 # Create model
@@ -35,7 +35,7 @@ model = create_model(opt)
 
 for test_loader in test_loaders:
     test_set_name = test_loader.dataset.opt['name']
-    print('Testing [%s]...' % test_set_name)
+    print('Testing [{:s}]...'.format(test_set_name))
     test_start_time = time.time()
     dataset_dir = os.path.join(opt['path']['results_root'], test_set_name)
     util.mkdir(dataset_dir)
@@ -56,13 +56,12 @@ for test_loader in test_loaders:
         model.test()  # test
         visuals = model.get_current_visuals(need_HR=need_HR)
 
-        sr_img = util.tensor2img_np(visuals['SR'])  # uint8
+        sr_img = util.tensor2img(visuals['SR'])  # uint8
 
         if need_HR:  # load GT image and calculate psnr
-            gt_img = util.tensor2img_np(visuals['HR'])
+            gt_img = util.tensor2img(visuals['HR'])
 
-            scale = test_loader.dataset.opt['scale']
-            crop_border = scale + 2
+            crop_border = test_loader.dataset.opt['scale']
             cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]
             cropped_gt_img = gt_img[crop_border:-crop_border, crop_border:-crop_border, :]
             psnr = util.psnr(cropped_sr_img, cropped_gt_img)
@@ -83,8 +82,12 @@ for test_loader in test_loaders:
         else:
             print(img_name)
 
-        save_img_path = os.path.join(dataset_dir, img_name + '.png')
-        util.save_img_np(sr_img.squeeze(), save_img_path)
+        suffix = opt['suffix']
+        if suffix:
+            save_img_path = os.path.join(dataset_dir, img_name + suffix + '.png')
+        else:
+            save_img_path = os.path.join(dataset_dir, img_name + '.png')
+        util.save_img(sr_img, save_img_path)
 
     if need_HR:  # metrics
         # Average PSNR/SSIM results
