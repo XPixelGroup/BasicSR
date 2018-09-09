@@ -8,7 +8,7 @@ An image super-resolution toolkit flexible for development. It now provides:
    1. We are also curious to know what is the upper bound of PSNR for bicubic downsampling kernel by using an extremely large model.-->
 2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model. It achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Papaer](), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
 <p align="center">
-  <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.png">
+  <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
 </p>
 
 3. [**SFTGAN**](https://github.com/xinntao/CVPR18-SFTGAN) model. It adopts Spatial Feature Transform (SFT) to effectively incorporate other conditions/priors, like semantic prior for image SR representing by segmentation probability maps. For more details, please refer to [Papaer](https://arxiv.org/abs/1804.02815), [SFTGAN repo](https://github.com/xinntao/CVPR18-SFTGAN).
