@@ -52,9 +52,9 @@ def main():
             val_dataset_opt = dataset_opt
             val_set = create_dataset(dataset_opt)
             val_loader = create_dataloader(val_set, dataset_opt)
-            print('Number of val images in [%s]: %d' % (dataset_opt['name'], len(val_set)))
+            print('Number of val images in [{:s}]: {:d}'.format(dataset_opt['name'], len(val_set)))
         else:
-            raise NotImplementedError("Phase [%s] is not recognized." % phase)
+            raise NotImplementedError('Phase [{:s}] is not recognized.'.formata(phase))
     assert train_loader is not None
 
     # Create model
@@ -93,7 +93,7 @@ def main():
 
             # save models
             if current_step % opt['logger']['save_checkpoint_freq'] == 0:
-                print('Saving the model at the end of iter %d' % (current_step))
+                print('Saving the model at the end of iter {:d}.'.format(current_step))
                 model.save(current_step)
 
             # validation
@@ -117,7 +117,7 @@ def main():
                     gt_img = util.tensor2img_np(visuals['HR'])  # uint8
 
                     # Save SR images for reference
-                    save_img_path = os.path.join(img_dir, '%s_%s.png' % (img_name, current_step))
+                    save_img_path = os.path.join(img_dir, '{:s}_{:s}.png'.format(img_name, current_step))
                     util.save_img_np(sr_img.squeeze(), save_img_path)
 
                     # calculate PSNR
@@ -143,7 +143,7 @@ def main():
 
     print('Saving the final model.')
     model.save('latest')
-    print('End of Training \t Time taken: %d sec' % (time.time() - start_time))
+    print('End of Training \t Time taken: {:.2f} sec'.format(time.time() - start_time))
 
 
 if __name__ == '__main__':
