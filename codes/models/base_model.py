@@ -7,8 +7,10 @@ class BaseModel():
     def __init__(self, opt):
         self.opt = opt
         self.save_dir = opt['path']['models']  # save models
-        self.device = torch.device('cuda' if opt['gpu_ids'] is not None else 'cpu' )
+        self.device = torch.device('cuda' if opt['gpu_ids'] is not None else 'cpu')
         self.is_train = opt['is_train']
+        self.schedulers = []
+        self.optimizers = []
 
     def feed_data(self, data):
         pass
@@ -48,7 +50,7 @@ class BaseModel():
 
     # helper saving function that can be used by subclasses
     def save_network(self, save_dir, network, network_label, iter_label):
-        save_filename = '%s_%s.pth' % (iter_label, network_label)
+        save_filename = '{:s}_{:s}.pth'.format(iter_label, network_label)
         save_path = os.path.join(save_dir, save_filename)
         if isinstance(network, nn.DataParallel):
             network = network.module
