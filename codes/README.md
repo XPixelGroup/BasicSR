@@ -1,5 +1,9 @@
 # Code Framework
-The overall code framework is shown in the following figure. It mainly consists of four parts - `Config`, `Data`, `Model` and `Network`. 
+The overall code framework is shown in the following figure. It mainly consists of four parts - `Config`, `Data`, `Model` and `Network`.
+
+<p align="center">
+   <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="450">
+</p>
 
 Let us take the train commad `python train.py -opt options/train/train_esrgan.json` for example. A sequence of actions will be done after this command. 
 
@@ -11,9 +15,6 @@ Let us take the train commad `python train.py -opt options/train/train_esrgan.js
 
 Moreover, there are utils and userful scripts. A detailed description is provided as follows.
 
-<p align="center">
-   <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="450">
-</p>
 
 ## Table of Contents
 1. [Config](#config)
@@ -23,17 +24,25 @@ Moreover, there are utils and userful scripts. A detailed description is provide
 1. [Utils](#utils)
 1. [Scripts](#scripts)
 
-## Config
-Folder [`options`](https://github.com/xinntao/BasicSR/tree/master/codes/options).
+## Config [[`options/`](https://github.com/xinntao/BasicSR/tree/master/codes/options)]
+Configure the options for data loader, network structure, model, training strategies and etc.
 
 - `json` file is used to configure options and `options/options.py` will convert the json file to python dict.
 - `json` file uses `null` for `None`; and supports `//` comments, i.e., in each line, contents after the `//` will be ignored. 
 - Supports `debug` mode, i.e, model name start with `debug_` will trigger the debug mode.
 - The configuration file and descriptions can be found in [`options`](https://github.com/xinntao/BasicSR/tree/master/codes/options).
 
-## Data
+## Data [[`data/`](https://github.com/xinntao/BasicSR/tree/master/codes/data)]
+A data loader to provide data for training, validation and testing.
+
+- A separate data loader module. You can modify/create data loader to meet your own needs.
+- Uses `cv2` package to do image processing, which provides rich operations.
+- Supports reading files from image folder or `lmdb` file. For faster IO during training, recommand to create `lmdb` dataset first. More details including lmdb format, creation and usage can be found in our [lmdb wiki](https://github.com/xinntao/BasicSR/wiki/lmdb).
+- `data/util.py` provides useful tools. For example, the `MATLAB bicubic` operation; rgb<-->ycbcr as MATLAB. We also provide [MATLAB bicubic imresize wiki](https://github.com/xinntao/BasicSR/wiki/MATLAB-bicubic-imresize) and [Color conversion in SR wiki](https://github.com/xinntao/BasicSR/wiki/Color-conversion-in-SR).
+- Now, we convert the images to format NCHW, [0,1], RGB, torch float tensor.
 
 ## Model
+
 
 ## Network
 
