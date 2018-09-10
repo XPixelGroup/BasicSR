@@ -1,5 +1,5 @@
 {
-  "name": "debug_003_SFTGANx4_OST" //  please remove "debub_" during training
+  "name": "debug_003_SFTGANx4_OST" //  please remove "debug_" during training
   , "use_tb_logger": false
   , "model": "sftgan"
   , "scale": 4

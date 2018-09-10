@@ -1,5 +1,5 @@
 {
-  "name": "debug_001_RRDB_PSNR_x4_DIV2K" //  please remove "debub_" during training
+  "name": "debug_001_RRDB_PSNR_x4_DIV2K" //  please remove "debug_" during training
   , "use_tb_logger": true
   , "model":"sr"
   , "scale": 4
