@@ -1,14 +1,14 @@
 import time
 import math
-import torch
 import numpy as np
+import torch
 import torchvision.utils
 from data import create_dataloader, create_dataset
 from utils import util
 
 opt = {}
 
-opt['name'] = 'test'
+opt['name'] = 'DIV2K800'
 opt['dataroot_HR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
 opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb'
 
