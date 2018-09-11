@@ -56,5 +56,5 @@ for path in glob.glob(test_img_folder + '/*'):
     seg = seg.cuda()
 
     output = model((img_LR, seg)).data
-    output = util.tensor2img_np(output.squeeze())
-    util.save_img_np(output, os.path.join(save_result_path, base + '_rlt.png'))
+    output = util.tensor2img(output.squeeze())
+    util.save_img(output, os.path.join(save_result_path, base + '_rlt.png'))
