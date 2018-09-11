@@ -48,12 +48,15 @@ We also provides:
 1. [Wiki](https://github.com/xinntao/BasicSR/wiki), e.g., How to make high quality gif with full (true) color, Matlab bicubic imresize
 <!--1. evaluation metric codes.-->
 
-## Prerequisites
+#### Dependencies
 
-- Linux
-- Python3
-- Pytorch 0.4
-- NVIDIA GPU + CUDA
+- Python 3 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux))
+- [PyTorch >= 0.4.0](https://pytorch.org/)
+- NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
+- Python packages: `pip install numpy opencv-python lmdb scikit-image`
+- [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
+
+
 
 ## Datasets
 There are some **classical SR datasets**, for example:
