@@ -1,4 +1,5 @@
 function generate_mod_LR_bic()
+%% check if need to operate in float space.
 %% matlab code to genetate mod images, bicubic-downsampled LR,
 %% bicubic_upsampled images.
 
