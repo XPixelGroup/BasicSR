@@ -109,6 +109,7 @@ We use a PSNR-oriented pretrained SR model to initialize the parameters for bett
 1. Run command: `python train.py -opt options/train/train_sftgan.json`
 
 # Datasets
+Several common SR datasets are list below. 
 
 <table>
   <tr>
@@ -121,75 +122,80 @@ We use a PSNR-oriented pretrained SR model to initialize the parameters for bett
   <tr>
     <td rowspan="3">Classical SR Training</td>
     <td>T91</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>91 images for training</sub></td>
     <td rowspan="9"><a href="https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing">Google Drive</a></td>
-    <td rowspan="9"><a href="https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q">Baidu Drive</a></td>
+    <td rowspan="9"><a href="https://pan.baidu.com/s/1q_1ERCMqALH0xFwjLM0pTg">Baidu Drive</a></td>
   </tr>
  <tr>
-    <td>BSD200</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/">BSDS200</a></td>
+    <td><sub>A subset (train) of BSD500 for training</sub></td>
   </tr>
   <tr>
-    <td>General 100</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="http://mmlab.ie.cuhk.edu.hk/projects/FSRCNN.html">General100</a></td>
+    <td><sub>100 images for training</sub></td>
   </tr>
   <tr>
     <td rowspan="6">Classical SR Testing</td>
     <td>Set5</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>Set5 test dataset</sub></td>
   </tr>
   <tr>
     <td>Set14</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>Set14 test dataset</sub></td>
   </tr>
   <tr>
-    <td>BSD100</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/">BSDS100</a></td>
+    <td><sub>A subset (test) of BSD500 for testing</sub></td>
   </tr>
   <tr>
-    <td>Urban100</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="https://sites.google.com/site/jbhuang0604/publications/struct_sr">urban100</a></td>
+    <td><sub>100 building images for testing (regular structures)</sub></td>
   </tr>
   <tr>
-    <td>manga109</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="http://www.manga109.org/en/">manga109</a></td>
+    <td><sub>109 images of Japanese manga for testing</sub></td>
   </tr>
   <tr>
     <td>historical</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>10 gray LR images without the ground-truth</sub></td>
   </tr>
    
   <tr>
     <td rowspan="3">2K Resolution</td>
-    <td>DIV2K</td>
-    <td><sub>Desc</sub></td>
-    <td rowspan="3"><a href="https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing">Google Drive</a></td>
-    <td rowspan="3"><a href="https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q">Baidu Drive</a></td>
+    <td><a href="https://data.vision.ee.ethz.ch/cvl/DIV2K/">DIV2K</a></td>
+    <td><sub>proposed in <a href="http://www.vision.ee.ethz.ch/ntire17/">NTIRE17</a>(800 train and 100 validation)</sub></td>
+    <td rowspan="3"><a href="https://drive.google.com/drive/folders/1B-uaxvV9qeuQ-t7MFiN1oEdA6dKnj2vW?usp=sharing">Google Drive</a></td>
+    <td rowspan="3"><a href="https://pan.baidu.com/s/1CFIML6KfQVYGZSNFrhMXmA">Baidu Drive</a></td>
   </tr>
  <tr>
-    <td>Flickr2K</td>
-    <td><sub>Desc</sub></td>
+    <td><a href="https://github.com/LimBee/NTIRE2017">Flickr2K</a></td>
+    <td><sub>2650 2K images from Flickr for training</sub></td>
   </tr>
  <tr>
     <td>DF2K</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>A merged training dataset of DIV2K and Flickr2K</sub></td>
   </tr>
   
   <tr>
-    <td rowspan="2">OST</td>
+    <td rowspan="2">OST (Outdoor Scenes)</td>
     <td>OST Training</td>
-    <td><sub>Desc</sub></td>
-    <td rowspan="2"><a href="https://drive.google.com/drive/folders/1pRmhEmmY-tPF7uH8DuVthfHoApZWJ1QU?usp=sharing">Google Drive</a></td>
-    <td rowspan="2"><a href="https://pan.baidu.com/s/18fJzAHIg8Zpkc-2seGRW4Q">Baidu Drive</a></td>
+    <td><sub>7 categories images with rich textures</sub></td>
+    <td rowspan="2"><a href="">Google Drive</a></td>
+    <td rowspan="2"><a href="">Baidu Drive</a></td>
   </tr>
  <tr>
     <td>OST300</td>
-    <td><sub>Desc</sub></td>
+    <td><sub>300 test images of outdoor scences</sub></td>
+  </tr>
+  
+  <tr>
+    <td >PIRM</td>
+    <td>PIRM</td>
+    <td><sub>PIRM self-val, val, test datasets</sub></td>
+    <td rowspan="2"><a href="https://drive.google.com/drive/folders/17FmdXu5t8wlKwt8extb_nQAdjxUOrb1O?usp=sharing">Google Drive</a></td>
+    <td rowspan="2"><a href="https://pan.baidu.com/s/1gYv4tSJk_RVCbCq4B6UxNQ">Baidu Drive</a></td>
   </tr>
 </table>
-
-
-Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/), or from [Baidu Drive](https://pan.baidu.com/s/1LUj90_skqlVw4rjRVeEoiw).
 
 # Pretrained models
 We provide some pretrained models. More details about the pretrained models, please see [`experiments/pretrained_models`](https://github.com/xinntao/BasicSR/tree/master/experiments/pretrained_models).
@@ -258,7 +264,7 @@ You can put the downloaded models in the `experiments/pretrained_models` folder.
 
 ---
 ## :satisfied: Image Viewer - [HandyViewer](https://github.com/xinntao/HandyViewer)
-If you have trouble in comparing image details, may have a try for [HandyViewer](https://github.com/xinntao/HandyViewer) - an image viewer that you can switch image with a fixed zoom ratio.
+May try [HandyViewer](https://github.com/xinntao/HandyViewer) - an image viewer that you can switch image with a fixed zoom ratio, easy for comparing image details.
 
 ---
 
