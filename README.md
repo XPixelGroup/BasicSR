@@ -6,7 +6,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 <!--   1. want to compare more structures for SR. e.g. ResNet Block, ResNeXt Block, Dense Block, Residual Dense Block, Poly Block, Dual Path Block, Squeeze-and-Excitation Block and etc.
    1. want to provide some useful tricks for training SR networks.
    1. We are also curious to know what is the upper bound of PSNR for bicubic downsampling kernel by using an extremely large model.-->
-2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model. It achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
+2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model (It can also train the **SRGAN** model). Enhanced SRGAN achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
 <p align="center">
   <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
 </p>
@@ -51,10 +51,10 @@ An image super-resolution toolkit flexible for development. It now provides:
 - Python packages: `pip install numpy opencv-python lmdb scikit-image`
 - [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
 
-## Codes
+# Codes
 We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
 <p align="center">
-   <img src="https://c1.staticflickr.com/2/1859/30513344578_801bc60a82_b.jpg" height="300">
+   <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="300">
 </p>
 
 We also provides:
@@ -63,12 +63,52 @@ We also provides:
 1. Some useful scripts, more details in [`./codes/scripts`](https://github.com/xinntao/BasicSR/tree/master/codes/scripts). 
 1. [Wiki](https://github.com/xinntao/BasicSR/wiki), e.g., How to make high quality gif with full (true) color, Matlab bicubic imresize and etc.
 
-## Usage 
-### How to test
+# Usage
+### Data and model preparation
+The common **SR datasets** can be found in [Datasets](#datasets). Detailed data preparation can be seen in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data).
 
-### How to train
+We provide **pretrained models** in [Pretrained models](#pretrained-models).
 
-## Datasets
+## How to Test
+### Test ESRGAN (SRGAN) models
+1. Modify the configuration file `options/test/test_esrgan.json` 
+1. Run command: `python test.py -opt options/test/test_esrgan.json`
+
+### Test SR models
+1. Modify the configuration file `options/test/test_sr.json` 
+1. Run command: `python test.py -opt options/test/test_sr.json`
+
+### Test SFTGAN models
+1. Obtain the segmentation probability maps: `python test_seg.py`
+1. Run command: `python test_sftgan.py`
+
+## How to Train
+### Train ESRGAN (SRGAN) models
+We use a PSNR-oriented pretrained SR model to initialize the parameters for better quality.
+
+1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data).
+1. Prerapre the PSNR-oriented pretrained model. You can use the `RRDB_PSNR_x4.pth` as the pretrained model. 
+1. Modify the configuration file  `options/train/train_esrgan.json`
+1. Run command: `python train.py -opt options/train/train_esrgan.json`
+
+### Train SR models
+1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data). 
+1. Modify the configuration file `options/train/train_sr.json`
+1. Run command: `python train.py -opt options/train/train_sr.json`
+
+### Train SFTGAN models 
+*Pretraining is also important*. We use a PSNR-oriented pretrained SR model (trained on DIV2K) to initialize the SFTGAN model.
+
+1. First prepare the segmentation probability maps for training data: run [`test_seg.py`](https://github.com/xinntao/BasicSR/blob/master/codes/test_seg.py). We provide a pretrained segmentation model for 7 outdoor categories in [Pretrained models](#pretrained-models). We use [Xiaoxiao Li's codes](https://github.com/lxx1991/caffe_mpi) to train our segmentation model and transfer it to a PyTorch model.
+1. Put the images and segmentation probability maps in a folder as described in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data).
+1. Transfer the pretrained model parameters to the SFTGAN model. 
+    1. First train with `debug` mode and obtain a saved model.
+    1. Run [`transfer_params_sft.py`](https://github.com/xinntao/BasicSR/blob/master/codes/scripts/transfer_params_sft.py) to initialize the model.
+    1. We provide an initialized model named `sft_net_ini.pth` in [Pretrained models](#pretrained-models)
+1. Modify the configuration file in `options/train/train_sftgan.json`
+1. Run command: `python train.py -opt options/train/train_sftgan.json`
+
+# Datasets
 
 <table>
   <tr>
@@ -151,7 +191,7 @@ We also provides:
 
 Currently, there is a new DIVerse 2K resolution high quality images for SR called **DIV2K**, which can be downloaded from [DIV2K offical page](https://data.vision.ee.ethz.ch/cvl/DIV2K/), or from [Baidu Drive](https://pan.baidu.com/s/1LUj90_skqlVw4rjRVeEoiw).
 
-## Pretrained models
+# Pretrained models
 We provide some pretrained models. More details about the pretrained models, please see [`experiments/pretrained_models`](https://github.com/xinntao/BasicSR/tree/master/experiments/pretrained_models).
 
 You can put the downloaded models in the `experiments/pretrained_models` folder.
@@ -224,7 +264,7 @@ If you have trouble in comparing image details, may have a try for [HandyViewer]
 
 
 
-## Acknowlegement
+## Acknowledgement
 
 - Code architecture is inspired by [pytorch-cyclegan](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
 - Thanks to *Wai Ho Kwok*, who contributes to the initial version.
