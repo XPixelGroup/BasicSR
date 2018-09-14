@@ -1,5 +1,5 @@
 # BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/CVPR18-SFTGAN)
-### :sun_with_face: We are updating codes and description these days.
+
 An image super-resolution toolkit flexible for development. It now provides:
 
 1. **PSNR-oriented SR** models (e.g., SRCNN, SRResNet and etc). You can try different architectures, e.g, ResNet Block, ResNeXt Block, Dense Block, Residual Dense Block, Poly Block, Dual Path Block, Squeeze-and-Excitation Block, Residual-in-Residual Dense Block and etc.
