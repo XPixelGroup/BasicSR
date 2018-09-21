@@ -1,7 +1,5 @@
 function generate_mod_LR_bic()
-%% check if need to operate in float space.
-%% matlab code to genetate mod images, bicubic-downsampled LR,
-%% bicubic_upsampled images.
+%% matlab code to genetate mod images, bicubic-downsampled LR, bicubic_upsampled images.
 
 %% set parameters
 % comment the unnecessary line
@@ -49,6 +47,7 @@ for i = 1 : length(filepaths)
         fprintf(str_rlt);
         % read image
         img = imread(fullfile(input_folder, [imname, ext]));
+        img = im2double(img);
         % modcrop
         img = modcrop(img, mod_scale);
         if exist('save_mod_folder', 'var')
@@ -59,9 +58,6 @@ for i = 1 : length(filepaths)
         if exist('save_LR_folder', 'var')
             imwrite(im_LR, fullfile(save_LR_folder, [imname, '_bicLRx4.png']));
         end
-        %         im_B = double(im_B)/255;
-        %         im_B = rgb2ycbcr(im_B);
-        %         im_B = im_B(:,:,1);
         % Bicubic
         if exist('save_bic_folder', 'var')
             im_B = imresize(im_LR, up_scale, 'bicubic');
