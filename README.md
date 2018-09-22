@@ -26,17 +26,20 @@ An image super-resolution toolkit flexible for development. It now provides:
     }
 -->
 
-    @inproceedings{wang2018esrgan,
-        author = {Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Loy, Chen Change and Qiao, Yu and Tang, Xiaoou},
+    @InProceedings{wang2018esrgan,
+        author = {Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Qiao, Yu and Loy, Chen Change},
         title = {ESRGAN: Enhanced super-resolution generative adversarial networks},
-        booktitle = {European Conference on Computer Vision (ECCV) Workshops},
+        booktitle = {The European Conference on Computer Vision Workshops (ECCVW)},
+        month = {September},
         year = {2018}
-    @inproceedings{wang2018sftgan,
+    }
+    @InProceedings{wang2018sftgan,
         author = {Wang, Xintao and Yu, Ke and Dong, Chao and Loy, Chen Change},
         title = {Recovering realistic texture in image super-resolution by deep spatial feature transform},
         booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+        month = {June},
         year = {2018}
-
+    }
 <!-- ### Table of Contents
 1. [Introduction](#introduction)
 1. [Introduction](#introduction)
