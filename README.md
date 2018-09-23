@@ -6,7 +6,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 <!--   1. want to compare more structures for SR. e.g. ResNet Block, ResNeXt Block, Dense Block, Residual Dense Block, Poly Block, Dual Path Block, Squeeze-and-Excitation Block and etc.
    1. want to provide some useful tricks for training SR networks.
    1. We are also curious to know what is the upper bound of PSNR for bicubic downsampling kernel by using an extremely large model.-->
-2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model (It can also train the **SRGAN** model). Enhanced SRGAN achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
+2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model (It can also train the **SRGAN** model). Enhanced SRGAN achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](https://arxiv.org/abs/1809.00219), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
 <p align="center">
   <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
 </p>
@@ -62,8 +62,8 @@ We provide a detailed explaination of the **code framework** in [`./codes`](http
 
 We also provides:
 
-<!--1. evaluation metric codes.-->
-1. Some useful scripts, more details in [`./codes/scripts`](https://github.com/xinntao/BasicSR/tree/master/codes/scripts). 
+1. Some useful scripts. More details in [`./codes/scripts`](https://github.com/xinntao/BasicSR/tree/master/codes/scripts). 
+1. [Evaluation codes](https://github.com/xinntao/BasicSR/tree/master/metrics), e.g., PSNR/SSIM metric.
 1. [Wiki](https://github.com/xinntao/BasicSR/wiki), e.g., How to make high quality gif with full (true) color, Matlab bicubic imresize and etc.
 
 # Usage
