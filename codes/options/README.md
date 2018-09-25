@@ -13,7 +13,7 @@ Click for detailed explanations for each json file.
 ## train_sr_json
 ```c++
 {
-  "name": "debug_001_RRDB_PSNR_x4_DIV2K" //  leading'debug_' enters the 'debug' mode. Please remove it during formal training
+  "name": "debug_001_RRDB_PSNR_x4_DIV2K" //  leading 'debug_' enters the 'debug' mode. Please remove it during formal training
   , "use_tb_logger": true // use tensorboard_logger, ref: `https://github.com/xinntao/BasicSR/tree/master/codes/utils`
   , "model":"sr" // model type, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/models/__init__.py`
   , "scale": 4 // scale factor for SR
@@ -81,7 +81,7 @@ Click for detailed explanations for each json file.
 ## train_esrgan_json
 ```c++
 {
-  "name": "debug_002_RRDB_ESRGAN_x4_DIV2K" // leading'debug_' enters the 'debug' mode. Please remove it during formal training
+  "name": "debug_002_RRDB_ESRGAN_x4_DIV2K" // leading 'debug_' enters the 'debug' mode. Please remove it during formal training
   , "use_tb_logger": true // use tensorboard_logger, ref: `https://github.com/xinntao/BasicSR/tree/master/codes/utils`
   , "model":"srragan" // "srgan" |"srragan", model type, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/models/__init__.py`
   , "scale": 4 // scale factor for SR
@@ -138,9 +138,9 @@ Click for detailed explanations for each json file.
     "lr_G": 1e-4 // initialized learning rate for G
     , "weight_decay_G": 0
     , "beta1_G": 0.9
-    , "lr_D": 1e-4
+    , "lr_D": 1e-4 // initialized learning rate for D
     , "weight_decay_D": 0
-    , "beta1_D": 0.9 // initialized learning rate for D
+    , "beta1_D": 0.9 
     , "lr_scheme": "MultiStepLR" // learning rate decay scheme
     , "lr_steps": [50000, 100000, 200000, 300000] // at which steps, decay the learining rate
     , "lr_gamma": 0.5
@@ -172,28 +172,28 @@ Click for detailed explanations for each json file.
 
 ```c++
 {
-  "name": "debug_003_SFTGANx4_OST" //  please remove "debug_" during training
-  , "use_tb_logger": false
-  , "model": "sftgan"
-  , "scale": 4
-  , "gpu_ids": [0]
+  "name": "debug_003_SFTGANx4_OST" // leading 'debug_' enters the 'debug' mode. Please remove it during formal training
+  , "use_tb_logger": false // use tensorboard_logger, ref: `https://github.com/xinntao/BasicSR/tree/master/codes/utils`
+  , "model": "sftgan" // model type, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/models/__init__.py`
+  , "scale": 4 // scale factor for SR
+  , "gpu_ids": [0] // specify GPUs, actually it sets the `CUDA_VISIBLE_DEVICES`
 
-  , "datasets": {
-    "train": {
-      "name": "OST"
-      , "mode": "LRHRseg_bg"
-      , "dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/OST/train/img"
-      , "dataroot_HR_bg": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub"
-      , "dataroot_LR": null
-      , "subset_file": null
-      , "use_shuffle": true
-      , "n_workers": 8
+  , "datasets": { // configure the training and validation datasets
+    "train": { // training dataset configurations
+      "name": "OST" // dataset name
+      , "mode": "LRHRseg_bg" // dataset mode, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/data/__init__.py`
+      , "dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/OST/train/img" // HR data root
+      , "dataroot_HR_bg": "/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub" // HR images for background, here, SFTGAN uses DIV2K images as the training images for the background category
+      , "dataroot_LR": null // if null, generate the LR images on-the-fl
+      , "subset_file": null // use a subset of an image folder
+      , "use_shuffle": true // shuffle the dataset
+      , "n_workers": 8 // number of data load workers
       , "batch_size": 16
-      , "HR_size": 96
-      , "use_flip": true
-      , "use_rot": false
+      , "HR_size": 96 // cropped HR patch size
+      , "use_flip": true // whether use horizontal and vertical flips
+      , "use_rot": false // whether use rotations: 90, 190, 270 degrees
     }
-    , "val": {
+    , "val": { // validation dataset configurations
       "name": "val_OST300_part"
       , "mode": "LRHRseg_bg"
       , "dataroot_HR": "/mnt/SSD/xtwang/BasicSR_datasets/OST/val/img"
@@ -202,33 +202,33 @@ Click for detailed explanations for each json file.
   }
 
   , "path": {
-    "root": "/home/xtwang/Projects/BasicSR"
-    , "pretrain_model_G": "../experiments/pretrained_models/sft_net_ini.pth"
+    "root": "/home/xtwang/Projects/BasicSR" // root path
+    , "pretrain_model_G": "../experiments/pretrained_models/sft_net_ini.pth" // path of the pretrained model
   }
 
-  , "network_G": {
-    "which_model_G": "sft_arch"
+  , "network_G": { // configurations for the network G
+    "which_model_G": "sft_arch" // network structures, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/models/networks.py`
   }
-  , "network_D": {
-    "which_model_D": "dis_acd"
+  , "network_D": { // configurations for the network D
+    "which_model_D": "dis_acd" // network structures, ref: `https://github.com/xinntao/BasicSR/blob/master/codes/models/networks.py`
   }
 
-  , "train": {
-    "lr_G": 1e-4
+  , "train": { // training strategies
+    "lr_G": 1e-4 // initialized learning rate for G
     , "weight_decay_G": 0
     , "beta1_G": 0.9
-    , "lr_D": 1e-4
+    , "lr_D": 1e-4 // initialized learning rate for D
     , "weight_decay_D": 0
     , "beta1_D": 0.9
-    , "lr_scheme": "MultiStepLR"
-    , "lr_steps": [50000, 100000, 150000, 200000]
+    , "lr_scheme": "MultiStepLR" // learning rate decay scheme
+    , "lr_steps": [50000, 100000, 150000, 200000] // at which steps, decay the learining rate
     , "lr_gamma": 0.5
 
-    , "pixel_criterion": "l1"
+    , "pixel_criterion": "l1" // "l1" | "l2", pixel criterion
     , "pixel_weight": 0
-    , "feature_criterion": "l1"
+    , "feature_criterion": "l1" // perceptual criterion (VGG loss)
     , "feature_weight": 1
-    , "gan_type": "vanilla"
+    , "gan_type": "vanilla" // GAN type
     , "gan_weight": 5e-3
 
     //for wgan-gp
@@ -237,11 +237,11 @@ Click for detailed explanations for each json file.
     // , "gp_weigth": 10
 
     , "manual_seed": 0
-    , "niter": 6e5
-    , "val_freq": 2e3
+    , "niter": 6e5 // total training iteration
+    , "val_freq": 2e3 // validation frequency
   }
 
-  , "logger": {
+  , "logger": { // logger configurations
     "print_freq": 200
     , "save_checkpoint_freq": 2e3
   }
