@@ -89,7 +89,7 @@ We provide **pretrained models** in [Pretrained models](#pretrained-models).
 ### Train ESRGAN (SRGAN) models
 We use a PSNR-oriented pretrained SR model to initialize the parameters for better quality.
 
-1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data).
+1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data) and [wiki (Faster IO speed)](https://github.com/xinntao/BasicSR/wiki/Faster-IO-speed). 
 1. Prerapre the PSNR-oriented pretrained model. You can use the `RRDB_PSNR_x4.pth` as the pretrained model. 
 1. Modify the configuration file  `options/train/train_esrgan.json`
 1. Run command: `python train.py -opt options/train/train_esrgan.json`
