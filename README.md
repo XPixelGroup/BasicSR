@@ -54,7 +54,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 - Python packages: `pip install numpy opencv-python lmdb scikit-image`
 - [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
 
-# Codes
+# [Codes](https://github.com/xinntao/BasicSR/tree/master/codes)
 We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
 <p align="center">
    <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="300">
