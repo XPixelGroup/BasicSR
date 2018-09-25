@@ -37,7 +37,7 @@ Moreover, there are utils and userful scripts. A detailed description is provide
 
 - A separate data loader module. You can modify/create data loader to meet your own needs.
 - Uses `cv2` package to do image processing, which provides rich operations.
-- Supports reading files from image folder or `lmdb` file. For faster IO during training, recommand to create `lmdb` dataset first. More details including lmdb format, creation and usage can be found in our [lmdb wiki](https://github.com/xinntao/BasicSR/wiki/lmdb).
+- Supports reading files from image folder or `lmdb` file. For faster IO during training, recommand to create `lmdb` dataset first. More details including lmdb format, creation and usage can be found in our [lmdb wiki](https://github.com/xinntao/BasicSR/wiki/Faster-IO-speed).
 - [`data/util.py`](https://github.com/xinntao/BasicSR/blob/master/codes/data/util.py) provides useful tools. For example, the `MATLAB bicubic` operation; rgb<-->ycbcr as MATLAB. We also provide [MATLAB bicubic imresize wiki](https://github.com/xinntao/BasicSR/wiki/MATLAB-bicubic-imresize) and [Color conversion in SR wiki](https://github.com/xinntao/BasicSR/wiki/Color-conversion-in-SR).
 - Now, we convert the images to format NCHW, [0,1], RGB, torch float tensor.
 
