@@ -183,8 +183,8 @@ Several common SR datasets are list below.
     <td rowspan="2">OST (Outdoor Scenes)</td>
     <td>OST Training</td>
     <td><sub>7 categories images with rich textures</sub></td>
-    <td rowspan="2"><a href="">Google Drive</a></td>
-    <td rowspan="2"><a href="">Baidu Drive</a></td>
+    <td rowspan="2"><a href="https://drive.google.com/drive/u/1/folders/1iZfzAxAwOpeutz27HC56_y5RNqnsPPKr">Google Drive</a></td>
+    <td rowspan="2"><a href="https://pan.baidu.com/s/1neUq5tZ4yTnOEAntZpK_rQ#list/path=%2Fpublic%2FSFTGAN&parentPath=%2Fpublic">Baidu Drive</a></td>
   </tr>
  <tr>
     <td>OST300</td>
