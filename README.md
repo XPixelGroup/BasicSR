@@ -6,7 +6,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 <!--   1. want to compare more structures for SR. e.g. ResNet Block, ResNeXt Block, Dense Block, Residual Dense Block, Poly Block, Dual Path Block, Squeeze-and-Excitation Block and etc.
    1. want to provide some useful tricks for training SR networks.
    1. We are also curious to know what is the upper bound of PSNR for bicubic downsampling kernel by using an extremely large model.-->
-2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model (It can also train the **SRGAN** model). Enhanced SRGAN achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
+2. [**Enhanced SRGAN**](https://github.com/xinntao/ESRGAN) model (It can also train the **SRGAN** model). Enhanced SRGAN achieves consistently better visual quality with more realistic and natural textures than [SRGAN](https://arxiv.org/abs/1609.04802) and won the first place in the [PIRM2018-SR Challenge](https://www.pirm2018.org/PIRM-SR.html). For more details, please refer to [Paper](https://arxiv.org/abs/1809.00219), [ESRGAN repo](https://github.com/xinntao/ESRGAN). (If you just want to test the model, [ESRGAN repo](https://github.com/xinntao/ESRGAN) provides simpler testing codes.)
 <p align="center">
   <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
 </p>
@@ -26,17 +26,20 @@ An image super-resolution toolkit flexible for development. It now provides:
     }
 -->
 
-    @inproceedings{wang2018esrgan,
-        author = {Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Loy, Chen Change and Qiao, Yu and Tang, Xiaoou},
+    @InProceedings{wang2018esrgan,
+        author = {Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Qiao, Yu and Loy, Chen Change},
         title = {ESRGAN: Enhanced super-resolution generative adversarial networks},
-        booktitle = {European Conference on Computer Vision (ECCV) Workshops},
+        booktitle = {The European Conference on Computer Vision Workshops (ECCVW)},
+        month = {September},
         year = {2018}
-    @inproceedings{wang2018sftgan,
+    }
+    @InProceedings{wang2018sftgan,
         author = {Wang, Xintao and Yu, Ke and Dong, Chao and Loy, Chen Change},
         title = {Recovering realistic texture in image super-resolution by deep spatial feature transform},
         booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+        month = {June},
         year = {2018}
-
+    }
 <!-- ### Table of Contents
 1. [Introduction](#introduction)
 1. [Introduction](#introduction)
@@ -51,7 +54,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 - Python packages: `pip install numpy opencv-python lmdb scikit-image`
 - [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
 
-# Codes
+# [Codes](https://github.com/xinntao/BasicSR/tree/master/codes)
 We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
 <p align="center">
    <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="300">
@@ -59,8 +62,8 @@ We provide a detailed explaination of the **code framework** in [`./codes`](http
 
 We also provides:
 
-<!--1. evaluation metric codes.-->
-1. Some useful scripts, more details in [`./codes/scripts`](https://github.com/xinntao/BasicSR/tree/master/codes/scripts). 
+1. Some useful scripts. More details in [`./codes/scripts`](https://github.com/xinntao/BasicSR/tree/master/codes/scripts). 
+1. [Evaluation codes](https://github.com/xinntao/BasicSR/tree/master/metrics), e.g., PSNR/SSIM metric.
 1. [Wiki](https://github.com/xinntao/BasicSR/wiki), e.g., How to make high quality gif with full (true) color, Matlab bicubic imresize and etc.
 
 # Usage
@@ -86,7 +89,7 @@ We provide **pretrained models** in [Pretrained models](#pretrained-models).
 ### Train ESRGAN (SRGAN) models
 We use a PSNR-oriented pretrained SR model to initialize the parameters for better quality.
 
-1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data).
+1. Prepare datasets, usually the DIV2K dataset. More details are in [`codes/data`](https://github.com/xinntao/BasicSR/tree/master/codes/data) and [wiki (Faster IO speed)](https://github.com/xinntao/BasicSR/wiki/Faster-IO-speed). 
 1. Prerapre the PSNR-oriented pretrained model. You can use the `RRDB_PSNR_x4.pth` as the pretrained model. 
 1. Modify the configuration file  `options/train/train_esrgan.json`
 1. Run command: `python train.py -opt options/train/train_esrgan.json`
@@ -180,8 +183,8 @@ Several common SR datasets are list below.
     <td rowspan="2">OST (Outdoor Scenes)</td>
     <td>OST Training</td>
     <td><sub>7 categories images with rich textures</sub></td>
-    <td rowspan="2"><a href="">Google Drive</a></td>
-    <td rowspan="2"><a href="">Baidu Drive</a></td>
+    <td rowspan="2"><a href="https://drive.google.com/drive/u/1/folders/1iZfzAxAwOpeutz27HC56_y5RNqnsPPKr">Google Drive</a></td>
+    <td rowspan="2"><a href="https://pan.baidu.com/s/1neUq5tZ4yTnOEAntZpK_rQ#list/path=%2Fpublic%2FSFTGAN&parentPath=%2Fpublic">Baidu Drive</a></td>
   </tr>
  <tr>
     <td>OST300</td>
