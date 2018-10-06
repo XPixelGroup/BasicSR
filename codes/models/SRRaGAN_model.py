@@ -187,11 +187,8 @@ class SRRaGANModel(BaseModel):
 
     def test(self):
         self.netG.eval()
-        for k, v in self.netG.named_parameters():
-            v.requires_grad = False
-        self.fake_H = self.netG(self.var_L)
-        for k, v in self.netG.named_parameters():
-            v.requires_grad = True
+        with torch.no_grad():
+            self.fake_H = self.netG(self.var_L)
         self.netG.train()
 
     def get_current_log(self):
