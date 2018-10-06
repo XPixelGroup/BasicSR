@@ -196,11 +196,8 @@ class SFTGAN_ACD_Model(BaseModel):
 
     def test(self):
         self.netG.eval()
-        for k, v in self.netG.named_parameters():
-            v.requires_grad = False
-        self.fake_H = self.netG((self.var_L, self.var_seg))
-        for k, v in self.netG.named_parameters():
-            v.requires_grad = True
+        with torch.no_grad():
+            self.fake_H = self.netG((self.var_L, self.var_seg))
         self.netG.train()
 
     def get_current_log(self):
