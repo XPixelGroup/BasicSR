@@ -1,4 +1,4 @@
-# BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/CVPR18-SFTGAN)
+# BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/SFTGAN)
 
 An image super-resolution toolkit flexible for development. It now provides:
 
@@ -13,18 +13,10 @@ An image super-resolution toolkit flexible for development. It now provides:
 
 3. [**SFTGAN**](https://github.com/xinntao/CVPR18-SFTGAN) model. It adopts Spatial Feature Transform (SFT) to effectively incorporate other conditions/priors, like semantic prior for image SR, representing by segmentation probability maps. For more details, please refer to [Papaer](https://arxiv.org/abs/1804.02815), [SFTGAN repo](https://github.com/xinntao/CVPR18-SFTGAN).
 <p align="center">
-  <img height="220" src="https://github.com/xinntao/CVPR18-SFTGAN/blob/master/imgs/network_structure.png">
+  <img height="220" src="https://github.com/xinntao/SFTGAN/blob/master/figures/network_structure.png">
 </p>
 
 ### BibTex
-<!--
-    @article{wang2018esrgan,
-        author={Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Loy, Chen Change and Qiao, Yu and Tang, Xiaoou},
-        title={ESRGAN: Enhanced super-resolution generative adversarial networks},
-        journal={arXiv preprint arXiv:1809.00219},
-        year={2018}
-    }
--->
 
     @InProceedings{wang2018esrgan,
         author = {Wang, Xintao and Yu, Ke and Wu, Shixiang and Gu, Jinjin and Liu, Yihao and Dong, Chao and Qiao, Yu and Loy, Chen Change},
@@ -36,15 +28,17 @@ An image super-resolution toolkit flexible for development. It now provides:
     @InProceedings{wang2018sftgan,
         author = {Wang, Xintao and Yu, Ke and Dong, Chao and Loy, Chen Change},
         title = {Recovering realistic texture in image super-resolution by deep spatial feature transform},
-        booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+        booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
         month = {June},
         year = {2018}
     }
-<!-- ### Table of Contents
-1. [Introduction](#introduction)
-1. [Introduction](#introduction)
-### Introduction
--->
+    
+## Table of Contents
+1. [Dependencies](#dependencies)
+1. [Codes](#codes)
+1. [Usage](#usage)
+1. [Datasets](#datasets)
+1. [Pretrained models](#pretrained-models)
 
 ### Dependencies
 
@@ -54,8 +48,8 @@ An image super-resolution toolkit flexible for development. It now provides:
 - Python packages: `pip install numpy opencv-python lmdb scikit-image`
 - [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
 
-# [Codes](https://github.com/xinntao/BasicSR/tree/master/codes)
-We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
+# Codes
+[`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes). We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
 <p align="center">
    <img src="https://github.com/xinntao/public_figures/blob/master/BasicSR/code_framework.png" height="300">
 </p>
