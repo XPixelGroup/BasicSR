@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 import options.options as option
 import utils.util as util
-from data.util import rgb2ycbcr
+from data.util import bgr2ycbcr
 from data import create_dataset, create_dataloader
 from models import create_model
 from utils.logger import PrintLogger
@@ -69,8 +69,8 @@ for test_loader in test_loaders:
             test_results['psnr'].append(psnr)
             test_results['ssim'].append(ssim)
             if gt_img.shape[2] == 3:  # RGB image
-                cropped_sr_img_y = rgb2ycbcr(cropped_sr_img, only_y=True)
-                cropped_gt_img_y = rgb2ycbcr(cropped_gt_img, only_y=True)
+                cropped_sr_img_y = bgr2ycbcr(cropped_sr_img, only_y=True)
+                cropped_gt_img_y = bgr2ycbcr(cropped_gt_img, only_y=True)
                 psnr_y = util.psnr(cropped_sr_img_y, cropped_gt_img_y)
                 ssim_y = util.ssim(cropped_sr_img_y, cropped_gt_img_y, multichannel=False)
                 test_results['psnr_y'].append(psnr_y)
