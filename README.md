@@ -45,7 +45,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 - Python 3 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux))
 - [PyTorch >= 0.4.0](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
-- Python packages: `pip install numpy opencv-python lmdb scikit-image`
+- Python packages: `pip install numpy opencv-python lmdb`
 - [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
 
 # Codes
