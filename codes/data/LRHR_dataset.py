@@ -111,7 +111,7 @@ class LRHRDataset(data.Dataset):
 
         # change color space if necessary
         if self.opt['color']:
-            img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0]
+            img_LR = util.channel_convert(C, self.opt['color'], [img_LR])[0] # TODO during val no definetion
 
         # BGR to RGB, HWC to CHW, numpy to tensor
         if img_HR.shape[2] == 3:
