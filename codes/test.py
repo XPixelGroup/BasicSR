@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import argparse
+import numpy as np
 from collections import OrderedDict
 
 import options.options as option
@@ -58,30 +59,7 @@ for test_loader in test_loaders:
 
         sr_img = util.tensor2img(visuals['SR'])  # uint8
 
-        if need_HR:  # load GT image and calculate psnr
-            gt_img = util.tensor2img(visuals['HR'])
-
-            crop_border = test_loader.dataset.opt['scale']
-            cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]
-            cropped_gt_img = gt_img[crop_border:-crop_border, crop_border:-crop_border, :]
-            psnr = util.psnr(cropped_sr_img, cropped_gt_img)
-            ssim = util.ssim(cropped_sr_img, cropped_gt_img, multichannel=True)
-            test_results['psnr'].append(psnr)
-            test_results['ssim'].append(ssim)
-            if gt_img.shape[2] == 3:  # RGB image
-                cropped_sr_img_y = bgr2ycbcr(cropped_sr_img, only_y=True)
-                cropped_gt_img_y = bgr2ycbcr(cropped_gt_img, only_y=True)
-                psnr_y = util.psnr(cropped_sr_img_y, cropped_gt_img_y)
-                ssim_y = util.ssim(cropped_sr_img_y, cropped_gt_img_y, multichannel=False)
-                test_results['psnr_y'].append(psnr_y)
-                test_results['ssim_y'].append(ssim_y)
-                print('{:20s} - PSNR: {:.4f} dB; SSIM: {:.4f}; PSNR_Y: {:.4f} dB; SSIM_Y: {:.4f}.'\
-                    .format(img_name, psnr, ssim, psnr_y, ssim_y))
-            else:
-                print('{:20s} - PSNR: {:.4f} dB; SSIM: {:.4f}.'.format(img_name, psnr, ssim))
-        else:
-            print(img_name)
-
+        # save images
         suffix = opt['suffix']
         if suffix:
             save_img_path = os.path.join(dataset_dir, img_name + suffix + '.png')
@@ -89,14 +67,45 @@ for test_loader in test_loaders:
             save_img_path = os.path.join(dataset_dir, img_name + '.png')
         util.save_img(sr_img, save_img_path)
 
+        # calculate PSNR and SSIM
+        if need_HR:
+            gt_img = util.tensor2img(visuals['HR'])
+            gt_img = gt_img / 255.
+            sr_img = sr_img / 255.
+
+            crop_border = test_loader.dataset.opt['scale']
+            cropped_sr_img = sr_img[crop_border:-crop_border, crop_border:-crop_border, :]
+            cropped_gt_img = gt_img[crop_border:-crop_border, crop_border:-crop_border, :]
+
+            psnr = util.calculate_psnr(cropped_sr_img * 255, cropped_gt_img * 255)
+            ssim = util.calculate_ssim(cropped_sr_img * 255, cropped_gt_img * 255)
+            test_results['psnr'].append(psnr)
+            test_results['ssim'].append(ssim)
+
+            if gt_img.shape[2] == 3:  # RGB image
+                sr_img_y = bgr2ycbcr(sr_img, only_y=True)
+                gt_img_y = bgr2ycbcr(gt_img, only_y=True)
+                cropped_sr_img_y = sr_img_y[crop_border:-crop_border, crop_border:-crop_border]
+                cropped_gt_img_y = gt_img_y[crop_border:-crop_border, crop_border:-crop_border]
+                psnr_y = util.calculate_psnr(cropped_sr_img_y * 255, cropped_gt_img_y * 255)
+                ssim_y = util.calculate_ssim(cropped_sr_img_y * 255, cropped_gt_img_y * 255)
+                test_results['psnr_y'].append(psnr_y)
+                test_results['ssim_y'].append(ssim_y)
+                print('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}; PSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}.'\
+                    .format(img_name, psnr, ssim, psnr_y, ssim_y))
+            else:
+                print('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}.'.format(img_name, psnr, ssim))
+        else:
+            print(img_name)
+
     if need_HR:  # metrics
         # Average PSNR/SSIM results
         ave_psnr = sum(test_results['psnr']) / len(test_results['psnr'])
         ave_ssim = sum(test_results['ssim']) / len(test_results['ssim'])
-        print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.4f} dB; SSIM: {:.4f}\n'\
+        print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.6f} dB; SSIM: {:.6f}\n'\
                 .format(test_set_name, ave_psnr, ave_ssim))
         if test_results['psnr_y'] and test_results['ssim_y']:
             ave_psnr_y = sum(test_results['psnr_y']) / len(test_results['psnr_y'])
             ave_ssim_y = sum(test_results['ssim_y']) / len(test_results['ssim_y'])
-            print('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.4f} dB; SSIM_Y: {:.4f}\n'\
+            print('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}\n'\
                 .format(ave_psnr_y, ave_ssim_y))
