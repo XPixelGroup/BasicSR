@@ -17,7 +17,6 @@ def parse(opt_path, is_train=True):
             json_str += line
     opt = json.loads(json_str, object_pairs_hook=OrderedDict)
 
-    opt['timestamp'] = get_timestamp()
     opt['is_train'] = is_train
     scale = opt['scale']
 
@@ -73,6 +72,19 @@ def parse(opt_path, is_train=True):
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 
     return opt
+
+
+def dict2str(opt, indent_l=1):
+    '''dict to string for logger'''
+    msg = ''
+    for k, v in opt.items():
+        if isinstance(v, dict):
+            msg += ' ' * (indent_l * 2) + k + ':[\n'
+            msg += dict2str(v, indent_l + 1)
+            msg += ' ' * (indent_l * 2) + ']\n'
+        else:
+            msg += ' ' * (indent_l * 2) + k + ': ' + str(v) + '\n'
+    return msg
 
 
 def save(opt):
