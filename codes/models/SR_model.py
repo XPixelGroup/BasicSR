@@ -1,4 +1,5 @@
 import os
+import logging
 from collections import OrderedDict
 
 import torch
@@ -7,6 +8,8 @@ from torch.optim import lr_scheduler
 
 import models.networks as networks
 from .base_model import BaseModel
+
+logger = logging.getLogger('base')
 
 
 class SRModel(BaseModel):
@@ -38,7 +41,7 @@ class SRModel(BaseModel):
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    print('WARNING: params [{:s}] will not optimize.'.format(k))
+                    logger.warning('Params [{:s}] will not optimize.'.format(k))
             self.optimizer_G = torch.optim.Adam(
                 optim_params, lr=train_opt['lr_G'], weight_decay=wd_G)
             self.optimizers.append(self.optimizer_G)
@@ -52,10 +55,8 @@ class SRModel(BaseModel):
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
             self.log_dict = OrderedDict()
-
-        print('---------- Model initialized ------------------')
+        # print network
         self.print_network()
-        print('-----------------------------------------------')
 
     def feed_data(self, data, need_HR=True):
         self.var_L = data['LR'].to(self.device)  # LR
@@ -131,17 +132,19 @@ class SRModel(BaseModel):
 
     def print_network(self):
         s, n = self.get_network_description(self.netG)
-        print('Number of parameters in G: {:,d}'.format(n))
-        if self.is_train:
-            message = '-------------- Generator --------------\n' + s + '\n'
-            network_path = os.path.join(self.save_dir, '../', 'network.txt')
-            with open(network_path, 'w') as f:
-                f.write(message)
+        if isinstance(self.netG, nn.DataParallel):
+            net_struc_str = '{} - {}'.format(self.netG.__class__.__name__,
+                                             self.netG.module.__class__.__name__)
+        else:
+            net_struc_str = '{}'.format(self.netG.__class__.__name__)
+
+        logger.info('Network G structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+        logger.info(s)
 
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            print('loading model for G [{:s}] ...'.format(load_path_G))
+            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
 
     def save(self, iter_label):
