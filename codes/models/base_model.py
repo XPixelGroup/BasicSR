@@ -38,7 +38,7 @@ class BaseModel():
             scheduler.step()
 
     def get_current_learning_rate(self):
-        return self.optimizers[0].param_groups[0]['lr']
+        return self.schedulers[0].get_lr()[0]
 
     # helper printing function that can be used by subclasses
     def get_network_description(self, network):

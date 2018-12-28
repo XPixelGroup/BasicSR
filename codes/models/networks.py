@@ -1,11 +1,12 @@
 import functools
+import logging
 import torch
 import torch.nn as nn
 from torch.nn import init
 
 import models.modules.architecture as arch
 import models.modules.sft_arch as sft_arch
-
+logger = logging.getLogger('base')
 ####################
 # initialize
 ####################
@@ -60,7 +61,7 @@ def weights_init_orthogonal(m):
 
 def init_weights(net, init_type='kaiming', scale=1, std=0.02):
     # scale for 'kaiming', std for 'normal'.
-    print('initialization method [{:s}]'.format(init_type))
+    logger.info('Initialization method [{:s}]'.format(init_type))
     if init_type == 'normal':
         weights_init_normal_ = functools.partial(weights_init_normal, std=std)
         net.apply(weights_init_normal_)
