@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 import time
 import argparse
 import numpy as np
@@ -10,7 +11,6 @@ import utils.util as util
 from data.util import bgr2ycbcr
 from data import create_dataset, create_dataloader
 from models import create_model
-from utils.logger import PrintLogger
 
 # options
 parser = argparse.ArgumentParser()
@@ -19,16 +19,15 @@ opt = option.parse(parser.parse_args().opt, is_train=False)
 util.mkdirs((path for key, path in opt['path'].items() if not key == 'pretrain_model_G'))
 opt = option.dict_to_nonedict(opt)
 
-# print to file and std_out simultaneously
-sys.stdout = PrintLogger(opt['path']['log'])
-print('\n**********' + util.get_timestamp() + '**********')
-
+util.setup_logger(None, opt['path']['log'] + '/test.log', level=logging.INFO, screen=True)
+logger = logging.getLogger('base')
+logger.info(option.dict2str(opt))
 # Create test dataset and dataloader
 test_loaders = []
 for phase, dataset_opt in sorted(opt['datasets'].items()):
     test_set = create_dataset(dataset_opt)
     test_loader = create_dataloader(test_set, dataset_opt)
-    print('Number of test images in [{:s}]: {:d}'.format(dataset_opt['name'], len(test_set)))
+    logger.info('Number of test images in [{:s}]: {:d}'.format(dataset_opt['name'], len(test_set)))
     test_loaders.append(test_loader)
 
 # Create model
@@ -36,7 +35,7 @@ model = create_model(opt)
 
 for test_loader in test_loaders:
     test_set_name = test_loader.dataset.opt['name']
-    print('\nTesting [{:s}]...'.format(test_set_name))
+    logger.info('\nTesting [{:s}]...'.format(test_set_name))
     test_start_time = time.time()
     dataset_dir = os.path.join(opt['path']['results_root'], test_set_name)
     util.mkdir(dataset_dir)
@@ -91,21 +90,21 @@ for test_loader in test_loaders:
                 ssim_y = util.calculate_ssim(cropped_sr_img_y * 255, cropped_gt_img_y * 255)
                 test_results['psnr_y'].append(psnr_y)
                 test_results['ssim_y'].append(ssim_y)
-                print('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}; PSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}.'\
+                logger.info('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}; PSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}.'\
                     .format(img_name, psnr, ssim, psnr_y, ssim_y))
             else:
-                print('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}.'.format(img_name, psnr, ssim))
+                logger.info('{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}.'.format(img_name, psnr, ssim))
         else:
-            print(img_name)
+            logger.info(img_name)
 
     if need_HR:  # metrics
         # Average PSNR/SSIM results
         ave_psnr = sum(test_results['psnr']) / len(test_results['psnr'])
         ave_ssim = sum(test_results['ssim']) / len(test_results['ssim'])
-        print('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.6f} dB; SSIM: {:.6f}\n'\
+        logger.info('----Average PSNR/SSIM results for {}----\n\tPSNR: {:.6f} dB; SSIM: {:.6f}\n'\
                 .format(test_set_name, ave_psnr, ave_ssim))
         if test_results['psnr_y'] and test_results['ssim_y']:
             ave_psnr_y = sum(test_results['psnr_y']) / len(test_results['psnr_y'])
             ave_ssim_y = sum(test_results['ssim_y']) / len(test_results['ssim_y'])
-            print('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}\n'\
+            logger.info('----Y channel, average PSNR/SSIM----\n\tPSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}\n'\
                 .format(ave_psnr_y, ave_ssim_y))

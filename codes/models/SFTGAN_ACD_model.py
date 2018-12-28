@@ -1,4 +1,5 @@
 import os
+import logging
 from collections import OrderedDict
 
 import torch
@@ -8,6 +9,8 @@ from torch.optim import lr_scheduler
 import models.networks as networks
 from .base_model import BaseModel
 from models.modules.loss import GANLoss, GradientPenaltyLoss
+
+logger = logging.getLogger('base')
 
 
 class SFTGAN_ACD_Model(BaseModel):
@@ -36,7 +39,7 @@ class SFTGAN_ACD_Model(BaseModel):
                     raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_pix_type))
                 self.l_pix_w = train_opt['pixel_weight']
             else:
-                print('Remove pixel loss.')
+                logging.info('Remove pixel loss.')
                 self.cri_pix = None
 
             # G feature loss
@@ -50,7 +53,7 @@ class SFTGAN_ACD_Model(BaseModel):
                     raise NotImplementedError('Loss type [{:s}] not recognized.'.format(l_fea_type))
                 self.l_fea_w = train_opt['feature_weight']
             else:
-                print('Remove feature loss.')
+                logging.info('Remove feature loss.')
                 self.cri_fea = None
             if self.cri_fea:  # load VGG perceptual loss
                 self.netF = networks.define_F(opt, use_bn=False).to(self.device)
@@ -103,10 +106,8 @@ class SFTGAN_ACD_Model(BaseModel):
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
             self.log_dict = OrderedDict()
-
-        print('---------- Model initialized ------------------')
+        # print network
         self.print_network()
-        print('-----------------------------------------------')
 
     def feed_data(self, data, need_HR=True):
         # LR
@@ -214,35 +215,45 @@ class SFTGAN_ACD_Model(BaseModel):
     def print_network(self):
         # G
         s, n = self.get_network_description(self.netG)
-        print('Number of parameters in G: {:,d}'.format(n))
-        if self.is_train:
-            message = '-------------- Generator --------------\n' + s + '\n'
-            network_path = os.path.join(self.save_dir, '../', 'network.txt')
-            with open(network_path, 'w') as f:
-                f.write(message)
+        if isinstance(self.netG, nn.DataParallel):
+            net_struc_str = '{} - {}'.format(self.netG.__class__.__name__,
+                                             self.netG.module.__class__.__name__)
+        else:
+            net_struc_str = '{}'.format(self.netG.__class__.__name__)
 
+        logger.info('Network G structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+        logger.info(s)
+        if self.is_train:
             # D
             s, n = self.get_network_description(self.netD)
-            print('Number of parameters in D: {:,d}'.format(n))
-            message = '\n\n\n-------------- Discriminator --------------\n' + s + '\n'
-            with open(network_path, 'a') as f:
-                f.write(message)
+            if isinstance(self.netD, nn.DataParallel):
+                net_struc_str = '{} - {}'.format(self.netD.__class__.__name__,
+                                                self.netD.module.__class__.__name__)
+            else:
+                net_struc_str = '{}'.format(self.netD.__class__.__name__)
+
+            logger.info('Network D structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+            logger.info(s)
 
             if self.cri_fea:  # F, Perceptual Network
                 s, n = self.get_network_description(self.netF)
-                print('Number of parameters in F: {:,d}'.format(n))
-                message = '\n\n\n-------------- Perceptual Network --------------\n' + s + '\n'
-                with open(network_path, 'a') as f:
-                    f.write(message)
+                if isinstance(self.netF, nn.DataParallel):
+                    net_struc_str = '{} - {}'.format(self.netF.__class__.__name__,
+                                                    self.netF.module.__class__.__name__)
+                else:
+                    net_struc_str = '{}'.format(self.netF.__class__.__name__)
+
+                logger.info('Network F structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+                logger.info(s)
 
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            print('loading model for G [{:s}] ...'.format(load_path_G))
+            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
         load_path_D = self.opt['path']['pretrain_model_D']
         if self.opt['is_train'] and load_path_D is not None:
-            print('loading model for D [{:s}] ...'.format(load_path_D))
+            logger.info('Loading model for D [{:s}] ...'.format(load_path_D))
             self.load_network(load_path_D, self.netD)
 
     def save(self, iter_label):
