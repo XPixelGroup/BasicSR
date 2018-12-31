@@ -14,12 +14,11 @@ logger = logging.getLogger('base')
 
 class SRModel(BaseModel):
     def __init__(self, opt):
-        super(SRModel, self).__init__(opt)
+        super(SRModel, self).__init__(opt, "SR")
         train_opt = opt['train']
 
         # define network and load pretrained models
         self.netG = networks.define_G(opt).to(self.device)
-        self.load()
 
         if self.is_train:
             self.netG.train()
@@ -141,11 +140,18 @@ class SRModel(BaseModel):
         logger.info('Network G structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
         logger.info(s)
 
-    def load(self):
+    def load_pretrained(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
-            self.load_network(load_path_G, self.netG)
+            logger.info('Loading pretrained model for G [{:s}] ...'.format(load_path_G))
+            self.load_network_from_path(load_path_G, self.netG)
 
-    def save(self, iter_label):
-        self.save_network(self.save_dir, self.netG, 'G', iter_label)
+    def all_networks_state_dict(self):
+        return {
+            "G": self.network_state_dict(self.netG)
+        }
+
+    def networks_index(self):
+        return {
+            "G": self.netG
+        }
