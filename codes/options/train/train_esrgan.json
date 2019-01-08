@@ -29,6 +29,7 @@
 
   , "path": {
     "root": "/home/xtwang/Projects/BasicSR"
+    // , "resume_state": "../experiments/debug_002_RRDB_ESRGAN_x4_DIV2K/training_state/16.state"
     , "pretrain_model_G": "../experiments/pretrained_models/RRDB_PSNR_x4.pth"
   }
 
