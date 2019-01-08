@@ -15,7 +15,7 @@ logger = logging.getLogger('base')
 
 class SFTGAN_ACD_Model(BaseModel):
     def __init__(self, opt):
-        super(SFTGAN_ACD_Model, self).__init__(opt, "SFTGAN_ACD")
+        super(SFTGAN_ACD_Model, self).__init__(opt)
         train_opt = opt['train']
 
         # define networks and load pretrained models
@@ -24,6 +24,7 @@ class SFTGAN_ACD_Model(BaseModel):
             self.netD = networks.define_D(opt).to(self.device)  # D
             self.netG.train()
             self.netD.train()
+        self.load()  # load G and D if needed
 
         # define losses, optimizer and scheduler
         if self.is_train:
@@ -245,24 +246,16 @@ class SFTGAN_ACD_Model(BaseModel):
                 logger.info('Network F structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
                 logger.info(s)
 
-    def load_pretrained(self):
+    def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            logger.info('Loading pretrained model for G [{:s}] ...'.format(load_path_G))
-            self.load_network_from_path(load_path_G, self.netG)
+            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
+            self.load_network(load_path_G, self.netG)
         load_path_D = self.opt['path']['pretrain_model_D']
         if self.opt['is_train'] and load_path_D is not None:
-            logger.info('Loading pretrained model for D [{:s}] ...'.format(load_path_D))
-            self.load_network_from_path(load_path_D, self.netD)
+            logger.info('Loading model for D [{:s}] ...'.format(load_path_D))
+            self.load_network(load_path_D, self.netD)
 
-    def all_networks_state_dict(self):
-        return {
-            "G": self.network_state_dict(self.netG),
-            "D": self.network_state_dict(self.netD)
-        }
-
-    def networks_index(self):
-        return {
-            "G": self.netG,
-            "D": self.netD
-        }
+    def save(self, iter_label):
+        self.save_network(self.save_dir, self.netG, 'G', iter_label)
+        self.save_network(self.save_dir, self.netD, 'D', iter_label)
