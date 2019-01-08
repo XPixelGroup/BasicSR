@@ -1,4 +1,7 @@
 # BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/SFTGAN)
+:triangular_flag_on_post: <small>Add saving and loading training state. When resuming training, just pass a option with the name `resume_state`, like , `"resume_state": "../experiments/debug_001_RRDB_PSNR_x4_DIV2K/training_state/200.state"`. </small>
+
+:triangular_flag_on_post: <small>Use Python logging, and support PyTorch 1.0</small>
 
 An image super-resolution toolkit flexible for development. It now provides:
 
@@ -46,7 +49,7 @@ An image super-resolution toolkit flexible for development. It now provides:
 - [PyTorch >= 0.4.0](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 - Python packages: `pip install numpy opencv-python lmdb`
-- [option] Python packages: [`pip install tensorflow tensorboard_logger`](https://github.com/xinntao/BasicSR/tree/master/codes/utils), for visualizing curves.
+- [option] Python packages: [`pip install tensorboardX`](https://github.com/lanpa/tensorboardX), for visualizing curves.
 
 # Codes
 [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes). We provide a detailed explaination of the **code framework** in [`./codes`](https://github.com/xinntao/BasicSR/tree/master/codes).
@@ -250,8 +253,8 @@ You can put the downloaded models in the `experiments/pretrained_models` folder.
   
   <tr>
     <td >SRResNet<sup>*2</sup></td>
-    <td>SRGAN_bicx4_303_505.pth</td>
-     <td><sub> SRGAN(with modification)</sub></td>
+    <td>SRResNet_bicx4_in3nf64nb16.pth</td>
+     <td><sub> SRResNet(with modification)</sub></td>
     <td><a href="https://drive.google.com/drive/folders/1WR2X4_gwiQ9REb5fHfNnBfXOdeuDS8BA?usp=sharing">Google Drive</a></td>
     <td><a href="">Baidu Drive</a></td>
   </tr>
