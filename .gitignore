@@ -7,6 +7,9 @@ experiments/pretrained_models/*
 # !experiments/pretrained_models/SRResNet_bicx4_in3nf64nb16.pth
 !experiments/pretrained_models/README.md
 
+results/*
+tb_logger/*
+
 # file type
 *.svg
 *.pyc
@@ -24,8 +27,6 @@ experiments/pretrained_models/*
 *.synctex.gz
 
 # TODO
-codes/scripts/torch_to_pytorch
-
 data_samples/samples_byteimg
 data_samples/samples_colorimg
 data_samples/samples_segprob

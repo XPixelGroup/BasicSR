@@ -47,11 +47,12 @@ def set_random_seed(seed):
     torch.cuda.manual_seed_all(seed)
 
 
-def setup_logger(logger_name, log_file, level=logging.INFO, screen=False):
+def setup_logger(logger_name, root, phase, level=logging.INFO, screen=False):
     '''set up logger'''
     l = logging.getLogger(logger_name)
     formatter = logging.Formatter(
         '%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s', datefmt='%y-%m-%d %H:%M:%S')
+    log_file = os.path.join(root, phase + '_{}.log'.format(get_timestamp()))
     fh = logging.FileHandler(log_file, mode='w')
     fh.setFormatter(formatter)
     l.setLevel(level)
