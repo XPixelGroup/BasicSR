@@ -72,9 +72,10 @@ def main():
 
     # Create model
     model = create_model(opt)
-    epoch_start, current_step  = model.load_checkpoint()
-    logger.info('Start training from epoch:{:3d}, iter:{:8d}'.format(epoch_start, current_step))
-    for epoch in range(epoch_start, total_epoches):
+
+    current_step = 0
+    logger.info('Start training...')
+    for epoch in range(total_epoches):
         for i, train_data in enumerate(train_loader):
             current_step += 1
             if current_step > total_iters:
@@ -142,10 +143,10 @@ def main():
             # save models
             if current_step % opt['logger']['save_checkpoint_freq'] == 0:
                 logger.info('Saving the model.')
-                model.save_checkpoint(epoch, current_step)
+                model.save(current_step)
 
     logger.info('Saving the final model.')
-    model.save_checkpoint(total_epoches, current_step)
+    model.save('latest')
     logger.info('End of training.')
 
 
