@@ -19,7 +19,7 @@ opt = option.parse(parser.parse_args().opt, is_train=False)
 util.mkdirs((path for key, path in opt['path'].items() if not key == 'pretrain_model_G'))
 opt = option.dict_to_nonedict(opt)
 
-util.setup_logger(None, opt['path']['log'] + '/test.log', level=logging.INFO, screen=True)
+util.setup_logger(None, opt['path']['log'], 'test.log', level=logging.INFO, screen=True)
 logger = logging.getLogger('base')
 logger.info(option.dict2str(opt))
 # Create test dataset and dataloader
