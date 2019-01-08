@@ -21,17 +21,27 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-opt', type=str, required=True, help='Path to option JSON file.')
     opt = option.parse(parser.parse_args().opt, is_train=True)
-
-    util.mkdir_and_rename(opt['path']['experiments_root'])  # rename old experiment folder if exists
-    util.mkdirs((path for key, path in opt['path'].items()
-                 if not key == 'experiments_root' and 'pretrain_model' not in key))
-
     opt = option.dict_to_nonedict(opt)  # Convert to NoneDict, which return None for missing key.
 
+    # train from scratch OR resume training
+    if opt['path']['resume_state']:  # resuming training
+        resume_state = torch.load(opt['path']['resume_state'])
+    else:  # training from scratch
+        resume_state = None
+        util.mkdir_and_rename(opt['path']['experiments_root'])  # rename old folder if exists
+        util.mkdirs((path for key, path in opt['path'].items() if not key == 'experiments_root'
+                     and 'pretrain_model' not in key and 'resume' not in key))
+
     # config loggers. Before it, the log will not work
-    util.setup_logger(None, opt['path']['log'] + '/train.log', level=logging.INFO, screen=True)
-    util.setup_logger('val', opt['path']['log'] + '/val.log', level=logging.INFO)
+    util.setup_logger(None, opt['path']['log'], 'train', level=logging.INFO, screen=True)
+    util.setup_logger('val', opt['path']['log'], 'val', level=logging.INFO)
     logger = logging.getLogger('base')
+
+    if resume_state:
+        logger.info('Resuming training from epoch: {}, iter: {}.'.format(
+            resume_state['epoch'], resume_state['iter']))
+        option.check_resume(opt)  # check resume options
+
     logger.info(option.dict2str(opt))
     # tensorboard logger
     if opt['use_tb_logger'] and 'debug' not in opt['name']:
@@ -56,12 +66,11 @@ def main():
             logger.info('Number of train images: {:,d}, iters: {:,d}'.format(
                 len(train_set), train_size))
             total_iters = int(opt['train']['niter'])
-            total_epoches = int(math.ceil(total_iters / train_size))
-            logger.info('Total epoches needed: {:d} for iters {:,d}'.format(
-                total_epoches, total_iters))
+            total_epochs = int(math.ceil(total_iters / train_size))
+            logger.info('Total epochs needed: {:d} for iters {:,d}'.format(
+                total_epochs, total_iters))
             train_loader = create_dataloader(train_set, dataset_opt)
         elif phase == 'val':
-            val_dataset_opt = dataset_opt
             val_set = create_dataset(dataset_opt)
             val_loader = create_dataloader(val_set, dataset_opt)
             logger.info('Number of val images in [{:s}]: {:d}'.format(dataset_opt['name'],
@@ -70,13 +79,22 @@ def main():
             raise NotImplementedError('Phase [{:s}] is not recognized.'.format(phase))
     assert train_loader is not None
 
-    # Create model
+    # create model
     model = create_model(opt)
 
-    current_step = 0
-    logger.info('Start training...')
-    for epoch in range(total_epoches):
-        for i, train_data in enumerate(train_loader):
+    # resume training
+    if resume_state:
+        start_epoch = resume_state['epoch']
+        current_step = resume_state['iter']
+        model.resume_training(resume_state)  # handle optimizers and schedulers
+    else:
+        current_step = 0
+        start_epoch = 0
+
+    # training
+    logger.info('Start training from epoch: {:d}, iter: {:d}'.format(start_epoch, current_step))
+    for epoch in range(start_epoch, total_epochs):
+        for _, train_data in enumerate(train_loader):
             current_step += 1
             if current_step > total_iters:
                 break
@@ -140,10 +158,11 @@ def main():
                 if opt['use_tb_logger'] and 'debug' not in opt['name']:
                     tb_logger.add_scalar('psnr', avg_psnr, current_step)
 
-            # save models
+            # save models and training states
             if current_step % opt['logger']['save_checkpoint_freq'] == 0:
-                logger.info('Saving the model.')
+                logger.info('Saving models and training states.')
                 model.save(current_step)
+                model.save_training_state(epoch, current_step)
 
     logger.info('Saving the final model.')
     model.save('latest')

@@ -1,11 +1,8 @@
 import os
+import os.path as osp
+import logging
 from collections import OrderedDict
-from datetime import datetime
 import json
-
-
-def get_timestamp():
-    return datetime.now().strftime('%y%m%d-%H%M%S')
 
 
 def parse(opt_path, is_train=True):
@@ -49,6 +46,7 @@ def parse(opt_path, is_train=True):
         experiments_root = os.path.join(opt['path']['root'], 'experiments', opt['name'])
         opt['path']['experiments_root'] = experiments_root
         opt['path']['models'] = os.path.join(experiments_root, 'models')
+        opt['path']['training_state'] = os.path.join(experiments_root, 'training_state')
         opt['path']['log'] = experiments_root
         opt['path']['val_images'] = os.path.join(experiments_root, 'val_images')
 
@@ -74,26 +72,6 @@ def parse(opt_path, is_train=True):
     return opt
 
 
-def dict2str(opt, indent_l=1):
-    '''dict to string for logger'''
-    msg = ''
-    for k, v in opt.items():
-        if isinstance(v, dict):
-            msg += ' ' * (indent_l * 2) + k + ':[\n'
-            msg += dict2str(v, indent_l + 1)
-            msg += ' ' * (indent_l * 2) + ']\n'
-        else:
-            msg += ' ' * (indent_l * 2) + k + ': ' + str(v) + '\n'
-    return msg
-
-
-def save(opt):
-    dump_dir = opt['path']['experiments_root'] if opt['is_train'] else opt['path']['results_root']
-    dump_path = os.path.join(dump_dir, 'options.json')
-    with open(dump_path, 'w') as dump_file:
-        json.dump(opt, dump_file, indent=2)
-
-
 class NoneDict(dict):
     def __missing__(self, key):
         return None
@@ -110,3 +88,33 @@ def dict_to_nonedict(opt):
         return [dict_to_nonedict(sub_opt) for sub_opt in opt]
     else:
         return opt
+
+
+def dict2str(opt, indent_l=1):
+    '''dict to string for logger'''
+    msg = ''
+    for k, v in opt.items():
+        if isinstance(v, dict):
+            msg += ' ' * (indent_l * 2) + k + ':[\n'
+            msg += dict2str(v, indent_l + 1)
+            msg += ' ' * (indent_l * 2) + ']\n'
+        else:
+            msg += ' ' * (indent_l * 2) + k + ': ' + str(v) + '\n'
+    return msg
+
+
+def check_resume(opt):
+    '''Check resume states and pretrain_model paths'''
+    logger = logging.getLogger('base')
+    if opt['path']['resume_state']:
+        if opt['path']['pretrain_model_G'] or opt['path']['pretrain_model_D']:
+            logger.warning('pretrain_model path will be ignored when resuming training.')
+
+        state_idx = osp.basename(opt['path']['resume_state']).split('.')[0]
+        opt['path']['pretrain_model_G'] = osp.join(opt['path']['models'],
+                                                   '{}_G.pth'.format(state_idx))
+        logger.info('Set [pretrain_model_G] to ' + opt['path']['pretrain_model_G'])
+        if 'gan' in opt['model']:
+            opt['path']['pretrain_model_D'] = osp.join(opt['path']['models'],
+                                                       '{}_D.pth'.format(state_idx))
+            logger.info('Set [pretrain_model_D] to ' + opt['path']['pretrain_model_D'])
