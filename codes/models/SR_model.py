@@ -144,8 +144,8 @@ class SRModel(BaseModel):
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
+            logger.info('Loading pretrained model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
 
-    def save(self, iter_label):
-        self.save_network(self.save_dir, self.netG, 'G', iter_label)
+    def save(self, iter_step):
+        self.save_network(self.netG, 'G', iter_step)
