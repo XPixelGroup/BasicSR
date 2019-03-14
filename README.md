@@ -1,4 +1,13 @@
 # BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/SFTGAN)
+
+:black_square_button: TODO
+
+- [ ] Use *yaml* instead of *json* for configurations
+- [ ] Support distributed training
+- [ ] Simplify the network structure file
+- [ ] Provide new pre-trained models
+
+
 :triangular_flag_on_post: <small>Add saving and loading training state. When resuming training, just pass a option with the name `resume_state`, like , `"resume_state": "../experiments/debug_001_RRDB_PSNR_x4_DIV2K/training_state/200.state"`. </small>
 
 :triangular_flag_on_post: <small>Use Python logging, and support PyTorch 1.0</small>
