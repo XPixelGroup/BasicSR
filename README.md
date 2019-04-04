@@ -6,7 +6,7 @@
 - [ ] Support distributed training
 - [ ] Simplify the network structure file
 - [ ] Provide new pre-trained models
-
+- [ ] Update the creating lmdb script to add image one by one
 
 :triangular_flag_on_post: <small>Add saving and loading training state. When resuming training, just pass a option with the name `resume_state`, like , `"resume_state": "../experiments/debug_001_RRDB_PSNR_x4_DIV2K/training_state/200.state"`. </small>
 
