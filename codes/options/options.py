@@ -65,9 +65,12 @@ def parse(opt_path, is_train=True):
     opt['network_G']['scale'] = scale
 
     # export CUDA_VISIBLE_DEVICES
-    gpu_list = ','.join(str(x) for x in opt['gpu_ids'])
-    os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-    print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+    if 'gpu_ids' in opt.keys():    
+        gpu_list = ','.join(str(x) for x in opt['gpu_ids'])
+        os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+        print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+    else:
+        print('export CUDA_VISIBLE_DEVICES=CPU')
 
     return opt
 
