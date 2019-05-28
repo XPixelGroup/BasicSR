@@ -22,7 +22,7 @@ if mode == 1:
     data_size = sum([img.nbytes for img in dataset])
 # mode 2 large data, read imgs later
 elif mode == 2:
-    data_size = sum(os.stat(v).stat().st_size for v in img_list)
+    data_size = sum(os.stat(v).st_size for v in img_list)
 else:
     raise ValueError('mode should be 1 or 2')
 
