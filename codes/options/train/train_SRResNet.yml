@@ -5,6 +5,7 @@
 name: debug_001_SRResNetx4_DIV2K  # please remove 'debug_' during training
 use_tb_logger: true
 model: sr
+distortion: sr
 scale: 4
 gpu_ids: [0]
 
@@ -13,12 +14,11 @@ datasets:
   train:
     name: DIV2K
     mode: LRHR
-    dataroot_HR: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb
     dataroot_LR: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb
-    subset_file: ~
 
     use_shuffle: true
-    n_workers: 8
+    n_workers: 8  # per GPU
     batch_size: 16
     HR_size: 128 # 128 | 192
     use_flip: true
@@ -27,7 +27,7 @@ datasets:
   val:
     name: val_set5
     mode: LRHR
-    dataroot_HR: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5
     dataroot_LR: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4
 
 #### network structures
@@ -57,9 +57,9 @@ train:
 
   pixel_criterion: l1
   pixel_weight: 1.0
-  val_freq: !!float 5e3
 
   manual_seed: 0
+  val_freq: !!float 5e3
 
 #### logger
 logger:
