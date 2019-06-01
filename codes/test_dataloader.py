@@ -9,14 +9,9 @@ from utils import util
 opt = {}
 
 opt['name'] = 'DIV2K800'
-opt['dataroot_HR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
+opt['dataroot_GT'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
 opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb'
 
-# opt['dataroot_HR'] = '/mnt/SSD/xtwang/BasicSR_datasets/OST/train/img'
-# opt['dataroot_HR_bg'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub'
-# opt['dataroot_LR'] = None
-
-opt['subset_file'] = None
 opt['mode'] = 'LRHR'  # 'LRHR' | 'LRHRseg_bg'
 opt['phase'] = 'train'  # 'train' | 'val'
 opt['use_shuffle'] = True
