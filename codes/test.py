@@ -47,7 +47,7 @@ for test_loader in test_loaders:
     test_results['ssim_y'] = []
 
     for data in test_loader:
-        need_HR = False if test_loader.dataset.opt['dataroot_HR'] is None else True
+        need_HR = False if test_loader.dataset.opt['dataroot_GT'] is None else True
 
         model.feed_data(data, need_HR=need_HR)
         img_path = data['LR_path'][0]

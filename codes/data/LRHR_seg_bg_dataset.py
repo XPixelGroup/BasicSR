@@ -25,10 +25,10 @@ class LRHRSeg_BG_Dataset(data.Dataset):
         self.HR_env_bg = None
 
         # read image list from lmdb or image files
-        self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_HR'])
+        self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_GT'])
         self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
         self.HR_env_bg, self.paths_HR_bg = util.get_image_paths(opt['data_type'], \
-            opt['dataroot_HR_bg'])
+            opt['dataroot_GT_bg'])
 
         assert self.paths_HR, 'Error: HR path is empty.'
         if self.paths_LR and self.paths_HR:

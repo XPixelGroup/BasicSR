@@ -200,7 +200,7 @@ def main():
 
                     visuals = model.get_current_visuals()
                     sr_img = util.tensor2img(visuals['SR'])  # uint8
-                    gt_img = util.tensor2img(visuals['HR'])  # uint8
+                    gt_img = util.tensor2img(visuals['GT'])  # uint8
 
                     # Save SR images for reference
                     save_img_path = os.path.join(img_dir, '{:s}_{:d}.png'.format(\
