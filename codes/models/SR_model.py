@@ -1,13 +1,13 @@
-import os
 import logging
 from collections import OrderedDict
 
 import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
-
+from torch.nn.parallel import DataParallel, DistributedDataParallel
 import models.networks as networks
 from .base_model import BaseModel
+from models.modules.loss import CharbonnierLoss
 
 logger = logging.getLogger('base')
 
@@ -15,10 +15,21 @@ logger = logging.getLogger('base')
 class SRModel(BaseModel):
     def __init__(self, opt):
         super(SRModel, self).__init__(opt)
+
+        if opt['dist']:
+            self.rank = torch.distributed.get_rank()
+        else:
+            self.rank = -1  # non dist training
         train_opt = opt['train']
 
         # define network and load pretrained models
         self.netG = networks.define_G(opt).to(self.device)
+        if opt['dist']:
+            self.netG = DistributedDataParallel(self.netG, device_ids=[torch.cuda.current_device()])
+        else:
+            self.netG = DataParallel(self.netG)
+        # print network
+        self.print_network()
         self.load()
 
         if self.is_train:
@@ -30,6 +41,8 @@ class SRModel(BaseModel):
                 self.cri_pix = nn.L1Loss().to(self.device)
             elif loss_type == 'l2':
                 self.cri_pix = nn.MSELoss().to(self.device)
+            elif loss_type == 'cb':
+                self.cri_pix = CharbonnierLoss().to(self.device)
             else:
                 raise NotImplementedError('Loss type [{:s}] is not recognized.'.format(loss_type))
             self.l_pix_w = train_opt['pixel_weight']
@@ -41,9 +54,13 @@ class SRModel(BaseModel):
                 if v.requires_grad:
                     optim_params.append(v)
                 else:
-                    logger.warning('Params [{:s}] will not optimize.'.format(k))
+                    if self.rank <= 0:
+                        logger.warning('Params [{:s}] will not optimize.'.format(k))
             self.optimizer_G = torch.optim.Adam(
-                optim_params, lr=train_opt['lr_G'], weight_decay=wd_G)
+                optim_params,
+                lr=train_opt['lr_G'],
+                weight_decay=wd_G,
+                betas=(train_opt['beta1'], train_opt['beta2']))
             self.optimizers.append(self.optimizer_G)
 
             # schedulers
@@ -55,8 +72,6 @@ class SRModel(BaseModel):
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
             self.log_dict = OrderedDict()
-        # print network
-        self.print_network()
 
     def feed_data(self, data, need_GT=True):
         self.var_L = data['LR'].to(self.device)  # LR
@@ -137,15 +152,15 @@ class SRModel(BaseModel):
                                              self.netG.module.__class__.__name__)
         else:
             net_struc_str = '{}'.format(self.netG.__class__.__name__)
-
-        logger.info('Network G structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
-        logger.info(s)
+        if self.rank <= 0:
+            logger.info('Network G structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+            logger.info(s)
 
     def load(self):
         load_path_G = self.opt['path']['pretrain_model_G']
         if load_path_G is not None:
-            logger.info('Loading pretrained model for G [{:s}] ...'.format(load_path_G))
+            logger.info('Loading model for G [{:s}] ...'.format(load_path_G))
             self.load_network(load_path_G, self.netG)
 
-    def save(self, iter_step):
-        self.save_network(self.netG, 'G', iter_step)
+    def save(self, iter_label):
+        self.save_network(self.netG, 'G', iter_label)
