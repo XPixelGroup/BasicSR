@@ -5,20 +5,19 @@ import torch.utils.data
 
 
 def create_dataloader(dataset, dataset_opt, opt, sampler):
-    if opt['dist']:
-        world_size = torch.distributed.get_world_size()
-        rank = torch.distributed.get_rank()
-        num_workers = dataset_opt['n_workers']
-        assert dataset_opt['batch_size'] % world_size == 0
-        batch_size = dataset_opt['batch_size'] // world_size
-        shuffle = False
-    else:
-        num_workers = dataset_opt['n_workers'] * len(opt['gpu_ids'])
-        batch_size = dataset_opt['batch_size']
-        shuffle = True
-
     phase = dataset_opt['phase']
     if phase == 'train':
+        if opt['dist']:
+            world_size = torch.distributed.get_world_size()
+            rank = torch.distributed.get_rank()
+            num_workers = dataset_opt['n_workers']
+            assert dataset_opt['batch_size'] % world_size == 0
+            batch_size = dataset_opt['batch_size'] // world_size
+            shuffle = False
+        else:
+            num_workers = dataset_opt['n_workers'] * len(opt['gpu_ids'])
+            batch_size = dataset_opt['batch_size']
+            shuffle = True
         return torch.utils.data.DataLoader(
             dataset,
             batch_size=batch_size,
