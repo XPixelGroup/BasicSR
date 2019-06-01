@@ -27,6 +27,9 @@ do not support SFT now
 # scripts (all)
 # utils
     README.md
+#experiments
+    # pretrained_models
+        README.md
 
 auto_test.py
 README.md
