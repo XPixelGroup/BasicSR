@@ -80,12 +80,12 @@ class SRRaGANModel(BaseModel):
                 else:
                     logger.warning('Params [{:s}] will not optimize.'.format(k))
             self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'], \
-                weight_decay=wd_G, betas=(train_opt['beta1_G'], 0.999))
+                weight_decay=wd_G, betas=(train_opt['beta1_G'], train_opt['beta2_G']))
             self.optimizers.append(self.optimizer_G)
             # D
             wd_D = train_opt['weight_decay_D'] if train_opt['weight_decay_D'] else 0
             self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=train_opt['lr_D'], \
-                weight_decay=wd_D, betas=(train_opt['beta1_D'], 0.999))
+                weight_decay=wd_D, betas=(train_opt['beta1_D'], train_opt['beta2_D']))
             self.optimizers.append(self.optimizer_D)
 
             # schedulers
@@ -100,14 +100,14 @@ class SRRaGANModel(BaseModel):
         # print network
         self.print_network()
 
-    def feed_data(self, data, need_HR=True):
+    def feed_data(self, data, need_GT=True):
         # LR
         self.var_L = data['LR'].to(self.device)
 
-        if need_HR:  # train or val
-            self.var_H = data['HR'].to(self.device)
+        if need_GT:  # train or val
+            self.var_H = data['GT'].to(self.device)
 
-            input_ref = data['ref'] if 'ref' in data else data['HR']
+            input_ref = data['ref'] if 'ref' in data else data['GT']
             self.var_ref = input_ref.to(self.device)
 
     def optimize_parameters(self, step):
@@ -194,12 +194,12 @@ class SRRaGANModel(BaseModel):
     def get_current_log(self):
         return self.log_dict
 
-    def get_current_visuals(self, need_HR=True):
+    def get_current_visuals(self, need_GT=True):
         out_dict = OrderedDict()
         out_dict['LR'] = self.var_L.detach()[0].float().cpu()
         out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
-        if need_HR:
-            out_dict['HR'] = self.var_H.detach()[0].float().cpu()
+        if need_GT:
+            out_dict['GT'] = self.var_H.detach()[0].float().cpu()
         return out_dict
 
     def print_network(self):

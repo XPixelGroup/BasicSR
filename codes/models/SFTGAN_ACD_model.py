@@ -109,7 +109,7 @@ class SFTGAN_ACD_Model(BaseModel):
         # print network
         self.print_network()
 
-    def feed_data(self, data, need_HR=True):
+    def feed_data(self, data, need_GT=True):
         # LR
         self.var_L = data['LR'].to(self.device)
         # seg
@@ -117,8 +117,8 @@ class SFTGAN_ACD_Model(BaseModel):
         # category
         self.var_cat = data['category'].long().to(self.device)
 
-        if need_HR:  # train or val
-            self.var_H = data['HR'].to(self.device)
+        if need_GT:  # train or val
+            self.var_H = data['GT'].to(self.device)
 
     def optimize_parameters(self, step):
         # G
@@ -204,12 +204,12 @@ class SFTGAN_ACD_Model(BaseModel):
     def get_current_log(self):
         return self.log_dict
 
-    def get_current_visuals(self, need_HR=True):
+    def get_current_visuals(self, need_GT=True):
         out_dict = OrderedDict()
         out_dict['LR'] = self.var_L.detach()[0].float().cpu()
         out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
-        if need_HR:
-            out_dict['HR'] = self.var_H.detach()[0].float().cpu()
+        if need_GT:
+            out_dict['GT'] = self.var_H.detach()[0].float().cpu()
         return out_dict
 
     def print_network(self):
