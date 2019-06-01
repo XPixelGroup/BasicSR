@@ -2,17 +2,18 @@ import os
 import math
 import pickle
 import random
+import logging
 import numpy as np
 import lmdb
 import torch
 import cv2
-import logging
-
-IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP']
 
 ####################
 # Files & IO
 ####################
+
+###################### get image path list ######################
+IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP']
 
 
 def is_image_file(filename):
@@ -20,6 +21,7 @@ def is_image_file(filename):
 
 
 def _get_paths_from_images(path):
+    '''get image path list from image folder'''
     assert os.path.isdir(path), '{:s} is not a valid directory'.format(path)
     images = []
     for dirpath, _, fnames in sorted(os.walk(path)):
@@ -32,6 +34,7 @@ def _get_paths_from_images(path):
 
 
 def _get_paths_from_lmdb(dataroot):
+    '''get image path list from lmdb cache keys'''
     env = lmdb.open(dataroot, readonly=True, lock=False, readahead=False, meminit=False)
     keys_cache_file = os.path.join(dataroot, '_keys_cache.p')
     logger = logging.getLogger('base')
@@ -48,6 +51,8 @@ def _get_paths_from_lmdb(dataroot):
 
 
 def get_image_paths(data_type, dataroot):
+    '''get image path list
+    support lmdb or image files'''
     env, paths = None, None
     if dataroot is not None:
         if data_type == 'lmdb':
@@ -59,23 +64,31 @@ def get_image_paths(data_type, dataroot):
     return env, paths
 
 
-def _read_lmdb_img(env, path):
+###################### read images ######################
+def _read_lmdb_img(env, key, size=None):
+    '''read image from lmdb with key (w/ and w/o fixed size)
+    if size: a (H, W, C) tuple: fixed size
+    else: read size form the corresponding .meta key'''
     with env.begin(write=False) as txn:
-        buf = txn.get(path.encode('ascii'))
-        buf_meta = txn.get((path + '.meta').encode('ascii')).decode('ascii')
+        buf = txn.get(key.encode('ascii'))
+        if not size:
+            buf_meta = txn.get((key + '.meta').encode('ascii')).decode('ascii')
     img_flat = np.frombuffer(buf, dtype=np.uint8)
-    H, W, C = [int(s) for s in buf_meta.split(',')]
+    if size:
+        H, W, C = size
+    else:
+        H, W, C = [int(s) for s in buf_meta.split(',')]
     img = img_flat.reshape(H, W, C)
     return img
 
 
-def read_img(env, path):
-    # read image by cv2 or from lmdb
-    # return: Numpy float32, HWC, BGR, [0,1]
+def read_img(env, path, size=None):
+    '''read image by cv2 or from lmdb
+    return: Numpy float32, HWC, BGR, [0,1]'''
     if env is None:  # img
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     else:
-        img = _read_lmdb_img(env, path)
+        img = _read_lmdb_img(env, path, size)
     img = img.astype(np.float32) / 255.
     if img.ndim == 2:
         img = np.expand_dims(img, axis=2)
@@ -104,6 +117,36 @@ def augment(img_list, hflip=True, rot=True):
         return img
 
     return [_augment(img) for img in img_list]
+
+
+def augment_flow(img_list, flow_list, hflip=True, rot=True):
+    # horizontal flip OR rotate
+    hflip = hflip and random.random() < 0.5
+    vflip = rot and random.random() < 0.5
+    rot90 = rot and random.random() < 0.5
+
+    def _augment(img):
+        if hflip: img = img[:, ::-1, :]
+        if vflip: img = img[::-1, :, :]
+        if rot90: img = img.transpose(1, 0, 2)
+        return img
+
+    def _augment_flow(flow):
+        if hflip:
+            flow = flow[:, ::-1, :]
+            flow[:, :, 0] *= -1
+        if vflip:
+            flow = flow[::-1, :, :]
+            flow[:, :, 1] *= -1
+        if rot90:
+            flow = flow.transpose(1, 0, 2)
+            flow = flow[:, :, [1, 0]]
+        return flow
+
+    rlt_img_list = [_augment(img) for img in img_list]
+    rlt_flow_list = [_augment_flow(flow) for flow in flow_list]
+
+    return rlt_img_list, rlt_flow_list
 
 
 def channel_convert(in_c, tar_type, img_list):
