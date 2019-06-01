@@ -58,10 +58,10 @@ class SRModel(BaseModel):
         # print network
         self.print_network()
 
-    def feed_data(self, data, need_HR=True):
+    def feed_data(self, data, need_GT=True):
         self.var_L = data['LR'].to(self.device)  # LR
-        if need_HR:
-            self.real_H = data['HR'].to(self.device)  # HR
+        if need_GT:
+            self.real_H = data['GT'].to(self.device)  # GT
 
     def optimize_parameters(self, step):
         self.optimizer_G.zero_grad()
@@ -122,12 +122,12 @@ class SRModel(BaseModel):
     def get_current_log(self):
         return self.log_dict
 
-    def get_current_visuals(self, need_HR=True):
+    def get_current_visuals(self, need_GT=True):
         out_dict = OrderedDict()
         out_dict['LR'] = self.var_L.detach()[0].float().cpu()
         out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
-        if need_HR:
-            out_dict['HR'] = self.real_H.detach()[0].float().cpu()
+        if need_GT:
+            out_dict['GT'] = self.real_H.detach()[0].float().cpu()
         return out_dict
 
     def print_network(self):
