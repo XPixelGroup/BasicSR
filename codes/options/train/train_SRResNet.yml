@@ -2,7 +2,7 @@
 # With 16 Residual blocks w/o BN
 
 #### general settings
-name: debug_001_SRResNetx4_DIV2K  # please remove 'debug_' during training
+name: 001_MSRResNetx4_scratch_DIV2K_ori  # please remove 'debug_' during training
 use_tb_logger: true
 model: sr
 distortion: sr
@@ -18,7 +18,7 @@ datasets:
     dataroot_LR: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb
 
     use_shuffle: true
-    n_workers: 8  # per GPU
+    n_workers: 6  # per GPU
     batch_size: 16
     GT_size: 128 # 128 | 192
     use_flip: true
@@ -32,13 +32,12 @@ datasets:
 
 #### network structures
 network_G:
-  which_model_G: sr_resnet
-  norm_type: ~
-  mode: CNA
-  nf: 64
-  nb: 16
+  which_model_G: MSRResNet
   in_nc: 3
   out_nc: 3
+  nf: 64
+  nb: 16
+  upscale: 4
 
 #### path
 path:
@@ -52,6 +51,7 @@ train:
   beta1: 0.9
   beta2: 0.99
   niter: 1000000
+  warmup_iter: -1  # no warm up
   lr_steps: [200000, 400000, 600000, 800000]
   lr_gamma: 0.5
 
