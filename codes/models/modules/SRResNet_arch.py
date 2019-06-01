@@ -7,13 +7,13 @@ import models.modules.module_util as mutil
 class MSRResNet(nn.Module):
     ''' modified SRResNet'''
 
-    def __init__(self, in_nc=3, out_nc=3, nf=64, upscale=4):
+    def __init__(self, in_nc=3, out_nc=3, nf=64, nb=16, upscale=4):
         super(MSRResNet, self).__init__()
         self.upscale = upscale
 
         self.conv_first = nn.Conv2d(in_nc, nf, 3, 1, 1, bias=True)
         basic_block = functools.partial(mutil.ResidualBlock_noBN, nf=nf)
-        self.recon_trunk = mutil.make_layer(basic_block, 16)
+        self.recon_trunk = mutil.make_layer(basic_block, nb)
 
         # upsampling
         if self.upscale == 2:
