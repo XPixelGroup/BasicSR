@@ -21,15 +21,11 @@ class LRHRDataset(data.Dataset):
         self.opt = opt
         self.data_type = self.opt['data_type']
         self.paths_LR, self.paths_GT = None, None
+        self.sizes_LR, self.sizes_GT = None, None
         self.LR_env, self.GT_env = None, None  # environment for lmdb
-        if self.data_type == 'img':
-            self.paths_GT = sorted(util._get_paths_from_images(opt['dataroot_GT']))
-            self.paths_LR = sorted(util._get_paths_from_images(opt['dataroot_LR']))
-        elif self.data_type == 'lmdb':
-            keys = pickle.load(open(osp.join(opt['dataroot_GT'], '_keys_cache.p'), 'rb'))
-            self.paths_GT = sorted([key for key in keys if not key.endswith('.meta')])
-            keys = pickle.load(open(osp.join(opt['dataroot_LR'], '_keys_cache.p'), 'rb'))
-            self.paths_LR = sorted([key for key in keys if not key.endswith('.meta')])
+
+        self.paths_GT, self.sizes_GT = util.get_image_paths(self.data_type, opt['dataroot_GT'])
+        self.paths_LR, self.sizes_LR = util.get_image_paths(self.data_type, opt['dataroot_LR'])
         assert self.paths_GT, 'Error: GT path is empty.'
         if self.paths_LR and self.paths_GT:
             assert len(self.paths_LR) == len(self.paths_GT), \
@@ -54,7 +50,11 @@ class LRHRDataset(data.Dataset):
 
         # get GT image
         GT_path = self.paths_GT[index]
-        img_GT = util.read_img(self.GT_env, GT_path)
+        if self.data_type == 'lmdb':
+            resolution = [int(s) for s in self.sizes_GT[index].split('_')]
+        else:
+            resolution = None
+        img_GT = util.read_img(self.GT_env, GT_path, resolution)
         # modcrop in the validation / test phase
         if self.opt['phase'] != 'train':
             img_GT = util.modcrop(img_GT, scale)
@@ -65,7 +65,11 @@ class LRHRDataset(data.Dataset):
         # get LR image
         if self.paths_LR:
             LR_path = self.paths_LR[index]
-            img_LR = util.read_img(self.LR_env, LR_path)
+            if self.data_type == 'lmdb':
+                resolution = [int(s) for s in self.sizes_LR[index].split('_')]
+            else:
+                resolution = None
+            img_LR = util.read_img(self.LR_env, LR_path, resolution)
         else:  # down-sampling on-the-fly
             # randomly scale during training
             if self.opt['phase'] == 'train':
