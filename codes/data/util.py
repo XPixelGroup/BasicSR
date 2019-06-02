@@ -34,50 +34,37 @@ def _get_paths_from_images(path):
 
 
 def _get_paths_from_lmdb(dataroot):
-    '''get image path list from lmdb cache keys'''
-    env = lmdb.open(dataroot, readonly=True, lock=False, readahead=False, meminit=False)
-    keys_cache_file = os.path.join(dataroot, '_keys_cache.p')
-    logger = logging.getLogger('base')
-    if os.path.isfile(keys_cache_file):
-        logger.info('Read lmdb keys from cache: {}'.format(keys_cache_file))
-        keys = pickle.load(open(keys_cache_file, "rb"))
-    else:
-        with env.begin(write=False) as txn:
-            logger.info('Creating lmdb keys cache: {}'.format(keys_cache_file))
-            keys = [key.decode('ascii') for key, _ in txn.cursor()]
-        pickle.dump(keys, open(keys_cache_file, 'wb'))
-    paths = sorted([key for key in keys if not key.endswith('.meta')])
-    return env, paths
+    '''get image path list from lmdb meta info'''
+    meta_info = pickle.load(open(os.path.join(dataroot, 'meta_info.pkl'), 'rb'))
+    paths = meta_info['keys']
+    sizes = meta_info['resolution']
+    if len(sizes) == 1:
+        sizes = sizes * len(paths)
+    return paths, sizes
 
 
 def get_image_paths(data_type, dataroot):
     '''get image path list
     support lmdb or image files'''
-    env, paths = None, None
+    paths, sizes = None, None
     if dataroot is not None:
         if data_type == 'lmdb':
-            env, paths = _get_paths_from_lmdb(dataroot)
+            paths, sizes = _get_paths_from_lmdb(dataroot)
         elif data_type == 'img':
             paths = sorted(_get_paths_from_images(dataroot))
         else:
             raise NotImplementedError('data_type [{:s}] is not recognized.'.format(data_type))
-    return env, paths
+    return paths, sizes
 
 
 ###################### read images ######################
-def _read_lmdb_img(env, key, size=None):
+def _read_img_lmdb(env, key, size):
     '''read image from lmdb with key (w/ and w/o fixed size)
-    if size: a (H, W, C) tuple: fixed size
-    else: read size form the corresponding .meta key'''
+    size: (C, H, W) tuple'''
     with env.begin(write=False) as txn:
         buf = txn.get(key.encode('ascii'))
-        if not size:
-            buf_meta = txn.get((key + '.meta').encode('ascii')).decode('ascii')
     img_flat = np.frombuffer(buf, dtype=np.uint8)
-    if size:
-        H, W, C = size
-    else:
-        H, W, C = [int(s) for s in buf_meta.split(',')]
+    C, H, W = size
     img = img_flat.reshape(H, W, C)
     return img
 
@@ -88,7 +75,7 @@ def read_img(env, path, size=None):
     if env is None:  # img
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     else:
-        img = _read_lmdb_img(env, path, size)
+        img = _read_img_lmdb(env, path, size)
     img = img.astype(np.float32) / 255.
     if img.ndim == 2:
         img = np.expand_dims(img, axis=2)
