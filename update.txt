@@ -24,7 +24,17 @@ do not support SFT now
         train_ESRGAN.yml
         train_SRGAN.yml
     README.md
-# scripts (all)
+# scripts
+    # back_projection
+    color2gray.py
+    extract_subimgs_single.py
+    generate_mod_LR_bic.m
+    generate_mod_LR_bic.py
+    net_interp.py
+    README.md
+    rename.py
+    transfer_params.py
+    transfer_params_sft.py
 # utils
     README.md
 #experiments
