@@ -1,16 +1,16 @@
 # BasicSR [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/SFTGAN)
 
-:black_square_button: TODO
+We are updating the BasicSR (v0.1)
+- [x] Support PyTorch 1.1
+- [x] Use *yaml* instead of *json* for configurations
+- [x] Support distributed training
+- [x] Simplify the network structure file
 
-- [ ] Use *yaml* instead of *json* for configurations
-- [ ] Support distributed training
-- [ ] Simplify the network structure file
+:black_square_button: TODO
 - [ ] Provide new pre-trained models
 - [ ] Update the creating lmdb script to add image one by one
 
 :triangular_flag_on_post: <small>Add saving and loading training state. When resuming training, just pass a option with the name `resume_state`, like , `"resume_state": "../experiments/debug_001_RRDB_PSNR_x4_DIV2K/training_state/200.state"`. </small>
-
-:triangular_flag_on_post: <small>Use Python logging, and support PyTorch 1.0</small>
 
 An image super-resolution toolkit flexible for development. It now provides:
 
@@ -55,9 +55,14 @@ An image super-resolution toolkit flexible for development. It now provides:
 ### Dependencies
 
 - Python 3 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux))
-- [PyTorch >= 0.4.0](https://pytorch.org/)
+- [PyTorch >= 1.1](https://pytorch.org/) (We are using the new feature - `torch.utils.tensorboard`)
+- To support the `torch.utils.tensorboard`, you need to:
+   ```
+   pip install tb-nightly
+   pip install future
+   ```
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
-- Python packages: `pip install numpy opencv-python lmdb`
+- Python packages: `pip install numpy opencv-python lmdb pyyaml`
 - [option] Python packages: [`pip install tensorboardX`](https://github.com/lanpa/tensorboardX), for visualizing curves.
 
 # Codes
