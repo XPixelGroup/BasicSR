@@ -3,9 +3,9 @@ from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-from torch.optim import lr_scheduler
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 import models.networks as networks
+import models.lr_scheduler as lr_scheduler
 from .base_model import BaseModel
 from models.modules.loss import CharbonnierLoss
 
@@ -66,8 +66,23 @@ class SRModel(BaseModel):
             # schedulers
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
-                    self.schedulers.append(lr_scheduler.MultiStepLR(optimizer, \
-                        train_opt['lr_steps'], train_opt['lr_gamma']))
+                    self.schedulers.append(
+                        lr_scheduler.MultiStepLR_Restart(
+                            optimizer,
+                            train_opt['lr_steps'],
+                            restarts=train_opt['restarts'],
+                            weights=train_opt['restart_weights'],
+                            gamma=train_opt['lr_gamma'],
+                            clear_state=train_opt['clear_state']))
+            elif train_opt['lr_scheme'] == 'CosineAnnealingLR_Restart':
+                for optimizer in self.optimizers:
+                    self.schedulers.append(
+                        lr_scheduler.CosineAnnealingLR_Restart(
+                            optimizer,
+                            train_opt['T_period'],
+                            eta_min=train_opt['eta_min'],
+                            restarts=train_opt['restarts'],
+                            weights=train_opt['restart_weights']))
             else:
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
