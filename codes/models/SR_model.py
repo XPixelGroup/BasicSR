@@ -38,7 +38,7 @@ class SRModel(BaseModel):
             # loss
             loss_type = train_opt['pixel_criterion']
             if loss_type == 'l1':
-                self.cri_pix = nn.L1Loss().to(self.device)  # reduction='sum'
+                self.cri_pix = nn.L1Loss().to(self.device)
             elif loss_type == 'l2':
                 self.cri_pix = nn.MSELoss().to(self.device)
             elif loss_type == 'cb':
