@@ -5,13 +5,14 @@ import glob
 import pickle
 import lmdb
 import cv2
+from utils.util import ProgressBar
 
 sys.path.append(osp.dirname(osp.dirname(osp.abspath(__file__))))
-from utils.util import ProgressBar
 
 # configurations
 img_folder = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub/*'  # glob matching pattern
-lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_subV2.lmdb'  # must end with .lmdb
+# lmdb_save_path must end with .lmdb
+lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_subV2.lmdb'
 meta_info = {'name': 'DIV2K800_sub_GT'}
 mode = 2  # 1 for reading all the images to memory and then writing to lmdb (more memory);
 # 2 for reading several images and then writing to lmdb, loop over (less memory)
@@ -70,6 +71,5 @@ else:
     print('Not all images have the same resolution. Save meta info for each image...')
 
 #### pickle dump
-keys_cache_file = osp.join(lmdb_save_path, 'meta_info.pkl')
-pickle.dump(meta_info, open(keys_cache_file, "wb"))
+pickle.dump(meta_info, open(osp.join(lmdb_save_path, 'meta_info.pkl'), "wb"))
 print('Finish creating lmdb meta info.')

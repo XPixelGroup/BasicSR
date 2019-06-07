@@ -1,6 +1,4 @@
-import os.path as osp
 import random
-import pickle
 import numpy as np
 import cv2
 import lmdb
@@ -28,17 +26,18 @@ class LRHRDataset(data.Dataset):
         self.paths_LR, self.sizes_LR = util.get_image_paths(self.data_type, opt['dataroot_LR'])
         assert self.paths_GT, 'Error: GT path is empty.'
         if self.paths_LR and self.paths_GT:
-            assert len(self.paths_LR) == len(self.paths_GT), \
-                'GT and LR datasets have different number of images - {}, {}.'.format(\
+            assert len(self.paths_LR) == len(
+                self.paths_GT
+            ), 'GT and LR datasets have different number of images - {}, {}.'.format(
                 len(self.paths_LR), len(self.paths_GT))
         self.random_scale_list = [1]
 
     def _init_lmdb(self):
         # https://github.com/chainer/chainermn/issues/129
-        self.GT_env = lmdb.open(
-            self.opt['dataroot_GT'], readonly=True, lock=False, readahead=False, meminit=False)
-        self.LR_env = lmdb.open(
-            self.opt['dataroot_LR'], readonly=True, lock=False, readahead=False, meminit=False)
+        self.GT_env = lmdb.open(self.opt['dataroot_GT'], readonly=True, lock=False, readahead=False,
+                                meminit=False)
+        self.LR_env = lmdb.open(self.opt['dataroot_LR'], readonly=True, lock=False, readahead=False,
+                                meminit=False)
 
     def __getitem__(self, index):
         if self.data_type == 'lmdb':
@@ -98,8 +97,8 @@ class LRHRDataset(data.Dataset):
             # if the image size is too small
             H, W, _ = img_GT.shape
             if H < GT_size or W < GT_size:
-                img_GT = cv2.resize(
-                    np.copy(img_GT), (GT_size, GT_size), interpolation=cv2.INTER_LINEAR)
+                img_GT = cv2.resize(np.copy(img_GT), (GT_size, GT_size),
+                                    interpolation=cv2.INTER_LINEAR)
                 # using matlab imresize
                 img_LR = util.imresize_np(img_GT, 1 / scale, True)
                 if img_LR.ndim == 2:
@@ -116,8 +115,8 @@ class LRHRDataset(data.Dataset):
             img_GT = img_GT[rnd_h_GT:rnd_h_GT + GT_size, rnd_w_GT:rnd_w_GT + GT_size, :]
 
             # augmentation - flip, rotate
-            img_LR, img_GT = util.augment([img_LR, img_GT], self.opt['use_flip'], \
-                self.opt['use_rot'])
+            img_LR, img_GT = util.augment([img_LR, img_GT], self.opt['use_flip'],
+                                          self.opt['use_rot'])
 
         # change color space if necessary
         if self.opt['color']:
