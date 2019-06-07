@@ -2,9 +2,7 @@ import os
 import math
 import pickle
 import random
-import logging
 import numpy as np
-import lmdb
 import torch
 import cv2
 
@@ -98,9 +96,12 @@ def augment(img_list, hflip=True, rot=True):
     rot90 = rot and random.random() < 0.5
 
     def _augment(img):
-        if hflip: img = img[:, ::-1, :]
-        if vflip: img = img[::-1, :, :]
-        if rot90: img = img.transpose(1, 0, 2)
+        if hflip:
+            img = img[:, ::-1, :]
+        if vflip:
+            img = img[::-1, :, :]
+        if rot90:
+            img = img.transpose(1, 0, 2)
         return img
 
     return [_augment(img) for img in img_list]
@@ -113,9 +114,12 @@ def augment_flow(img_list, flow_list, hflip=True, rot=True):
     rot90 = rot and random.random() < 0.5
 
     def _augment(img):
-        if hflip: img = img[:, ::-1, :]
-        if vflip: img = img[::-1, :, :]
-        if rot90: img = img.transpose(1, 0, 2)
+        if hflip:
+            img = img[:, ::-1, :]
+        if vflip:
+            img = img[::-1, :, :]
+        if rot90:
+            img = img.transpose(1, 0, 2)
         return img
 
     def _augment_flow(flow):
@@ -244,8 +248,9 @@ def cubic(x):
     absx = torch.abs(x)
     absx2 = absx**2
     absx3 = absx**3
-    return (1.5*absx3 - 2.5*absx2 + 1) * ((absx <= 1).type_as(absx)) + \
-        (-0.5*absx3 + 2.5*absx2 - 4*absx + 2) * (((absx > 1)*(absx <= 2)).type_as(absx))
+    return (1.5 * absx3 - 2.5 * absx2 + 1) * (
+        (absx <= 1).type_as(absx)) + (-0.5 * absx3 + 2.5 * absx2 - 4 * absx + 2) * ((
+            (absx > 1) * (absx <= 2)).type_as(absx))
 
 
 def calculate_weights_indices(in_length, out_length, scale, kernel, kernel_width, antialiasing):
@@ -309,7 +314,7 @@ def imresize(img, scale, antialiasing=True):
     # output: CHW RGB [0,1] w/o round
 
     in_C, in_H, in_W = img.size()
-    out_C, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
+    _, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
     kernel_width = 4
     kernel = 'cubic'
 
@@ -379,7 +384,7 @@ def imresize_np(img, scale, antialiasing=True):
     img = torch.from_numpy(img)
 
     in_H, in_W, in_C = img.size()
-    out_C, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
+    _, out_H, out_W = in_C, math.ceil(in_H * scale), math.ceil(in_W * scale)
     kernel_width = 4
     kernel = 'cubic'
 
@@ -460,5 +465,5 @@ if __name__ == '__main__':
     print('average time: {}'.format(total_time / 10))
 
     import torchvision.utils
-    torchvision.utils.save_image(
-        (rlt * 255).round() / 255, 'rlt.png', nrow=1, padding=0, normalize=False)
+    torchvision.utils.save_image((rlt * 255).round() / 255, 'rlt.png', nrow=1, padding=0,
+                                 normalize=False)

@@ -6,14 +6,8 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 
 class MultiStepLR_Restart(_LRScheduler):
-    def __init__(self,
-                 optimizer,
-                 milestones,
-                 restarts=None,
-                 weights=None,
-                 gamma=0.1,
-                 clear_state=False,
-                 last_epoch=-1):
+    def __init__(self, optimizer, milestones, restarts=None, weights=None, gamma=0.1,
+                 clear_state=False, last_epoch=-1):
         self.milestones = Counter(milestones)
         self.gamma = gamma
         self.clear_state = clear_state
@@ -69,9 +63,7 @@ class CosineAnnealingLR_Restart(_LRScheduler):
 
 
 if __name__ == "__main__":
-    optimizer = torch.optim.Adam([torch.zeros(3, 64, 3, 3)],
-                                 lr=2e-4,
-                                 weight_decay=0,
+    optimizer = torch.optim.Adam([torch.zeros(3, 64, 3, 3)], lr=2e-4, weight_decay=0,
                                  betas=(0.9, 0.99))
     ##############################
     # MultiStepLR_Restart
@@ -94,8 +86,8 @@ if __name__ == "__main__":
     restarts = [250000, 500000, 750000]
     restart_weights = [1, 1, 1]
 
-    scheduler = MultiStepLR_Restart(
-        optimizer, lr_steps, restarts, restart_weights, gamma=0.5, clear_state=False)
+    scheduler = MultiStepLR_Restart(optimizer, lr_steps, restarts, restart_weights, gamma=0.5,
+                                    clear_state=False)
 
     ##############################
     # Cosine Annealing Restart
@@ -110,8 +102,8 @@ if __name__ == "__main__":
     restarts = [250000, 500000, 750000]
     restart_weights = [1, 1, 1]
 
-    scheduler = CosineAnnealingLR_Restart(
-        optimizer, T_period, eta_min=1e-7, restarts=restarts, weights=restart_weights)
+    scheduler = CosineAnnealingLR_Restart(optimizer, T_period, eta_min=1e-7, restarts=restarts,
+                                          weights=restart_weights)
 
     ##############################
     # Draw figure
@@ -125,8 +117,6 @@ if __name__ == "__main__":
 
     import matplotlib as mpl
     from matplotlib import pyplot as plt
-    from matplotlib import colors as colors
-    from matplotlib.pyplot import figure
     import matplotlib.ticker as mtick
     mpl.style.use('default')
     import seaborn
