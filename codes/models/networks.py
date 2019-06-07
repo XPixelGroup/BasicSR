@@ -1,6 +1,4 @@
 import logging
-import torch
-import torch.nn as nn
 
 import models.modules.SRResNet_arch as SRResNet_arch
 logger = logging.getLogger('base')
@@ -11,17 +9,12 @@ logger = logging.getLogger('base')
 ####################
 #### Generator
 def define_G(opt):
-    gpu_ids = opt['gpu_ids']
     opt_net = opt['network_G']
     which_model = opt_net['which_model_G']
 
     if which_model == 'MSRResNet':
-        netG = SRResNet_arch.MSRResNet(
-            in_nc=opt_net['in_nc'],
-            out_nc=opt_net['out_nc'],
-            nf=opt_net['nf'],
-            nb=opt_net['nb'],
-            upscale=opt_net['scale'])
+        netG = SRResNet_arch.MSRResNet(in_nc=opt_net['in_nc'], out_nc=opt_net['out_nc'],
+                                       nf=opt_net['nf'], nb=opt_net['nb'], upscale=opt_net['scale'])
     # elif which_model == 'sft_arch':  # SFT-GAN
     #     netG = sft_arch.SFT_Net()
     # elif which_model == 'RRDB_net':  # RRDB

@@ -1,6 +1,4 @@
 import math
-import numpy as np
-import torch
 import torchvision.utils
 from data import create_dataloader, create_dataset
 from utils import util
@@ -39,7 +37,7 @@ for i, data in enumerate(train_loader):
     print(i)
     LR = data['LR']
     HR = data['GT']
-    torchvision.utils.save_image(
-        LR, 'tmp/LR_{:03d}.png'.format(i), nrow=nrow, padding=padding, normalize=False)
-    torchvision.utils.save_image(
-        HR, 'tmp/GT_{:03d}.png'.format(i), nrow=nrow, padding=padding, normalize=False)
+    torchvision.utils.save_image(LR, 'tmp/LR_{:03d}.png'.format(i), nrow=nrow, padding=padding,
+                                 normalize=False)
+    torchvision.utils.save_image(HR, 'tmp/GT_{:03d}.png'.format(i), nrow=nrow, padding=padding,
+                                 normalize=False)

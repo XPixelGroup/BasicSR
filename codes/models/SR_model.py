@@ -56,33 +56,26 @@ class SRModel(BaseModel):
                 else:
                     if self.rank <= 0:
                         logger.warning('Params [{:s}] will not optimize.'.format(k))
-            self.optimizer_G = torch.optim.Adam(
-                optim_params,
-                lr=train_opt['lr_G'],
-                weight_decay=wd_G,
-                betas=(train_opt['beta1'], train_opt['beta2']))
+            self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'],
+                                                weight_decay=wd_G,
+                                                betas=(train_opt['beta1'], train_opt['beta2']))
             self.optimizers.append(self.optimizer_G)
 
             # schedulers
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
                     self.schedulers.append(
-                        lr_scheduler.MultiStepLR_Restart(
-                            optimizer,
-                            train_opt['lr_steps'],
-                            restarts=train_opt['restarts'],
-                            weights=train_opt['restart_weights'],
-                            gamma=train_opt['lr_gamma'],
-                            clear_state=train_opt['clear_state']))
+                        lr_scheduler.MultiStepLR_Restart(optimizer, train_opt['lr_steps'],
+                                                         restarts=train_opt['restarts'],
+                                                         weights=train_opt['restart_weights'],
+                                                         gamma=train_opt['lr_gamma'],
+                                                         clear_state=train_opt['clear_state']))
             elif train_opt['lr_scheme'] == 'CosineAnnealingLR_Restart':
                 for optimizer in self.optimizers:
                     self.schedulers.append(
                         lr_scheduler.CosineAnnealingLR_Restart(
-                            optimizer,
-                            train_opt['T_period'],
-                            eta_min=train_opt['eta_min'],
-                            restarts=train_opt['restarts'],
-                            weights=train_opt['restart_weights']))
+                            optimizer, train_opt['T_period'], eta_min=train_opt['eta_min'],
+                            restarts=train_opt['restarts'], weights=train_opt['restart_weights']))
             else:
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
