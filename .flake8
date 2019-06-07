@@ -1,0 +1,6 @@
+[flake8]
+ignore =
+    # Too many leading '#' for block comment (E266)
+    E266
+
+max-line-length=100
