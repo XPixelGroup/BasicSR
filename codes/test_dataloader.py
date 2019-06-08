@@ -7,8 +7,8 @@ opt = {}
 
 opt['name'] = 'DIV2K800'
 opt['dataroot_GT'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
-opt['dataroot_LR'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb'
-opt['mode'] = 'LRHR'
+opt['dataroot_LQ'] = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb'
+opt['mode'] = 'LQGT'
 opt['phase'] = 'train'  # 'train' | 'val'
 opt['use_shuffle'] = True
 opt['n_workers'] = 8
@@ -35,9 +35,9 @@ for i, data in enumerate(train_loader):
     if i > 5:
         break
     print(i)
-    LR = data['LR']
-    HR = data['GT']
-    torchvision.utils.save_image(LR, 'tmp/LR_{:03d}.png'.format(i), nrow=nrow, padding=padding,
+    LQ = data['LQ']
+    GT = data['GT']
+    torchvision.utils.save_image(LQ, 'tmp/LQ_{:03d}.png'.format(i), nrow=nrow, padding=padding,
                                  normalize=False)
-    torchvision.utils.save_image(HR, 'tmp/GT_{:03d}.png'.format(i), nrow=nrow, padding=padding,
+    torchvision.utils.save_image(GT, 'tmp/GT_{:03d}.png'.format(i), nrow=nrow, padding=padding,
                                  normalize=False)

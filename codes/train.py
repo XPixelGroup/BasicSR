@@ -180,7 +180,7 @@ def main():
                 idx = 0
                 for val_data in val_loader:
                     idx += 1
-                    img_name = os.path.splitext(os.path.basename(val_data['LR_path'][0]))[0]
+                    img_name = os.path.splitext(os.path.basename(val_data['LQ_path'][0]))[0]
                     img_dir = os.path.join(opt['path']['val_images'], img_name)
                     util.mkdir(img_dir)
 
