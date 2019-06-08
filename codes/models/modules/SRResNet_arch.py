@@ -33,6 +33,11 @@ class MSRResNet(nn.Module):
         # activation function
         self.lrelu = nn.LeakyReLU(negative_slope=0.1, inplace=True)
 
+        # initialization
+        mutil.initialize_weights([self.conv_first, self.upconv1, self.HRconv, self.conv_last], 0.1)
+        if self.upscale == 4:
+            mutil.initialize_weights(self.upconv2, 0.1)
+
     def forward(self, x):
         fea = self.lrelu(self.conv_first(x))
         out = self.recon_trunk(fea)
