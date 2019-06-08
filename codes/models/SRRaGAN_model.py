@@ -1,4 +1,3 @@
-import os
 import logging
 from collections import OrderedDict
 
@@ -79,20 +78,23 @@ class SRRaGANModel(BaseModel):
                     optim_params.append(v)
                 else:
                     logger.warning('Params [{:s}] will not optimize.'.format(k))
-            self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'], \
-                weight_decay=wd_G, betas=(train_opt['beta1_G'], train_opt['beta2_G']))
+            self.optimizer_G = torch.optim.Adam(optim_params, lr=train_opt['lr_G'],
+                                                weight_decay=wd_G,
+                                                betas=(train_opt['beta1_G'], train_opt['beta2_G']))
             self.optimizers.append(self.optimizer_G)
             # D
             wd_D = train_opt['weight_decay_D'] if train_opt['weight_decay_D'] else 0
-            self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=train_opt['lr_D'], \
-                weight_decay=wd_D, betas=(train_opt['beta1_D'], train_opt['beta2_D']))
+            self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=train_opt['lr_D'],
+                                                weight_decay=wd_D,
+                                                betas=(train_opt['beta1_D'], train_opt['beta2_D']))
             self.optimizers.append(self.optimizer_D)
 
             # schedulers
             if train_opt['lr_scheme'] == 'MultiStepLR':
                 for optimizer in self.optimizers:
-                    self.schedulers.append(lr_scheduler.MultiStepLR(optimizer, \
-                        train_opt['lr_steps'], train_opt['lr_gamma']))
+                    self.schedulers.append(
+                        lr_scheduler.MultiStepLR(optimizer, train_opt['lr_steps'],
+                                                 train_opt['lr_gamma']))
             else:
                 raise NotImplementedError('MultiStepLR learning rate scheme is enough.')
 
@@ -101,8 +103,8 @@ class SRRaGANModel(BaseModel):
         self.print_network()
 
     def feed_data(self, data, need_GT=True):
-        # LR
-        self.var_L = data['LR'].to(self.device)
+        # LQ
+        self.var_L = data['LQ'].to(self.device)
 
         if need_GT:  # train or val
             self.var_H = data['GT'].to(self.device)
@@ -196,7 +198,7 @@ class SRRaGANModel(BaseModel):
 
     def get_current_visuals(self, need_GT=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.var_L.detach()[0].float().cpu()
+        out_dict['LQ'] = self.var_L.detach()[0].float().cpu()
         out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
         if need_GT:
             out_dict['GT'] = self.var_H.detach()[0].float().cpu()
@@ -218,7 +220,7 @@ class SRRaGANModel(BaseModel):
             s, n = self.get_network_description(self.netD)
             if isinstance(self.netD, nn.DataParallel):
                 net_struc_str = '{} - {}'.format(self.netD.__class__.__name__,
-                                                self.netD.module.__class__.__name__)
+                                                 self.netD.module.__class__.__name__)
             else:
                 net_struc_str = '{}'.format(self.netD.__class__.__name__)
 
@@ -229,11 +231,12 @@ class SRRaGANModel(BaseModel):
                 s, n = self.get_network_description(self.netF)
                 if isinstance(self.netF, nn.DataParallel):
                     net_struc_str = '{} - {}'.format(self.netF.__class__.__name__,
-                                                    self.netF.module.__class__.__name__)
+                                                     self.netF.module.__class__.__name__)
                 else:
                     net_struc_str = '{}'.format(self.netF.__class__.__name__)
 
-                logger.info('Network F structure: {}, with parameters: {:,d}'.format(net_struc_str, n))
+                logger.info('Network F structure: {}, with parameters: {:,d}'.format(
+                    net_struc_str, n))
                 logger.info(s)
 
     def load(self):

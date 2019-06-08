@@ -27,12 +27,12 @@ def create_dataloader(dataset, dataset_opt, opt, sampler):
 
 def create_dataset(dataset_opt):
     mode = dataset_opt['mode']
-    if mode == 'LR':
-        from data.LR_dataset import LRDataset as D
-    elif mode == 'LRHR':
-        from data.LRHR_dataset import LRHRDataset as D
-    # elif mode == 'LRHRseg_bg':
-    #     from data.LRHR_seg_bg_dataset import LRHRSeg_BG_Dataset as D
+    if mode == 'LQ':
+        from data.LQ_dataset import LQDataset as D
+    elif mode == 'LQGT':
+        from data.LQGT_dataset import LQGTDataset as D
+    # elif mode == 'LQGTseg_bg':
+    #     from data.LQGT_seg_bg_dataset import LQGTSeg_BG_Dataset as D
     else:
         raise NotImplementedError('Dataset [{:s}] is not recognized.'.format(mode))
     dataset = D(dataset_opt)

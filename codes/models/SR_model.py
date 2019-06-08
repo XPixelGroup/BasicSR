@@ -82,7 +82,7 @@ class SRModel(BaseModel):
             self.log_dict = OrderedDict()
 
     def feed_data(self, data, need_GT=True):
-        self.var_L = data['LR'].to(self.device)  # LR
+        self.var_L = data['LQ'].to(self.device)  # LQ
         if need_GT:
             self.real_H = data['GT'].to(self.device)  # GT
 
@@ -147,7 +147,7 @@ class SRModel(BaseModel):
 
     def get_current_visuals(self, need_GT=True):
         out_dict = OrderedDict()
-        out_dict['LR'] = self.var_L.detach()[0].float().cpu()
+        out_dict['LQ'] = self.var_L.detach()[0].float().cpu()
         out_dict['SR'] = self.fake_H.detach()[0].float().cpu()
         if need_GT:
             out_dict['GT'] = self.real_H.detach()[0].float().cpu()

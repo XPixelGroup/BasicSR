@@ -2,20 +2,20 @@
 # With 16 Residual blocks w/o BN
 
 #### general settings
-name: 001_MSRResNetx4_scratch_DIV2K_ori  # please remove 'debug_' during training
+name: 001_MSRResNetx4_scratch_DIV2K  # please remove 'debug_' during training
 use_tb_logger: true
 model: sr
 distortion: sr
 scale: 4
-gpu_ids: [0]
+gpu_ids: [7]
 
 #### datasets
 datasets:
   train:
     name: DIV2K
-    mode: LRHR
+    mode: LQGT
     dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb
-    dataroot_LR: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub_bicLRx4.lmdb
 
     use_shuffle: true
     n_workers: 6  # per GPU
@@ -26,9 +26,9 @@ datasets:
     color: RGB
   val:
     name: val_set5
-    mode: LRHR
+    mode: LQGT
     dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5
-    dataroot_LR: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4
 
 #### network structures
 network_G:
@@ -58,7 +58,7 @@ train:
   pixel_criterion: l1
   pixel_weight: 1.0
 
-  manual_seed: 0
+  manual_seed: 10
   val_freq: !!float 5e3
 
 #### logger
