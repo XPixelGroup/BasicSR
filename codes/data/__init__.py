@@ -4,7 +4,7 @@ import torch
 import torch.utils.data
 
 
-def create_dataloader(dataset, dataset_opt, opt, sampler):
+def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
     phase = dataset_opt['phase']
     if phase == 'train':
         if opt['dist']:
