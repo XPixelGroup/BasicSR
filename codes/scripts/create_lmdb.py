@@ -5,20 +5,26 @@ import glob
 import pickle
 import lmdb
 import cv2
-from utils.util import ProgressBar
-
-sys.path.append(osp.dirname(osp.dirname(osp.abspath(__file__))))
+try:
+    sys.path.append(osp.dirname(osp.dirname(osp.abspath(__file__))))
+    from utils.util import ProgressBar
+except ImportError:
+    pass
 
 # configurations
 img_folder = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub/*'  # glob matching pattern
-# lmdb_save_path must end with .lmdb
-lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_subV2.lmdb'
+lmdb_save_path = '/mnt/SSD/xtwang/BasicSR_datasets/DIV2K800/DIV2K800_sub.lmdb'
 meta_info = {'name': 'DIV2K800_sub_GT'}
 mode = 2  # 1 for reading all the images to memory and then writing to lmdb (more memory);
 # 2 for reading several images and then writing to lmdb, loop over (less memory)
 batch = 1000  # Used in mode 2. After batch images, lmdb commits.
 ###########################################
-
+if not lmdb_save_path.endswith('.lmdb'):
+    raise ValueError("lmdb_save_path must end with \'lmdb\'.")
+#### whether the lmdb file exist
+if osp.exists(lmdb_save_path):
+    print('Folder [{:s}] already exists. Exit...'.format(lmdb_save_path))
+    sys.exit(1)
 img_list = sorted(glob.glob(img_folder))
 if mode == 1:
     print('Read images...')
