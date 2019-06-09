@@ -1,6 +1,7 @@
+import torch
 import logging
-
 import models.modules.SRResNet_arch as SRResNet_arch
+import models.modules.discriminator_vgg_arch as SRGAN_arch
 logger = logging.getLogger('base')
 
 
@@ -34,28 +35,13 @@ def define_G(opt):
     return netG
 
 
-'''
 #### Discriminator
 def define_D(opt):
-    gpu_ids = opt['gpu_ids']
     opt_net = opt['network_D']
     which_model = opt_net['which_model_D']
 
     if which_model == 'discriminator_vgg_128':
-        netD = arch.Discriminator_VGG_128(in_nc=opt_net['in_nc'], base_nf=opt_net['nf'], \
-            norm_type=opt_net['norm_type'], mode=opt_net['mode'], act_type=opt_net['act_type'])
-
-    elif which_model == 'dis_acd':  # sft-gan, Auxiliary Classifier Discriminator
-        netD = sft_arch.ACD_VGG_BN_96()
-
-    elif which_model == 'discriminator_vgg_96':
-        netD = arch.Discriminator_VGG_96(in_nc=opt_net['in_nc'], base_nf=opt_net['nf'], \
-            norm_type=opt_net['norm_type'], mode=opt_net['mode'], act_type=opt_net['act_type'])
-    elif which_model == 'discriminator_vgg_192':
-        netD = arch.Discriminator_VGG_192(in_nc=opt_net['in_nc'], base_nf=opt_net['nf'], \
-            norm_type=opt_net['norm_type'], mode=opt_net['mode'], act_type=opt_net['act_type'])
-    elif which_model == 'discriminator_vgg_128_SN':
-        netD = arch.Discriminator_VGG_128_SN()
+        netD = SRGAN_arch.Discriminator_VGG_128(in_nc=opt_net['in_nc'], nf=opt_net['nf'])
     else:
         raise NotImplementedError('Discriminator model [{:s}] not recognized'.format(which_model))
     return netD
@@ -65,14 +51,12 @@ def define_D(opt):
 def define_F(opt, use_bn=False):
     gpu_ids = opt['gpu_ids']
     device = torch.device('cuda' if gpu_ids else 'cpu')
-    # pytorch pretrained VGG19-54, before ReLU.
+    # PyTorch pretrained VGG19-54, before ReLU.
     if use_bn:
         feature_layer = 49
     else:
         feature_layer = 34
-    netF = arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn, \
-        use_input_norm=True, device=device)
-    # netF = arch.ResNet101FeatureExtractor(use_input_norm=True, device=device)
+    netF = SRGAN_arch.VGGFeatureExtractor(feature_layer=feature_layer, use_bn=use_bn,
+                                          use_input_norm=True, device=device)
     netF.eval()  # No need to train
     return netF
-'''
