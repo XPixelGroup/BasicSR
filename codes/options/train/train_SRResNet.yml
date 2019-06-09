@@ -42,6 +42,7 @@ network_G:
 #### path
 path:
   pretrain_model_G: ~
+  strict_load: true
   resume_state: ~
 
 #### training settings: learning rate scheme, loss
