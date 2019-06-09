@@ -151,7 +151,7 @@ class SRModel(BaseModel):
 
     def print_network(self):
         s, n = self.get_network_description(self.netG)
-        if isinstance(self.netG, nn.DataParallel):
+        if isinstance(self.netG, nn.DataParallel) or isinstance(self.netG, DistributedDataParallel):
             net_struc_str = '{} - {}'.format(self.netG.__class__.__name__,
                                              self.netG.module.__class__.__name__)
         else:
