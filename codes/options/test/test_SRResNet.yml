@@ -1,0 +1,48 @@
+name: MSRResNetx4
+suffix: ~  # add suffix to saved images
+model: sr
+distortion: sr
+scale: 4
+crop_border: ~  # crop border when evaluation. If None(~), crop the scale pixels
+gpu_ids: [0]
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: set5
+    mode: LQGT
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/val_set5/Set5_bicLRx4
+  test_2:  # the 2st test dataset
+    name: set14
+    mode: LQGT
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/val_set14/Set14_bicLRx4
+  test_3:
+    name: bsd100
+    mode: LQGT
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/BSD/BSDS100
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/BSD/BSDS100_bicLRx4
+  test_4:
+    name: urban100
+    mode: LQGT
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/urban100
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/urban100_bicLRx4
+  test_5:
+    name: div2k100
+    mode: LQGT
+    dataroot_GT: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K100/DIV2K_valid_HR
+    dataroot_LQ: /mnt/SSD/xtwang/BasicSR_datasets/DIV2K100/DIV2K_valid_bicLRx4
+
+
+#### network structures
+network_G:
+  which_model_G: MSRResNet
+  in_nc: 3
+  out_nc: 3
+  nf: 64
+  nb: 16
+  upscale: 4
+
+#### path
+path:
+  pretrain_model_G: ../experiments/pretrained_models/MSRResNetx4.pth
