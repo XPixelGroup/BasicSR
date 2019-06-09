@@ -1,6 +1,8 @@
 do not support subset_file
 do not support SFT now
 
+SRGAN does not support dist training now
+
 ##################
 ## TODO
 ##################
@@ -11,13 +13,10 @@ do not support SFT now
     README.md
 # models
     # modules
-        architecture.py
         seg_arch.py
         sft_arch.py
-        spectral_norm.py
     SFTGAN_ACD_model.py
-    SRGAN_model.py
-    SRRaGAN_model.py
+
 # options
     # test
     # train
