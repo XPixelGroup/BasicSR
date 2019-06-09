@@ -26,13 +26,13 @@ def parse(opt_path, is_train=True):
             dataset['scale'] = scale
         is_lmdb = False
         if dataset.get('dataroot_GT', None) is not None:
-            dataset['dataroot_GT'] = os.path.expanduser(dataset['dataroot_GT'])
+            dataset['dataroot_GT'] = osp.expanduser(dataset['dataroot_GT'])
             if dataset['dataroot_GT'].endswith('lmdb'):
                 is_lmdb = True
         # if dataset.get('dataroot_GT_bg', None) is not None:
-        #     dataset['dataroot_GT_bg'] = os.path.expanduser(dataset['dataroot_GT_bg'])
+        #     dataset['dataroot_GT_bg'] = osp.expanduser(dataset['dataroot_GT_bg'])
         if dataset.get('dataroot_LQ', None) is not None:
-            dataset['dataroot_LQ'] = os.path.expanduser(dataset['dataroot_LQ'])
+            dataset['dataroot_LQ'] = osp.expanduser(dataset['dataroot_LQ'])
             if dataset['dataroot_LQ'].endswith('lmdb'):
                 is_lmdb = True
         dataset['data_type'] = 'lmdb' if is_lmdb else 'img'
@@ -42,16 +42,16 @@ def parse(opt_path, is_train=True):
 
     # path
     for key, path in opt['path'].items():
-        if path and key in opt['path']:
-            opt['path'][key] = os.path.expanduser(path)
+        if path and key in opt['path'] and key != 'strict_load':
+            opt['path'][key] = osp.expanduser(path)
     opt['path']['root'] = osp.abspath(osp.join(__file__, osp.pardir, osp.pardir, osp.pardir))
     if is_train:
-        experiments_root = os.path.join(opt['path']['root'], 'experiments', opt['name'])
+        experiments_root = osp.join(opt['path']['root'], 'experiments', opt['name'])
         opt['path']['experiments_root'] = experiments_root
-        opt['path']['models'] = os.path.join(experiments_root, 'models')
-        opt['path']['training_state'] = os.path.join(experiments_root, 'training_state')
+        opt['path']['models'] = osp.join(experiments_root, 'models')
+        opt['path']['training_state'] = osp.join(experiments_root, 'training_state')
         opt['path']['log'] = experiments_root
-        opt['path']['val_images'] = os.path.join(experiments_root, 'val_images')
+        opt['path']['val_images'] = osp.join(experiments_root, 'val_images')
 
         # change some options for debug mode
         if 'debug' in opt['name']:
@@ -59,7 +59,7 @@ def parse(opt_path, is_train=True):
             opt['logger']['print_freq'] = 1
             opt['logger']['save_checkpoint_freq'] = 8
     else:  # test
-        results_root = os.path.join(opt['path']['root'], 'results', opt['name'])
+        results_root = osp.join(opt['path']['root'], 'results', opt['name'])
         opt['path']['results_root'] = results_root
         opt['path']['log'] = results_root
 
