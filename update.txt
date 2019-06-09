@@ -43,7 +43,5 @@ do not support SFT now
 
 auto_test.py
 README.md
-test_dataloader.py
 test_seg.py
 test_sftgan.py
-test.py
