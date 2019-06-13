@@ -2,12 +2,12 @@
 # With 16 Residual blocks w/o BN
 
 #### general settings
-name: 006_SRGANx4_MSRResNetx4Ini_DIV2K  # please remove 'debug_' during training
+name: 002_SRGANx4_MSRResNetx4Ini_DIV2K
 use_tb_logger: true
 model: srgan
 distortion: sr
 scale: 4
-gpu_ids: [4]
+gpu_ids: [1]
 
 #### datasets
 datasets:
@@ -20,7 +20,7 @@ datasets:
     use_shuffle: true
     n_workers: 6  # per GPU
     batch_size: 16
-    GT_size: 128 # 128 | 192
+    GT_size: 128
     use_flip: true
     use_rot: true
     color: RGB
@@ -61,7 +61,7 @@ train:
   beta2_D: 0.99
   lr_scheme: MultiStepLR
 
-  niter: 500000
+  niter: 400000
   warmup_iter: -1  # no warm up
   lr_steps: [50000, 100000, 200000, 300000]
   lr_gamma: 0.5

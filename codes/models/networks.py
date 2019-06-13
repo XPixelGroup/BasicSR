@@ -2,6 +2,7 @@ import torch
 import logging
 import models.modules.SRResNet_arch as SRResNet_arch
 import models.modules.discriminator_vgg_arch as SRGAN_arch
+import models.modules.RRDBNet_arch as RRDBNet_arch
 logger = logging.getLogger('base')
 
 
@@ -16,20 +17,11 @@ def define_G(opt):
     if which_model == 'MSRResNet':
         netG = SRResNet_arch.MSRResNet(in_nc=opt_net['in_nc'], out_nc=opt_net['out_nc'],
                                        nf=opt_net['nf'], nb=opt_net['nb'], upscale=opt_net['scale'])
+    elif which_model == 'RRDBNet':
+        netG = RRDBNet_arch.RRDBNet(in_nc=opt_net['in_nc'], out_nc=opt_net['out_nc'],
+                                    nf=opt_net['nf'], nb=opt_net['nb'])
     # elif which_model == 'sft_arch':  # SFT-GAN
     #     netG = sft_arch.SFT_Net()
-    # elif which_model == 'RRDB_net':  # RRDB
-    #     netG = arch.RRDBNet(
-    #         in_nc=opt_net['in_nc'],
-    #         out_nc=opt_net['out_nc'],
-    #         nf=opt_net['nf'],
-    #         nb=opt_net['nb'],
-    #         gc=opt_net['gc'],
-    #         upscale=opt_net['scale'],
-    #         norm_type=opt_net['norm_type'],
-    #         act_type='leakyrelu',
-    #         mode=opt_net['mode'],
-    #         upsample_mode='upconv')
     else:
         raise NotImplementedError('Generator model [{:s}] not recognized'.format(which_model))
     return netG
