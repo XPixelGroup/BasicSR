@@ -1,4 +1,4 @@
-## BasicSR [[EDVR]](https://github.com/xinntao/EDVR) [[DNI]](https://xinntao.github.io/projects/DNI) [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](https://github.com/xinntao/SFTGAN)
+## BasicSR [[EDVR]](https://github.com/xinntao/EDVR) [[DNI]](https://xinntao.github.io/projects/DNI) [[SFTGAN]](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
 
 :triangular_flag_on_post: We have updated the BasicSR toolbox (v0.1).<br/>
 Almost all the files have updates, including:
@@ -11,8 +11,14 @@ Almost all the files have updates, including:
 If you find compatibility issues, please see whether these files are in the [To-be-updated list](https://github.com/xinntao/BasicSR/blob/master/updateTODO.txt).<br/>
 If you want to use the old version, please find it in the [releases](https://github.com/xinntao/BasicSR/releases) with `tag v0.0`.
 
+---
+Check our new work on:<br/>
+1. **Video Super-Resolution**: [`EDVR: Video Restoration with Enhanced Deformable Convolutional Networks`](https://xinntao.github.io/projects/EDVR), which has won all four tracks in NTIRE 2019 Challenges on Video Restoration and Enhancement (CVPR19 Workshops).
+2. **DNI (CVPR19)**: [`Deep Network Interpolation for Continuous Imagery Effect Transition`](https://xinntao.github.io/projects/DNI)
+---
+
 <p align="center">
-  <img height="350" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
+  <img height="400" src="https://github.com/xinntao/ESRGAN/blob/master/figures/baboon.jpg">
 </p>
 
 ### Updates
@@ -34,7 +40,7 @@ We use datasets in LDMB format for faster IO speed. Please refer to [wiki](https
 Please see [wiki](https://github.com/xinntao/BasicSR/wiki/Training-and-Testing) for the basic usage, *i.e.,* training and testing.
 
 ## Model Zoo and Baselines
-Results and pre-trained models are available in the [wiki-Model zoo](https://github.com/xinntao/EDVR/wiki/Model-Zoo).
+Results and pre-trained models are available in the [wiki-Model zoo](https://github.com/xinntao/BasicSR/wiki/Model-Zoo).
 
 ## Contributing
 We appreciate all contributions. Please refer to [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/CONTRIBUTING.md) for contributing guideline.
