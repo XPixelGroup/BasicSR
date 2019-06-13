@@ -92,5 +92,5 @@ for path in glob.glob(test_img_folder + '/*'):
     color.select(0, 0).masked_fill_(mask, lookup_table[8][0])  # R
     color.select(0, 1).masked_fill_(mask, lookup_table[8][1])  # G
     color.select(0, 2).masked_fill_(mask, lookup_table[8][2])  # B
-    torchvision.utils.save_image(color, os.path.join(save_colorimg_path, base+'.png'), padding=0, \
-        normalize=False)
+    torchvision.utils.save_image(color, os.path.join(save_colorimg_path, base + '.png'), padding=0,
+                                 normalize=False)
