@@ -1,4 +1,3 @@
-import os.path
 import random
 import numpy as np
 import cv2
@@ -27,13 +26,13 @@ class LRHRSeg_BG_Dataset(data.Dataset):
         # read image list from lmdb or image files
         self.HR_env, self.paths_HR = util.get_image_paths(opt['data_type'], opt['dataroot_GT'])
         self.LR_env, self.paths_LR = util.get_image_paths(opt['data_type'], opt['dataroot_LR'])
-        self.HR_env_bg, self.paths_HR_bg = util.get_image_paths(opt['data_type'], \
-            opt['dataroot_GT_bg'])
+        self.HR_env_bg, self.paths_HR_bg = util.get_image_paths(opt['data_type'],
+                                                                opt['dataroot_GT_bg'])
 
         assert self.paths_HR, 'Error: HR path is empty.'
         if self.paths_LR and self.paths_HR:
             assert len(self.paths_LR) == len(self.paths_HR), \
-                'HR and LR datasets have different number of images - {}, {}.'.format(\
+                'HR and LR datasets have different number of images - {}, {}.'.format(
                 len(self.paths_LR), len(self.paths_HR))
 
         self.random_scale_list = [1, 0.9, 0.8, 0.7, 0.6, 0.5]

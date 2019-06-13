@@ -49,29 +49,17 @@ class SFT_Net(nn.Module):
         sft_branch.append(nn.Conv2d(64, 64, 3, 1, 1))
         self.sft_branch = nn.Sequential(*sft_branch)
 
-        self.HR_branch = nn.Sequential(
-            nn.Conv2d(64, 256, 3, 1, 1),
-            nn.PixelShuffle(2),
-            nn.ReLU(True),
-            nn.Conv2d(64, 256, 3, 1, 1),
-            nn.PixelShuffle(2),
-            nn.ReLU(True),
-            nn.Conv2d(64, 64, 3, 1, 1),
-            nn.ReLU(True),
-            nn.Conv2d(64, 3, 3, 1, 1)
-        )
+        self.HR_branch = nn.Sequential(nn.Conv2d(64, 256, 3, 1,
+                                                 1), nn.PixelShuffle(2), nn.ReLU(True),
+                                       nn.Conv2d(64, 256, 3, 1, 1), nn.PixelShuffle(2),
+                                       nn.ReLU(True), nn.Conv2d(64, 64, 3, 1, 1), nn.ReLU(True),
+                                       nn.Conv2d(64, 3, 3, 1, 1))
 
-        self.CondNet = nn.Sequential(
-            nn.Conv2d(8, 128, 4, 4),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 32, 1)
-        )
+        self.CondNet = nn.Sequential(nn.Conv2d(8, 128, 4, 4), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 32, 1))
 
     def forward(self, x):
         # x[0]: img; x[1]: seg
@@ -91,48 +79,35 @@ class ACD_VGG_BN_96(nn.Module):
         self.feature = nn.Sequential(
             nn.Conv2d(3, 64, 3, 1, 1),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(64, 64, 4, 2, 1),
             nn.BatchNorm2d(64, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(64, 128, 3, 1, 1),
             nn.BatchNorm2d(128, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(128, 128, 4, 2, 1),
             nn.BatchNorm2d(128, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(128, 256, 3, 1, 1),
             nn.BatchNorm2d(256, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(256, 256, 4, 2, 1),
             nn.BatchNorm2d(256, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(256, 512, 3, 1, 1),
             nn.BatchNorm2d(512, affine=True),
             nn.LeakyReLU(0.1, True),
-
             nn.Conv2d(512, 512, 4, 2, 1),
             nn.BatchNorm2d(512, affine=True),
             nn.LeakyReLU(0.1, True),
         )
 
         # gan
-        self.gan = nn.Sequential(
-            nn.Linear(512*6*6, 100),
-            nn.LeakyReLU(0.1, True),
-            nn.Linear(100, 1)
-        )
+        self.gan = nn.Sequential(nn.Linear(512 * 6 * 6, 100), nn.LeakyReLU(0.1, True),
+                                 nn.Linear(100, 1))
 
-        self.cls = nn.Sequential(
-            nn.Linear(512*6*6, 100),
-            nn.LeakyReLU(0.1, True),
-            nn.Linear(100, 8)
-        )
+        self.cls = nn.Sequential(nn.Linear(512 * 6 * 6, 100), nn.LeakyReLU(0.1, True),
+                                 nn.Linear(100, 8))
 
     def forward(self, x):
         fea = self.feature(x)
@@ -191,30 +166,19 @@ class SFT_Net_torch(nn.Module):
         sft_branch.append(nn.Conv2d(64, 64, 3, 1, 1))
         self.sft_branch = nn.Sequential(*sft_branch)
 
-        self.HR_branch = nn.Sequential(
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv2d(64, 64, 3, 1, 1),
-            nn.ReLU(True),
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv2d(64, 64, 3, 1, 1),
-            nn.ReLU(True),
-            nn.Conv2d(64, 64, 3, 1, 1),
-            nn.ReLU(True),
-            nn.Conv2d(64, 3, 3, 1, 1)
-        )
+        self.HR_branch = nn.Sequential(nn.Upsample(scale_factor=2, mode='nearest'),
+                                       nn.Conv2d(64, 64, 3, 1, 1), nn.ReLU(True),
+                                       nn.Upsample(scale_factor=2, mode='nearest'),
+                                       nn.Conv2d(64, 64, 3, 1, 1), nn.ReLU(True),
+                                       nn.Conv2d(64, 64, 3, 1, 1), nn.ReLU(True),
+                                       nn.Conv2d(64, 3, 3, 1, 1))
 
         # Condtion network
-        self.CondNet = nn.Sequential(
-            nn.Conv2d(8, 128, 4, 4),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 128, 1),
-            nn.LeakyReLU(0.1, True),
-            nn.Conv2d(128, 32, 1)
-        )
+        self.CondNet = nn.Sequential(nn.Conv2d(8, 128, 4, 4), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 128, 1), nn.LeakyReLU(0.1, True),
+                                     nn.Conv2d(128, 32, 1))
 
     def forward(self, x):
         # x[0]: img; x[1]: seg

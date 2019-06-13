@@ -1,6 +1,4 @@
-do not support subset_file
 do not support SFT now
-
 SRGAN does not support dist training now
 
 ##################
@@ -10,37 +8,22 @@ SRGAN does not support dist training now
 # data
     LR_dataset.py
     LRHR_seg_bg_dataset.py
-    README.md
 # models
     # modules
         seg_arch.py
         sft_arch.py
     SFTGAN_ACD_model.py
-
 # options
     # test
     # train
         train_ESRGAN.yml
         train_SRGAN.yml
-    README.md
 # scripts
     # back_projection
     color2gray.py
     extract_subimgs_single.py
     generate_mod_LR_bic.m
     generate_mod_LR_bic.py
-    net_interp.py
-    README.md
-    rename.py
-    transfer_params.py
     transfer_params_sft.py
-# utils
-    README.md
-#experiments
-    # pretrained_models
-        README.md
-
-auto_test.py
-README.md
 test_seg.py
 test_sftgan.py

@@ -3,10 +3,12 @@ import os.path
 import sys
 from multiprocessing import Pool
 import cv2
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from data.util import bgr2ycbcr
-from utils.progress_bar import ProgressBar
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from data.util import bgr2ycbcr
+    from utils.progress_bar import ProgressBar
+except ImportError:
+    pass
 
 
 def main():
@@ -53,9 +55,8 @@ def worker(path, save_folder, mode, compression_level):
         img_y = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     else:
         img_y = bgr2ycbcr(img, only_y=True)
-    cv2.imwrite(
-        os.path.join(save_folder, img_name), img_y,
-        [cv2.IMWRITE_PNG_COMPRESSION, compression_level])
+    cv2.imwrite(os.path.join(save_folder, img_name), img_y,
+                [cv2.IMWRITE_PNG_COMPRESSION, compression_level])
     return 'Processing {:s} ...'.format(img_name)
 
 

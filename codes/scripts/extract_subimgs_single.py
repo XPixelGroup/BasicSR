@@ -1,11 +1,14 @@
 import os
-import os.path
+import os.path as osp
 import sys
 from multiprocessing import Pool
 import numpy as np
 import cv2
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.progress_bar import ProgressBar
+try:
+    sys.path.append(osp.dirname(osp.dirname(osp.abspath(__file__))))
+    from utils.util import ProgressBar
+except ImportError:
+    pass
 
 
 def main():
@@ -40,8 +43,8 @@ def main():
     pool = Pool(n_thread)
     for path in img_list:
         pool.apply_async(worker,
-            args=(path, save_folder, crop_sz, step, thres_sz, compression_level),
-            callback=update)
+                         args=(path, save_folder, crop_sz, step, thres_sz, compression_level),
+                         callback=update)
     pool.close()
     pool.join()
     print('All subprocesses done.')
