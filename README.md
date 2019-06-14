@@ -12,7 +12,7 @@ If you find compatibility issues, please see whether these files are in the [To-
 If you want to use the old version, please find it in the [releases](https://github.com/xinntao/BasicSR/releases) with `tag v0.0`.
 
 ---
-Check our new work on:<br/>
+Check out our new work on:<br/>
 1. **Video Super-Resolution**: [`EDVR: Video Restoration with Enhanced Deformable Convolutional Networks`](https://xinntao.github.io/projects/EDVR), which has won all four tracks in NTIRE 2019 Challenges on Video Restoration and Enhancement (CVPR19 Workshops).
 2. **DNI (CVPR19)**: [`Deep Network Interpolation for Continuous Imagery Effect Transition`](https://xinntao.github.io/projects/DNI)
 ---
