@@ -1,4 +1,4 @@
-## BasicSR [[EDVR]](https://github.com/xinntao/EDVR) [[DNI]](https://xinntao.github.io/projects/DNI) [[SFTGAN]](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
+## BasicSR [[EDVR]](https://github.com/xinntao/EDVR) [[DNI]](https://xinntao.github.io/projects/DNI) [[ESRGAN]](https://github.com/xinntao/ESRGAN) [[SFTGAN]](http://mmlab.ie.cuhk.edu.hk/projects/SFTGAN/)
 
 :triangular_flag_on_post: We have updated the BasicSR toolbox (v0.1).<br/>
 Almost all the files have updates, including:
