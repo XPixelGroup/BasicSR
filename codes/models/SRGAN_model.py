@@ -259,7 +259,7 @@ class SRGANModel(BaseModel):
             self.load_network(load_path_G, self.netG, self.opt['path']['strict_load'])
         load_path_D = self.opt['path']['pretrain_model_D']
         if self.opt['is_train'] and load_path_D is not None:
-            logger.info('Loading model for D [{:s}] ...'.format(load_path_G))
+            logger.info('Loading model for D [{:s}] ...'.format(load_path_D))
             self.load_network(load_path_D, self.netD, self.opt['path']['strict_load'])
 
     def save(self, iter_step):
