@@ -97,7 +97,7 @@ def main():
         logger.info('Random seed: {}'.format(seed))
     util.set_random_seed(seed)
 
-    torch.backends.cudnn.benckmark = True
+    torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
 
     #### create train and val dataloader
