@@ -1,0 +1,32 @@
+name: TOF_official
+suffix: ~  # add suffix to saved images
+model_type: VideoBaseModel
+scale: 4
+crop_border: 0  # crop border when evaluation. If None, crop the scale pixels
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test:
+    name: Vid4
+    type: VideoTestDataset
+    dataroot_gt: datasets/Vid4/GT
+    dataroot_lq: datasets/Vid4/BIx4up_direct
+    io_backend:
+      type: disk
+
+    cache_data: True
+    num_frame: 7
+    padding: reflection_circle
+
+# network structures
+network_g:
+  type: TOFlow
+  adapt_official_weights: true
+
+save_img: true
+
+# path
+path:
+  pretrain_model_g: experiments/pretrained_models/tof_official-e81c455f.pth
+  strict_load: true

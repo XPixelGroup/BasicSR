@@ -1,0 +1,38 @@
+name: ESRGAN_SRx4_DF2KOST_official
+model_type: ESRGANModel
+scale: 4
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: val_set5
+    type: SingleImageDataset
+    dataroot_lq: datasets/val_set5/Set5_bicLRx4
+    io_backend:
+      type: disk
+  test_2:  # the 2st test dataset
+    name: val_set14
+    type: SingleImageDataset
+    dataroot_lq: datasets/val_set14/Set14_bicLRx4
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: RRDBNet
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_block: 23
+  num_grow_ch: 32
+
+# path
+path:
+  pretrain_model_g: experiments/pretrained_models/ESRGAN_SRx4_DF2KOST_official-2c80e636.pth
+  strict_load: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name

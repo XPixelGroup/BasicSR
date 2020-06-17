@@ -1,0 +1,53 @@
+name: RCAN_BIX4-official
+suffix: ~  # add suffix to saved images
+model_type: SRModel
+scale: 4
+crop_border: ~  # crop border when evaluation. If None, crop the scale pixels
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: val_set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set5/Set5
+    dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
+    io_backend:
+      type: disk
+  test_2:  # the 2st test dataset
+    name: val_set14
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set14/Set14
+    dataroot_lq: ./datasets/val_set14/Set14_bicLRx4
+    io_backend:
+      type: disk
+
+  test_3:
+    name: div2k100
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/DIV2K100/DIV2K_valid_HR
+    dataroot_lq: ./datasets/DIV2K100/DIV2K_valid_bicLRx4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: RCAN
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_group: 10
+  num_block: 20
+  squeeze_factor: 16
+  upscale: 4
+  res_scale: 1
+  img_range: 255.
+  rgb_mean: [0.4488, 0.4371, 0.4040]
+
+save_img: true
+
+# path
+path:
+  pretrain_model_g: ./experiments/pretrained_models/RCAN_BIX4-official.pth
+  strict_load: true

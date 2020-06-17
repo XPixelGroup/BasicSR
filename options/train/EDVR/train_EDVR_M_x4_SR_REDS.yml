@@ -1,0 +1,106 @@
+# general settings
+name: 001_EDVR_M_x4_SR_REDS_woTSA_scratch_600k_valREDS4
+model_type: EDVRModel
+scale: 4
+gpu_ids: [0,1,2,3,4,5,6,7]
+set_CUDA_VISIBLE_DEVICES: true
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: REDS
+    type: REDSDataset
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
+    dataroot_flow: ~
+    meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
+    val_partition: REDS4  # set to 'official' when use the official validation partition
+    io_backend:
+      type: disk
+
+    num_frame: 5
+    gt_size: 256
+    interval_list: [1]
+    random_reverse: false
+    use_flip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker: 3  # per GPU
+    batch_size: 32  # total
+    dataset_enlarge_ratio: 1000
+
+  val:
+    name: REDS4
+    type: VideoTestDataset
+    dataroot_gt: datasets/REDS/REDS4/GT  # change to 'REDSval4' when use the official validation partition
+    dataroot_lq: datasets/REDS/REDS4/sharp_bicubic  # change to 'REDSval4' when use the official validation partition
+    io_backend:
+      type: disk
+
+    cache_data: true
+    num_frame: 5
+    padding: reflection_circle
+
+# network structures
+network_g:
+  type: EDVR
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_frame: 5
+  deformable_groups: 8
+  num_extract_block: 5
+  num_reconstruct_block: 10
+  center_frame_idx: ~
+  hr_in: false
+  with_predeblur: false
+  with_tsa: false
+
+# path
+path:
+  pretrain_model_g: ~
+  strict_load: true
+  resume_state: ~
+
+# training settings
+train:
+  optim_g:
+    type: Adam
+    lr: !!float 4e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: CosineAnnealingRestartLR
+    periods: [150000, 150000, 150000, 150000]
+    restart_weights: [1, 0.5, 0.5, 0.5]
+    eta_min: !!float 1e-7
+
+  niter: 600000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: CharbonnierLoss
+    loss_weight: 1.0
+    reduction: sum
+
+  manual_seed: 0
+
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: false
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29746

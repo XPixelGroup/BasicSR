@@ -1,0 +1,94 @@
+# general settings
+name: 104_EDSRx4_102pretrain_DIV2K
+model_type: SRModel
+scale: 4
+gpu_ids: [4]
+set_CUDA_VISIBLE_DEVICES: true
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DIV2K
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/DIV2K_train_HR_sub
+    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
+    filename_tmpl: '{}_bicLRx4'
+
+    io_backend:
+      type: disk
+
+    gt_size: 192 # 96 for X2; 144 for X3; 192 for X4
+    use_flip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker: 6  # per GPU
+    batch_size: 16
+    dataset_enlarge_ratio: 1000
+
+  val:
+    name: val_set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set5/Set5
+    dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: EDSR
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_block: 16
+  upscale: 4
+  res_scale: 1
+  img_range: 255.
+  rgb_mean: [0.4488, 0.4371, 0.4040]
+
+# path
+path:
+  pretrain_model_g: experiments/102_EDSRx2_scratch_DIV2K/models/net_g_300000.pth
+  strict_load: false
+  resume_state: ~
+
+# training settings
+train:
+  optim_g:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [200000]
+    gamma: 0.5
+
+  niter: 300000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+  manual_seed: 0
+
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: true
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29746

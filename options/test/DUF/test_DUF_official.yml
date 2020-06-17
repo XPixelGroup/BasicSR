@@ -1,0 +1,43 @@
+name: DUF_x4_52L_official
+model_type: VideoBaseModel
+scale: 4
+gpu_ids: [0, 1, 2, 3, 4, 5, 6, 7]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test:
+    name: Vid4
+    type: VideoTestDUFDataset
+    dataroot_gt: datasets/Vid4/GT
+    dataroot_lq: datasets/Vid4/BIx4
+    io_backend:
+      type: disk
+
+    cache_data: false
+    num_frame: 7
+    padding: reflection_circle
+    use_duf_downsampling: true
+
+# network structures
+network_g:
+  type: DUF
+  scale: 4
+  num_layer: 52
+  adapt_official_weights: true
+
+
+# path
+path:
+  pretrain_model_g: experiments/pretrained_models/DUF_x4_52L_official.pth
+  strict_load: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr_y: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 8
+      test_y_channel: true

@@ -1,0 +1,120 @@
+# general settings
+name: 003_RRDB_ESRGANx4_DIV2K
+model_type: ESRGANModel
+scale: 4
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: false
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DIV2K
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/DIV2K_train_HR_sub
+    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
+    io_backend:
+      type: memcached
+      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      sys_path: /mnt/lustre/share/pymc/py3
+
+    gt_size: 128
+    use_flip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker: 6  # per GPU
+    batch_size: 16
+    dataset_enlarge_ratio: 1000
+
+  val:
+    name: val_set14
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set14/Set14
+    dataroot_lq: ./datasets/val_set14/Set14_bicLRx4
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: RRDBNet
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_block: 23
+
+network_d:
+  type: VGGStyleDiscriminator128
+  num_in_ch: 3
+  num_feat: 64
+
+# path
+path:
+  pretrain_model_g: ../experiments/pretrained_models/RRDB_PSNR_x4.pth
+  strict_load: true
+  resume_state: ~
+
+# training settings
+train:
+  optim_g:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+  optim_d:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [50000, 100000, 200000, 300000]
+    gamma: 0.5
+
+  niter: 400000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: !!float 1e-2
+    reduction: mean
+  perceptual_opt:
+    type: PerceptualLoss
+    layer_weights:
+      'conv5_4': 1  # before relu
+    vgg_type: vgg19
+    use_input_norm: true
+    perceptual_weight: 1.0
+    style_weight: 0
+    norm_img: false
+    criterion: l1
+  gan_opt:
+    type: GANLoss
+    gan_type: vanilla
+    real_label_val: 1.0
+    fake_label_val: 0.0
+    loss_weight: !!float 5e-3
+
+  net_d_steps: 1
+  net_d_init_steps: 0
+
+  manual_seed: 0
+
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: true
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29748

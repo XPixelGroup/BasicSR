@@ -1,0 +1,95 @@
+# Modified version of SRResNet w/o BN
+# Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
+
+# general settings
+name: 007_MSRResNetx4_010pretrain_DIV2K_sum
+model_type: SRModel
+scale: 4
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: true
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DIV2K
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/DIV2K_train_HR_sub
+    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
+    filename_tmpl: '{}_bicLRx4'
+
+    io_backend:
+      type: disk
+
+    gt_size: 128
+    use_flip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker: 6  # per GPU
+    batch_size: 16
+    dataset_enlarge_ratio: 1000
+
+  val:
+    name: val_set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set5/Set5
+    dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: MSRResNet
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_block: 16
+  upscale: 4
+
+# path
+path:
+  pretrain_model_g: experiments/010_MSRResNetx2_scratch_DIV2K_patch64_sum/models/net_g_1000000.pth
+  strict_load: false
+  resume_state: ~
+
+# train
+train:
+  optim_g:
+    type: Adam
+    lr: !!float 2e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: CosineAnnealingRestartLR
+    periods: [250000, 250000, 250000, 250000]
+    restart_weights: [1, 1, 1, 1]
+    eta_min: !!float 1e-7
+
+  niter: 1000000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+  manual_seed: 0
+
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: true
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29746

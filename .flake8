@@ -1,6 +1,7 @@
 [flake8]
 ignore =
-    # Too many leading '#' for block comment (E266)
-    E266
+    # line break after binary operatorflake8(W504)
+    W504,
+    W503,
 
-max-line-length=100
+max-line-length=80

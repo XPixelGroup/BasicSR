@@ -1,0 +1,48 @@
+name: 004_MSRResNetx4_scratch_DIV2K_sum_rand0
+suffix: ~  # add suffix to saved images
+model_type: SRModel
+scale: 4
+crop_border: ~  # crop border when evaluation. If None, crop the scale pixels
+gpu_ids: [0]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: val_set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set5/Set5
+    dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
+    io_backend:
+      type: disk
+  test_2:  # the 2st test dataset
+    name: val_set14
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/val_set14/Set14
+    dataroot_lq: ./datasets/val_set14/Set14_bicLRx4
+    io_backend:
+      type: disk
+
+  test_3:
+    name: div2k100
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_valid_HR
+    dataroot_lq: datasets/DIV2K/DIV2K_valid_LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: MSRResNet
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 64
+  num_block: 16
+  upscale: 4
+
+save_img: true
+
+# path
+path:
+  pretrain_model_g: ./experiments/004_MSRResNetx4_scratch_DIV2K_sum_rand0/models/net_g_1000000.pth
+  strict_load: true

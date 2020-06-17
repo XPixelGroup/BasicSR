@@ -1,0 +1,50 @@
+name: EDVR_L_x4_Vimeo90K_SR_official
+model_type: EDVRModel
+scale: 4
+gpu_ids: [0, 1, 2, 3, 4, 5, 6, 7]
+set_CUDA_VISIBLE_DEVICES: true
+
+datasets:
+  test:
+    name: Vimeo90K-Test
+    type: VideoTestVimeo90KDataset
+    dataroot_gt: datasets/vimeo90k/vimeo_septuplet/sequences
+    dataroot_lq: datasets/vimeo90k/vimeo_septuplet_matlabLRx4/sequences
+    meta_info_file: basicsr/data/meta_info/meta_info_Vimeo90K_test_GT.txt
+    io_backend:
+      type: disk
+
+    cache_data: false
+    num_frame: 7
+    padding: reflection_circle
+
+# network structures
+network_g:
+  type: EDVR
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 128
+  num_frame: 7
+  deformable_groups: 8
+  num_extract_block: 5
+  num_reconstruct_block: 40
+  center_frame_idx: ~
+  hr_in: false
+  with_predeblur: false
+  with_tsa: true
+
+# path
+path:
+  pretrain_model_g: experiments/pretrained_models/EDVR_L_x4_SR_Vimeo90K_official-4a42f42d.pth
+  strict_load: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
