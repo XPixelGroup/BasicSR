@@ -106,7 +106,7 @@ def get_root_logger(logger_name='basicsr',
     if logger.hasHandlers():
         return logger
 
-    format_str = '%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s'
+    format_str = '%(asctime)s %(levelname)s: %(message)s'
     logging.basicConfig(format=format_str, level=log_level)
     rank, _ = get_dist_info()
     if rank != 0:

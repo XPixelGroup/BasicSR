@@ -1,4 +1,4 @@
-name: EDVR_M_x4_REDS_SR_official
+name: EDVR_M_x4_SR_REDS_official
 model_type: EDVRModel
 scale: 4
 gpu_ids: [0, 1, 2, 3]

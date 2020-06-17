@@ -16,7 +16,10 @@ datasets:
     meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
     val_partition: REDS4  # set to 'official' when use the official validation partition
     io_backend:
-      type: disk
+      type: memcached
+      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      sys_path: /mnt/lustre/share/pymc/py3
 
     num_frame: 5
     gt_size: 256
@@ -39,7 +42,10 @@ datasets:
     meta_info_file: basicsr/data/meta_info/meta_info_REDS4_test_GT.txt
     # change to 'meta_info_REDSval4_test_GT' when use the official validation partition
     io_backend:
-      type: disk
+      type: memcached
+      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      sys_path: /mnt/lustre/share/pymc/py3
 
     cache_data: false
     num_frame: 5
