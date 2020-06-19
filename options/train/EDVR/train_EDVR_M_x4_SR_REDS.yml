@@ -1,5 +1,5 @@
 # general settings
-name: 001_EDVR_M_x4_SR_REDS_woTSA_scratch_600k_valREDS4
+name: 002_EDVR_M_x4_SR_REDS_600k_B4G8_valREDS4_001pretrain
 model_type: EDVRModel
 scale: 4
 gpu_ids: [0,1,2,3,4,5,6,7]
@@ -34,12 +34,14 @@ datasets:
   val:
     name: REDS4
     type: VideoTestDataset
-    dataroot_gt: datasets/REDS/REDS4/GT  # change to 'REDSval4' when use the official validation partition
-    dataroot_lq: datasets/REDS/REDS4/sharp_bicubic  # change to 'REDSval4' when use the official validation partition
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
+    meta_info_file: basicsr/data/meta_info/meta_info_REDS4_test_GT.txt
+    # change to 'meta_info_REDSval4_test_GT' when use the official validation partition
     io_backend:
       type: disk
 
-    cache_data: true
+    cache_data: false
     num_frame: 5
     padding: reflection_circle
 
@@ -56,12 +58,12 @@ network_g:
   center_frame_idx: ~
   hr_in: false
   with_predeblur: false
-  with_tsa: false
+  with_tsa: true
 
 # path
 path:
-  pretrain_model_g: ~
-  strict_load: true
+  pretrain_model_g: experiments/001_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4/models/net_g_600000.pth
+  strict_load: false
   resume_state: ~
 
 # training settings
@@ -74,12 +76,13 @@ train:
 
   scheduler:
     type: CosineAnnealingRestartLR
-    periods: [150000, 150000, 150000, 150000]
-    restart_weights: [1, 0.5, 0.5, 0.5]
+    periods: [50000, 100000, 150000, 150000, 150000]
+    restart_weights: [1, 0.5, 0.5, 0.5, 0.5]
     eta_min: !!float 1e-7
 
   niter: 600000
   warmup_iter: -1  # no warm up
+  tsa_iter: 50000
 
   # losses
   pixel_opt:
@@ -94,6 +97,12 @@ val:
   val_freq: !!float 5e3
   save_img: false
 
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
+
 # logging settings
 logger:
   print_freq: 100
@@ -103,4 +112,4 @@ logger:
 # dist training settings
 dist_params:
   backend: nccl
-  port: 29746
+  port: 29500

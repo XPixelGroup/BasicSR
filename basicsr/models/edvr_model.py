@@ -9,22 +9,22 @@ class EDVRModel(VideoBaseModel):
 
     def setup_optimizers(self):
         train_opt = self.opt['train']
-        if train_opt['ft_tsa_only']:
+        if train_opt['tsa_iter']:
             normal_params = []
             tsa_fusion_params = []
             for k, v in self.net_g.named_parameters():
-                if 'tsa_fusion' in k:
+                if 'fusion' in k:
                     tsa_fusion_params.append(v)
                 else:
                     normal_params.append(v)
             optim_params = [
                 {  # add normal params first
                     'params': normal_params,
-                    'lr': train_opt['lr_g']
+                    'lr': train_opt['optim_g']['lr']
                 },
                 {
                     'params': tsa_fusion_params,
-                    'lr': train_opt['lr_g']
+                    'lr': train_opt['optim_g']['lr']
                 },
             ]
         else:
@@ -44,7 +44,7 @@ class EDVRModel(VideoBaseModel):
     def fix_parames(self, step):
         # fix the weights of normal module
         if self.opt['train'][
-                'ft_tsa_only'] and step <= self.opt['train']['ft_tsa_only']:
+                'tsa_iter'] and step <= self.opt['train']['tsa_iter']:
             self.optimizers[0].param_groups[0]['lr'] = 0
 
     def optimize_parameters(self, step):
