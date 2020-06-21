@@ -150,7 +150,7 @@ if __name__ == '__main__':
         ext_modules=[
             make_cuda_ext(
                 name='deform_conv_ext',
-                module='basicsr.models.archs.dcn',
+                module='basicsr.models.ops.dcn',
                 sources=['src/deform_conv_ext.cpp'],
                 sources_cuda=[
                     'src/cuda/deform_conv_cuda.cpp',
