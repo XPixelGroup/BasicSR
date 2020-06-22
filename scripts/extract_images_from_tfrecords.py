@@ -41,16 +41,51 @@ def celeba_tfrecords():
 
             # save image
             img = img[:, :, [2, 1, 0]]
-            cv2.imwrite(
-                os.path.join(save_all_path, '{:06d}.png'.format(idx)), img)
+            cv2.imwrite(os.path.join(save_all_path, f'{idx:08d}.png'), img)
+
+            idx += 1
+            print(idx)
+
+
+def ffhq_tfrecords():
+    # Configurations
+    file_pattern = '/home/xtwang/datasets/ffhq/ffhq-r10.tfrecords'
+    resolution = 1024
+    save_path = f'/home/xtwang/datasets/ffhq/ffhq_imgs/ffhq_{resolution}'
+
+    os.makedirs(save_path, exist_ok=True)
+    idx = 0
+    print(glob.glob(file_pattern))
+    for record in glob.glob(file_pattern):
+        record_iterator = tf.python_io.tf_record_iterator(record)
+        for string_record in record_iterator:
+            example = tf.train.Example()
+            example.ParseFromString(string_record)
+            # label = example.features.feature['label'].int64_list.value[0]
+
+            # attr = example.features.feature['attr'].int64_list.value
+            # male = attr[20]
+            # young = attr[39]
+
+            shape = example.features.feature['shape'].int64_list.value
+            c, h, w = shape
+            img_str = example.features.feature['data'].bytes_list.value[0]
+            img = np.fromstring(img_str, dtype=np.uint8).reshape((c, h, w))
+
+            # save image
+            img = img.transpose(1, 2, 0)
+            img = img[:, :, [2, 1, 0]]
+            cv2.imwrite(os.path.join(save_path, f'{idx:08d}.png'), img)
 
             idx += 1
             print(idx)
 
 
 if __name__ == '__main__':
+    # we have test on TensorFlow 1.15
     try:
         import tensorflow as tf
     except Exception:
         raise ImportError('You need to install tensorflow to read tfrecords.')
-    celeba_tfrecords()
+    # celeba_tfrecords()
+    ffhq_tfrecords()
