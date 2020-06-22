@@ -98,8 +98,8 @@ train:
     fake_label_val: 0.0
     loss_weight: !!float 5e-3
 
-  net_d_steps: 1
-  net_d_init_steps: 0
+  net_d_iters: 1
+  net_d_init_iters: 0
 
   manual_seed: 0
 

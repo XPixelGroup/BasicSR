@@ -52,10 +52,10 @@ class VideoGANModel(VideoBaseModel):
             cri_gan_cls = getattr(loss_module, gan_type)
             self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
 
-        self.net_d_steps = train_opt['net_d_steps'] if train_opt[
-            'net_d_steps'] else 1
-        self.net_d_init_steps = train_opt['net_d_init_steps'] if train_opt[
-            'net_d_init_steps'] else 0
+        self.net_d_iters = train_opt['net_d_iters'] if train_opt[
+            'net_d_iters'] else 1
+        self.net_d_init_iters = train_opt['net_d_init_iters'] if train_opt[
+            'net_d_init_iters'] else 0
 
         # set up optimizers and schedulers
         self.setup_optimizers()
@@ -84,7 +84,7 @@ class VideoGANModel(VideoBaseModel):
                 f'optimizer {optim_type} is not supperted yet.')
         self.optimizers.append(self.optimizer_d)
 
-    def optimize_parameters(self, step):
+    def optimize_parameters(self, current_iter):
         # optimize net_g
         for p in self.net_d.parameters():
             p.requires_grad = False
@@ -93,7 +93,8 @@ class VideoGANModel(VideoBaseModel):
         self.output = self.net_g(self.lq)
 
         l_g_total = 0
-        if step % self.net_d_steps == 0 and step > self.net_d_init_steps:
+        if (current_iter % self.net_d_iters == 0
+                and current_iter > self.net_d_init_iters):
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)
