@@ -102,8 +102,8 @@ train:
   gan_type: vanilla
   gan_weight: !!float 5e-3
 
-  net_d_steps: 1
-  net_d_init_steps: 0
+  net_d_iters: 1
+  net_d_init_iters: 0
 
   val_freq: !!float 20000
   val_func: VideoSRValidation

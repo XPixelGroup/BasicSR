@@ -1,36 +1,44 @@
+import logging
+
 import torch
+from torch.nn.parallel import DistributedDataParallel
 
 from basicsr.models.video_base_model import VideoBaseModel
+
+logger = logging.getLogger('basicsr')
 
 
 class EDVRModel(VideoBaseModel):
     """EDVR Model.
+
+    Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.  # noqa: E501
     """
+
+    def __init__(self, opt):
+        super(EDVRModel, self).__init__(opt)
+        self.train_tsa_iter = opt['train']['tsa_iter']
 
     def setup_optimizers(self):
         train_opt = self.opt['train']
-        if train_opt['tsa_iter']:
-            normal_params = []
-            tsa_fusion_params = []
-            for k, v in self.net_g.named_parameters():
-                if 'fusion' in k:
-                    tsa_fusion_params.append(v)
-                else:
-                    normal_params.append(v)
-            optim_params = [
-                {  # add normal params first
-                    'params': normal_params,
-                    'lr': train_opt['optim_g']['lr']
-                },
-                {
-                    'params': tsa_fusion_params,
-                    'lr': train_opt['optim_g']['lr']
-                },
-            ]
-        else:
-            optim_params = []
-            for k, v in self.net_g.named_parameters():
-                optim_params.append(v)
+        dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
+        logger.info(f'multiple the learning rate for dcn with {dcn_lr_mul}.')
+        normal_params = []
+        dcn_params = []  # params for dcn
+        for name, param in self.net_g.named_parameters():
+            if 'dcn' in name:
+                dcn_params.append(param)
+            else:
+                normal_params.append(param)
+        optim_params = [
+            {  # add normal params first
+                'params': normal_params,
+                'lr': train_opt['optim_g']['lr']
+            },
+            {
+                'params': dcn_params,
+                'lr': train_opt['optim_g']['lr'] * dcn_lr_mul
+            },
+        ]
 
         optim_type = train_opt['optim_g'].pop('type')
         if optim_type == 'Adam':
@@ -41,13 +49,20 @@ class EDVRModel(VideoBaseModel):
                 f'optimizer {optim_type} is not supperted yet.')
         self.optimizers.append(self.optimizer_g)
 
-    def fix_parames(self, step):
-        # fix the weights of normal module
-        if self.opt['train'][
-                'tsa_iter'] and step <= self.opt['train']['tsa_iter']:
-            self.optimizers[0].param_groups[0]['lr'] = 0
+    def optimize_parameters(self, current_iter):
+        if self.train_tsa_iter:
+            if current_iter == 1:
+                logger.info(
+                    f'Only train TSA module for {self.train_tsa_iter} iters.')
+                for name, param in self.net_g.named_parameters():
+                    if 'fusion' not in name:
+                        param.requires_grad = False
+            elif current_iter == self.train_tsa_iter:
+                logger.info('Train all the parameters.')
+                for param in self.net_g.parameters():
+                    param.requires_grad = True
+                if isinstance(self.net_g, DistributedDataParallel):
+                    logger.info('Set net_g.find_unused_parameters = False.')
+                    self.net_g.find_unused_parameters = False
 
-    def optimize_parameters(self, step):
-        self.fix_parames(step)
-
-        super(VideoBaseModel, self).optimize_parameters(step)
+        super(VideoBaseModel, self).optimize_parameters(current_iter)
