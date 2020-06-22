@@ -62,7 +62,7 @@ class MessageLogger():
             eta_sec = time_sec_avg * (self.max_iters - current_iter - 1)
             eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
             message += f'[eta: {eta_str}, '
-            message += f'time: {iter_time:.3f}, data_time: {data_time:.3f}] '
+            message += f'time (data): {iter_time:.3f} ({data_time:.3f})] '
 
         # other items, especially losses
         for k, v in log_vars.items():
@@ -129,9 +129,15 @@ def get_env_info():
     import torch
     import torchvision
     from basicsr.version import __version__
-
-    msg = (f'^.^ Good Luck! ^.^\n\tBasicSR Version: {__version__}'
-           f'\n\tPyTorch Version: {torch.__version__}'
-           f'\n\tTorchVision Version: {torchvision.__version__}'
-           f'\n\tMMCV Version: {mmcv.__version__}')
+    msg = """
+     ______                   __   __                 __      __
+    / ____/____   ____   ____/ /  / /   __  __ _____ / /__   / /
+   / / __ / __ \ / __ \ / __  /  / /   / / / // ___// //_/  / /
+  / /_/ // /_/ // /_/ // /_/ /  / /___/ /_/ // /__ / ,<    /_/
+  \____/ \____/ \____/ \__,_/  /_____/\__,_/ \___//_/|_|  (_)
+    """
+    msg += (f'\nVersion Information: \n\tBasicSR: {__version__}'
+            f'\n\tPyTorch: {torch.__version__}'
+            f'\n\tTorchVision: {torchvision.__version__}'
+            f'\n\tMMCV: {mmcv.__version__}')
     return msg
