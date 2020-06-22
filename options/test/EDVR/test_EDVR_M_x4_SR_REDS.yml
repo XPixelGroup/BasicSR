@@ -35,7 +35,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/pretrained_models/EDVR_M_x4_SR_REDS_official-36f1f566.pth
+  pretrain_model_g: experiments/pretrained_models/EDVR_M_x4_SR_REDS_official-32075921.pth
   strict_load: true
 
 # validation settings

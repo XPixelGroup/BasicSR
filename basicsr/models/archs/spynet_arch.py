@@ -61,7 +61,7 @@ class SpyNet(nn.Module):
         super(SpyNet, self).__init__()
         self.basic_module = nn.ModuleList([BasicModule() for _ in range(6)])
         if load_path:
-            self.load_state_dict(torch.load(load_path))
+            self.load_state_dict(torch.load(load_path)['params'])
 
         self.register_buffer(
             'mean',

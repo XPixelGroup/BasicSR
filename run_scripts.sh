@@ -16,7 +16,7 @@ python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=4321 basicsr/test.py -opt options/test/test_TOF_official.yml --launcher pytorch
 
 # distributed testing. 4GPUs
-python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/test.py -opt options/test/test_EDVR.yml --launcher pytorch
+python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml --launcher pytorch
 
 # Distributed training, slurm
 # slurm, 1 GPU

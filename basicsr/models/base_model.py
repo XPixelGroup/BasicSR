@@ -195,7 +195,7 @@ class BaseModel():
             if key.startswith('module.'):  # remove unnecessary 'module.'
                 key = key[7:]
             state_dict[key] = param.cpu()
-        torch.save(state_dict, save_path)
+        torch.save(dict(params=state_dict), save_path)
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
         """Print keys with differnet name or different size when loading models.
@@ -246,7 +246,7 @@ class BaseModel():
             net = net.module
         net_cls_name = net.__class__.__name__
         logger.info(f'Loading {net_cls_name} model from {load_path}.')
-        load_net = torch.load(load_path)
+        load_net = torch.load(load_path)['params']
         # remove unnecessary 'module.'
         for k, v in load_net.items():
             if k.startswith('module.'):
