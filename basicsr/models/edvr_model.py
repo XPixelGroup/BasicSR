@@ -1,5 +1,6 @@
 import logging
 
+import torch
 from torch.nn.parallel import DistributedDataParallel
 
 from basicsr.models.video_base_model import VideoBaseModel
@@ -9,14 +10,44 @@ logger = logging.getLogger('basicsr')
 
 class EDVRModel(VideoBaseModel):
     """EDVR Model.
+
+    Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.  # noqa: E501
     """
 
     def __init__(self, opt):
         super(EDVRModel, self).__init__(opt)
         self.train_tsa_iter = opt['train']['tsa_iter']
 
-    # def setup_optimizers(self):
-    # TODO: set dcn a differnet learning rate.
+    def setup_optimizers(self):
+        train_opt = self.opt['train']
+        dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
+        logger.info(f'multiple the learning rate for dcn with {dcn_lr_mul}.')
+        normal_params = []
+        dcn_params = []  # params for dcn
+        for name, param in self.net_g.named_parameters():
+            if 'dcn' in name:
+                dcn_params.append(param)
+            else:
+                normal_params.append(param)
+        optim_params = [
+            {  # add normal params first
+                'params': normal_params,
+                'lr': train_opt['optim_g']['lr']
+            },
+            {
+                'params': dcn_params,
+                'lr': train_opt['optim_g']['lr'] * dcn_lr_mul
+            },
+        ]
+
+        optim_type = train_opt['optim_g'].pop('type')
+        if optim_type == 'Adam':
+            self.optimizer_g = torch.optim.Adam(optim_params,
+                                                **train_opt['optim_g'])
+        else:
+            raise NotImplementedError(
+                f'optimizer {optim_type} is not supperted yet.')
+        self.optimizers.append(self.optimizer_g)
 
     def optimize_parameters(self, current_iter):
         if self.train_tsa_iter:
