@@ -10,6 +10,8 @@ import os
 import cv2
 import numpy as np
 
+from basicsr.utils.lmdb import LmdbMaker
+
 
 def celeba_tfrecords():
     # Configurations
@@ -61,11 +63,6 @@ def ffhq_tfrecords():
         for string_record in record_iterator:
             example = tf.train.Example()
             example.ParseFromString(string_record)
-            # label = example.features.feature['label'].int64_list.value[0]
-
-            # attr = example.features.feature['attr'].int64_list.value
-            # male = attr[20]
-            # young = attr[39]
 
             shape = example.features.feature['shape'].int64_list.value
             c, h, w = shape
@@ -81,6 +78,41 @@ def ffhq_tfrecords():
             print(idx)
 
 
+def ffhq_tfrecords_to_lmdb():
+    # Configurations
+    file_pattern = '/home/xtwang/datasets/ffhq/ffhq-r10.tfrecords'
+    log_resolution = 10
+    compress_level = 1
+    lmdb_path = f'/home/xtwang/datasets/ffhq/ffhq_{2**log_resolution}.lmdb'
+
+    idx = 0
+    print(glob.glob(file_pattern))
+
+    lmdb_maker = LmdbMaker(lmdb_path)
+    for record in glob.glob(file_pattern):
+        record_iterator = tf.python_io.tf_record_iterator(record)
+        for string_record in record_iterator:
+            example = tf.train.Example()
+            example.ParseFromString(string_record)
+
+            shape = example.features.feature['shape'].int64_list.value
+            c, h, w = shape
+            img_str = example.features.feature['data'].bytes_list.value[0]
+            img = np.fromstring(img_str, dtype=np.uint8).reshape((c, h, w))
+
+            # write image to lmdb
+            img = img.transpose(1, 2, 0)
+            img = img[:, :, [2, 1, 0]]
+            _, img_byte = cv2.imencode(
+                '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
+            key = f'{idx:08d}/r{log_resolution:02d}'
+            lmdb_maker.put(img_byte, key, (h, w, c))
+
+            idx += 1
+            print(key)
+    lmdb_maker.close()
+
+
 if __name__ == '__main__':
     # we have test on TensorFlow 1.15
     try:
@@ -88,4 +120,5 @@ if __name__ == '__main__':
     except Exception:
         raise ImportError('You need to install tensorflow to read tfrecords.')
     # celeba_tfrecords()
-    ffhq_tfrecords()
+    # ffhq_tfrecords()
+    ffhq_tfrecords_to_lmdb()

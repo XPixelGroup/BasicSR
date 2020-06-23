@@ -58,7 +58,7 @@ def make_lmdb_from_imgs(data_path,
             the images to memory. Default: False.
         n_thread (int): For multiprocessing.
         map_size (int | None): Map size for lmdb env. If None, use the
-            estimated size from images. Defalut: None
+            estimated size from images. Default: None
     """
 
     assert len(img_path_list) == len(keys), (
@@ -136,7 +136,7 @@ def make_lmdb_from_imgs(data_path,
 
 
 def read_img_worker(path, key, compress_level):
-    """Read image worker
+    """Read image worker.
 
     Args:
         path (str): Image path.
@@ -148,6 +148,7 @@ def read_img_worker(path, key, compress_level):
         byte: Image byte.
         tuple[int]: Image shape.
     """
+
     img = mmcv.imread(path, flag='unchanged')
     if img.ndim == 2:
         h, w = img.shape
@@ -157,3 +158,49 @@ def read_img_worker(path, key, compress_level):
     _, img_byte = cv2.imencode('.png', img,
                                [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
     return (key, img_byte, (h, w, c))
+
+
+class LmdbMaker():
+    """LMDB Maker.
+
+    Args:
+        lmdb_path (str): Lmdb save path.
+        map_size (int): Map size for lmdb env. Default: 1024 ** 4, 1TB.
+        batch (int): After processing batch images, lmdb commits. Default: 5000.
+        compress_level (int): Compress level when encoding images. Default: 1.
+    """
+
+    def __init__(self,
+                 lmdb_path,
+                 map_size=1024**4,
+                 batch=5000,
+                 compress_level=1):
+        if not lmdb_path.endswith('.lmdb'):
+            raise ValueError("lmdb_path must end with '.lmdb'.")
+        if osp.exists(lmdb_path):
+            print(f'Folder {lmdb_path} already exists. Exit.')
+            sys.exit(1)
+
+        self.lmdb_path = lmdb_path
+        self.batch = batch
+        self.compress_level = compress_level
+        self.env = lmdb.open(lmdb_path, map_size=map_size)
+        self.txn = self.env.begin(write=True)
+        self.txt_file = open(osp.join(lmdb_path, 'meta_info.txt'), 'w')
+        self.counter = 0
+
+    def put(self, img_byte, key, img_shape):
+        self.counter += 1
+        key_byte = key.encode('ascii')
+        self.txn.put(key_byte, img_byte)
+        # write meta information
+        h, w, c = img_shape
+        self.txt_file.write(f'{key}.png ({h},{w},{c}) {self.compress_level}\n')
+        if self.counter % self.batch == 0:
+            self.txn.commit()
+            self.txn = self.env.begin(write=True)
+
+    def close(self):
+        self.txn.commit()
+        self.env.close()
+        self.txt_file.close()
