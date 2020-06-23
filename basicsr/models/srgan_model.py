@@ -10,8 +10,7 @@ loss_module = importlib.import_module('basicsr.models.losses')
 
 
 class SRGANModel(SRModel):
-    """SRGAN model for single image super-resolution.
-    """
+    """SRGAN model for single image super-resolution."""
 
     def init_training_settings(self):
         train_opt = self.opt['train']
@@ -61,8 +60,6 @@ class SRGANModel(SRModel):
         self.setup_optimizers()
         self.setup_schedulers()
 
-        self.log_dict = OrderedDict()
-
     def setup_optimizers(self):
         train_opt = self.opt['train']
         # optimizer g
@@ -93,28 +90,29 @@ class SRGANModel(SRModel):
         self.output = self.net_g(self.lq)
 
         l_g_total = 0
+        loss_dict = OrderedDict()
         if (current_iter % self.net_d_iters == 0
                 and current_iter > self.net_d_init_iters):
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)
                 l_g_total += l_g_pix
-                self.log_dict['l_g_pix'] = l_g_pix.item()
+                loss_dict['l_g_pix'] = l_g_pix
             # perceptual loss
             if self.cri_perceptual:
                 l_g_percep, l_g_style = self.cri_perceptual(
                     self.output, self.gt)
                 if l_g_percep is not None:
                     l_g_total += l_g_percep
-                    self.log_dict['l_g_percep'] = l_g_percep.item()
+                    loss_dict['l_g_percep'] = l_g_percep
                 if l_g_style is not None:
                     l_g_total += l_g_style
-                    self.log_dict['l_g_style'] = l_g_style.item()
+                    loss_dict['l_g_style'] = l_g_style
             # gan loss
             fake_g_pred = self.net_d(self.output)
             l_g_gan = self.cri_gan(fake_g_pred, True, is_disc=False)
             l_g_total += l_g_gan
-            self.log_dict['l_g_gan'] = l_g_gan.item()
+            loss_dict['l_g_gan'] = l_g_gan
 
             l_g_total.backward()
             self.optimizer_g.step()
@@ -128,16 +126,18 @@ class SRGANModel(SRModel):
         # real
         real_d_pred = self.net_d(self.gt)
         l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
-        self.log_dict['l_d_real'] = l_d_real.item()
-        self.log_dict['out_d_real'] = torch.mean(real_d_pred.detach())
+        loss_dict['l_d_real'] = l_d_real
+        loss_dict['out_d_real'] = torch.mean(real_d_pred.detach())
         l_d_real.backward()
         # fake
         fake_d_pred = self.net_d(self.output.detach())
         l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
-        self.log_dict['l_d_fake'] = l_d_fake.item()
-        self.log_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
+        loss_dict['l_d_fake'] = l_d_fake
+        loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
         l_d_fake.backward()
         self.optimizer_d.step()
+
+        self.log_dict = self.reduce_loss_dict(loss_dict)
 
     def save(self, epoch, current_iter):
         self.save_network(self.net_g, 'net_g', current_iter)

@@ -7,7 +7,7 @@ python basicsr/test.py -opt options/test/test_SRResNet.yml
 
 # Distributed training, pytorch
 # distributed training, 1 GPUs
-python -m torch.distributed.launch --nproc_per_node=1 --master_port=4321 basicsr/train.py -opt options/train/train_SRResNet.yml --launcher pytorch
+python -m torch.distributed.launch --nproc_per_node=1 --master_port=4321 basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNetx4.yml --launcher pytorch
 
 # distributed training, 8 GPUs
 python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/train_EDVR_M.yml --launcher pytorch

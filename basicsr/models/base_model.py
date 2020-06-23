@@ -1,5 +1,6 @@
 import logging
 import os
+from collections import OrderedDict
 
 import torch
 import torch.nn as nn
@@ -12,8 +13,7 @@ logger = logging.getLogger('basicsr')
 
 
 class BaseModel():
-    """Base model.
-    """
+    """Base model."""
 
     def __init__(self, opt):
         if opt['dist']:
@@ -23,7 +23,7 @@ class BaseModel():
 
         self.opt = opt
         self.device = torch.device(
-            'cuda' if opt['gpu_ids'] is not None else 'cpu')
+            'cuda' if opt['num_gpu'] is not None else 'cpu')
         self.is_train = opt['is_train']
         self.schedulers = []
         self.optimizers = []
@@ -74,7 +74,7 @@ class BaseModel():
                 net,
                 device_ids=[torch.cuda.current_device()],
                 find_unused_parameters=find_unused_parameters)
-        else:
+        elif self.opt['num_gpu'] > 1:
             net = DataParallel(net)
         return net
 
@@ -296,3 +296,30 @@ class BaseModel():
             self.optimizers[i].load_state_dict(o)
         for i, s in enumerate(resume_schedulers):
             self.schedulers[i].load_state_dict(s)
+
+    def reduce_loss_dict(self, loss_dict):
+        """reduce loss dict.
+
+        In distributed training, it averages the losses among different GPUs .
+
+        Args:
+            loss_dict (OrderedDict): Loss dict.
+        """
+        with torch.no_grad():
+            if self.opt['dist']:
+                keys = []
+                losses = []
+                for name, value in loss_dict.items():
+                    keys.append(name)
+                    losses.append(value)
+                losses = torch.stack(losses, 0)
+                torch.distributed.reduce(losses, dst=0)
+                if self.rank == 0:
+                    losses /= torch.distributed.get_world_size()
+                loss_dict = {key: loss for key, loss in zip(keys, losses)}
+
+            log_dict = OrderedDict()
+            for name, value in loss_dict.items():
+                log_dict[name] = value.mean().item()
+
+            return log_dict

@@ -63,8 +63,6 @@ class SRModel(BaseModel):
         self.setup_optimizers()
         self.setup_schedulers()
 
-        self.log_dict = OrderedDict()
-
     def setup_optimizers(self):
         train_opt = self.opt['train']
         optim_params = []
@@ -94,23 +92,26 @@ class SRModel(BaseModel):
         self.output = self.net_g(self.lq)
 
         l_total = 0
+        loss_dict = OrderedDict()
         # pixel loss
         if self.cri_pix:
             l_pix = self.cri_pix(self.output, self.gt)
             l_total += l_pix
-            self.log_dict['l_pix'] = l_pix.item()
+            loss_dict['l_pix'] = l_pix
         # perceptual loss
         if self.cri_perceptual:
             l_percep, l_style = self.cri_perceptual(self.output, self.gt)
             if l_percep is not None:
                 l_total += l_percep
-                self.log_dict['l_percep'] = l_percep.item()
+                loss_dict['l_percep'] = l_percep
             if l_style is not None:
                 l_total += l_style
-                self.log_dict['l_style'] = l_style.item()
+                loss_dict['l_style'] = l_style
 
         l_total.backward()
         self.optimizer_g.step()
+
+        self.log_dict = self.reduce_loss_dict(loss_dict)
 
     def test(self):
         self.net_g.eval()
