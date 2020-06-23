@@ -3,8 +3,7 @@ name: 107_EDVRwoTSA_CBInit_lr1e-4_400k_REDS_SyncBN
 use_tb_logger: true
 model_type: VideoGANModel
 scale: 4
-gpu_ids: [0,1,2,3,4,5,6,7]
-set_CUDA_VISIBLE_DEVICES: false
+num_gpu: 8
 
 # datasets
 datasets:

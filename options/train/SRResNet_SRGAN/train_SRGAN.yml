@@ -5,8 +5,7 @@
 name: 103_SRGANx4_MSRResNetx4Ini_DIV2K
 model_type: SRGANModel
 scale: 4
-gpu_ids: [0]
-set_CUDA_VISIBLE_DEVICES: false
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

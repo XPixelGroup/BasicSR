@@ -5,7 +5,6 @@ datasets
 
 import glob
 import logging
-import os
 import os.path as osp
 
 import cv2
@@ -70,7 +69,6 @@ def main():
     # configurations
     #####
     device = torch.device('cuda')
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     data_mode = 'Vid4'  # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
     # Vid4: SR
     # REDS4: sharp_bicubic (SR-clean), blur_bicubic (SR-blur);

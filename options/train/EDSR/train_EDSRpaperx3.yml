@@ -2,8 +2,7 @@
 name: 106_EDSRpaperx3_105pretrain_DIV2K
 model_type: SRModel
 scale: 3
-gpu_ids: [3]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

@@ -2,8 +2,7 @@
 name: 003_RRDB_ESRGANx4_DIV2K
 model_type: ESRGANModel
 scale: 4
-gpu_ids: [0]
-set_CUDA_VISIBLE_DEVICES: false
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

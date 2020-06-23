@@ -2,8 +2,7 @@
 name: 105_EDSRpaperx2_scratch_DIV2K
 model_type: SRModel
 scale: 2
-gpu_ids: [6]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

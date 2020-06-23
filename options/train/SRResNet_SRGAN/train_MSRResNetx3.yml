@@ -5,8 +5,7 @@
 name: 006_MSRResNetx3_010pretrain_DIV2K_sum
 model_type: SRModel
 scale: 3
-gpu_ids: [1]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

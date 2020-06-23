@@ -2,8 +2,7 @@
 name: 002_EDVR_M_x4_SR_REDS_600k_B4G8_valREDS4_001pretrain_ddpsetFalse
 model_type: EDVRModel
 scale: 4
-gpu_ids: [0,1,2,3,4,5,6,7]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 8
 
 # dataset and data loader settings
 datasets:

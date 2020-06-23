@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from collections import OrderedDict
 
@@ -42,13 +41,6 @@ def parse(opt_path, is_train=True):
     with open(opt_path, mode='r') as f:
         Loader, _ = ordered_yaml()
         opt = yaml.load(f, Loader=Loader)
-
-    gpu_list = ','.join(str(x) for x in opt['gpu_ids'])
-    if opt.get('set_CUDA_VISIBLE_DEVICES', None):
-        os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-        print('export CUDA_VISIBLE_DEVICES=' + gpu_list, flush=True)
-    else:
-        print('gpu_list: ', gpu_list, flush=True)
 
     opt['is_train'] = is_train
     scale = opt['scale']

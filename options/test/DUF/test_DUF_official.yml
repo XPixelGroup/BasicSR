@@ -1,8 +1,7 @@
 name: DUF_x4_52L_official
 model_type: VideoBaseModel
 scale: 4
-gpu_ids: [0, 1, 2, 3, 4, 5, 6, 7]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 8
 
 datasets:
   test:

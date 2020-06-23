@@ -3,8 +3,7 @@ suffix: ~  # add suffix to saved images
 model_type: VideoBaseModel
 scale: 4
 crop_border: 0  # crop border when evaluation. If None, crop the scale pixels
-gpu_ids: [0]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 datasets:
   test:

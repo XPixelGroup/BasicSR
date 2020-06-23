@@ -14,7 +14,6 @@ def main(mode='folder'):
     """
     opt = {}
     opt['dist'] = False
-    opt['gpu_ids'] = [0]
     opt['phase'] = 'train'
 
     opt['name'] = 'Vimeo90K'

@@ -2,8 +2,7 @@
 name: debug_002_EDVR_L_deblur_lr4e-4_600k_REDS
 model_type: VideoBaseModel
 scale: 1
-gpu_ids: [0,1,2,3,4,5,6,7]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 8
 
 # dataset and data loader settings
 datasets:

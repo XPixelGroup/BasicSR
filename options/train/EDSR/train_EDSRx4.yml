@@ -2,8 +2,7 @@
 name: 104_EDSRx4_102pretrain_DIV2K
 model_type: SRModel
 scale: 4
-gpu_ids: [4]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

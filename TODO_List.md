@@ -1,7 +1,7 @@
 # TODO List
 
 ### Training
-
+- [ ] video_gan_model.py
 
 ### Testing
 - [ ] Image SR: x8 test

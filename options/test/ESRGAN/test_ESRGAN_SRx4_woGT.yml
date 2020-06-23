@@ -1,8 +1,7 @@
 name: ESRGAN_SRx4_DF2KOST_official
 model_type: ESRGANModel
 scale: 4
-gpu_ids: [0]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 datasets:
   test_1:  # the 1st test dataset

@@ -5,8 +5,7 @@
 name: 001_MSRResNetx4_scratch_DIV2K
 model_type: SRModel
 scale: 4
-gpu_ids: [0]
-set_CUDA_VISIBLE_DEVICES: true
+num_gpu: 1
 
 # dataset and data loader settings
 datasets:

@@ -62,7 +62,7 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
         opt (dict): Config options. Default: None.
         It contains the following keys:
             dist (bool): Distributed training or not.
-            gpu_ids (list): GPU indexes.
+            num_gpu (int): Number of gpus.
         sampler (torch.utils.data.sampler): Data sampler. Default: None.
     """
     phase = dataset_opt['phase']
@@ -74,7 +74,10 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             batch_size = dataset_opt['batch_size'] // world_size
             shuffle = False
         else:  # non-distributed training
-            num_workers = dataset_opt['num_worker'] * len(opt['gpu_ids'])
+            if opt['num_gpu'] is None:  # cpu mode
+                num_workers = dataset_opt['num_worker']
+            else:
+                num_workers = dataset_opt['num_worker'] * opt['num_gpu']
             batch_size = dataset_opt['batch_size']
             shuffle = True
         return torch.utils.data.DataLoader(
