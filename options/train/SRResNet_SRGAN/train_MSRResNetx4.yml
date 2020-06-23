@@ -5,17 +5,19 @@
 name: 007_MSRResNetx4_010pretrain_DIV2K_sum
 model_type: SRModel
 scale: 4
-gpu_ids: [0]
+num_gpu: 1
 set_CUDA_VISIBLE_DEVICES: true
+gpu_ids: [1]
+
 
 # dataset and data loader settings
 datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: ./datasets/DIV2K_train_HR_sub
-    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
-    filename_tmpl: '{}_bicLRx4'
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    filename_tmpl: '{}'
 
     io_backend:
       type: disk
@@ -27,14 +29,14 @@ datasets:
     # data loader
     use_shuffle: true
     num_worker: 6  # per GPU
-    batch_size: 16
+    batch_size: 16  # total
     dataset_enlarge_ratio: 1000
 
   val:
     name: val_set5
     type: PairedImageDataset
-    dataroot_gt: ./datasets/val_set5/Set5
-    dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
+    dataroot_gt: datasets/val_set5/Set5
+    dataroot_lq: datasets/val_set5/Set5_bicLRx4
     io_backend:
       type: disk
 
@@ -49,11 +51,11 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/010_MSRResNetx2_scratch_DIV2K_patch64_sum/models/net_g_1000000.pth
+  pretrain_model_g: ~ # experiments/010_MSRResNetx2_scratch_DIV2K_patch64_sum/models/net_g_1000000.pth
   strict_load: false
   resume_state: ~
 
-# train
+# training settings
 train:
   optim_g:
     type: Adam
@@ -74,7 +76,7 @@ train:
   pixel_opt:
     type: L1Loss
     loss_weight: 1.0
-    reduction: mean
+    reduction: sum
 
   manual_seed: 0
 
@@ -82,6 +84,12 @@ train:
 val:
   val_freq: !!float 5e3
   save_img: true
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: false
 
 # logging settings
 logger:
@@ -92,4 +100,4 @@ logger:
 # dist training settings
 dist_params:
   backend: nccl
-  port: 29746
+  port: 29500
