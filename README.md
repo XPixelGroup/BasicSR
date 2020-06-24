@@ -1,4 +1,9 @@
-## We have merged BasicSR into [MMSR](https://github.com/open-mmlab/mmsr) :smile:
+## Please use the `v1.0` branch :smile:
+
+The master branch is out-of-dated. <br>
+Please use the `v1.0` branch by `git checkout v1.0`
+
+---
 
 MMSR is an open source image and video super-resolution toolbox based on PyTorch. It is a part of the [open-mmlab](https://github.com/open-mmlab) project developed by [Multimedia Laboratory, CUHK](http://mmlab.ie.cuhk.edu.hk/). MMSR is based on our previous projects: [BasicSR](https://github.com/xinntao/BasicSR), [ESRGAN](https://github.com/xinntao/ESRGAN), and [EDVR](https://github.com/xinntao/EDVR).
 
@@ -33,10 +38,10 @@ Check out our new work on:<br/>
 - [PyTorch >= 1.0](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 - Python packages: `pip install numpy opencv-python lmdb pyyaml`
-- TensorBoard: 
+- TensorBoard:
   - PyTorch >= 1.1: `pip install tb-nightly future`
   - PyTorch == 1.0: `pip install tensorboardX`
-  
+
 ## Dataset Preparation
 We use datasets in LDMB format for faster IO speed. Please refer to [wiki](https://github.com/xinntao/BasicSR/wiki/Prepare-datasets-in-LMDB-format) for more details.
 
