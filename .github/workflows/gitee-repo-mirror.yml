@@ -1,0 +1,14 @@
+name: Mirror BasicSR to Gitee
+
+on: [ push, delete, create ]
+
+jobs:
+  git-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wearerequired/git-mirror-action@v1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        with:
+          source-repo: 'git@github.com:xinntao/BasicSR.git'
+          destination-repo: 'git@gitee.com:xinntao/BasicSR.git'
