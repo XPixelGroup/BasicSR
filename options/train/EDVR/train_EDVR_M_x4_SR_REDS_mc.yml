@@ -88,6 +88,7 @@ train:
   niter: 600000
   warmup_iter: -1  # no warm up
   tsa_iter: 50000
+  dcn_lr_mul: 0.5
 
   # losses
   pixel_opt:

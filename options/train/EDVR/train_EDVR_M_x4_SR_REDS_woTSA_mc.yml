@@ -1,5 +1,5 @@
 # general settings
-name: 001_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_dcnlr
+name: 001_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_reduceloss
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
@@ -87,7 +87,7 @@ train:
 
   niter: 600000
   warmup_iter: -1  # no warm up
-  dcn_lr_mul: 0.5
+  dcn_lr_mul: 1
 
   # losses
   pixel_opt:
