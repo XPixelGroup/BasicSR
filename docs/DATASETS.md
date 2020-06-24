@@ -1,3 +1,11 @@
+# To be updated
+
+TODO
+
+----
+# Below is out-of-dated!
+
+
 There are three kinds of datasets: training dataset, validation dataset, and testing dataset. Usually, we do not explicitly distinguish between the validation and testing datasets in image/video restoration. So we use the validation/testing dataset in our description. <br/>
 We recommend to use [LMDB](https://lmdb.readthedocs.io/en/release/) (Lightning Memory-Mapped Database) formats for the training datasets, and directly read images (using image folder) during validation/testing. So there is no need to prepare LMDB files for evaluation/testing datasets.
 
