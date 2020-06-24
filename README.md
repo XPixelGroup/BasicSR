@@ -1,7 +1,7 @@
 # BasicSR
 
 BasicSR is an open source image and video super-resolution toolbox based on PyTorch.<br>
-[ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN).
+([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))
 
 
 ## Dependencies and Installation
@@ -25,8 +25,8 @@ Please see [TrainingTesting.md](docs/TrainingTesting.md) for the basic usage, *i
 ## Model Zoo and Baselines
 Results and pre-trained models are available in the [ModelZoo.md](docs/ModelZoo.md).
 
-## Contact
-If you have any question, please email `xintao.alpha@gmail.com`.
-
 ## License
 This project is released under the Apache 2.0 license.
+
+#### Contact
+If you have any question, please email `xintao.alpha@gmail.com`.
