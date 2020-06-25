@@ -25,7 +25,8 @@ class REDSDataset(data.Dataset):
     ...
 
     Key examples: "000/00000000"
-    GT (gt): Ground-Truth; LQ (lq): Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames.
+    GT (gt): Ground-Truth;
+    LQ (lq): Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames.
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
@@ -51,7 +52,8 @@ class REDSDataset(data.Dataset):
     def __init__(self, opt):
         super(REDSDataset, self).__init__()
         self.opt = opt
-        self.gt_root, self.lq_root = Path(opt['dataroot_gt']), Path(opt['dataroot_lq'])
+        self.gt_root, self.lq_root = Path(opt['dataroot_gt']), Path(
+            opt['dataroot_lq'])
         self.flow_root = Path(
             opt['dataroot_flow']) if opt['dataroot_flow'] is not None else None
         self.num_frame = opt['num_frame']
