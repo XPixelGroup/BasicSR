@@ -1,10 +1,10 @@
 import random
 from pathlib import Path
 
-import mmcv
 import numpy as np
 import torch
 import torch.utils.data as data
+import mmcv
 
 from basicsr.data.transforms import augment, paired_random_crop, totensor
 from basicsr.utils import FileClient, get_root_logger
@@ -64,7 +64,7 @@ class REDSDataset(data.Dataset):
             for line in fin:
                 folder, frame_num, _ = line.split(' ')
                 self.keys.extend(
-                    [f'{folder}/{i:08d}' for i in range(int(frame_num))])
+                        [f'{folder}/{i:08d}' for i in range(int(frame_num))])
 
         # remove the video clips used in validation
         if opt['val_partition'] == 'REDS4':
