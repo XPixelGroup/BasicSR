@@ -16,6 +16,9 @@ python setup.py develop
 pip install requirements.txt
 ```
 
+## TODO List
+Please see [project boards](https://github.com/xinntao/BasicSR/projects).
+
 ## Dataset Preparation
 Please refer to [DATASETS.md](docs/DATASETS.md) for more details.
 
