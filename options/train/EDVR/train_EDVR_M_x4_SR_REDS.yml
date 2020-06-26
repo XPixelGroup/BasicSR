@@ -1,5 +1,5 @@
 # general settings
-name: 002_EDVR_M_x4_SR_REDS_600k_B4G8_valREDS4_001pretrain
+name: 102_EDVR_M_x4_SR_REDS_600k_B4G8_valREDS4_101pretrain
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
@@ -82,6 +82,7 @@ train:
   niter: 600000
   warmup_iter: -1  # no warm up
   tsa_iter: 50000
+  dcn_lr_mul: 1
 
   # losses
   pixel_opt:
@@ -112,3 +113,5 @@ logger:
 dist_params:
   backend: nccl
   port: 29500
+
+find_unused_parameters: true

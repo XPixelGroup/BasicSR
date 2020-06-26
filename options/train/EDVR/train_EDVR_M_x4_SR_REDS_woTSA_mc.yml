@@ -1,5 +1,5 @@
 # general settings
-name: 001_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_reduceloss
+name: 101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
