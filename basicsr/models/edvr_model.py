@@ -23,23 +23,26 @@ class EDVRModel(VideoBaseModel):
         train_opt = self.opt['train']
         dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
         logger.info(f'multiple the learning rate for dcn with {dcn_lr_mul}.')
-        normal_params = []
-        dcn_params = []  # params for dcn
-        for name, param in self.net_g.named_parameters():
-            if 'dcn' in name:
-                dcn_params.append(param)
-            else:
-                normal_params.append(param)
-        optim_params = [
-            {  # add normal params first
-                'params': normal_params,
-                'lr': train_opt['optim_g']['lr']
-            },
-            {
-                'params': dcn_params,
-                'lr': train_opt['optim_g']['lr'] * dcn_lr_mul
-            },
-        ]
+        if dcn_lr_mul == 1:
+            optim_params = self.net_g.parameters()
+        else:  # separate dcn params and normal params for differnet lr
+            normal_params = []
+            dcn_params = []
+            for name, param in self.net_g.named_parameters():
+                if 'dcn' in name:
+                    dcn_params.append(param)
+                else:
+                    normal_params.append(param)
+            optim_params = [
+                {  # add normal params first
+                    'params': normal_params,
+                    'lr': train_opt['optim_g']['lr']
+                },
+                {
+                    'params': dcn_params,
+                    'lr': train_opt['optim_g']['lr'] * dcn_lr_mul
+                },
+            ]
 
         optim_type = train_opt['optim_g'].pop('type')
         if optim_type == 'Adam':
