@@ -60,6 +60,14 @@ GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=test --g
 # 8 GPUs
 
 ```
+
+
+## Tensorboard
+
+```sh
+tensorboard --logdir tb_logger --port 5500 --bind_all
+```
+
 ----
 # Below is out-of-dated!
 
