@@ -1,10 +1,10 @@
-# Modified version of SRResNet w/o BN
+# Modified SRResNet w/o BN from:
 # Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
 
 # general settings
-name: 010_MSRResNetx2_scratch_DIV2K_patch64_sum
+name: 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1
 model_type: SRModel
-scale: 2
+scale: 4
 num_gpu: 1
 
 # dataset and data loader settings
@@ -12,28 +12,32 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: ./datasets/DIV2K_train_HR_sub
-    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX2_sub
-    filename_tmpl: '{}_bicLRx2'
-
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    # (for lmdb)
+    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    filename_tmpl: '{}'
     io_backend:
       type: disk
+      # (for lmdb)
+      # type: lmdb
 
-    gt_size: 64
+    gt_size: 128
     use_flip: true
     use_rot: true
 
     # data loader
     use_shuffle: true
     num_worker: 6  # per GPU
-    batch_size: 16
+    batch_size: 16  # total
     dataset_enlarge_ratio: 1000
 
   val:
-    name: val_set5
+    name: Set5
     type: PairedImageDataset
-    dataroot_gt: ./datasets/val_set5/Set5_mod12
-    dataroot_lq: ./datasets/val_set5/Set5_bicLRx2
+    dataroot_gt: datasets/Set5/GTmod12
+    dataroot_lq: datasets/Set5/LRbicx4
     io_backend:
       type: disk
 
@@ -44,7 +48,7 @@ network_g:
   num_out_ch: 3
   num_feat: 64
   num_block: 16
-  upscale: 2
+  upscale: 4
 
 # path
 path:
@@ -52,7 +56,7 @@ path:
   strict_load: true
   resume_state: ~
 
-# train
+# training settings
 train:
   optim_g:
     type: Adam
@@ -80,7 +84,13 @@ train:
 # validation settings
 val:
   val_freq: !!float 5e3
-  save_img: true
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: false
 
 # logging settings
 logger:
@@ -91,4 +101,4 @@ logger:
 # dist training settings
 dist_params:
   backend: nccl
-  port: 29746
+  port: 29500
