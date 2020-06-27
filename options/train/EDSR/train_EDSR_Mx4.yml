@@ -52,7 +52,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/102_EDSRx2_scratch_DIV2K/models/net_g_300000.pth
+  pretrain_model_g: experiments/201_EDSR_Mx2_f64b16_DIV2K_300k_B16G1/models/net_g_300000.pth
   strict_load: false
   resume_state: ~
 
