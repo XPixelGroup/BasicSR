@@ -1,5 +1,5 @@
 # general settings
-name: 103_EDVR_L_x4_SR_REDS_woTSA_600k_B4G8_valREDSval4
+name: 103_EDVR_L_x4_SR_REDS_woTSA_600k_B4G8_valREDS4
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
@@ -16,6 +16,11 @@ datasets:
     val_partition: REDS4  # set to 'official' when use the official validation partition
     io_backend:
       type: disk
+      # (for memcached)
+      # type: memcached
+      # server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      # client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      # sys_path: /mnt/lustre/share/pymc/py3
 
     num_frame: 5
     gt_size: 256
@@ -39,6 +44,11 @@ datasets:
     # change to 'meta_info_REDSval4_test_GT' when use the official validation partition
     io_backend:
       type: disk
+      # (for memcached)
+      # type: memcached
+      # server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      # client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      # sys_path: /mnt/lustre/share/pymc/py3
 
     cache_data: false
     num_frame: 5
