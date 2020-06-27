@@ -6,7 +6,7 @@ In the root path, run:
 ############################
 # Single GPU training
 ############################
-python basicsr/train.py -opt options/train/train_SRResNet.yml
+CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/EDSR/train_EDSR_Mx2.yml
 
 ############################
 # Single GPU testing
