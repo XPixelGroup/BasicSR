@@ -1,11 +1,12 @@
 function generate_bicubic_img()
-%% matlab code to genetate mod images, bicubic-downsampled images and bicubic_upsampled images
+%% matlab code to genetate mod images, bicubic-downsampled images and
+%% bicubic_upsampled images
 
-%% set parameters
-% comment the unnecessary line
-input_folder = '../../datasets/val_set14/Set14';
-save_mod_folder = '../../datasets/val_set14/Set14_mod12';
-save_lr_folder = '../../datasets/val_set14/Set14_bicLRx2';
+%% set configurations
+% comment the unnecessary lines
+input_folder = '../../datasets/Set5/original';
+save_mod_folder = '../../datasets/Set5/GTmod12';
+save_lr_folder = '../../datasets/Set5/LRbicx2';
 % save_bic_folder = '';
 
 mod_scale = 12;
@@ -36,36 +37,36 @@ end
 idx = 0;
 filepaths = dir(fullfile(input_folder,'*.*'));
 for i = 1 : length(filepaths)
-    [paths,imname,ext] = fileparts(filepaths(i).name);
-    if isempty(imname)
+    [paths, img_name, ext] = fileparts(filepaths(i).name);
+    if isempty(img_name)
         disp('Ignore . folder.');
-    elseif strcmp(imname, '.')
+    elseif strcmp(img_name, '.')
         disp('Ignore .. folder.');
     else
         idx = idx + 1;
-        str_rlt = sprintf('%d\t%s.\n', idx, imname);
+        str_rlt = sprintf('%d\t%s.\n', idx, img_name);
         fprintf(str_rlt);
 
         % read image
-        img = imread(fullfile(input_folder, [imname, ext]));
+        img = imread(fullfile(input_folder, [img_name, ext]));
         img = im2double(img);
 
         % modcrop
         img = modcrop(img, mod_scale);
         if exist('save_mod_folder', 'var')
-            imwrite(img, fullfile(save_mod_folder, [imname, '.png']));
+            imwrite(img, fullfile(save_mod_folder, [img_name, '.png']));
         end
 
         % LR
         im_lr = imresize(img, 1/up_scale, 'bicubic');
         if exist('save_lr_folder', 'var')
-            imwrite(im_lr, fullfile(save_lr_folder, [imname, '.png']));
+            imwrite(im_lr, fullfile(save_lr_folder, [img_name, '.png']));
         end
 
         % Bicubic
         if exist('save_bic_folder', 'var')
             im_bicubic = imresize(im_lr, up_scale, 'bicubic');
-            imwrite(im_bicubic, fullfile(save_bic_folder, [imname, '.png']));
+            imwrite(im_bicubic, fullfile(save_bic_folder, [img_name, '.png']));
         end
     end
 end
