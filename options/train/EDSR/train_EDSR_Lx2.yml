@@ -1,5 +1,5 @@
 # general settings
-name: 105_EDSRpaperx2_scratch_DIV2K
+name: 204_EDSR_Lx2_f256b32_DIV2K_300k_B16G1
 model_type: SRModel
 scale: 2
 num_gpu: 1
@@ -9,28 +9,32 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: ./datasets/DIV2K_train_HR_sub
-    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX2_sub
-    filename_tmpl: '{}_bicLRx2'
-
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X2_sub
+    # (for lmdb)
+    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X2_sub.lmdb
+    filename_tmpl: '{}'
     io_backend:
       type: disk
+      # (for lmdb)
+      # type: lmdb
 
-    gt_size: 96 # 96 for X2; 144 for X3; 192 for X4
+    gt_size: 96
     use_flip: true
     use_rot: true
 
     # data loader
     use_shuffle: true
     num_worker: 6  # per GPU
-    batch_size: 16
+    batch_size: 16  # total
     dataset_enlarge_ratio: 1000
 
   val:
-    name: val_set5
+    name: Set5
     type: PairedImageDataset
-    dataroot_gt: ./datasets/val_set5/Set5_mod12
-    dataroot_lq: ./datasets/val_set5/Set5_bicLRx2
+    dataroot_gt: datasets/Set5/GTmod12
+    dataroot_lq: datasets/Set5/LRbicx2
     io_backend:
       type: disk
 
@@ -79,7 +83,13 @@ train:
 # validation settings
 val:
   val_freq: !!float 5e3
-  save_img: true
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 2
+      test_y_channel: false
 
 # logging settings
 logger:
@@ -90,4 +100,4 @@ logger:
 # dist training settings
 dist_params:
   backend: nccl
-  port: 29746
+  port: 29500
