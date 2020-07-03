@@ -44,10 +44,10 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port=4321 basicsr
 GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=999 --gres=gpu:1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=6 --kill-on-bad-exit=1 python -u basicsr/train.py -opt options/train/train_SRResNet.yml --launcher="slurm"
 
 # 4 GPUs
-GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=EDVRwoTSA --gres=gpu:4 --ntasks=4 --ntasks-per-node=4 --cpus-per-task=4 --kill-on-bad-exit=1 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA_mc.yml --launcher="slurm"
+GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=EDVRwoTSA --gres=gpu:4 --ntasks=4 --ntasks-per-node=4 --cpus-per-task=4 --kill-on-bad-exit=1 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher="slurm"
 
 # 8 GPUs
-GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=EDVRwoTSA --gres=gpu:8 --ntasks=8 --ntasks-per-node=8 --cpus-per-task=6 --kill-on-bad-exit=1 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA_mc.yml  --launcher="slurm"
+GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=EDVRwoTSA --gres=gpu:8 --ntasks=8 --ntasks-per-node=8 --cpus-per-task=6 --kill-on-bad-exit=1 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml  --launcher="slurm"
 
 ############################
 # Slurm testing
