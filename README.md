@@ -1,6 +1,6 @@
 # BasicSR
 
-[GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR); [English](https://github.com/xinntao/BasicSR-private) | [简体中文](https://github.com/xinntao/BasicSR-private/blob/master/README_CN.md)
+[GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR); [English](https://github.com/xinntao/BasicSR) | [简体中文](https://github.com/xinntao/BasicSR/blob/master/README_CN.md)
 
 BasicSR is an open source image and video super-resolution toolbox based on PyTorch.<br>
 ([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))
