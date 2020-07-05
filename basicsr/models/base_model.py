@@ -179,25 +179,35 @@ class BaseModel():
         """Save networks.
 
         Args:
-            net (nn.Module): Network to be saved.
+            net (nn.Module | list[nn.Module]): Network(s) to be saved.
             net_label (str): Network label.
             current_iter (int): Current iter number.
-            param_key (str): The parameter key to save network.
+            param_key (str | list[str]): The parameter key(s) to save network.
                 Default: 'params'.
         """
         if current_iter == -1:
             current_iter = 'latest'
         save_filename = f'{net_label}_{current_iter}.pth'
         save_path = os.path.join(self.opt['path']['models'], save_filename)
-        if isinstance(net, nn.DataParallel) or isinstance(
-                net, DistributedDataParallel):
-            net = net.module
-        state_dict = net.state_dict()
-        for key, param in state_dict.items():
-            if key.startswith('module.'):  # remove unnecessary 'module.'
-                key = key[7:]
-            state_dict[key] = param.cpu()
-        torch.save({param_key: state_dict}, save_path)
+
+        net = net if isinstance(net, list) else [net]
+        param_key = param_key if isinstance(param_key, list) else [param_key]
+        assert len(net) == len(
+            param_key), 'The lengths of net and param_key should be the same.'
+
+        save_dict = {}
+        for net_, param_key_ in zip(net, param_key):
+            if isinstance(net_, nn.DataParallel) or isinstance(
+                    net_, DistributedDataParallel):
+                net_ = net_.module
+            state_dict = net_.state_dict()
+            for key, param in state_dict.items():
+                if key.startswith('module.'):  # remove unnecessary 'module.'
+                    key = key[7:]
+                state_dict[key] = param.cpu()
+            save_dict[param_key_] = state_dict
+
+        torch.save(save_dict, save_path)
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
         """Print keys with differnet name or different size when loading models.
