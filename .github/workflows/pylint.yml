@@ -25,5 +25,6 @@ jobs:
     - name: Lint
       run: |
         flake8 .
+        isort --help
         isort --recursive --check-only --diff basicsr/ scripts/ tests/
         yapf -r -d basicsr/ options/ scripts/ tests/
