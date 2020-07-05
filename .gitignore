@@ -2,6 +2,7 @@ experiments/*
 results/*
 tb_logger/*
 datasets/*
+wandb
 .vscode
 
 version.py

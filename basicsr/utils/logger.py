@@ -83,6 +83,17 @@ def init_tb_logger(log_dir):
     return tb_logger
 
 
+@master_only
+def init_wandb_logger(opt):
+    """We now only use wandb to sync tensorboard log."""
+    import wandb
+    wandb.init(
+        name=opt['name'],
+        config=opt,
+        project=opt['logger']['wandb']['project'],
+        sync_tensorboard=True)
+
+
 def get_root_logger(logger_name='basicsr',
                     log_level=logging.INFO,
                     log_file=None):

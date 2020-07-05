@@ -12,8 +12,8 @@ from basicsr.data import create_dataloader, create_dataset
 from basicsr.data.data_sampler import DistIterSampler
 from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
-                           get_root_logger, init_tb_logger, make_exp_dirs,
-                           set_random_seed)
+                           get_root_logger, init_tb_logger, init_wandb_logger,
+                           make_exp_dirs, set_random_seed)
 from basicsr.utils.options import dict2str, dict_to_nonedict, parse
 
 
@@ -67,6 +67,8 @@ def main():
     tb_logger = None
     if opt['logger']['use_tb_logger'] and 'debug' not in opt['name']:
         tb_logger = init_tb_logger(log_dir='./tb_logger/' + opt['name'])
+    if opt['logger']['wandb'] and 'debug' not in opt['name']:
+        init_wandb_logger(opt)
 
     # convert to NoneDict, which returns None for missing keys
     opt = dict_to_nonedict(opt)
