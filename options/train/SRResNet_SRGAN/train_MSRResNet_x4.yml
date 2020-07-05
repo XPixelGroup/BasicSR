@@ -2,7 +2,7 @@
 # Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
 
 # general settings
-name: 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1
+name: 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb
 model_type: SRModel
 scale: 4
 num_gpu: 1
@@ -97,6 +97,8 @@ logger:
   print_freq: 100
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
+  wandb:
+    project: basicsr
 
 # dist training settings
 dist_params:

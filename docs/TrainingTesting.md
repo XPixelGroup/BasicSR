@@ -11,7 +11,7 @@ CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/SRResNet_SRGAN
 ############################
 # Single GPU testing
 ############################
-python basicsr/test.py -opt options/test/test_SRResNet.yml
+CUDA_VISIBLE_DEVICES=0 python basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
 
 
 ############################
