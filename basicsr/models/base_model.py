@@ -175,13 +175,15 @@ class BaseModel():
         ]
 
     @master_only
-    def save_network(self, net, net_label, current_iter):
+    def save_network(self, net, net_label, current_iter, param_key='params'):
         """Save networks.
 
         Args:
             net (nn.Module): Network to be saved.
             net_label (str): Network label.
             current_iter (int): Current iter number.
+            param_key (str): The parameter key to save network.
+                Default: 'params'.
         """
         if current_iter == -1:
             current_iter = 'latest'
@@ -195,7 +197,7 @@ class BaseModel():
             if key.startswith('module.'):  # remove unnecessary 'module.'
                 key = key[7:]
             state_dict[key] = param.cpu()
-        torch.save(dict(params=state_dict), save_path)
+        torch.save({param_key: state_dict}, save_path)
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
         """Print keys with differnet name or different size when loading models.
