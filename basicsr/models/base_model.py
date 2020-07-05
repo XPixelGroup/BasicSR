@@ -234,19 +234,21 @@ class BaseModel():
                         f'{crt_net[k].shape}; load_net: {load_net[k].shape}')
                     load_net[k + '.ignore'] = load_net.pop(k)
 
-    def load_network(self, net, load_path, strict=True):
+    def load_network(self, net, load_path, strict=True, param_key='params'):
         """Load network.
 
         Args:
             load_path (str): The path of networks to be loaded.
             net (nn.Module): Network.
             strict (bool): Whether strictly loaded.
+            param_key (str): The parameter key of loaded network.
+                Default: 'params'.
         """
         if isinstance(net, (DataParallel, DistributedDataParallel)):
             net = net.module
         net_cls_name = net.__class__.__name__
         logger.info(f'Loading {net_cls_name} model from {load_path}.')
-        load_net = torch.load(load_path)['params']
+        load_net = torch.load(load_path)[param_key]
         # remove unnecessary 'module.'
         for k, v in load_net.items():
             if k.startswith('module.'):
