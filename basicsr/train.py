@@ -1,9 +1,9 @@
 import argparse
 import logging
 import math
-import os.path as osp
 import random
 import time
+from os import path as osp
 
 import torch
 from mmcv.runner import get_time_str, init_dist

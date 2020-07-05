@@ -3,11 +3,11 @@ import os
 from collections import OrderedDict
 
 import torch
-import torch.nn as nn
 from mmcv.runner import master_only
+from torch import nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
-import basicsr.models.lr_scheduler as lr_scheduler
+from basicsr.models import lr_scheduler as lr_scheduler
 
 logger = logging.getLogger('basicsr')
 

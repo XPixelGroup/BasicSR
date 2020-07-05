@@ -1,12 +1,12 @@
 import importlib
-import os.path as osp
 from collections import OrderedDict
 from copy import deepcopy
+from os import path as osp
 
 import mmcv
 import torch
 
-import basicsr.models.networks as networks
+from basicsr.models import networks as networks
 from basicsr.models.base_model import BaseModel
 from basicsr.utils import ProgressBar, get_root_logger, tensor2img
 

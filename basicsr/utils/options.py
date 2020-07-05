@@ -1,5 +1,5 @@
-import os.path as osp
 from collections import OrderedDict
+from os import path as osp
 
 import yaml
 
@@ -11,9 +11,10 @@ def ordered_yaml():
         yaml Loader and Dumper.
     """
     try:
-        from yaml import CLoader as Loader, CDumper as Dumper
+        from yaml import CDumper as Dumper
+        from yaml import CLoader as Loader
     except ImportError:
-        from yaml import Loader, Dumper
+        from yaml import Dumper, Loader
 
     _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 

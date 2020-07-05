@@ -1,11 +1,11 @@
 import glob
-import os.path as osp
+from os import path as osp
 
 import mmcv
 import torch
-import torch.utils.data as data
+from torch.utils import data as data
 
-import basicsr.data.util as util
+from basicsr.data import util as util
 from basicsr.data.util import duf_downsample
 from basicsr.utils import get_root_logger
 

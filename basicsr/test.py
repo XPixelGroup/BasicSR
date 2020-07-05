@@ -1,6 +1,6 @@
 import argparse
 import logging
-import os.path as osp
+from os import path as osp
 
 from mmcv.runner import get_time_str, init_dist
 

@@ -1,9 +1,9 @@
-import os.path as osp
+from os import path as osp
 
 import mmcv
 import numpy as np
 import torch
-import torch.nn.functional as F
+from torch.nn import functional as F
 
 from basicsr.data.transforms import mod_crop, totensor
 
@@ -256,7 +256,7 @@ def generate_gaussian_kernel(kernel_size=13, sigma=1.6):
     Returns:
         np.array: The Gaussian kernel.
     """
-    import scipy.ndimage.filters as filters
+    from scipy.ndimage import filters as filters
     kernel = np.zeros((kernel_size, kernel_size))
     # set element at the middle to one, a dirac delta
     kernel[kernel_size // 2, kernel_size // 2] = 1

@@ -1,5 +1,5 @@
 import importlib
-import os.path as osp
+from os import path as osp
 
 import mmcv
 

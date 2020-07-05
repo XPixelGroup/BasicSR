@@ -1,7 +1,7 @@
 import torch
-import torch.autograd as autograd
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import autograd as autograd
+from torch import nn as nn
+from torch.nn import functional as F
 
 from basicsr.models.archs.vgg_arch import VGGFeatureExtractor
 from basicsr.models.loss_utils import masked_loss

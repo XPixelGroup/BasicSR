@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 import torch
 
-import basicsr.models.networks as networks
+from basicsr.models import networks as networks
 from basicsr.models.sr_model import SRModel
 
 loss_module = importlib.import_module('basicsr.models.losses')

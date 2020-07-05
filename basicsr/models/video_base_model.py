@@ -1,11 +1,11 @@
 import importlib
-import os.path as osp
 from collections import Counter
 from copy import deepcopy
+from os import path as osp
 
 import mmcv
 import torch
-import torch.distributed as dist
+from torch import distributed as dist
 
 from basicsr.models.sr_model import SRModel
 from basicsr.utils import ProgressBar, get_root_logger, tensor2img

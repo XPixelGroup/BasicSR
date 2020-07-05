@@ -1,9 +1,9 @@
 import math
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.nn.init as init
+from torch import nn as nn
+from torch.nn import functional as F
+from torch.nn import init as init
 from torch.nn.modules.batchnorm import _BatchNorm
 
 from basicsr.models.ops.dcn import (ModulatedDeformConvPack,

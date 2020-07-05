@@ -1,4 +1,4 @@
-import torch.nn as nn
+from torch import nn as nn
 
 
 class VGGStyleDiscriminator128(nn.Module):

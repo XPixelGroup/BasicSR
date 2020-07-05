@@ -141,6 +141,7 @@ def get_env_info():
     import mmcv
     import torch
     import torchvision
+
     from basicsr.version import __version__
     msg = r"""
      ______                   __   __                 __      __

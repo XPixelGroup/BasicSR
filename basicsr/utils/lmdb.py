@@ -1,6 +1,6 @@
-import os.path as osp
 import sys
 from multiprocessing import Pool
+from os import path as osp
 
 import cv2
 import lmdb

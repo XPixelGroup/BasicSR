@@ -1,8 +1,8 @@
-import os.path as osp
+from os import path as osp
 
 import mmcv
 import numpy as np
-import torch.utils.data as data
+from torch.utils import data as data
 
 from basicsr.data.transforms import totensor
 from basicsr.utils import FileClient

@@ -1,9 +1,9 @@
 import math
 import os
-import os.path as osp
 import random
 import sys
 import time
+from os import path as osp
 from shutil import get_terminal_size
 
 import mmcv

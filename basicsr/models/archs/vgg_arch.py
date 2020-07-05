@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
 import torch
-import torch.nn as nn
-import torchvision.models.vgg as vgg
+from torch import nn as nn
+from torchvision.models import vgg as vgg
 
 NAMES = {
     'vgg11': [

@@ -1,7 +1,7 @@
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn as nn
+from torch.nn import functional as F
 
-import basicsr.models.archs.arch_util as arch_util
+from basicsr.models.archs import arch_util as arch_util
 
 
 class MSRResNet(nn.Module):

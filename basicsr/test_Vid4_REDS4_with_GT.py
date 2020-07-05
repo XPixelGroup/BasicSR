@@ -2,18 +2,17 @@
 Test Vid4 (SR) and REDS4 (SR-clean, SR-blur, deblur-clean, deblur-compression)
 datasets
 '''
-
 import glob
 import logging
-import os.path as osp
+from os import path as osp
 
 import cv2
 import numpy as np
 import torch
 
-import basicsr.data.util as data_util
-import basicsr.models.archs.EDVR_arch as EDVR_arch
-import basicsr.utils.util as util
+from basicsr.data import util as data_util
+from basicsr.models.archs import EDVR_arch as EDVR_arch
+from basicsr.utils import util as util
 
 
 # TODO: modify it

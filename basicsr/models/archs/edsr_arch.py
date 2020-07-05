@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+from torch import nn as nn
 
 from basicsr.models.archs.arch_util import (ResidualBlockNoBN, Upsample,
                                             make_layer)
