@@ -1,5 +1,5 @@
 # general settings
-name: 202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain
+name: 202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain_wandb
 model_type: SRModel
 scale: 3
 num_gpu: 1
@@ -9,16 +9,16 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
-    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X3_sub
+    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X3_sub
     # (for lmdb)
-    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
-    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X3_sub.lmdb
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X3_sub.lmdb
     filename_tmpl: '{}'
     io_backend:
-      type: disk
+      # type: disk
       # (for lmdb)
-      # type: lmdb
+      type: lmdb
 
     gt_size: 144
     use_flip: true
@@ -52,7 +52,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/201_EDSR_Mx2_f64b16_DIV2K_300k_B16G1/models/net_g_300000.pth
+  pretrain_model_g: experiments/201_EDSR_Mx2_f64b16_DIV2K_300k_B16G1_wandb/models/net_g_300000.pth
   strict_load: false
   resume_state: ~
 
@@ -78,7 +78,7 @@ train:
     loss_weight: 1.0
     reduction: mean
 
-  manual_seed: 0
+  manual_seed: 10
 
 # validation settings
 val:
@@ -96,6 +96,8 @@ logger:
   print_freq: 100
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
+  wandb:
+    project: basicsr
 
 # dist training settings
 dist_params:
