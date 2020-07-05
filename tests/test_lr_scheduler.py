@@ -1,8 +1,8 @@
 import matplotlib as mpl
-import matplotlib.ticker as mtick
 import seaborn
 import torch
 from matplotlib import pyplot as plt
+from matplotlib import ticker as mtick
 
 from basicsr.models.lr_scheduler import CosineAnnealingRestartLR
 
@@ -50,7 +50,10 @@ def main():
     plt.figure(1)
     plt.subplot(111)
     plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
-    plt.title('Cosine Annealing Restart LR Scheme', fontsize=16, color='k')
+    plt.title(
+        'Cosine Annealing Restart Learning Rate Scheme',
+        fontsize=16,
+        color='k')
     plt.plot(
         list(range(total_iter)), lr_l, linewidth=1.5, label='learning rate 1')
     plt.plot(
