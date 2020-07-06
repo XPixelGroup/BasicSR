@@ -50,9 +50,11 @@ def main():
         resume_state = torch.load(
             opt['path']['resume_state'],
             map_location=lambda storage, loc: storage.cuda(device_id))
-        check_resume(opt, resume_state['iter'])
     else:
         resume_state = None
+
+    # convert to NoneDict, which returns None for missing keys
+    opt = dict_to_nonedict(opt)
 
     # mkdir and loggers
     if resume_state is None:
@@ -63,15 +65,12 @@ def main():
         logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
     logger.info(dict2str(opt))
-    # initialize tensorboard logger
+    # initialize tensorboard logger and wandb logger
     tb_logger = None
     if opt['logger']['use_tb_logger'] and 'debug' not in opt['name']:
         tb_logger = init_tb_logger(log_dir='./tb_logger/' + opt['name'])
     if opt['logger']['wandb'] and 'debug' not in opt['name']:
         init_wandb_logger(opt)
-
-    # convert to NoneDict, which returns None for missing keys
-    opt = dict_to_nonedict(opt)
 
     # random seed
     seed = opt['train']['manual_seed']
@@ -119,6 +118,8 @@ def main():
     assert train_loader is not None
 
     # create model
+    if resume_state:
+        check_resume(opt, resume_state['iter'])  # modify pretrain_model paths
     model = create_model(opt)
 
     # resume training
