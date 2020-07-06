@@ -1,4 +1,4 @@
-name: 202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain
+name: 202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain_wandb
 model_type: SRModel
 scale: 3
 num_gpu: 1
@@ -42,7 +42,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain/models/net_g_300000.pth
+  pretrain_model_g: experiments/202_EDSR_Mx3_f64b16_DIV2K_300k_B16G1_201pretrain_wandb/models/net_g_300000.pth
   strict_load: true
 
 # validation settings
