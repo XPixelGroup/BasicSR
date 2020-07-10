@@ -1,6 +1,5 @@
 import datetime
 import logging
-import os
 import time
 
 from mmcv.runner import get_dist_info, master_only
@@ -88,17 +87,26 @@ def init_tb_logger(log_dir):
 def init_wandb_logger(opt):
     """We now only use wandb to sync tensorboard log."""
     import wandb
+    logger = logging.getLogger('basicsr')
+
+    project = opt['logger']['wandb']['project']
     resume_id = opt['logger']['wandb'].get('resume_id', None)
     if resume_id:
-        os.environ['WANDB_RESUME'] = 'allow'
-        os.environ['WANDB_RUN_ID'] = resume_id
+        wandb_id = resume_id
+        resume = 'allow'
+        logger.warn(f'Resume wandb logger with id={wandb_id}.')
     else:
-        os.environ['WANDB_RESUME'] = 'never'
+        wandb_id = wandb.util.generate_id()
+        resume = 'never'
     wandb.init(
+        id=wandb_id,
+        resume=resume,
         name=opt['name'],
         config=opt,
-        project=opt['logger']['wandb']['project'],
+        project=project,
         sync_tensorboard=True)
+
+    logger.info(f'Use wandb logger with id={wandb_id}; project={project}.')
 
 
 def get_root_logger(logger_name='basicsr',

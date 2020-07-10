@@ -99,6 +99,7 @@ logger:
   use_tb_logger: true
   wandb:
     project: basicsr
+    resume_id: ~
 
 # dist training settings
 dist_params:
