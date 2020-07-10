@@ -1,5 +1,5 @@
 # general settings
-name: 101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4
+name: 101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
@@ -99,7 +99,7 @@ train:
     loss_weight: 1.0
     reduction: sum
 
-  manual_seed: 0
+  manual_seed: 10
 
 # validation settings
 val:
@@ -117,6 +117,8 @@ logger:
   print_freq: 100
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
+  wandb:
+    project: basicsr
 
 # dist training settings
 dist_params:
