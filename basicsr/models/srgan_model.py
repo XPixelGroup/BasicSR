@@ -122,7 +122,6 @@ class SRGANModel(SRModel):
             p.requires_grad = True
 
         self.optimizer_d.zero_grad()
-        # forward and backward separately, since batch norm statistics differ
         # real
         real_d_pred = self.net_d(self.gt)
         l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
