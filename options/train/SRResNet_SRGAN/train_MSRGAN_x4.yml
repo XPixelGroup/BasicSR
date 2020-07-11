@@ -1,8 +1,9 @@
 # Modified SRResNet w/o BN from:
 # Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
+# Use perceptual loss before ReLU as ESRGAN does
 
 # general settings
-name: xxx
+name: 004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb
 model_type: SRGANModel
 scale: 4
 num_gpu: 1
@@ -57,7 +58,7 @@ network_d:
 
 # path
 path:
-  pretrain_model_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1/models/net_g_1000000.pth
+  pretrain_model_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
   strict_load: true
   resume_state: ~
 
@@ -125,6 +126,9 @@ logger:
   print_freq: 100
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
+  wandb:
+    project: basicsr
+    resume_id: ~
 
 # dist training settings
 dist_params:
