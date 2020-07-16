@@ -1,0 +1,14 @@
+addict
+future
+lmdb
+matplotlib
+mmcv>=0.5.4
+numpy
+opencv-python
+pyyaml
+scipy
+seaborn
+tb-nightly
+torch>=1.3
+torchvision
+yapf
