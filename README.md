@@ -3,7 +3,7 @@
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
 
-BasicSR is an open source image and video super-resolution (may extend to more restoration tasksin the future) toolbox based on PyTorch.<br>
+BasicSR is an open source image and video super-resolution toolbox based on PyTorch (may extend to more restoration tasks in the future).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
 ## Dependencies and Installation
@@ -29,7 +29,7 @@ Please refer to [Datasets.md](docs/Datasets.md) for more details.
 Please see [TrainTest.md](docs/TrainTest.md) for the basic usage, *i.e.,* training and testing.
 
 ## Model Zoo and Baselines
-Results and pre-trained models are available in the [ModelZoo.md](docs/ModelZoo.md).
+Results and pre-trained models are available in [ModelZoo.md](docs/ModelZoo.md).
 
 ## Codebase Designs and Conventions
 Please see [DesignConvention.md](docs/DesignConvention.md) for the designs and convetions of the BasicSR codebase.

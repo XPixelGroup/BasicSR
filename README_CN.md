@@ -3,11 +3,11 @@
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
 
-BasicSR 是一个基于 PyTorch 的开源图像视频超分辨率(Super-Resolution)工具箱(之后或许会支持更多的 Restoration 任务).<br>
+BasicSR 是一个基于 PyTorch 的开源图像视频超分辨率 (Super-Resolution) 工具箱 (之后或许会支持更多的 Restoration 任务).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
 ## 依赖和安装
-- Python >= 3.7 (推荐使用[Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
+- Python >= 3.7 (推荐使用 [Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
