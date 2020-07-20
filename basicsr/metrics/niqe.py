@@ -162,20 +162,19 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
 
     We use the official params estimated from the pristine dataset.
     We use the recommended block size (96, 96) without overlaps.
-    The NIQE is calculated on a gray or Y (of YCbCr) image with shape
-        (h, w).
 
     Args:
         img (ndarray): Input image whose quality needs to be computed.
             The input image must be in range [0, 255] with float/int type.
-            The input_order of image can be 'HW' or 'HWC' or 'CHW'.
+            The input_order of image can be 'HW' or 'HWC' or 'CHW'. (BGR order)
             If the input order is 'HWC' or 'CHW', it will be converted to gray
-            or Y (of YCbCr) image.
+            or Y (of YCbCr) image according to the ``convert_to`` argument.
         crop_border (int): Cropped pixels in each edges of an image. These
-            pixels are not involved in the PSNR calculation.
+            pixels are not involved in the metric calculation.
         input_order (str): Whether the input order is 'HW', 'HWC' or 'CHW'.
             Default: 'HWC'.
-        convert_to (str): TODO.
+        convert_to (str): Whether coverted to 'y' (of MATLAB YCbCr) or 'gray'.
+            Default: 'y'.
 
     Returns:
         float: NIQE result.
@@ -187,13 +186,17 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
     cov_pris_param = niqe_pris_params['cov_pris_param']
     gaussian_window = niqe_pris_params['gaussian_window']
 
-    if input_order != 'HW':
-        img = reorder_image(img, input_order=input_order)
-
     if crop_border != 0:
         img = img[crop_border:-crop_border, crop_border:-crop_border, ...]
 
-    img = np.squeeze(_to_y_channel(img))
+    img = img.astype(np.float32)
+    if input_order != 'HW':
+        img = reorder_image(img, input_order=input_order)
+        if convert_to == 'y':
+            img = _to_y_channel(img)
+        elif convert_to == 'gray':
+            img = cv2.cvtColor(img / 255., cv2.COLOR_BGR2GRAY) * 255.
+        img = np.squeeze(img)
     niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)
 
     return niqe_result

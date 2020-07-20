@@ -2,7 +2,8 @@ experiments/*
 results/*
 tb_logger/*
 datasets/*
-wandb
+wandb/*
+
 .vscode
 
 version.py
@@ -12,9 +13,7 @@ version.py
 *.jpg
 *.gif
 *.pth
-*.pytorch
 *.zip
-*.npz
 
 # template
 
