@@ -15,8 +15,8 @@ def estimate_aggd_param(block):
         block (ndarray): 2D Image block.
 
     Returns:
-        tuple: alpha (float), betal (float) and betar (float) for the AGGD
-            distribution (Estimating the parames in Equation 7 in the paper.)
+        tuple: alpha (float), beta_l (float) and beta_r (float) for the AGGD
+            distribution (Estimating the parames in Equation 7 in the paper).
     """
     block = block.flatten()
     gam = np.arange(0.2, 10.001, 0.001)  # len = 9801
@@ -33,9 +33,9 @@ def estimate_aggd_param(block):
     array_position = np.argmin((r_gam - rhatnorm)**2)
 
     alpha = gam[array_position]
-    betal = left_std * np.sqrt(gamma(1 / alpha) / gamma(3 / alpha))
-    betar = right_std * np.sqrt(gamma(1 / alpha) / gamma(3 / alpha))
-    return (alpha, betal, betar)
+    beta_l = left_std * np.sqrt(gamma(1 / alpha) / gamma(3 / alpha))
+    beta_r = right_std * np.sqrt(gamma(1 / alpha) / gamma(3 / alpha))
+    return (alpha, beta_l, beta_r)
 
 
 def compute_feature(block):
@@ -48,8 +48,8 @@ def compute_feature(block):
         list: Features with length of 18.
     """
     feat = []
-    alpha, betal, betar = estimate_aggd_param(block)
-    feat.extend([alpha, (betal + betar) / 2])
+    alpha, beta_l, beta_r = estimate_aggd_param(block)
+    feat.extend([alpha, (beta_l + beta_r) / 2])
 
     # distortions disturb the fairly regular structure of natural images.
     # This deviation can be captured by analyzing the sample distribution of
@@ -58,9 +58,10 @@ def compute_feature(block):
     shifts = [[0, 1], [1, 0], [1, 1], [1, -1]]
     for i in range(len(shifts)):
         shifted_block = np.roll(block, shifts[i], axis=(0, 1))
-        alpha, betal, betar = estimate_aggd_param(block * shifted_block)
-        mean = (betar - betal) * (gamma(2 / alpha) / gamma(1 / alpha))  # Equ 8
-        feat.extend([alpha, mean, betal, betar])
+        alpha, beta_l, beta_r = estimate_aggd_param(block * shifted_block)
+        # Eq. 8
+        mean = (beta_r - beta_l) * (gamma(2 / alpha) / gamma(1 / alpha))
+        feat.extend([alpha, mean, beta_l, beta_r])
     return feat
 
 
@@ -70,7 +71,7 @@ def niqe(img,
          gaussian_window,
          block_size_h=96,
          block_size_w=96):
-    """Calculate NIQE (Natural Image Quality Evaluator) metrics.
+    """Calculate NIQE (Natural Image Quality Evaluator) metric.
 
     Ref: Making a "Completely Blind" Image Quality Analyzer.
     This implementation could produce almost the same results as the official
@@ -106,14 +107,14 @@ def niqe(img,
     num_block_w = math.floor(w / block_size_w)
     img = img[0:num_block_h * block_size_h, 0:num_block_w * block_size_w]
 
-    distparam = []  # multiscale features
+    distparam = []  # dist param is actually the multiscale features
     for scale in (1, 2):  # perform on two scales (1, 2)
         mu = convolve(img, gaussian_window, mode='nearest')
         sigma = np.sqrt(
             np.abs(
                 convolve(np.square(img), gaussian_window, mode='nearest') -
                 np.square(mu)))
-        # normalize, as in Equ 1 in the paper
+        # normalize, as in Eq. 1 in the paper
         img_nomalized = (img - mu) / (sigma + 1)
 
         feat = []
@@ -143,7 +144,7 @@ def niqe(img,
     mu_distparam = np.nanmean(distparam, axis=0)
     cov_distparam = np.cov(distparam, rowvar=False)  # TODO: use nancov
 
-    # compute niqe quality, Equ. 10 in the paper
+    # compute niqe quality, Eq. 10 in the paper
     invcov_param = np.linalg.pinv((cov_pris_param + cov_distparam) / 2)
     quality = np.matmul(
         np.matmul((mu_pris_param - mu_distparam), invcov_param),
@@ -154,7 +155,7 @@ def niqe(img,
 
 
 def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
-    """Calculate NIQE (Natural Image Quality Evaluator) metrics.
+    """Calculate NIQE (Natural Image Quality Evaluator) metric.
 
     Ref: Making a "Completely Blind" Image Quality Analyzer.
     This implementation could produce almost the same results as the official
@@ -169,7 +170,7 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
             The input_order of image can be 'HW' or 'HWC' or 'CHW'. (BGR order)
             If the input order is 'HWC' or 'CHW', it will be converted to gray
             or Y (of YCbCr) image according to the ``convert_to`` argument.
-        crop_border (int): Cropped pixels in each edges of an image. These
+        crop_border (int): Cropped pixels in each edge of an image. These
             pixels are not involved in the metric calculation.
         input_order (str): Whether the input order is 'HW', 'HWC' or 'CHW'.
             Default: 'HWC'.
@@ -186,9 +187,6 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
     cov_pris_param = niqe_pris_params['cov_pris_param']
     gaussian_window = niqe_pris_params['gaussian_window']
 
-    if crop_border != 0:
-        img = img[crop_border:-crop_border, crop_border:-crop_border, ...]
-
     img = img.astype(np.float32)
     if input_order != 'HW':
         img = reorder_image(img, input_order=input_order)
@@ -197,6 +195,10 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
         elif convert_to == 'gray':
             img = cv2.cvtColor(img / 255., cv2.COLOR_BGR2GRAY) * 255.
         img = np.squeeze(img)
+
+    if crop_border != 0:
+        img = img[crop_border:-crop_border, crop_border:-crop_border]
+
     niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)
 
     return niqe_result
