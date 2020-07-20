@@ -1,7 +1,6 @@
-from os import path as osp
-
 import mmcv
 import numpy as np
+from os import path as osp
 
 from basicsr.metrics import calculate_psnr, calculate_ssim
 

@@ -3,10 +3,9 @@ import logging
 import math
 import random
 import time
-from os import path as osp
-
 import torch
 from mmcv.runner import get_time_str, init_dist
+from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.data.data_sampler import DistIterSampler
@@ -102,9 +101,8 @@ def main():
                 train_sampler = None
             train_loader = create_dataloader(train_set, dataset_opt, opt,
                                              train_sampler)
-            logger.info(
-                f'Number of train images: {len(train_set)}, iters: {train_size}'
-            )
+            logger.info(f'Number of train images: {len(train_set)}, '
+                        f'iters: {train_size}')
             logger.info(
                 f'Total epochs needed: {total_epochs} for iters {total_iters}')
         elif phase == 'val':

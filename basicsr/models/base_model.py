@@ -1,8 +1,7 @@
 import logging
 import os
-from collections import OrderedDict
-
 import torch
+from collections import OrderedDict
 from mmcv.runner import master_only
 from torch import nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel

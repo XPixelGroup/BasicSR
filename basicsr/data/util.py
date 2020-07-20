@@ -1,8 +1,7 @@
-from os import path as osp
-
 import mmcv
 import numpy as np
 import torch
+from os import path as osp
 from torch.nn import functional as F
 
 from basicsr.data.transforms import mod_crop, totensor

@@ -1,11 +1,10 @@
+import cv2
+import mmcv
+import numpy as np
 import os
 import sys
 from multiprocessing import Pool
 from os import path as osp
-
-import cv2
-import mmcv
-import numpy as np
 
 from basicsr.utils.util import ProgressBar
 

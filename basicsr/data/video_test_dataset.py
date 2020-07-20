@@ -1,8 +1,7 @@
 import glob
-from os import path as osp
-
 import mmcv
 import torch
+from os import path as osp
 from torch.utils import data as data
 
 from basicsr.data import util as util

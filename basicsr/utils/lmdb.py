@@ -1,10 +1,9 @@
-import sys
-from multiprocessing import Pool
-from os import path as osp
-
 import cv2
 import lmdb
 import mmcv
+import sys
+from multiprocessing import Pool
+from os import path as osp
 
 from .util import ProgressBar
 
@@ -166,7 +165,8 @@ class LmdbMaker():
     Args:
         lmdb_path (str): Lmdb save path.
         map_size (int): Map size for lmdb env. Default: 1024 ** 4, 1TB.
-        batch (int): After processing batch images, lmdb commits. Default: 5000.
+        batch (int): After processing batch images, lmdb commits.
+            Default: 5000.
         compress_level (int): Compress level when encoding images. Default: 1.
     """
 

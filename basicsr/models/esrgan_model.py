@@ -1,7 +1,6 @@
 import importlib
-from collections import OrderedDict
-
 import torch
+from collections import OrderedDict
 
 from basicsr.models.srgan_model import SRGANModel
 
