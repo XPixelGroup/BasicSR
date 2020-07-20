@@ -1,9 +1,8 @@
-import random
-from pathlib import Path
-
 import mmcv
 import numpy as np
+import random
 import torch
+from pathlib import Path
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop, totensor

@@ -139,9 +139,9 @@ class PerceptualLoss(nn.Module):
 
     Args:
         layers_weights (dict): The weight for each layer of vgg feature.
-            Here is an example: {'conv5_4': 1.}, which means the conv5_4 feature
-            layer (before relu5_4) will be extracted with weight 1.0 in
-            calculting losses.
+            Here is an example: {'conv5_4': 1.}, which means the conv5_4
+            feature layer (before relu5_4) will be extracted with weight
+            1.0 in calculting losses.
         vgg_type (str): The type of vgg network used as feature extractor.
             Default: 'vgg19'.
         use_input_norm (bool):  If True, normalize the input image in vgg.

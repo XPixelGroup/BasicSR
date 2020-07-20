@@ -1,7 +1,6 @@
 import importlib
-from collections import OrderedDict
-
 import torch
+from collections import OrderedDict
 
 from basicsr.models import networks as networks
 from basicsr.models.sr_model import SRModel

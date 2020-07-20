@@ -1,5 +1,4 @@
 import math
-
 import mmcv
 import torchvision.utils
 
@@ -31,7 +30,7 @@ def main(mode='folder'):
         opt['io_backend'] = dict(type='disk')
     elif mode == 'lmdb':
         opt['dataroot_gt'] = 'datasets/DIV2K/DIV2K_train_HR_sub.lmdb'
-        opt['dataroot_lq'] = 'datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb'
+        opt['dataroot_lq'] = 'datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb'  # noqa:E501
         opt['io_backend'] = dict(type='lmdb')
 
     opt['gt_size'] = 128

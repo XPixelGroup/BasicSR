@@ -1,8 +1,7 @@
 import argparse
 import logging
-from os import path as osp
-
 from mmcv.runner import get_time_str, init_dist
+from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.models import create_model

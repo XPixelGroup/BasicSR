@@ -2,7 +2,7 @@ addict
 future
 lmdb
 matplotlib
-mmcv>=0.5.4
+mmcv>=0.6
 numpy
 opencv-python
 pyyaml
