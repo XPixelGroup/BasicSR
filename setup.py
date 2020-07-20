@@ -1,10 +1,10 @@
 #!/usr/bin/env python
+from setuptools import find_packages, setup
+
 import os
 import subprocess
 import time
-
 import torch
-from setuptools import find_packages, setup
 from torch.utils.cpp_extension import (BuildExtension, CppExtension,
                                        CUDAExtension)
 
@@ -14,15 +14,6 @@ def readme():
         content = f.read()
     return content
 
-
-MAJOR = 1
-MINOR = 0
-PATCH = 0
-SUFFIX = ''
-if PATCH != '':
-    SHORT_VERSION = '{}.{}.{}{}'.format(MAJOR, MINOR, PATCH, SUFFIX)
-else:
-    SHORT_VERSION = '{}.{}{}'.format(MAJOR, MINOR, SUFFIX)
 
 version_file = 'basicsr/version.py'
 
@@ -71,15 +62,21 @@ def get_hash():
 def write_version_py():
     content = """# GENERATED VERSION FILE
 # TIME: {}
-
 __version__ = '{}'
 short_version = '{}'
+version_info = ({})
 """
     sha = get_hash()
+    with open('VERSION', 'r') as f:
+        SHORT_VERSION = f.read().strip()
+    VERSION_INFO = ', '.join(
+        [x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
     VERSION = SHORT_VERSION + '+' + sha
 
+    version_file_str = content.format(time.asctime(), VERSION, SHORT_VERSION,
+                                      VERSION_INFO)
     with open(version_file, 'w') as f:
-        f.write(content.format(time.asctime(), VERSION, SHORT_VERSION))
+        f.write(version_file_str)
 
 
 def get_version():
@@ -105,7 +102,6 @@ def make_cuda_ext(name, module, sources, sources_cuda=[]):
     else:
         print(f'Compiling {name} without CUDA')
         extension = CppExtension
-        # raise EnvironmentError('CUDA is required to compile MMDetection!')
 
     return extension(
         name=f'{module}.{name}',
@@ -129,11 +125,12 @@ if __name__ == '__main__':
         description='BasicSR - Image and Video Super-Resolution Toolbox',
         long_description=readme(),
         author='Xintao Wang',
-        author_email='xintao.alpha@gmail.com',
+        author_email='xintao.wang@outlook.com',
         keywords='computer vision, super resolution',
+        url='https://github.com/xinntao/BasicSR',
         packages=find_packages(
             exclude=('options', 'datasets', 'experiments', 'results',
-                     'tb_logger')),
+                     'tb_logger', 'wandb')),
         classifiers=[
             'Development Status :: 4 - Beta',
             'License :: OSI Approved :: Apache Software License',
@@ -144,8 +141,7 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.7',
         ],
         license='Apache License 2.0',
-        setup_requires=['pytest-runner', 'cython', 'numpy'],
-        tests_require=['pytest', 'xdoctest'],
+        setup_requires=['cython', 'numpy'],
         install_requires=get_requirements(),
         ext_modules=[
             make_cuda_ext(
