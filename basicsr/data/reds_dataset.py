@@ -1,9 +1,8 @@
-import random
-from pathlib import Path
-
 import mmcv
 import numpy as np
+import random
 import torch
+from pathlib import Path
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop, totensor
@@ -121,7 +120,8 @@ class REDSDataset(data.Dataset):
         end_frame_idx = center_frame_idx + self.num_half_frames * interval
         while (start_frame_idx < 0) or (end_frame_idx > 99):
             center_frame_idx = random.randint(0, 99)
-            start_frame_idx = center_frame_idx - self.num_half_frames * interval
+            start_frame_idx = (
+                center_frame_idx - self.num_half_frames * interval)
             end_frame_idx = center_frame_idx + self.num_half_frames * interval
         frame_name = f'{center_frame_idx:08d}'
         neighbor_list = list(

@@ -1,7 +1,0 @@
-[flake8]
-ignore =
-    # line break after binary operatorflake8(W504)
-    W504,
-    W503,
-
-max-line-length=80

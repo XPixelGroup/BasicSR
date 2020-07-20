@@ -1,6 +1,5 @@
-import random
-
 import mmcv
+import random
 import torch
 
 

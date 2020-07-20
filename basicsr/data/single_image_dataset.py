@@ -1,7 +1,6 @@
-from os import path as osp
-
 import mmcv
 import numpy as np
+from os import path as osp
 from torch.utils import data as data
 
 from basicsr.data.transforms import totensor

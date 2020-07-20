@@ -1,8 +1,7 @@
 import glob
-from os import path as osp
-
 import mmcv
 import torch
+from os import path as osp
 from torch.utils import data as data
 
 from basicsr.data import util as util
@@ -13,7 +12,7 @@ from basicsr.utils import get_root_logger
 class VideoTestDataset(data.Dataset):
     """Video test dataset.
 
-    Supported datasets: Vid4, REDS4, REDS-official.
+    Supported datasets: Vid4, REDS4, REDSofficial.
     More generally, it supports testing dataset with following structures:
 
     dataroot
@@ -77,7 +76,7 @@ class VideoTestDataset(data.Dataset):
             subfolders_lq = sorted(glob.glob(osp.join(self.lq_root, '*')))
             subfolders_gt = sorted(glob.glob(osp.join(self.gt_root, '*')))
 
-        if opt['name'].lower() in ['vid4', 'reds4', 'reds-official']:
+        if opt['name'].lower() in ['vid4', 'reds4', 'redsofficial']:
             for subfolder_lq, subfolder_gt in zip(subfolders_lq,
                                                   subfolders_gt):
                 # get frame list for lq and gt

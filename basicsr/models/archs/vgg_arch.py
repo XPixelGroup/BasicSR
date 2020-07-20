@@ -1,6 +1,5 @@
-from collections import OrderedDict
-
 import torch
+from collections import OrderedDict
 from torch import nn as nn
 from torchvision.models import vgg as vgg
 
@@ -104,7 +103,7 @@ class VGGFeatureExtractor(nn.Module):
         modified_net = OrderedDict()
         for k, v in zip(self.names, features):
             if 'pool' in k:
-                # if remove pooling is true, the pooling operation will be moved
+                # if remove_pooling is true, pooling operation will be removed
                 if remove_pooling:
                     continue
                 else:

@@ -45,6 +45,7 @@ network_g:
   num_out_ch: 3
   num_feat: 64
   num_block: 23
+  num_grow_ch: 32
 
 # path
 path:
@@ -82,11 +83,11 @@ val:
   val_freq: !!float 5e3
   save_img: false
 
-metrics:
-    psnr: # metric name, can be arbitrary
-      type: calculate_psnr
-      crop_border: 4
-      test_y_channel: false
+  metrics:
+      psnr: # metric name, can be arbitrary
+        type: calculate_psnr
+        crop_border: 4
+        test_y_channel: false
 
 # logging settings
 logger:
