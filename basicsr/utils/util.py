@@ -1,15 +1,14 @@
 import math
+import mmcv
+import numpy as np
 import os
 import random
 import sys
 import time
-from os import path as osp
-from shutil import get_terminal_size
-
-import mmcv
-import numpy as np
 import torch
 from mmcv.runner import get_time_str, master_only
+from os import path as osp
+from shutil import get_terminal_size
 from torchvision.utils import make_grid
 
 from basicsr.utils import get_root_logger
@@ -214,6 +213,6 @@ class ProgressBar(object):
                 f'ETA: {eta:5}s\n{msg}\n')
         else:
             sys.stdout.write(
-                f'completed: {self.completed}, elapsed: {int(elapsed + 0.5)}s, '
-                f'{fps:.1f} tasks/s')
+                f'completed: {self.completed}, elapsed: {int(elapsed + 0.5)}s,'
+                f' {fps:.1f} tasks/s')
         sys.stdout.flush()

@@ -4,11 +4,10 @@ Ref:
 http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
 """
 
-import glob
-import os
-
 import cv2
+import glob
 import numpy as np
+import os
 
 from basicsr.utils.lmdb import LmdbMaker
 

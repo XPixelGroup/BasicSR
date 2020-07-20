@@ -1,9 +1,8 @@
 import importlib
-from os import path as osp
-
 import mmcv
 import torch
 import torch.utils.data
+from os import path as osp
 
 from basicsr.utils import get_root_logger
 

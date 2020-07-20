@@ -2,13 +2,12 @@
 Test Vid4 (SR) and REDS4 (SR-clean, SR-blur, deblur-clean, deblur-compression)
 datasets
 '''
+import cv2
 import glob
 import logging
-from os import path as osp
-
-import cv2
 import numpy as np
 import torch
+from os import path as osp
 
 from basicsr.data import util as data_util
 from basicsr.models.archs import EDVR_arch as EDVR_arch
@@ -68,7 +67,8 @@ def main():
     # configurations
     #####
     device = torch.device('cuda')
-    data_mode = 'Vid4'  # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
+    data_mode = 'Vid4'
+    # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
     # Vid4: SR
     # REDS4: sharp_bicubic (SR-clean), blur_bicubic (SR-blur);
     #        blur (deblur-clean), blur_comp (deblur-compression).

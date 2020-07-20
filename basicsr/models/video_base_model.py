@@ -1,10 +1,9 @@
 import importlib
+import mmcv
+import torch
 from collections import Counter
 from copy import deepcopy
 from os import path as osp
-
-import mmcv
-import torch
 from torch import distributed as dist
 
 from basicsr.models.sr_model import SRModel

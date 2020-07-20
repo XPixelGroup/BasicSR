@@ -1,6 +1,5 @@
-from os import path as osp
-
 import mmcv
+from os import path as osp
 
 from basicsr.utils.lmdb import make_lmdb_from_imgs
 
