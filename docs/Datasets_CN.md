@@ -1,16 +1,56 @@
 # 数据准备
 
-TODO
+## 数据存储形式
+目前支持的数据存储形式有以下三种:
+1. 直接以图像/视频的格式存放在硬盘
+2. 制作成[LMDB](https://lmdb.readthedocs.io/en/release/). 训练数据使用这种形式, 一般会加快读取速度.
+3. 若是支持 [Memcached](https://memcached.org/) 或 [Ceph](https://ceph.io/), 则可以使用. 它们一般应用在集群上.
 
-----
-# Below is out-of-dated!
+#### 如何使用
+目前, 我们可以通过 configuation yaml 文件方便的修改. 以支持DIV2K的[PairedImageDataset](../basicsr/data/paired_image_dataset.py)为例, 根据不同的要求修改yaml文件:
+1. 直接读取硬盘数据
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    io_backend:
+      type: disk
+    ```
+1. 使用LMDB.
+在使用前需要先制作LMDB, 参见[xxxx](xxx), 注意我们在原有的LDMB上, 新增加了特有的meta信息, 因此其他来源的LMDB并不能直接拿过来使用.
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    io_backend:
+      type: lmdb
+    ```
+1. 使用Memecached
+机器/集群需要支持Memcached. 具体的配置文件根据实际的Memcached需要进行修改:
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K_train_LR_bicubicX4_sub
+    io_backend:
+      type: memcached
+      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      sys_path: /mnt/lustre/share/pymc/py3
+    ```
+
+#### 如何实现
+实现是调用了[MMCV](https://github.com/open-mmlab/mmcv)优雅的FileClient设计. 为了使用BasicSR的设计, 我们对接口做了一些接口 (主要是为了适应LMDB), 参见[file_client.py](../basicsr/utils/file_client.py).
+
+在实现我们自己的dataloader的时候, 可以方便的调用接口, 以实现对不同数据存储形式的支持, 具体可以参考[PairedImageDataset](../basicsr/data/paired_image_dataset.py).
+
+#### LMDB具体说明
+
+## 图像数据
+
+## 视频帧数据
 
 
-There are three kinds of datasets: training dataset, validation dataset, and testing dataset. Usually, we do not explicitly distinguish between the validation and testing datasets in image/video restoration. So we use the validation/testing dataset in our description. <br/>
-We recommend to use [LMDB](https://lmdb.readthedocs.io/en/release/) (Lightning Memory-Mapped Database) formats for the training datasets, and directly read images (using image folder) during validation/testing. So there is no need to prepare LMDB files for evaluation/testing datasets.
 
----
-We organize the training datasets in LMDB format for **faster training IO speed**. If you do not want to use LMDB, you can also use the **image folder**.<br/>
 Besides the standard LMDB folder, we add an extra `meta_info.pkl` file to record the **meta information** of the dataset, such as the dataset name, keys and resolution of each image in the dataset.
 
 Take the DIV2K dataset in LMDB for example, the folder structure and meta information are as follows:
