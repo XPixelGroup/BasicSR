@@ -1,13 +1,22 @@
 # 数据准备
+[English](Datasets.md) | [简体中文](Datasets_CN.md)
+
+#### 目录
+1. [数据存储形式](#数据存储形式)
+    1. [如何使用](#如何使用)
+    1. [如何实现](#如何实现)
+    1. [LMDB具体说明](#LMDB具体说明)
+1. [图像数据](#图像数据)
+1. [视频帧数据](#视频帧数据)
 
 ## 数据存储形式
 目前支持的数据存储形式有以下三种:
 1. 直接以图像/视频的格式存放在硬盘
-2. 制作成[LMDB](https://lmdb.readthedocs.io/en/release/). 训练数据使用这种形式, 一般会加快读取速度.
+2. 制作成 [LMDB](https://lmdb.readthedocs.io/en/release/). 训练数据使用这种形式, 一般会加快读取速度.
 3. 若是支持 [Memcached](https://memcached.org/) 或 [Ceph](https://ceph.io/), 则可以使用. 它们一般应用在集群上.
 
 #### 如何使用
-目前, 我们可以通过 configuation yaml 文件方便的修改. 以支持DIV2K的[PairedImageDataset](../basicsr/data/paired_image_dataset.py)为例, 根据不同的要求修改yaml文件:
+目前, 我们可以通过 configuation yaml 文件方便的修改. 以支持DIV2K的 [PairedImageDataset](../basicsr/data/paired_image_dataset.py) 为例, 根据不同的要求修改yaml文件:
 1. 直接读取硬盘数据
     ```yaml
     type: PairedImageDataset
@@ -17,7 +26,7 @@
       type: disk
     ```
 1. 使用LMDB.
-在使用前需要先制作LMDB, 参见[xxxx](xxx), 注意我们在原有的LDMB上, 新增加了特有的meta信息, 因此其他来源的LMDB并不能直接拿过来使用.
+在使用前需要先制作LMDB, 参见 [LMDB具体说明](#LMDB具体说明), 注意我们在原有的 LDMB 上, 新增加了特有的 meta 信息, 因此其他来源的LMDB并不能直接拿过来使用.
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
@@ -26,7 +35,7 @@
       type: lmdb
     ```
 1. 使用Memecached
-机器/集群需要支持Memcached. 具体的配置文件根据实际的Memcached需要进行修改:
+机器/集群需要支持 Memcached. 具体的配置文件根据实际的 Memcached 需要进行修改:
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K_train_HR_sub
@@ -39,76 +48,69 @@
     ```
 
 #### 如何实现
-实现是调用了[MMCV](https://github.com/open-mmlab/mmcv)优雅的FileClient设计. 为了使用BasicSR的设计, 我们对接口做了一些接口 (主要是为了适应LMDB), 参见[file_client.py](../basicsr/utils/file_client.py).
+实现是调用了[MMCV](https://github.com/open-mmlab/mmcv) 优雅的 FileClient 设计. 为了使用 BasicSR 的设计, 我们对接口做了一些接口 (主要是为了适应LMDB), 参见 [file_client.py](../basicsr/utils/file_client.py).
 
-在实现我们自己的dataloader的时候, 可以方便的调用接口, 以实现对不同数据存储形式的支持, 具体可以参考[PairedImageDataset](../basicsr/data/paired_image_dataset.py).
+在实现我们自己的 dataloader 的时候, 可以方便的调用接口, 以实现对不同数据存储形式的支持, 具体可以参考 [PairedImageDataset](../basicsr/data/paired_image_dataset.py).
 
 #### LMDB具体说明
+我们在训练的时候使用 LMDB 存储形式可以加快IO和CPU解压缩的速度 (测试的时候数据较少, 一般就没有太必要使用 LMDB). 其具体的加速要根据机器的配置来, 以下几个因素会影响:
+1. 有的机器设置了定时清理缓存, 而 LMDB 依赖于缓存. 因此若一直缓存不进去, 则需要检查以下. 一般 `free -h` 命令下, LMDB 占用的缓存会记录在 `buff/cache` 条目下面
+1. 机器的内存是否足够大, 把整个 LMDB 数据都放进去. 如果不是, 则它会不会更换缓存, 影响速度
+1. 若是第一次缓存 LMDB 数据集, 可能会影响训练速度. 可以在训练前, 进入 LMDB 数据集, 把数据先缓存进去: `cat data.mdb > /dev/nul`
+
+除了标准的 LMDB 文件 (data.mdb 和 lock.mdb) 外, 我们还增加了 `meta_info.txt` 来记录额外的信息.
+下面用一个例子来说明:
+
+**文件结构**
+```
+DIV2K_train_HR_sub.lmdb
+├── data.mdb
+├── lock.mdb
+├── meta_info.txt
+```
+
+**meta信息**
+`meta_info.txt`, 我们采用txt来记录, 是为了可读性. 其里面的内容为:
+```txt
+0001_s001.png (480,480,3) 1
+0001_s002.png (480,480,3) 1
+0001_s003.png (480,480,3) 1
+0001_s004.png (480,480,3) 1
+...
+```
+每一行记录了一张图片, 有三个字段, 分别表示:
+- 图像名字 (带后缀): 0001_s001.png
+- 图像大小: (480,480,3) 表示是480x480x3的图像.
+- 其他参数 (BasicSR里面是使用 cv2 压缩 png 程度): 因为在复原任务中, 我们通常使用 png 来存储, 所以这个 1 表示 png 的压缩程度`CV_IMWRITE_PNG_COMPRESSION `是 1. 它取值为[0, 9]的整数, 更大的值表示更强的压缩, 即更小的储存空间和更长的压缩时间.
+
+**二进制内容**
+为了方便, 我们在 LMDB 数据集中存储的二进制内容是 cv2 encode过的 image: `cv2.imencode('.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level]`. 可以通过 `compress_level` 控制压缩程度, 平衡存储空间和读取(解压缩)速度.
 
 ## 图像数据
+推荐把其他数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要修改configuration yaml文件的对应路径.
+
+#### DIV2K
+DIV2K 数据集被广泛使用在图像复原的任务中.
+
+1. 从[官网](https://data.vision.ee.ethz.ch/cvl/DIV2K)下载数据.
+1. Crop to sub-images: 因为 DIV2K 数据集是 2K 分辨率的 (比如: 2048x1080)的, 而我们在训练的时候往往并不要那么大 (常见的是 128x128 或者 192x192 的训练patch). 因此我们可以可以先把2K的图片裁剪成有交叠的 480x480 的子图像块. 然后再由 dataloader 从这个 480x480 的子图像块中随机crop出 128x128 或者 192x192 的训练patch.<br>
+    运行脚本 [extract_subimages.py](../scripts/extract_subimages.py):
+    ```
+    python scripts/extract_subimages.py
+    ```
+    使用之前可能需要修改文件里面的路径和配置参数.
+1.
+#### 其他常见图像超分数据集
 
 ## 视频帧数据
 
+### REDS
+
+### Vimeo90K
 
 
-Besides the standard LMDB folder, we add an extra `meta_info.pkl` file to record the **meta information** of the dataset, such as the dataset name, keys and resolution of each image in the dataset.
 
-Take the DIV2K dataset in LMDB for example, the folder structure and meta information are as follows:
-#### folder structure
-```
-- DIV2K800_sub.lmdb
-|--- data.mdb
-|--- lock.mdb
-|--- meta_info.pkl
-```
-#### meta information in `meta_info.pkl`
-`meta_info.pkl` is a python-pickled dict.
 
-|     Key    |                           Value                           |
-|:----------:|:---------------------------------------------------------:|
-|    name    |                `DIV2K800_sub_GT`                    |
-|    keys    |   [ `0001_s001`, `0001_s002`, ..., `0800_s040` ] |
-| resolution |                       [ `3_480_480` ]                    |
-
-If all the images in the LMDB file have the same resolution, only one copy of `resolution` is stored. Otherwise, each key has its corresponding `resolution`.
-
-----
-
-## Table of Contents
-1. [Prepare DIV2K](#prepare-div2k)
-1. [Common Image SR Datasets](#common-image-sr-datasets)
-1. [Prepare Vimeo90K](#prepare-vimeo90k)
-1. [Prepare REDS](#prepare-reds)
-
-The following shows how to prepare the datasets in detail.<br/>
-It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
-
-## Prepare DIV2K
-[DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) is a widely-used dataset in image super-resolution. In many research works, a MATLAB bicubic downsampling kernel is assumed. It may not be practical because the MATLAB bicubic downsampling kernel is not a good approximation for the implicit degradation kernels in real-world scenarios. And there is another topic named **blind restoration** that deals with this gap.
-
-We provide a demo script for DIV2K X4 datasets preparation.
-```
-cd codes/data_scripts
-bash prepare_DIV2K_x4_dataset.sh
-```
-The specific steps are  as follows:
-
-**Step 1**: Download the GT images and corresponding LR images from the [official DIV2K website](https://data.vision.ee.ethz.ch/cvl/DIV2K/).<br/>
-Here are shortcuts for the download links:
-
-| Name | links (training) | links (validation)|
-|:----------:|:----------:|:----------:|
-|Ground-Truth|[DIV2K_train_HR](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip)|[DIV2K_valid_HR](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip)|
-|LRx2 (MATLAB bicubic)|[DIV2K_train_LR_bicubic_X2](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip)|[DIV2K_valid_LR_bicubic_X2](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip)|
-|LRx3 (MATLAB bicubic)|[DIV2K_train_LR_bicubic_X3](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X3.zip)|[DIV2K_valid_LR_bicubic_X3](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X3.zip)|
-|LRx4 (MATLAB bicubic)|[DIV2K_train_LR_bicubic_X4](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X4.zip)|[DIV2K_valid_LR_bicubic_X4](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X4.zip)|
-|LRx8 (MATLAB bicubic)|[DIV2K_train_LR_bicubic_X8](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_x8.zip)|[DIV2K_valid_LR_bicubic_X8](http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_x8.zip)|
-
-**Step 2**: Rename the downloaded LR images to have the same name as those of GT.<br/> Run the script `data_scripts/rename.py`. Remember to modify the folder path.
-
-**Step 3 (optional)**: Generate low-resolution counterparts. <br/>If you have downloaded the LR datasets, skip this step. Otherwise, you can use the script `data_scripts/generate_mod_LR_bic.m` or `data_scripts/generate_mod_LR_bic.py` to generate LR images. Make sure the LR and GT pairs have the same name.
-
-**Step 4**: Crop to sub-images. <br/>DIV2K has 2K resolution (e.g., 2048 × 1080) images but the training patches are usually very small (e.g., 128x128). So there is a waste if reading the whole image but only using a very small part of it. In order to accelerate the IO speed during training, we crop the 2K resolution images to sub-images (here, we crop to 480x480 sub-images). You can skip this step if your have a high IO speed.<br/>
 Note that the size of sub-images is different from the training patch size (`GT_size`) defined in the config file. Specifically, the sub-images with 480x480 are stored in the LMDB files. The dataloader will further randomly crop the sub-images to `GT_size x GT_size` patches for training. <br/>
 Use the script `data_scripts/extract_subimages.py` with `mode = 'pair'`. Remember to modify the following configurations if you have different settings:
 ```
