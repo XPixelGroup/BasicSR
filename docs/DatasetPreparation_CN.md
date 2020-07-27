@@ -1,5 +1,5 @@
 # 数据准备
-[English](Datasets.md) | [简体中文](Datasets_CN.md)
+[English](DatasetPreparation.md) | [简体中文](DatasetPreparation_CN.md)
 
 #### 目录
 1. [数据存储形式](#数据存储形式)

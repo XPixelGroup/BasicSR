@@ -23,7 +23,7 @@ pip install -r requirements.txt
 参见 [project boards](https://github.com/xinntao/BasicSR/projects).
 
 ## 数据准备
-参见 [Datasets_CN.md](docs/Datasets_CN.md).
+参见 [DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md).
 
 ## 训练和测试
 参见 [TrainTest_CN.md](docs/TrainTest_CN.md).

@@ -23,7 +23,7 @@ Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows.
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 ## Dataset Preparation
-Please refer to [Datasets.md](docs/Datasets.md) for more details.
+Please refer to [DatasetPreparation.md](docs/DatasetPreparation.md) for more details.
 
 ## Train and Test
 Please see [TrainTest.md](docs/TrainTest.md) for the basic usage, *i.e.,* training and testing.
