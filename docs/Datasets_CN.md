@@ -100,7 +100,7 @@ DIV2K_train_HR_sub.lmdb
 ## 图像数据
 推荐把数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要相应地修改configuration yaml文件的路径.
 
-#### DIV2K
+### DIV2K
 DIV2K 数据集被广泛使用在图像复原的任务中.
 
 **数据准备步骤**
@@ -116,7 +116,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_div2k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `tests/test_paired_image_dataset.py`, 注意修改函数相应的配置和路径.
 
-#### 其他常见图像超分数据集
+### 其他常见图像超分数据集
 我们提供了常见图像超分数据集的列表.
 
 <table>
@@ -205,11 +205,12 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 ## 视频帧数据
 推荐把数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要相应地修改configuration yaml文件的路径.
 
-#### REDS
+### REDS
 [官网](https://seungjunnah.github.io/Datasets/reds.html) <br>
 我们重新整合了 training 和 validation 数据到一个文件夹中: 训练集合原来有240个clip (序号从000到239), 我们把validation clips重命名, 从240到269.
 
 **Validation的划分**
+
 官方的validation划分和EDVR的划分不同 (当时为了比赛的设置):
 
 | name | clips | total number |
@@ -225,7 +226,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_reds`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `python tests/test_reds_dataset.py`, 注意修改函数相应的配置和路径.
 
-#### Vimeo90K
+### Vimeo90K
 [官网](http://toflow.csail.mit.edu/)
 
 **数据准备步骤**
