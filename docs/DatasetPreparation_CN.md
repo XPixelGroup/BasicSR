@@ -20,7 +20,7 @@
 3. 若是支持 [Memcached](https://memcached.org/) 或 [Ceph](https://ceph.io/), 则可以使用. 它们一般应用在集群上.
 
 #### 如何使用
-目前, 我们可以通过 configuation yaml 文件方便的修改. 以支持DIV2K的 [PairedImageDataset](../basicsr/data/paired_image_dataset.py) 为例, 根据不同的要求修改yaml文件:
+目前, 我们可以通过 configuration yaml 文件方便的修改. 以支持DIV2K的 [PairedImageDataset](../basicsr/data/paired_image_dataset.py) 为例, 根据不同的要求修改yaml文件:
 1. 直接读取硬盘数据
     ```yaml
     type: PairedImageDataset
@@ -30,7 +30,7 @@
       type: disk
     ```
 1. 使用LMDB.
-在使用前需要先制作LMDB, 参见 [LMDB具体说明](#LMDB具体说明), 注意我们在原有的 LDMB 上, 新增加了 meta 信息, 而且具体保存二进制内容也不同, 因此其他来源的LMDB并不能直接拿过来使用.
+在使用前需要先制作LMDB, 参见 [LMDB具体说明](#LMDB具体说明), 注意我们在原有的 LMDB 上, 新增加了 meta 信息, 而且具体保存二进制内容也不同, 因此其他来源的LMDB并不能直接拿过来使用.
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
@@ -191,7 +191,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
   </tr>
  <tr>
     <td>OST300</td>
-    <td><sub>300 test images of outdoor scences</sub></td>
+    <td><sub>300 test images of outdoor scenes</sub></td>
   </tr>
 
   <tr>
@@ -231,7 +231,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 
 **数据准备步骤**
 
-1. 下载数据: [`Septuplets dataset --> The original training + test set (82GB)`](http://data.csail.mit.edu/tofu/dataset/vimeo_septuplet.zip). 这些是Ground-Truth. 里面有·sep_trainlist.txt`文件来区分训练数据.
+1. 下载数据: [`Septuplets dataset --> The original training + test set (82GB)`](http://data.csail.mit.edu/tofu/dataset/vimeo_septuplet.zip). 这些是Ground-Truth. 里面有`sep_trainlist.txt`文件来区分训练数据.
 1. 生成低分辨率图片. (TODO)
 The low-resolution images in the Vimeo90K test dataset are generated with the MATLAB bicubic downsampling kernel. Use the script `data_scripts/generate_LR_Vimeo90K.m` (run in MATLAB) to generate the low-resolution images.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_vimeo90k`函数, 并需要修改函数相应的配置和路径.
