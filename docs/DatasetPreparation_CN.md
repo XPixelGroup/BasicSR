@@ -38,7 +38,7 @@
     io_backend:
       type: lmdb
     ```
-1. 使用Memecached
+1. 使用Memcached
 机器/集群需要支持 Memcached. 具体的配置文件根据实际的 Memcached 需要进行修改:
     ```yaml
     type: PairedImageDataset
@@ -85,8 +85,8 @@ DIV2K_train_HR_sub.lmdb
 ```
 每一行记录了一张图片, 有三个字段, 分别表示:
 - 图像名称 (带后缀): 0001_s001.png
-- 图像大小: (480,480,3) 表示是480x480x3的图像.
-- 其他参数 (BasicSR里面使用了 cv2 压缩 png 程度): 因为在复原任务中, 我们通常使用 png 来存储, 所以这个 1 表示 png 的压缩程度 `CV_IMWRITE_PNG_COMPRESSION ` 是 1. 它可以取值为[0, 9]的整数, 更大的值表示更强的压缩, 即更小的储存空间和更长的压缩时间.
+- 图像大小: (480,480,3) 表示是480x480x3的图像
+- 其他参数 (BasicSR里面使用了 cv2 压缩 png 程度): 因为在复原任务中, 我们通常使用 png 来存储, 所以这个 1 表示 png 的压缩程度 `CV_IMWRITE_PNG_COMPRESSION` 是 1. 它可以取值为[0, 9]的整数, 更大的值表示更强的压缩, 即更小的储存空间和更长的压缩时间.
 
 **二进制内容**
 
@@ -94,7 +94,7 @@ DIV2K_train_HR_sub.lmdb
 
 **如何制作**
 
-我们提供了脚本来制作. 在运行脚本前, 需要根据需求修改相应的参数. 目前支持 DIV2K, REDS 和Vimeo90K 的数据; 其他数据集可仿照进行制作. <br>
+我们提供了脚本来制作. 在运行脚本前, 需要根据需求修改相应的参数. 目前支持 DIV2K, REDS 和 Vimeo90K 数据集; 其他数据集可仿照进行制作. <br>
  `python scripts/create_lmdb.py`
 
 ## 图像数据

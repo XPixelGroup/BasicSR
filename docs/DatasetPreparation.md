@@ -1,15 +1,102 @@
-# To be updated
+# Dataset Preparation
+[English](DatasetPreparation.md) | [简体中文](DatasetPreparation_CN.md)
 
-TODO
+#### Contents
+1. [Data Storage Format](#Data-Storage-Format)
+    1. [How to Use](#How-to-Use)
+    1. [How to Implement](#How-to-Implement)
+    1. [LMDB Description](#LMDB-Description)
+1. [图像数据](#图像数据)
+    1. [DIV2K](#DIV2K)
+    1. [其他常见图像超分数据集](#其他常见图像超分数据集)
+1. [视频帧数据](#视频帧数据)
+    1. [REDS](#REDS)
+    1. [Vimeo90K](#Vimeo90K)
 
-----
-# Below is out-of-dated!
+## Data Storage Format
+At present, there are three types of data storage formats supported:
+1. Store in `hard disk` directly in the format of images / video frames.
+1. Make [LMDB](https://lmdb.readthedocs.io/en/release/), which could accelarate the IO and decompression speed during training.
+1. [memcached](https://memcached.org/) or [CEPH](https://ceph.io/) are also supported, if they are installed (usually on clusters).
 
+#### How to Use
+At present, we can modify the configuration yaml file to support different data storage formats. Taking [PairedImageDataset](../basicsr/data/paired_image_dataset.py) as an example, we can modify the yaml file according to different requirements.
+1. Directly read disk data.
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    io_backend:
+      type: disk
+    ```
+1. Use LMDB.
+We need to make LMDB before using it. Please refer to [LMDB description](#LMDB-Description). Note that we add meta information to the original LMDB, and the specific binary contents are also different. Therefore, LMDB from other sources can not be used directly.
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    io_backend:
+      type: lmdb
+    ```
+1. Use Memcechaed
+Your machine/clusters mush support memcached before using it. The configuration file should be modified accordingly.
+    ```yaml
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K_train_LR_bicubicX4_sub
+    io_backend:
+      type: memcached
+      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
+      client_cfg: /mnt/lustre/share/memcached_client/client.conf
+      sys_path: /mnt/lustre/share/pymc/py3
+    ```
+#### How to Implement
+The implementation is to call the elegent fileclient design in [mmcv](https://github.com/open-mmlab/mmcv). In order to be compatible with BasicSR, we have made some changes to the interface (mainly to adapt to LMDB). See [file_client.py](../basicsr/utils/file_client.py) for details.
 
-There are three kinds of datasets: training dataset, validation dataset, and testing dataset. Usually, we do not explicitly distinguish between the validation and testing datasets in image/video restoration. So we use the validation/testing dataset in our description. <br/>
-We recommend to use [LMDB](https://lmdb.readthedocs.io/en/release/) (Lightning Memory-Mapped Database) formats for the training datasets, and directly read images (using image folder) during validation/testing. So there is no need to prepare LMDB files for evaluation/testing datasets.
+When we implement our own dataloader, we can easily call the interfaces to support different data storage forms. Please refer to [PairedImageDataset](../basicsr/data/paired_image_dataset.py) for more details.
+
+#### LMDB Description
+During training, we use LMDB to speed up the IO and CPU decompression. (During testing, usually the data is limited and it is generally not necessary to use LMDB). The acceleration depends on the configurations of the machine, and the following factors will affect the speed:
+1. Some machines will clean cache regularly, and LMDB depends on the cache mechanism. Therefore, if the data fails to be cached, you need to check it. After the command `free -h`, the cache occupied by LMDB will be recorded under the `buff/cache` entry.
+1. Whether the memory of the machine is large enough to put the whole LMDB data in. If not, it will affect the speed due to the need to constantly update the cache.
+1. If you cache the LMDB dataset for the first time, it may affect the training speed. So before training, you can enter the LMDB dataset directory and cache the data by: ` cat data.mdb > /dev/nul`.
+
+In addition to the standard LMDB file (data.mdb and lock.mdb), we also add `meta_info.txt` to record additional information.
+Here is an example:
+
+**Folder Structure**
+```
+DIV2K_train_HR_sub.lmdb
+├── data.mdb
+├── lock.mdb
+├── meta_info.txt
+```
+
+**meta information**
+
+`meta_info.txt`, We use txt file to record for readability. The contents are:
+```txt
+0001_s001.png (480,480,3) 1
+0001_s002.png (480,480,3) 1
+0001_s003.png (480,480,3) 1
+0001_s004.png (480,480,3) 1
+...
+```
+Each line records an image with three fields, which indicate:
+- Image name (with suffix): 0001_s001.png
+- Image size: (480, 480,3) represents a 480x480x3 image
+- Other parameters (BasicSR uses cv2 compression level for PNG): In restoration tasks, we usually use PNG format, so `1` represents the PNG compression level `CV_IMWRITE_PNG_COMPRESSION` is 1. It can be an integer in [0, 9]. A larger value indicates stronger compression, that is, smaller storage space and longer compression time.
+
+**Binary Content**
+
+For convenience, the binary content stored in LMDB dataset is encoded image by cv2: `cv2.imencode('.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level]`. You can control the compression level by `compress_level`, balancing storage space and the speed of reading (including decompression).
+
+**How to Make LMDB**
+We provide a script to make LMDB. Before running the script, we need to modify the corresponding parameters accordingly. At present, we support DIV2K, REDS and Vimeo90K datasets; other datasets can also be made in a similar way.<br>
+ `python scripts/create_lmdb.py`
 
 ---
+
 We organize the training datasets in LMDB format for **faster training IO speed**. If you do not want to use LMDB, you can also use the **image folder**.<br/>
 Besides the standard LMDB folder, we add an extra `meta_info.pkl` file to record the **meta information** of the dataset, such as the dataset name, keys and resolution of each image in the dataset.
 
