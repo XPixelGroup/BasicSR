@@ -12,10 +12,8 @@ datasets:
     dataroot_gt: ./datasets/DIV2K_train_HR_sub
     dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
     io_backend:
-      type: memcached
-      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
-      client_cfg: /mnt/lustre/share/memcached_client/client.conf
-      sys_path: /mnt/lustre/share/pymc/py3
+      type: disk
+
 
     gt_size: 128
     use_flip: true
