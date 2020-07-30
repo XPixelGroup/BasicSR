@@ -1,7 +1,26 @@
 # 训练和测试
+[English](TrainTest.md) | [简体中文](TrainTest_CN.md)
 
-In the root path, run:
+所有的命令都在 `BasicSR` 的根目录下运行. <br>
+一般来说, 训练和测试都有以下的步骤:
+1. 准备数据. 参见 [DatasetPreparation_CN.md](DatasetPreparation_CN.md)
+1. 修改Config文件. Config文件在 `options` 目录下面. 具体的Config配置含义, 可参考 [Config说明](Config_CN.md)
+1. [Optional] 如果是测试或需要预训练, 则需下载预训练模型, 参见 [模型库](ModelZoo_CN.md)
+1. 运行命令. 根据需要，使用 [训练命令](#训练命令) 或 [测试命令](#测试命令)
 
+#### 目录
+1. [](#数据存储形式)
+    1. [如何使用](#如何使用)
+    1. [如何实现](#如何实现)
+    1. [LMDB具体说明](#LMDB具体说明)
+1. [图像数据](#图像数据)
+    1. [DIV2K](#DIV2K)
+    1. [其他常见图像超分数据集](#其他常见图像超分数据集)
+1. [视频帧数据](#视频帧数据)
+    1. [REDS](#REDS)
+    1. [Vimeo90K](#Vimeo90K)
+
+## 训练命令
 ```bash
 ############################
 # Single GPU training
@@ -36,7 +55,10 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port=4321 basicsr
 
 # 8 GPUs
 
+```
 
+## 测试命令
+```
 ############################
 # Slurm training
 ############################
@@ -68,28 +90,6 @@ GLOG_vmodule=MemcachedClient=-1 srun -p partition --mpi=pmi2 --job-name=test --g
 tensorboard --logdir tb_logger --port 5500 --bind_all
 ```
 
-----
-# Below is out-of-dated!
-
-# Image SR
-## How to Test
-#### Test SR models
-1. Modify the configuration file `options/test/test_SRResNet.yml`
-1. Run command: `python test.py -opt options/test/test_SRResNet.yml`
-#### Test ESRGAN (SRGAN) models
-1. Modify the configuration file `options/test/test_ESRGAN.yml`
-1. Run the command: `python test.py -opt options/test/test_ESRGAN.yml`
-
-<!--
-#### Test SFTGAN models
-1. Obtain the segmentation probability maps: `python test_seg.py`
-1. Run command: `python test_sftgan.py`
--->
-## How to Train
-#### Train SR models
-1. Prepare datasets, usually the DIV2K dataset. More details are in [DATASETS.md](docs/DATASETS.md).
-1. Modify the configuration file `options/train/train_SRResNet.yml`
-1. Run the command: `python train.py -opt options/train/train_SRResNet.yml`
 
 #### Train ESRGAN (SRGAN) models
 We use a PSNR-oriented pre-trained SR model to initialize the parameters for better quality and faster convergence.
