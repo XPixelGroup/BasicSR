@@ -22,7 +22,7 @@ The figure below shows the overall framework.
 
 When we add a new class or function, it can be used directly in the configuration file. The program will automatically scan, find and instantiate according to the class name or function name in the configuration file. This process is called dynamic instantiation.
 
-Specifically, we implement it through `importlib` and `getattr`. Taking the data module as example, we follow the below steps in [`data/__init__.py`](../data/__init__.py):
+Specifically, we implement it through `importlib` and `getattr`. Taking the data module as example, we follow the below steps in [`data/__init__.py`](../basicsr/data/__init__.py):
 
 1. Scan all the files under the data folder with '_dataset' in file names
 1. Import the classes or functions in these files through `importlib`

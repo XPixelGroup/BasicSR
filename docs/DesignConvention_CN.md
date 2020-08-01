@@ -24,7 +24,7 @@
 
 当我们新写了类 (Class) 或 函数 时, 可直接在配置文件中使用. 程序会根据配置文件的类名 或 函数名, 自动查找并实例化. 这个过程称为 动态实例化 (Dynamic Instantiation).
 
-具体而言, 我们是通过 `importlib` 和 `getattr` 来实现的. 以data为例, 我们在[`data/__init__.py`](../data/__init__.py) 中是如下做的:
+具体而言, 我们是通过 `importlib` 和 `getattr` 来实现的. 以data为例, 我们在[`data/__init__.py`](../basicsr/data/__init__.py) 中是如下做的:
 
 1. 扫描所有以`_dataset.py`为结尾的文件 (这是约定)
 1. 把这些文件中的 类 或 函数 通过 importlib 都 import 进来
