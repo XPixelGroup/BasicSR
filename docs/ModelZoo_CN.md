@@ -16,7 +16,7 @@
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
-   <img src="../assets/wandb.jpg">
+   <img src="../assets/wandb.jpg" height="350">
 </a></p>
 
 
