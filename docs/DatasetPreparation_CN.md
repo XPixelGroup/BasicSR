@@ -1,7 +1,9 @@
 # 数据准备
+
 [English](DatasetPreparation.md) | [简体中文](DatasetPreparation_CN.md)
 
 #### 目录
+
 1. [数据存储形式](#数据存储形式)
     1. [如何使用](#如何使用)
     1. [如何实现](#如何实现)
@@ -14,14 +16,19 @@
     1. [Vimeo90K](#Vimeo90K)
 
 ## 数据存储形式
+
 目前支持的数据存储形式有以下三种:
+
 1. 直接以图像/视频帧的格式存放在硬盘
 2. 制作成 [LMDB](https://lmdb.readthedocs.io/en/release/). 训练数据使用这种形式, 一般会加快读取速度.
 3. 若是支持 [Memcached](https://memcached.org/) 或 [Ceph](https://ceph.io/), 则可以使用. 它们一般应用在集群上.
 
 #### 如何使用
+
 目前, 我们可以通过 configuration yaml 文件方便的修改. 以支持DIV2K的 [PairedImageDataset](../basicsr/data/paired_image_dataset.py) 为例, 根据不同的要求修改yaml文件:
+
 1. 直接读取硬盘数据
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
@@ -29,8 +36,10 @@
     io_backend:
       type: disk
     ```
+
 1. 使用LMDB.
 在使用前需要先制作LMDB, 参见 [LMDB具体说明](#LMDB具体说明), 注意我们在原有的 LMDB 上, 新增加了 meta 信息, 而且具体保存二进制内容也不同, 因此其他来源的LMDB并不能直接拿过来使用.
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
@@ -38,8 +47,10 @@
     io_backend:
       type: lmdb
     ```
+
 1. 使用Memcached
 机器/集群需要支持 Memcached. 具体的配置文件根据实际的 Memcached 需要进行修改:
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K_train_HR_sub
@@ -52,12 +63,15 @@
     ```
 
 #### 如何实现
+
 实现是调用了[MMCV](https://github.com/open-mmlab/mmcv) 优雅的 FileClient 设计. 为了兼容 BasicSR, 我们对接口做了一些改动 (主要是为了适应LMDB), 参见 [file_client.py](../basicsr/utils/file_client.py).
 
 在实现我们自己的 dataloader 的时候, 可以方便地调用接口, 以实现对不同数据存储形式的支持, 具体可以参考 [PairedImageDataset](../basicsr/data/paired_image_dataset.py) 的写法.
 
 #### LMDB具体说明
+
 我们在训练的时候使用 LMDB 存储形式可以加快IO和CPU解压缩的速度 (测试的时候数据较少, 一般就没有太必要使用 LMDB). 其具体的加速要根据机器的配置来, 以下几个因素会影响:
+
 1. 有的机器设置了定时清理缓存, 而 LMDB 依赖于缓存. 因此若一直缓存不进去, 则需要检查一下. 一般 `free -h` 命令下, LMDB 占用的缓存会记录在 `buff/cache` 条目下面
 1. 机器的内存是否足够大, 能够把整个 LMDB 数据都放进去. 如果不是, 则它由于需要不断更换缓存, 会影响速度
 1. 若是第一次缓存 LMDB 数据集, 可能会影响训练速度. 可以在训练前, 进入 LMDB 数据集目录, 把数据先缓存进去: `cat data.mdb > /dev/nul`
@@ -66,7 +80,8 @@
 下面用一个例子来说明:
 
 **文件结构**
-```
+
+```txt
 DIV2K_train_HR_sub.lmdb
 ├── data.mdb
 ├── lock.mdb
@@ -76,6 +91,7 @@ DIV2K_train_HR_sub.lmdb
 **meta信息**
 
 `meta_info.txt`, 我们采用txt来记录, 是为了可读性. 其里面的内容为:
+
 ```txt
 0001_s001.png (480,480,3) 1
 0001_s002.png (480,480,3) 1
@@ -83,7 +99,9 @@ DIV2K_train_HR_sub.lmdb
 0001_s004.png (480,480,3) 1
 ...
 ```
+
 每一行记录了一张图片, 有三个字段, 分别表示:
+
 - 图像名称 (带后缀): 0001_s001.png
 - 图像大小: (480,480,3) 表示是480x480x3的图像
 - 其他参数 (BasicSR里面使用了 cv2 压缩 png 程度): 因为在复原任务中, 我们通常使用 png 来存储, 所以这个 1 表示 png 的压缩程度 `CV_IMWRITE_PNG_COMPRESSION` 是 1. 它可以取值为[0, 9]的整数, 更大的值表示更强的压缩, 即更小的储存空间和更长的压缩时间.
@@ -98,9 +116,11 @@ DIV2K_train_HR_sub.lmdb
  `python scripts/create_lmdb.py`
 
 ## 图像数据
+
 推荐把数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要相应地修改configuration yaml文件的路径.
 
 ### DIV2K
+
 DIV2K 数据集被广泛使用在图像复原的任务中.
 
 **数据准备步骤**
@@ -108,15 +128,18 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 1. 从[官网](https://data.vision.ee.ethz.ch/cvl/DIV2K)下载数据.
 1. Crop to sub-images: 因为 DIV2K 数据集是 2K 分辨率的 (比如: 2048x1080), 而我们在训练的时候往往并不要那么大 (常见的是 128x128 或者 192x192 的训练patch). 因此我们可以先把2K的图片裁剪成有overlap的 480x480 的子图像块. 然后再由 dataloader 从这个 480x480 的子图像块中随机crop出 128x128 或者 192x192 的训练patch.<br>
     运行脚本 [extract_subimages.py](../scripts/extract_subimages.py):
+
     ```
     python scripts/extract_subimages.py
     ```
+
     使用之前可能需要修改文件里面的路径和配置参数.
     **注意**: sub-image 的尺寸和训练patch的尺寸 (`gt_size`) 是不同的. 我们先把2K分辨率的图像 crop 成 sub-images (往往是 480x480), 然后存储起来. 在训练的时候, dataloader会读取这些sub-images, 然后进一步随机裁剪成 `gt_size` x `gt_size`的大小.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_div2k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `tests/test_paired_image_dataset.py`, 注意修改函数相应的配置和路径.
 
 ### 其他常见图像超分数据集
+
 我们提供了常见图像超分数据集的列表.
 
 <table>
@@ -203,9 +226,11 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 </table>
 
 ## 视频帧数据
+
 推荐把数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要相应地修改configuration yaml文件的路径.
 
 ### REDS
+
 [官网](https://seungjunnah.github.io/Datasets/reds.html) <br>
 我们重新整合了 training 和 validation 数据到一个文件夹中: 训练集合原来有240个clip (序号从000到239), 我们把validation clips重命名, 从240到269.
 
@@ -221,12 +246,14 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 余下的clips拿来做训练集合. 注意: 我们不需要显式地分开训练和验证集合, dataloader会做这件事.
 
 **数据准备步骤**
+
 1. 从[官网](https://seungjunnah.github.io/Datasets/reds.html)下载数据
 1. 整合 training 和 validation 数据: `python scripts/regroup_reds_dataset.py`
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_reds`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `python tests/test_reds_dataset.py`, 注意修改函数相应的配置和路径.
 
 ### Vimeo90K
+
 [官网](http://toflow.csail.mit.edu/)
 
 **数据准备步骤**

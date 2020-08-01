@@ -1,7 +1,9 @@
 # Dataset Preparation
+
 [English](DatasetPreparation.md) | [简体中文](DatasetPreparation_CN.md)
 
 #### Contents
+
 1. [Data Storage Format](#Data-Storage-Format)
     1. [How to Use](#How-to-Use)
     1. [How to Implement](#How-to-Implement)
@@ -14,14 +16,19 @@
     1. [Vimeo90K](#Vimeo90K)
 
 ## Data Storage Format
+
 At present, there are three types of data storage formats supported:
+
 1. Store in `hard disk` directly in the format of images / video frames.
 1. Make [LMDB](https://lmdb.readthedocs.io/en/release/), which could accelerate the IO and decompression speed during training.
 1. [memcached](https://memcached.org/) or [CEPH](https://ceph.io/) are also supported, if they are installed (usually on clusters).
 
 #### How to Use
+
 At present, we can modify the configuration yaml file to support different data storage formats. Taking [PairedImageDataset](../basicsr/data/paired_image_dataset.py) as an example, we can modify the yaml file according to different requirements.
+
 1. Directly read disk data.
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
@@ -29,8 +36,10 @@ At present, we can modify the configuration yaml file to support different data 
     io_backend:
       type: disk
     ```
+
 1. Use LMDB.
 We need to make LMDB before using it. Please refer to [LMDB description](#LMDB-Description). Note that we add meta information to the original LMDB, and the specific binary contents are also different. Therefore, LMDB from other sources can not be used directly.
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
@@ -38,8 +47,10 @@ We need to make LMDB before using it. Please refer to [LMDB description](#LMDB-D
     io_backend:
       type: lmdb
     ```
+
 1. Use Memcached
 Your machine/clusters mush support memcached before using it. The configuration file should be modified accordingly.
+
     ```yaml
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K_train_HR_sub
@@ -50,13 +61,17 @@ Your machine/clusters mush support memcached before using it. The configuration 
       client_cfg: /mnt/lustre/share/memcached_client/client.conf
       sys_path: /mnt/lustre/share/pymc/py3
     ```
+
 #### How to Implement
+
 The implementation is to call the elegant fileclient design in [mmcv](https://github.com/open-mmlab/mmcv). In order to be compatible with BasicSR, we have made some changes to the interface (mainly to adapt to LMDB). See [file_client.py](../basicsr/utils/file_client.py) for details.
 
 When we implement our own dataloader, we can easily call the interfaces to support different data storage forms. Please refer to [PairedImageDataset](../basicsr/data/paired_image_dataset.py) for more details.
 
 #### LMDB Description
+
 During training, we use LMDB to speed up the IO and CPU decompression. (During testing, usually the data is limited and it is generally not necessary to use LMDB). The acceleration depends on the configurations of the machine, and the following factors will affect the speed:
+
 1. Some machines will clean cache regularly, and LMDB depends on the cache mechanism. Therefore, if the data fails to be cached, you need to check it. After the command `free -h`, the cache occupied by LMDB will be recorded under the `buff/cache` entry.
 1. Whether the memory of the machine is large enough to put the whole LMDB data in. If not, it will affect the speed due to the need to constantly update the cache.
 1. If you cache the LMDB dataset for the first time, it may affect the training speed. So before training, you can enter the LMDB dataset directory and cache the data by: ` cat data.mdb > /dev/nul`.
@@ -65,7 +80,8 @@ In addition to the standard LMDB file (data.mdb and lock.mdb), we also add `meta
 Here is an example:
 
 **Folder Structure**
-```
+
+```txt
 DIV2K_train_HR_sub.lmdb
 ├── data.mdb
 ├── lock.mdb
@@ -75,6 +91,7 @@ DIV2K_train_HR_sub.lmdb
 **meta information**
 
 `meta_info.txt`, We use txt file to record for readability. The contents are:
+
 ```txt
 0001_s001.png (480,480,3) 1
 0001_s002.png (480,480,3) 1
@@ -82,7 +99,9 @@ DIV2K_train_HR_sub.lmdb
 0001_s004.png (480,480,3) 1
 ...
 ```
+
 Each line records an image with three fields, which indicate:
+
 - Image name (with suffix): 0001_s001.png
 - Image size: (480, 480,3) represents a 480x480x3 image
 - Other parameters (BasicSR uses cv2 compression level for PNG): In restoration tasks, we usually use PNG format, so `1` represents the PNG compression level `CV_IMWRITE_PNG_COMPRESSION` is 1. It can be an integer in [0, 9]. A larger value indicates stronger compression, that is, smaller storage space and longer compression time.
@@ -96,9 +115,11 @@ We provide a script to make LMDB. Before running the script, we need to modify t
  `python scripts/create_lmdb.py`
 
 ## Image Super-Resolution
+
 It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### DIV2K
+
 [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) is a widely-used dataset in image super-resolution. In many research works, a MATLAB bicubic downsampling kernel is assumed. It may not be practical because the MATLAB bicubic downsampling kernel is not a good approximation for the implicit degradation kernels in real-world scenarios. And there is another topic named *blind restoration* that deals with this gap.
 
 **Preparation Steps**
@@ -107,15 +128,18 @@ It is recommended to symlink the dataset root to `datasets`. If your folder stru
 1. Crop to sub-images: DIV2K has 2K resolution (e.g., 2048 × 1080) images but the training patches are usually small (e.g., 128x128 or 192x192). So there is a waste if reading the whole image but only using a very small part of it. In order to accelerate the IO speed during training, we crop the 2K resolution images to sub-images (here, we crop to 480x480 sub-images). <br>
 Note that the size of sub-images is different from the training patch size (`gt_size`) defined in the config file. Specifically, the cropped sub-images with 480x480 are stored. The dataloader will further randomly crop the sub-images to `GT_size x GT_size` patches for training. <br/>
     Run the script [extract_subimages.py](../scripts/extract_subimages.py):
+
     ```
     python scripts/extract_subimages.py
     ```
+
     Remember to modify the paths and configurations if you have different settings.
 1. [Optional] Create LMDB files. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_div2k` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_paired_image_dataset.py`.
 Remember to modify the paths and configurations accordingly.
 
 ### Common Image SR Datasets
+
 We provide a list of common image super-resolution datasets.
 
 <table>
@@ -202,9 +226,11 @@ We provide a list of common image super-resolution datasets.
 </table>
 
 ## Video Super-Resolution
+
 It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### REDS
+
 [Official website](https://seungjunnah.github.io/Datasets/reds.html).<br>
 We regroup the training and validation dataset into one folder. The original training dataset has 240 clips from 000 to 239. And we  rename the validation clips from 240 to 269.
 
@@ -228,6 +254,7 @@ All the left clips are used for training. Note that it it not required to explic
 Remember to modify the paths and configurations accordingly.
 
 ### Vimeo90K
+
 [Official webpage](http://toflow.csail.mit.edu/)
 
 1. Download the dataset: [`Septuplets dataset --> The original training + test set (82GB)`](http://data.csail.mit.edu/tofu/dataset/vimeo_septuplet.zip).This is the Ground-Truth (GT). There is a `sep_trainlist.txt` file listing the training samples in the download zip file.
