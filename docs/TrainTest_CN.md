@@ -11,11 +11,11 @@
 #### 目录
 1. [训练命令](#训练命令)
     1. [单GPU训练](#单GPU训练)
-    1. [分布式(多卡)训练](#分布式(多卡)训练)
+    1. [分布式(多卡)训练](#分布式训练)
     1. [Slurm训练](#Slurm训练)
 1. [测试命令](#测试命令)
     1. [单GPU测试](#单GPU测试)
-    1. [分布式(多卡)测试](#分布式(多卡)测试)
+    1. [分布式(多卡)测试](#分布式测试)
     1. [Slurm测试](#Slurm测试)
 
 ## 训练命令
@@ -26,7 +26,7 @@ CUDA_VISIBLE_DEVICES=0 \
 python basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml
 ```
 
-### 分布式(多卡)训练
+### 分布式训练
 **8 GPUs**
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
@@ -70,7 +70,7 @@ python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA
 CUDA_VISIBLE_DEVICES=0 \
 python basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
 ```
-### 分布式(多卡)测试
+### 分布式测试
 **8 GPUs**
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
