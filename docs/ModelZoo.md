@@ -1,16 +1,50 @@
-# To be updated
+# Model Zoo and Baselines
 
-TODO
+[English](ModelZoo.md) | [简体中文](ModelZoo_CN.md)
 
-----
-# Below is out-of-dated!
+We provide:
 
-
-# Image SR
-#### Pretrained models
-Pre-trained models can be downloaded from [here](https://drive.google.com/open?id=1cw-dEpAdwpuQdEC7WJhITwjrn2Tr-hqd)
+1. Official models converted directly from official released models
+1. Reproduced models with `BasicSR`. Pre-trained models and log examples are provided
 
 You can put the downloaded models in the `experiments/pretrained_models` folder.
+
+**[Download models and logs](https://drive.google.com/drive/folders/1S7hXPHf_5AEX551CLmYg6jdYtDoMWAGh?usp=sharing)**
+
+In addition, we upload the training process and curves in [wandb](https://www.wandb.com/).
+
+**[Training curves in wandb](https://app.wandb.ai/xintao/basicsr)**
+
+<p align="center">
+<a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
+   <img src="../assets/wandb.jpg" height="250">
+</a></p>
+
+#### Contents
+
+1. [Image Super-Resolution](#Image-Super-Resolution)
+
+## Image Super-Resolution
+
+When evaluation:
+
+- We crop `scale` border pixels in each border
+- Evaluated on RGB channels
+
+### Official Models
+
+### Reproduced Models
+
+Experimental name conventions are in []().
+
+|Exp Name         | Set5 (PSNR/SSIM)     | Set14 (PSNR/SSIM)   |DIV2K100 (PSNR/SSIM)   |
+| :------------- | :----------:    | :----------:   |:----------:   |
+| 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb | 30.2468 / 0.8651 | 26.7817 / 0.7451 | 28.9967 / 0.8195 |
+| 002_MSRResNet_x2_f64b16_DIV2K_1000k_B16G1_001pretrain_wandb | 35.7483 / 0.9442 | 31.5403 / 0.8937 |34.6699 / 0.9377|
+| 003_MSRResNet_x3_f64b16_DIV2K_1000k_B16G1_001pretrain_wandb | 32.4038 / 0.9032| 28.4418 / 0.8106|30.9726 / 0.8743 |
+| 004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb | | |
+
+
 
 # Video SR
 #### Evaluation
