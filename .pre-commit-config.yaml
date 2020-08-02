@@ -14,7 +14,7 @@ repos:
 
   # isort
   - repo: https://github.com/timothycrosley/isort
-    rev: 5.1.4
+    rev: 5.2.2
     hooks:
       - id: isort
 
@@ -26,7 +26,7 @@ repos:
 
   # pre-commit-hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.1.0
+    rev: v3.2.0
     hooks:
       - id: trailing-whitespace  # Trim trailing whitespace
       - id: check-yaml  # Attempt to load all yaml files to verify syntax
