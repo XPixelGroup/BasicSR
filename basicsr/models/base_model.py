@@ -100,11 +100,13 @@ class BaseModel():
             raise NotImplementedError(
                 f'Scheduler {scheduler_type} is not implemented yet.')
 
-    def _get_network_description(self, net):
-        """Get the string and total parameters of the network"""
+    def get_bare_model(self, net):
+        """Get bare model, especially under wrapping with
+        DistributedDataParallel or DataParallel.
+        """
         if isinstance(net, (DataParallel, DistributedDataParallel)):
             net = net.module
-        return str(net), sum(map(lambda x: x.numel(), net.parameters()))
+        return net
 
     @master_only
     def print_network(self, net):
@@ -113,12 +115,15 @@ class BaseModel():
         Args:
             net (nn.Module)
         """
-        net_str, net_params = self._get_network_description(net)
         if isinstance(net, (DataParallel, DistributedDataParallel)):
             net_cls_str = (f'{net.__class__.__name__} - '
                            f'{net.module.__class__.__name__}')
         else:
             net_cls_str = f'{net.__class__.__name__}'
+
+        net = self.get_bare_model(net)
+        net_str = str(net)
+        net_params = sum(map(lambda x: x.numel(), net.parameters()))
 
         logger.info(
             f'Network: {net_cls_str}, with parameters: {net_params:,d}')
@@ -255,10 +260,9 @@ class BaseModel():
             param_key (str): The parameter key of loaded network.
                 Default: 'params'.
         """
-        if isinstance(net, (DataParallel, DistributedDataParallel)):
-            net = net.module
-        net_cls_name = net.__class__.__name__
-        logger.info(f'Loading {net_cls_name} model from {load_path}.')
+        net = self.get_bare_model(net)
+        logger.info(
+            f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(load_path)[param_key]
         # remove unnecessary 'module.'
         for k, v in load_net.items():

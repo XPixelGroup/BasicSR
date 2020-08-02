@@ -26,6 +26,7 @@
 ### 单GPU训练
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0 \
 python basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml
 ```
@@ -35,6 +36,7 @@ python basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml
 **8 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
 ```
@@ -42,6 +44,7 @@ python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr
 **4 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
 python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
 ```
@@ -53,6 +56,7 @@ python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr
 **1 GPU**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=MSRResNetx4 --gres=gpu:1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=6 --kill-on-bad-exit=1 \
 python -u basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml --launcher="slurm"
@@ -61,6 +65,7 @@ python -u basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.
 **4 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=EDVRMwoTSA --gres=gpu:4 --ntasks=4 --ntasks-per-node=4 --cpus-per-task=4 --kill-on-bad-exit=1 \
 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher="slurm"
@@ -69,6 +74,7 @@ python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA
 **8 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=EDVRMwoTSA --gres=gpu:8 --ntasks=8 --ntasks-per-node=8 --cpus-per-task=6 --kill-on-bad-exit=1 \
 python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher="slurm"
@@ -79,6 +85,7 @@ python -u basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA
 ### 单GPU测试
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0 \
 python basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
 ```
@@ -88,6 +95,7 @@ python basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
 **8 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml --launcher pytorch
 ```
@@ -95,6 +103,7 @@ python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr
 **4 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
 python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml  --launcher pytorch
 ```
@@ -106,6 +115,7 @@ python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr
 **1 GPU**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=test --gres=gpu:1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=6 --kill-on-bad-exit=1 \
 python -u basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml --launcher="slurm"
@@ -114,6 +124,7 @@ python -u basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
 **4 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=test --gres=gpu:4 --ntasks=4 --ntasks-per-node=4 --cpus-per-task=4 --kill-on-bad-exit=1 \
 python -u basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml --launcher="slurm"
@@ -122,6 +133,7 @@ python -u basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml --la
 **8 GPUs**
 
 ```bash
+PYTHONPATH="./:${PYTHONPATH}" \
 GLOG_vmodule=MemcachedClient=-1 \
 srun -p [partition] --mpi=pmi2 --job-name=test --gres=gpu:8 --ntasks=8 --ntasks-per-node=8 --cpus-per-task=6 --kill-on-bad-exit=1 \
 python -u basicsr/test.py -opt options/test/EDVR/test_EDVR_M_x4_SR_REDS.yml --launcher="slurm"

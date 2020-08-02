@@ -6,7 +6,7 @@ from os import path as osp
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.models import create_model
 from basicsr.utils import get_env_info, get_root_logger, make_exp_dirs
-from basicsr.utils.options import dict2str, dict_to_nonedict, parse
+from basicsr.utils.options import dict2str, parse
 
 
 def main():
@@ -33,8 +33,6 @@ def main():
             init_dist(args.launcher, **opt['dist_params'])
         else:
             init_dist(args.launcher)
-
-    opt = dict_to_nonedict(opt)
 
     make_exp_dirs(opt)
     log_file = osp.join(opt['path']['log'],
