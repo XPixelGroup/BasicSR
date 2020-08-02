@@ -1,5 +1,5 @@
 # general settings
-name: 052_ESRGAN_x4_f64b23_DIV2K_1000k_B16G1_051pretrain_wandb
+name: 052_ESRGAN_x4_f64b23_DIV2K_400k_B16G1_051pretrain_wandb
 model_type: ESRGANModel
 scale: 4
 num_gpu: 1
