@@ -14,6 +14,7 @@
 整个 `BasicSR` 框架可以分为以下几个部分 —— 数据 (Data), 模型 (Model), 配置文件 (Options/Configs) 和训练过程.<br>
 当我们修改或定义新的方法时, 也往往是从以上几个方面进行修改/添加的.<br>
 下图概括了整体的框架.
+
 ![overall_structure](../assets/overall_structure.png)
 
 ## 特性

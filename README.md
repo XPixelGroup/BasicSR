@@ -52,6 +52,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 Please see [DesignConvention.md](docs/DesignConvention.md) for the designs and conventions of the BasicSR codebase.<br>
 The figure below shows the overall framework. More descriptions for each component: <br>
 **[Datasets.md](docs/Datasets.md)**&emsp;|&emsp;**[Models.md](docs/Models.md)**&emsp;|&emsp;**[Config.md](Config.md)**&emsp;|&emsp;**[Logging.md](docs/Logging.md)**
+
 ![overall_structure](./assets/overall_structure.png)
 
 ## License

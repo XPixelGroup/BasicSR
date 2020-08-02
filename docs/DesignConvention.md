@@ -14,6 +14,7 @@
 The `BasicSR` framework can be divided into the following parts: data, model, options/configs and training process. <br>
 When we modify or add a new method, we often modify/add it from the above aspects. <br>
 The figure below shows the overall framework.
+
 ![overall_structure](../assets/overall_structure.png)
 
 ## Features
