@@ -7,8 +7,10 @@
 1. 官方的模型, 它们是从官方release的models直接转化过来的
 1. 复现的模型, 使用`BasicSR`的框架复现的, 提供模型和log的例子
 
-下载的模型可以放在 `experiments/pretrained_models` 文件夹. <br>
-**[下载模型和log](https://drive.google.com/drive/folders/1S7hXPHf_5AEX551CLmYg6jdYtDoMWAGh?usp=sharing)**
+下载的模型可以放在 `experiments/pretrained_models` 文件夹.
+
+**[官方提供的模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**<br>
+**[复现的模型和log](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
 
 此外, 我们在 [wandb](https://www.wandb.com/) 上更新了模型训练的过程和曲线. 大家可以方便的比较:
 

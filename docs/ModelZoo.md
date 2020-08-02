@@ -9,7 +9,8 @@ We provide:
 
 You can put the downloaded models in the `experiments/pretrained_models` folder.
 
-**[Download models and logs](https://drive.google.com/drive/folders/1S7hXPHf_5AEX551CLmYg6jdYtDoMWAGh?usp=sharing)**
+**[Official pre-trained models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**<br>
+**[Download reproduced models and logs](https://drive.google.com/drive/folders/1S7hXPHf_5AEX551CLmYg6jdYtDoMWAGh?usp=sharing)**
 
 In addition, we upload the training process and curves in [wandb](https://www.wandb.com/).
 
