@@ -208,7 +208,7 @@ logger:
   save_checkpoint_freq: !!float 5e3
   # 是否使用tensorboard logger
   use_tb_logger: true
-  # 是否使用wandb logger
+  # 是否使用wandb logger, 目前wandb只是同步tensorboard的内容, 因此要使用wandb, 必须也同时使用tensorboard
   wandb:
     # wandb的project
     project: basicsr

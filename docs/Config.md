@@ -1,4 +1,3 @@
-
 # Configuration
 
 [English](Config.md) | [简体中文](Config_CN.md)
@@ -210,7 +209,7 @@ logger:
   save_checkpoint_freq: !!float 5e3
   # Whether to tensorboard logger
   use_tb_logger: true
-  # Whether to use wandb logger
+  # Whether to use wandb logger. Currently, wandb only sync the tensorboard log. So we should also turn on tensorboard when using wandb
   wandb:
     # wandb project name
     project: basicsr
