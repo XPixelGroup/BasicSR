@@ -32,7 +32,7 @@ def create_dataset(dataset_opt):
     """
     dataset_type = dataset_opt['type']
 
-    # dynamically instantiation
+    # dynamic instantiation
     for module in _dataset_modules:
         dataset_cls = getattr(module, dataset_type, None)
         if dataset_cls is not None:

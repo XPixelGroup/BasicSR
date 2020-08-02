@@ -1,7 +1,7 @@
 from basicsr.models.archs import _arch_modules
 
 
-def dynamical_instantiation(modules, cls_type, opt):
+def dynamic_instantiation(modules, cls_type, opt):
     """Dynamically instantiate class.
 
     Args:
@@ -26,7 +26,7 @@ def dynamical_instantiation(modules, cls_type, opt):
 # generator
 def define_net_g(opt):
     network_type = opt.pop('type')
-    net_g = dynamical_instantiation(_arch_modules, network_type, opt)
+    net_g = dynamic_instantiation(_arch_modules, network_type, opt)
 
     return net_g
 
@@ -35,5 +35,5 @@ def define_net_g(opt):
 def define_net_d(opt):
     network_type = opt.pop('type')
 
-    net_d = dynamical_instantiation(_arch_modules, network_type, opt)
+    net_d = dynamic_instantiation(_arch_modules, network_type, opt)
     return net_d

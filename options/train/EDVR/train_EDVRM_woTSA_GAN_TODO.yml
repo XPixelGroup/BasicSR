@@ -17,10 +17,7 @@ datasets:
     meta_info_file: ./data/meta_info/meta_info_REDS_GT.txt
     val_partition: REDS4
     io_backend:
-      type: memcached
-      server_list_cfg: /mnt/lustre/share/memcached_client/server_list.conf
-      client_cfg: /mnt/lustre/share/memcached_client/client.conf
-      sys_path: /mnt/lustre/share/pymc/py3
+      type: disk
 
     num_frame: 5
     gt_size: 256

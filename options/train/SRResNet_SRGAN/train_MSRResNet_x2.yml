@@ -12,16 +12,16 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
-    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X2_sub
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X2_sub
     # (for lmdb)
-    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
-    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X2_sub.lmdb
+    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X2_sub.lmdb
     filename_tmpl: '{}'
     io_backend:
-      # type: disk
+      type: disk
       # (for lmdb)
-      type: lmdb
+      # type: lmdb
 
     gt_size: 64
     use_flip: true
@@ -99,6 +99,7 @@ logger:
   use_tb_logger: true
   wandb:
     project: basicsr
+    resume_id: ~
 
 # dist training settings
 dist_params:

@@ -28,7 +28,7 @@ def create_model(opt):
     """
     model_type = opt['model_type']
 
-    # dynamically instantiation
+    # dynamic instantiation
     for module in _model_modules:
         model_cls = getattr(module, model_type, None)
         if model_cls is not None:
