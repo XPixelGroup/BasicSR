@@ -4,7 +4,6 @@
 
 ## Supported Datasets
 
-
 | Class         | Task   |Train/Test | Description       |
 | :------------- | :----------:| :----------:    | :----------:   |
 | [PairedImageDataset](../basicsr/data/paired_image_dataset.py) | Image Super-Resolution | Train|Support paired data |
