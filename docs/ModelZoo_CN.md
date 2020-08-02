@@ -19,10 +19,12 @@
    <img src="../assets/wandb.jpg" height="350">
 </a></p>
 
-
 #### 目录
 
 1. [图像超分辨率](#图像超分辨率)
+    1. [图像超分官方模型](#图像超分官方模型)
+    1. [图像超分复现模型](#图像超分复现模型)
+1. [视频超分辨率](#视频超分辨率)
 
 ## 图像超分辨率
 
@@ -31,22 +33,21 @@
 - 所有的图像各条边crop了scale的像素
 - 都在RGB通道上测试
 
-### 官方模型
+### 图像超分官方模型
 
-### 复现模型
+### 图像超分复现模型
 
-实验名称的命名规则参见 []().
+实验名称的命名规则参见 [Config_CN.md](Config_CN.md).
 
 |Exp Name         | Set5 (PSNR/SSIM)     | Set14 (PSNR/SSIM)   |DIV2K100 (PSNR/SSIM)   |
 | :------------- | :----------:    | :----------:   |:----------:   |
 | 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb | 30.2468 / 0.8651 | 26.7817 / 0.7451 | 28.9967 / 0.8195 |
 | 002_MSRResNet_x2_f64b16_DIV2K_1000k_B16G1_001pretrain_wandb | 35.7483 / 0.9442 | 31.5403 / 0.8937 |34.6699 / 0.9377|
 | 003_MSRResNet_x3_f64b16_DIV2K_1000k_B16G1_001pretrain_wandb | 32.4038 / 0.9032| 28.4418 / 0.8106|30.9726 / 0.8743 |
-| 004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb | | |
+| 004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb | | | |
 
+## 视频超分辨率
 
-
-# Video SR
 #### Evaluation
 
 In the evaluation, we include all the input frames and do not crop any border pixels unless otherwise stated.<br/>

@@ -129,7 +129,7 @@ It is recommended to symlink the dataset root to `datasets`. If your folder stru
 Note that the size of sub-images is different from the training patch size (`gt_size`) defined in the config file. Specifically, the cropped sub-images with 480x480 are stored. The dataloader will further randomly crop the sub-images to `GT_size x GT_size` patches for training. <br/>
     Run the script [extract_subimages.py](../scripts/extract_subimages.py):
 
-    ```
+    ```python
     python scripts/extract_subimages.py
     ```
 

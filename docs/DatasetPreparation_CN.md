@@ -129,7 +129,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 1. Crop to sub-images: 因为 DIV2K 数据集是 2K 分辨率的 (比如: 2048x1080), 而我们在训练的时候往往并不要那么大 (常见的是 128x128 或者 192x192 的训练patch). 因此我们可以先把2K的图片裁剪成有overlap的 480x480 的子图像块. 然后再由 dataloader 从这个 480x480 的子图像块中随机crop出 128x128 或者 192x192 的训练patch.<br>
     运行脚本 [extract_subimages.py](../scripts/extract_subimages.py):
 
-    ```
+    ```python
     python scripts/extract_subimages.py
     ```
 

@@ -23,6 +23,9 @@ In addition, we upload the training process and curves in [wandb](https://www.wa
 #### Contents
 
 1. [Image Super-Resolution](#Image-Super-Resolution)
+    1. [Image SR Official Models](#Image-SR-Official-Models)
+    1. [Image SR Reproduced Models](#Image-SR-Reproduced-Models)
+1. [Video Super-Resolution](#Video-Super-Resolution)
 
 ## Image Super-Resolution
 
@@ -31,11 +34,11 @@ When evaluation:
 - We crop `scale` border pixels in each border
 - Evaluated on RGB channels
 
-### Official Models
+### Image SR Official Models
 
-### Reproduced Models
+### Image SR Reproduced Models
 
-Experimental name conventions are in []().
+Experimental name conventions are in [Config.md](Config.md).
 
 |Exp Name         | Set5 (PSNR/SSIM)     | Set14 (PSNR/SSIM)   |DIV2K100 (PSNR/SSIM)   |
 | :------------- | :----------:    | :----------:   |:----------:   |
@@ -44,9 +47,8 @@ Experimental name conventions are in []().
 | 003_MSRResNet_x3_f64b16_DIV2K_1000k_B16G1_001pretrain_wandb | 32.4038 / 0.9032| 28.4418 / 0.8106|30.9726 / 0.8743 |
 | 004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb | | |
 
+## Video Super-Resolution
 
-
-# Video SR
 #### Evaluation
 
 In the evaluation, we include all the input frames and do not crop any border pixels unless otherwise stated.<br/>
