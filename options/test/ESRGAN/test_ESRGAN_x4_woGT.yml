@@ -5,15 +5,15 @@ num_gpu: 1
 
 datasets:
   test_1:  # the 1st test dataset
-    name: val_set5
+    name: Set5
     type: SingleImageDataset
-    dataroot_lq: datasets/val_set5/Set5_bicLRx4
+    dataroot_lq: datasets/Set5/LRbicx4
     io_backend:
       type: disk
   test_2:  # the 2st test dataset
-    name: val_set14
+    name: Set14
     type: SingleImageDataset
-    dataroot_lq: datasets/val_set14/Set14_bicLRx4
+    dataroot_lq: datasets/Set14/LRbicx4
     io_backend:
       type: disk
 
@@ -28,7 +28,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/pretrained_models/ESRGAN_SRx4_DF2KOST_official-2c80e636.pth
+  pretrain_model_g: experiments/pretrained_models/ESRGAN_SRx4_DF2KOST_official-ff704c30.pth
   strict_load: true
 
 # validation settings

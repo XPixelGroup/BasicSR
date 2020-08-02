@@ -1,4 +1,4 @@
-name: 051_RRDBNet_PSNR_x4_f64b23_DIV2K_600k_B16G1_wandb
+name: ESRGAN_PSNR_SRx4_DF2K_official
 model_type: SRModel
 scale: 4
 num_gpu: 1
@@ -19,14 +19,14 @@ datasets:
     io_backend:
       type: disk
 
-  # test_3:
-  #   name: DIV2K100
-  #   type: PairedImageDataset
-  #   dataroot_gt: datasets/DIV2K/DIV2K_valid_HR
-  #   dataroot_lq: datasets/DIV2K/DIV2K_valid_LR_bicubic/X4
-  #   filename_tmpl: '{}x4'
-  #   io_backend:
-  #     type: disk
+  test_3:
+    name: DIV2K100
+    type: PairedImageDataset
+    dataroot_gt: datasets/DIV2K/DIV2K_valid_HR
+    dataroot_lq: datasets/DIV2K/DIV2K_valid_LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
 
 # network structures
 network_g:
@@ -39,7 +39,7 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/051_RRDBNet_PSNR_x4_f64b23_DIV2K_600k_B16G1_wandb/models/net_g_600000.pth
+  pretrain_model_g: experiments/pretrained_models/ESRGAN_PSNR_SRx4_DF2K_official-150ff491.pth
   strict_load: true
 
 # validation settings
@@ -52,7 +52,7 @@ val:
       type: calculate_psnr
       crop_border: 4
       test_y_channel: false
-      ssim:
+    ssim:
       type: calculate_ssim
       crop_border: 4
       test_y_channel: false

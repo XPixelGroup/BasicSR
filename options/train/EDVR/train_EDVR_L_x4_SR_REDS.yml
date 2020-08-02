@@ -1,5 +1,5 @@
 # general settings
-name: 101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb
+name: 104_EDVR_L_x4_SR_REDS_600k_B4G8_valREDS4_103pretrain_wandb
 model_type: EDVRModel
 scale: 4
 num_gpu: 8
@@ -49,20 +49,20 @@ network_g:
   type: EDVR
   num_in_ch: 3
   num_out_ch: 3
-  num_feat: 64
+  num_feat: 128
   num_frame: 5
   deformable_groups: 8
   num_extract_block: 5
-  num_reconstruct_block: 10
+  num_reconstruct_block: 40
   center_frame_idx: ~
   hr_in: false
   with_predeblur: false
-  with_tsa: false
+  with_tsa: true
 
 # path
 path:
-  pretrain_model_g: ~
-  strict_load: true
+  pretrain_model_g: experiments/103_EDVR_L_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb/models/net_g_600000.pth
+  strict_load: false
   resume_state: ~
 
 # training settings
@@ -75,12 +75,13 @@ train:
 
   scheduler:
     type: CosineAnnealingRestartLR
-    periods: [150000, 150000, 150000, 150000]
-    restart_weights: [1, 1, 1, 1]
+    periods: [50000, 100000, 150000, 150000, 150000]
+    restart_weights: [1, 0.5, 0.5, 0.5, 0.5]
     eta_min: !!float 1e-7
 
   niter: 600000
   warmup_iter: -1  # no warm up
+  tsa_iter: 50000
   dcn_lr_mul: 1
 
   # losses
@@ -115,3 +116,5 @@ logger:
 dist_params:
   backend: nccl
   port: 29500
+
+find_unused_parameters: true
