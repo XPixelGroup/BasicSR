@@ -13,7 +13,7 @@ from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
                            get_root_logger, init_tb_logger, init_wandb_logger,
                            make_exp_dirs, set_random_seed)
-from basicsr.utils.options import dict2str, dict_to_nonedict, parse
+from basicsr.utils.options import dict2str, parse
 
 
 def main():
@@ -52,9 +52,6 @@ def main():
     else:
         resume_state = None
 
-    # convert to NoneDict, which returns None for missing keys
-    opt = dict_to_nonedict(opt)
-
     # mkdir and loggers
     if resume_state is None:
         make_exp_dirs(opt)
@@ -82,6 +79,7 @@ def main():
     # torch.backends.cudnn.deterministic = True
 
     # create train and val dataloaders
+    train_loader, val_loader = None, None
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             # dataset_ratio: enlarge the size of datasets for each epoch
@@ -169,8 +167,8 @@ def main():
                 model.save(epoch, current_iter)
 
             # validation
-            if opt['datasets'][
-                    'val'] and current_iter % opt['val']['val_freq'] == 0:
+            if opt['val']['val_freq'] is not None and current_iter % opt[
+                    'val']['val_freq'] == 0:
                 model.validation(val_loader, current_iter, tb_logger,
                                  opt['val']['save_img'])
 
@@ -183,7 +181,7 @@ def main():
     logger.info('Saving the latest model.')
     model.save(epoch=-1, current_iter=-1)  # -1 for the latest
     # last validation
-    if opt['datasets']['val']:
+    if opt['val']['val_freq'] is not None:
         model.validation(val_loader, current_iter, tb_logger,
                          opt['val']['save_img'])
 

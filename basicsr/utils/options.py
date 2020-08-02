@@ -106,30 +106,3 @@ def dict2str(opt, indent_level=1):
         else:
             msg += ' ' * (indent_level * 2) + k + ': ' + str(v) + '\n'
     return msg
-
-
-class NoneDict(dict):
-    """None dict. It will return none if key is not in the dict."""
-
-    def __missing__(self, key):
-        return None
-
-
-def dict_to_nonedict(opt):
-    """Convert to NoneDict, which returns None for missing keys.
-
-    Args:
-        opt (dict): Option dict.
-
-    Returns:
-        (dict): NoneDict for options.
-    """
-    if isinstance(opt, dict):
-        new_opt = dict()
-        for key, sub_opt in opt.items():
-            new_opt[key] = dict_to_nonedict(sub_opt)
-        return NoneDict(**new_opt)
-    elif isinstance(opt, list):
-        return [dict_to_nonedict(sub_opt) for sub_opt in opt]
-    else:
-        return opt
