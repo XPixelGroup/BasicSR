@@ -23,7 +23,7 @@ In general, both the training and testing include the following steps:
 
 ## Training Commands
 
-###  Single GPU Training
+### Single GPU Training
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 \
