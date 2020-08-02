@@ -40,7 +40,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
 - Results, re-trained models and log examples are available in [ModelZoo.md](docs/ModelZoo.md).
-- We also provide training curves in [wandb](https://app.wandb.ai/xintao/basicsr).
+- We also provide training curves in [wandb](https://app.wandb.ai/xintao/basicsr):
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
@@ -51,7 +51,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 Please see [DesignConvention.md](docs/DesignConvention.md) for the designs and conventions of the BasicSR codebase.<br>
 The figure below shows the overall framework. More descriptions for each component: <br>
-**[Datasets.md](docs/Datasets.md)**, **[Models.md](docs/Models.md)**, **[Config](Config.md)**, **[Logging.md](docs/Logging.md)**
+**[Datasets.md](docs/Datasets.md)**&ensp;|&ensp;**[Models.md](docs/Models.md)**&ensp;|&ensp;**[Config.md](Config.md)**&ensp;|&ensp;**[Logging.md](docs/Logging.md)**
 ![overall_structure](./assets/overall_structure.png)
 
 ## License

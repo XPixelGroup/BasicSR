@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 - 现支持的模型描述在 [Models_CN.md](docs/Models_CN.md). <br>
 - 结果, 预训练模型和log样例在 [ModelZoo_CN.md](docs/ModelZoo_CN.md).
-- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了训练曲线等.
+- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了训练曲线等:
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
@@ -51,7 +51,7 @@ pip install -r requirements.txt
 
 参见 [DesignConvention_CN.md](docs/DesignConvention_CN.md).<br>
 下图概括了整体的框架. 每个模块更多的描述参见: <br>
-**[Datasets_CN.md](docs/Datasets_CN.md)**, **[Models_CN.md](docs/Models_CN.md)**, **[Config_CN](Config_CN.md)**, **[Logging_CN.md](docs/Logging_CN.md)**
+**[Datasets_CN.md](docs/Datasets_CN.md)**&ensp;|&ensp;**[Models_CN.md](docs/Models_CN.md)**&ensp;|&ensp;**[Config_CN.md](Config_CN.md)**&ensp;|&ensp;**[Logging_CN.md](docs/Logging_CN.md)**
 ![overall_structure](./assets/overall_structure.png)
 
 ## 许可
