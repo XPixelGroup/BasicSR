@@ -1,5 +1,5 @@
 # general settings
-name: 003_RRDB_ESRGANx4_DIV2K
+name: 052_ESRGAN_x4_f64b23_DIV2K_1000k_B16G1_051pretrain_wandb
 model_type: ESRGANModel
 scale: 4
 num_gpu: 1
@@ -9,11 +9,16 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: ./datasets/DIV2K_train_HR_sub
-    dataroot_lq: ./datasets/DIV2K_train_LR_bicubicX4_sub
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    # (for lmdb)
+    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    filename_tmpl: '{}'
     io_backend:
       type: disk
-
+      # (for lmdb)
+      # type: lmdb
 
     gt_size: 128
     use_flip: true
@@ -22,14 +27,14 @@ datasets:
     # data loader
     use_shuffle: true
     num_worker: 6  # per GPU
-    batch_size: 16
+    batch_size: 16  # total
     dataset_enlarge_ratio: 1000
 
   val:
-    name: val_set14
+    name: Set14
     type: PairedImageDataset
-    dataroot_gt: ./datasets/val_set14/Set14
-    dataroot_lq: ./datasets/val_set14/Set14_bicLRx4
+    dataroot_gt: datasets/Set14/GTmod12
+    dataroot_lq: datasets/Set14/LRbicx4
     io_backend:
       type: disk
 
@@ -48,7 +53,7 @@ network_d:
 
 # path
 path:
-  pretrain_model_g: ../experiments/pretrained_models/RRDB_PSNR_x4.pth
+  pretrain_model_g: experiments/051_RRDBNet_PSNR_x4_f64b23_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
   strict_load: true
   resume_state: ~
 
@@ -105,13 +110,22 @@ val:
   val_freq: !!float 5e3
   save_img: true
 
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: false
+
 # logging settings
 logger:
   print_freq: 100
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
+  wandb:
+    project: basicsr
+    resume_id: ~
 
 # dist training settings
 dist_params:
   backend: nccl
-  port: 29748
+  port: 29500

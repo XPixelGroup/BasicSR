@@ -1,5 +1,5 @@
 # general settings
-name: 051_RRDBNet_PSNR_x4_f64b23_DIV2K_600k_B16G1_wandb
+name: 051_RRDBNet_PSNR_x4_f64b23_DIV2K_1000k_B16G1_wandb
 model_type: SRModel
 scale: 4
 num_gpu: 1
@@ -84,10 +84,10 @@ val:
   save_img: false
 
   metrics:
-      psnr: # metric name, can be arbitrary
-        type: calculate_psnr
-        crop_border: 4
-        test_y_channel: false
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: false
 
 # logging settings
 logger:
