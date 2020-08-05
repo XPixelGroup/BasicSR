@@ -72,7 +72,6 @@ class PairedImageDataset(data.Dataset):
                 self.io_backend_opt.pop('type'), **self.io_backend_opt)
 
         scale = self.opt['scale']
-        gt_size = self.opt['gt_size']
 
         # Load gt and lq images. Dimension order: HWC; channel order: BGR;
         # image range: [0, 1], float32.
@@ -85,6 +84,7 @@ class PairedImageDataset(data.Dataset):
 
         # augmentation
         if self.opt['phase'] == 'train':
+            gt_size = self.opt['gt_size']
             # random crop
             img_gt, img_lq = paired_random_crop(img_gt, img_lq, gt_size, scale,
                                                 gt_path)
