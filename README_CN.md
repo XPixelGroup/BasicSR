@@ -15,8 +15,8 @@ BasicSR 是一个基于 PyTorch 的开源图像视频超分辨率 (Super-Resolut
 在BasicSR的根目录下运行以下命令:
 
 ```bash
-python setup.py develop
 pip install -r requirements.txt
+python setup.py develop
 ```
 
 注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
