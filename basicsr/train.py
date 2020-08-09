@@ -32,7 +32,7 @@ def main():
     # distributed training settings
     if args.launcher == 'none':  # disabled distributed training
         opt['dist'] = False
-        rank = -1
+        rank = 0
         print('Disabled distributed training.', flush=True)
     else:
         opt['dist'] = True
@@ -42,6 +42,7 @@ def main():
             init_dist(args.launcher)
         world_size = torch.distributed.get_world_size()
         rank = torch.distributed.get_rank()
+    opt['rank'] = rank
 
     # load resume states if exists
     if opt['path'].get('resume_state', None):

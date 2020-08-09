@@ -15,11 +15,6 @@ class BaseModel():
     """Base model."""
 
     def __init__(self, opt):
-        if opt['dist']:
-            self.rank = torch.distributed.get_rank()
-        else:
-            self.rank = -1  # non-dist training
-
         self.opt = opt
         self.device = torch.device(
             'cuda' if opt['num_gpu'] is not None else 'cpu')
@@ -331,7 +326,7 @@ class BaseModel():
                     losses.append(value)
                 losses = torch.stack(losses, 0)
                 torch.distributed.reduce(losses, dst=0)
-                if self.rank == 0:
+                if self.opt['rank'] == 0:
                     losses /= torch.distributed.get_world_size()
                 loss_dict = {key: loss for key, loss in zip(keys, losses)}
 
