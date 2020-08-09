@@ -97,8 +97,11 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             pin_memory=False)
 
     if opt.get('use_prefetch', None):
+        num_prefetch_queue = opt.get('num_prefetch_queue', 1)
+        logger = get_root_logger()
+        logger.info('Use prefetch dataloader wiht num_prefetch_queue = '
+                    f'{num_prefetch_queue}')
         return PrefetchDataLoader(
-            num_prefetch_queue=opt.get('num_prefetch_queue', 1),
-            **dataloader_args)
+            num_prefetch_queue=num_prefetch_queue, **dataloader_args)
     else:
         return torch.utils.data.DataLoader(**dataloader_args)
