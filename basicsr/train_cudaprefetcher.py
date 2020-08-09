@@ -7,7 +7,7 @@ import torch
 from mmcv.runner import get_time_str, init_dist
 from os import path as osp
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import CUDAPreFetcher, create_dataloader, create_dataset
 from basicsr.data.data_sampler import DistIterSampler
 from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
@@ -141,7 +141,9 @@ def main():
     for epoch in range(start_epoch, total_epochs + 1):
         if opt['dist']:
             train_sampler.set_epoch(epoch)
-        for _, train_data in enumerate(train_loader):
+        prefetcher = CUDAPreFetcher(train_loader, opt)
+        train_data = prefetcher.next()
+        while train_data is not None:
             data_time = time.time() - data_time
 
             current_iter += 1
@@ -175,6 +177,8 @@ def main():
 
             data_time = time.time()
             iter_time = time.time()
+            train_data = prefetcher.next()
+
         # end of iter
     # end of epoch
 
