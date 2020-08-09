@@ -4,6 +4,7 @@ import torch
 import torch.utils.data
 from os import path as osp
 
+from basicsr.data.prefetch_generator import PrefetchDataLoader
 from basicsr.utils import get_root_logger
 
 __all__ = ['create_dataset', 'create_dataloader']
@@ -73,14 +74,14 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             batch_size = dataset_opt['batch_size'] // world_size
             shuffle = False
         else:  # non-distributed training
-            if opt['num_gpu'] is None:  # cpu mode
+            if opt.get('num_gpu', None) is None:  # cpu mode
                 num_workers = dataset_opt['num_worker']
             else:
                 num_workers = dataset_opt['num_worker'] * opt['num_gpu']
             batch_size = dataset_opt['batch_size']
             shuffle = True
-        return torch.utils.data.DataLoader(
-            dataset,
+        dataloader_args = dict(
+            dataset=dataset,
             batch_size=batch_size,
             shuffle=shuffle,
             num_workers=num_workers,
@@ -88,9 +89,16 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             drop_last=True,
             pin_memory=False)
     else:  # validation
-        return torch.utils.data.DataLoader(
-            dataset,
+        dataloader_args = dict(
+            dataset=dataset,
             batch_size=1,
             shuffle=False,
             num_workers=1,
             pin_memory=False)
+
+    if opt.get('use_prefetch', None):
+        return PrefetchDataLoader(
+            num_prefetch_queue=opt.get('num_prefetch_queue', 1),
+            **dataloader_args)
+    else:
+        return torch.utils.data.DataLoader(**dataloader_args)
