@@ -96,8 +96,8 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             num_workers=1,
             pin_memory=False)
 
-    if opt.get('use_prefetch', None):
-        num_prefetch_queue = opt.get('num_prefetch_queue', 1)
+    if dataset_opt.get('use_prefetch', None):
+        num_prefetch_queue = dataset_opt.get('num_prefetch_queue', 1)
         logger = get_root_logger()
         logger.info('Use prefetch dataloader wiht num_prefetch_queue = '
                     f'{num_prefetch_queue}')
