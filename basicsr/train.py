@@ -64,9 +64,13 @@ def main():
     logger.info(dict2str(opt))
     # initialize tensorboard logger and wandb logger
     tb_logger = None
-    if opt['logger']['use_tb_logger'] and 'debug' not in opt['name']:
+    if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
         tb_logger = init_tb_logger(log_dir='./tb_logger/' + opt['name'])
-    if opt['logger']['wandb'] and 'debug' not in opt['name']:
+    if (opt['logger'].get('wandb')
+            is not None) and (opt['logger']['wandb'].get('project')
+                              is not None) and ('debug' not in opt['name']):
+        assert opt['logger'].get('use_tb_logger') is True, (
+            'should turn on tensorboard when using wandb')
         init_wandb_logger(opt)
 
     # random seed
