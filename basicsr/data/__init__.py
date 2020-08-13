@@ -87,14 +87,14 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             num_workers=num_workers,
             sampler=sampler,
             drop_last=True,
-            pin_memory=False)
+            pin_memory=True)
     else:  # validation
         dataloader_args = dict(
             dataset=dataset,
             batch_size=1,
             shuffle=False,
             num_workers=1,
-            pin_memory=False)
+            pin_memory=True)
 
     if dataset_opt.get('use_prefetch', None):
         num_prefetch_queue = dataset_opt.get('num_prefetch_queue', 1)
@@ -113,10 +113,9 @@ class CUDAPreFetcher():
         self.loader = iter(loader)
         self.opt = opt
         self.stream = torch.cuda.Stream()
-        self.preload()
         self.device = torch.device(
             'cuda' if opt['num_gpu'] is not None else 'cpu')
-
+        self.preload()
     def preload(self):
         try:
             self.batch = next(self.loader)  # self.batch is a dict
@@ -126,9 +125,9 @@ class CUDAPreFetcher():
             return
         with torch.cuda.stream(self.stream):
             for k, v in self.batch.items():
-                # TODO: wheter v is a tensor
-                self.batch[k] = self.batch[k].to(
-                    device=self.opt.device, non_blocking=True)
+                if torch.is_tensor(v):
+                    self.batch[k] = self.batch[k].to(
+                        device=self.device, non_blocking=True)
 
     def next(self):
         torch.cuda.current_stream().wait_stream(self.stream)
