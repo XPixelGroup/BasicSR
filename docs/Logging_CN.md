@@ -40,7 +40,8 @@ logger:
   use_tb_logger: true
   # 是否使用wandb logger, 目前wandb只是同步tensorboard的内容, 因此要使用wandb, 必须也同时使用tensorboard
   wandb:
-    # wandb的project
+    # wandb的project. 默认是 None, 即不使用wandb.
+    # 这里使用了 basicsr wandb project: https://app.wandb.ai/xintao/basicsr
     project: basicsr
     # 如果是resume, 可以输入上次的wandb id, 则log可以接起来
     resume_id: ~
