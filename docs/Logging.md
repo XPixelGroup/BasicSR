@@ -40,7 +40,7 @@ ogger:
   use_tb_logger: true
   # Whether to use wandb logger. Currently, wandb only sync the tensorboard log. So we should also turn on tensorboard when using wandb
   wandb:
-    # wandb project name
+    # wandb project name. Default is None, that is not using wandb
     project: basicsr
     # If resuming, wandb id could automatically link previous logs
     resume_id: ~
