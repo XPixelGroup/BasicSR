@@ -4,7 +4,7 @@ import torch
 import torch.utils.data
 from os import path as osp
 
-from basicsr.data.prefetch_generator import PrefetchDataLoader
+from basicsr.data.prefetch_dataloader import PrefetchDataLoader
 from basicsr.utils import get_root_logger
 
 __all__ = ['create_dataset', 'create_dataloader']
@@ -87,50 +87,24 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             num_workers=num_workers,
             sampler=sampler,
             drop_last=True,
-            pin_memory=True)
+            pin_memory=dataset_opt.get('pin_memory', False))
     else:  # validation
         dataloader_args = dict(
             dataset=dataset,
             batch_size=1,
             shuffle=False,
             num_workers=1,
-            pin_memory=True)
+            pin_memory=dataset_opt.get('pin_memory', False))
 
-    if dataset_opt.get('use_prefetch', None):
+    prefetch_mode = dataset_opt.get('prefetch_mode')
+    if prefetch_mode == 'cpu':  # CPUPrefetcher
         num_prefetch_queue = dataset_opt.get('num_prefetch_queue', 1)
         logger = get_root_logger()
-        logger.info('Use prefetch dataloader wiht num_prefetch_queue = '
-                    f'{num_prefetch_queue}')
+        logger.info(f'Use prefetch dataloader. Mode: {prefetch_mode}, '
+                    f'num_prefetch_queue = {num_prefetch_queue}')
         return PrefetchDataLoader(
             num_prefetch_queue=num_prefetch_queue, **dataloader_args)
     else:
+        # Normal dataloader (prefetch_mode=None)
+        # or dataloader for CUDAPrefetcher (prefetch_mode='cuda')
         return torch.utils.data.DataLoader(**dataloader_args)
-
-
-class CUDAPreFetcher():
-
-    def __init__(self, loader, opt):
-        self.loader = iter(loader)
-        self.opt = opt
-        self.stream = torch.cuda.Stream()
-        self.device = torch.device(
-            'cuda' if opt['num_gpu'] is not None else 'cpu')
-        self.preload()
-    def preload(self):
-        try:
-            self.batch = next(self.loader)  # self.batch is a dict
-        except StopIteration:
-            # TODO: iter base
-            self.batch = None
-            return
-        with torch.cuda.stream(self.stream):
-            for k, v in self.batch.items():
-                if torch.is_tensor(v):
-                    self.batch[k] = self.batch[k].to(
-                        device=self.device, non_blocking=True)
-
-    def next(self):
-        torch.cuda.current_stream().wait_stream(self.stream)
-        batch = self.batch
-        self.preload()
-        return batch

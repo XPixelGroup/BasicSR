@@ -9,6 +9,7 @@ from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.data.data_sampler import DistIterSampler
+from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
                            get_root_logger, init_tb_logger, init_wandb_logger,
@@ -142,10 +143,23 @@ def main():
         f'Start training from epoch: {start_epoch}, iter: {current_iter}')
     data_time, iter_time = 0, 0
 
+    prefetch_mode = opt['datasets']['train'].get('prefetch_mode')
+    if prefetch_mode is None or prefetch_mode == 'cpu':
+        prefetcher = CPUPrefetcher(train_loader)
+    elif prefetch_mode == 'cuda':
+        prefetcher = CUDAPrefetcher(train_loader, opt)
+        if opt['datasets']['train'].get('pin_memory') is not True:
+            logger.warn('Please set pin_memory=True for CUDAPrefetcher.')
+    else:
+        raise ValueError(f'Wrong prefetch_mode {prefetch_mode}.'
+                         "Supported ones are: None, 'cuda', 'cpu'.")
+
     for epoch in range(start_epoch, total_epochs + 1):
         if opt['dist']:
             train_sampler.set_epoch(epoch)
-        for _, train_data in enumerate(train_loader):
+        prefetcher.reset()
+        train_data = prefetcher.next()
+        while train_data is not None:
             data_time = time.time() - data_time
 
             current_iter += 1
@@ -179,6 +193,7 @@ def main():
 
             data_time = time.time()
             iter_time = time.time()
+            train_data = prefetcher.next()
         # end of iter
     # end of epoch
 
