@@ -228,19 +228,19 @@ class BaseModel():
         load_net_keys = set(load_net.keys())
 
         if crt_net_keys != load_net_keys:
-            logger.warn('Current net - loaded net:')
+            logger.warning('Current net - loaded net:')
             for v in sorted(list(crt_net_keys - load_net_keys)):
-                logger.warn(f'  {v}')
-            logger.warn('Loaded net - current net:')
+                logger.warning(f'  {v}')
+            logger.warning('Loaded net - current net:')
             for v in sorted(list(load_net_keys - crt_net_keys)):
-                logger.warn(f'  {v}')
+                logger.warning(f'  {v}')
 
         # check the size for the same keys
         if not strict:
             common_keys = crt_net_keys & load_net_keys
             for k in common_keys:
                 if crt_net[k].size() != load_net[k].size():
-                    logger.warn(
+                    logger.warning(
                         f'Size different, ignore [{k}]: crt_net: '
                         f'{crt_net[k].shape}; load_net: {load_net[k].shape}')
                     load_net[k + '.ignore'] = load_net.pop(k)
