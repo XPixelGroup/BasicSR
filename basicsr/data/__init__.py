@@ -98,9 +98,12 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
 
     prefetch_mode = dataset_opt.get('prefetch_mode')
     if prefetch_mode == 'cpu':  # CPUPrefetcher
+        num_prefetch_queue = dataset_opt.get('num_prefetch_queue', 1)
+        logger = get_root_logger()
+        logger.info(f'Use {prefetch_mode} prefetch dataloader: '
+                    f'num_prefetch_queue = {num_prefetch_queue}')
         return PrefetchDataLoader(
-            num_prefetch_queue=dataset_opt['num_prefetch_queue'],
-            **dataloader_args)
+            num_prefetch_queue=num_prefetch_queue, **dataloader_args)
     else:
         # Normal dataloader (prefetch_mode=None)
         # or dataloader for CUDAPrefetcher (prefetch_mode='cuda')
