@@ -61,11 +61,11 @@ class EDVRModel(VideoBaseModel):
                     if 'fusion' not in name:
                         param.requires_grad = False
             elif current_iter == self.train_tsa_iter:
-                logger.warn('Train all the parameters.')
+                logger.warning('Train all the parameters.')
                 for param in self.net_g.parameters():
                     param.requires_grad = True
                 if isinstance(self.net_g, DistributedDataParallel):
-                    logger.warn('Set net_g.find_unused_parameters = False.')
+                    logger.warning('Set net_g.find_unused_parameters = False.')
                     self.net_g.find_unused_parameters = False
 
         super(VideoBaseModel, self).optimize_parameters(current_iter)

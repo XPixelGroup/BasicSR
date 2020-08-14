@@ -1,7 +1,7 @@
 experiments/*
 results/*
 tb_logger/*
-datasets/*
+datasets
 wandb/*
 
 .vscode

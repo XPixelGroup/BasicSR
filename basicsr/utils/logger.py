@@ -93,7 +93,7 @@ def init_wandb_logger(opt):
     if resume_id:
         wandb_id = resume_id
         resume = 'allow'
-        logger.warn(f'Resume wandb logger with id={wandb_id}.')
+        logger.warning(f'Resume wandb logger with id={wandb_id}.')
     else:
         wandb_id = wandb.util.generate_id()
         resume = 'never'
