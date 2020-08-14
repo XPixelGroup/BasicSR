@@ -79,7 +79,7 @@ def main():
     if seed is None:
         seed = random.randint(1, 10000)
     logger.info(f'Random seed: {seed}')
-    set_random_seed(seed)
+    set_random_seed(seed + rank)
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
