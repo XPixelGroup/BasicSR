@@ -38,7 +38,7 @@ def main(mode='folder'):
     opt['use_rot'] = True
 
     opt['use_shuffle'] = True
-    opt['num_worker'] = 1
+    opt['num_worker'] = 2
     opt['batch_size'] = 16
     opt['scale'] = 4
 

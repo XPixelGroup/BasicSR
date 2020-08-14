@@ -33,6 +33,7 @@ datasets:
     num_worker: 6  # per GPU
     batch_size: 16  # total
     dataset_enlarge_ratio: 1000
+    prefetch_mode: ~
 
   val:
     name: Set14

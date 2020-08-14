@@ -1,5 +1,6 @@
 import argparse
 import logging
+import torch
 from mmcv.runner import get_time_str, init_dist
 from os import path as osp
 
@@ -24,8 +25,9 @@ def main():
     opt = parse(args.opt, is_train=False)
 
     # distributed testing settings
-    if args.launcher == 'none':  # disabled distributed training
+    if args.launcher == 'none':  # disabled distributed testing
         opt['dist'] = False
+        rank = 0
         print('Disabled distributed testing.', flush=True)
     else:
         opt['dist'] = True
@@ -33,6 +35,8 @@ def main():
             init_dist(args.launcher, **opt['dist_params'])
         else:
             init_dist(args.launcher)
+        rank = torch.distributed.get_rank()
+    opt['rank'] = rank
 
     make_exp_dirs(opt)
     log_file = osp.join(opt['path']['log'],
