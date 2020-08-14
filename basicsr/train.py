@@ -143,11 +143,20 @@ def main():
         f'Start training from epoch: {start_epoch}, iter: {current_iter}')
     data_time, iter_time = 0, 0
 
+    # dataloader prefetcher
     prefetch_mode = opt['datasets']['train'].get('prefetch_mode')
-    if prefetch_mode is None or prefetch_mode == 'cpu':
+    if prefetch_mode is None:
         prefetcher = CPUPrefetcher(train_loader)
+    elif prefetch_mode == 'cpu':
+        num_prefetch_queue = opt['datasets']['train'].get(
+            'num_prefetch_queue', 1)
+        opt['datasets']['train']['num_prefetch_queue'] = num_prefetch_queue
+        prefetcher = CPUPrefetcher(train_loader)
+        logger.info(f'Use {prefetch_mode} prefetch dataloader: '
+                    f'num_prefetch_queue = {num_prefetch_queue}')
     elif prefetch_mode == 'cuda':
         prefetcher = CUDAPrefetcher(train_loader, opt)
+        logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:
             logger.warn('Please set pin_memory=True for CUDAPrefetcher.')
     else:
