@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from basicsr.metrics.metric_util import _to_y_channel, reorder_image
+from basicsr.metrics.metric_util import reorder_image, to_y_channel
 
 
 def calculate_psnr(img1,
@@ -40,8 +40,8 @@ def calculate_psnr(img1,
         img2 = img2[crop_border:-crop_border, crop_border:-crop_border, ...]
 
     if test_y_channel:
-        img1 = _to_y_channel(img1)
-        img2 = _to_y_channel(img2)
+        img1 = to_y_channel(img1)
+        img2 = to_y_channel(img2)
 
     mse = np.mean((img1 - img2)**2)
     if mse == 0:
@@ -128,8 +128,8 @@ def calculate_ssim(img1,
         img2 = img2[crop_border:-crop_border, crop_border:-crop_border, ...]
 
     if test_y_channel:
-        img1 = _to_y_channel(img1)
-        img2 = _to_y_channel(img2)
+        img1 = to_y_channel(img1)
+        img2 = to_y_channel(img2)
 
     ssims = []
     for i in range(img1.shape[2]):
