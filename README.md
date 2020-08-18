@@ -3,7 +3,7 @@
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
 
-BasicSR is an open source image and video super-resolution toolbox based on PyTorch (may extend to more restoration tasks in the future).<br>
+BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
 ## Dependencies and Installation
@@ -12,7 +12,7 @@ BasicSR is an open source image and video super-resolution toolbox based on PyTo
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-Please run the following commands in the BasicSR root path to install BasicSR:
+Please run the following commands in the **BasicSR root path** to install BasicSR:
 
 ```bash
 pip install -r requirements.txt
@@ -32,14 +32,14 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 ## Train and Test
 
-- Please see [TrainTest.md](docs/TrainTest.md) for the basic usage, *i.e.,* training and testing.
+- **Training and testing commands**: Please see [TrainTest.md](docs/TrainTest.md) for the basic usage.
 - **Options/Configs**: Please refer to [Config.md](docs/Config.md).
 - **Logging**: Please refer to [Logging.md](docs/Logging.md).
 
 ## Model Zoo and Baselines
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
-- Results, re-trained models and log examples are available in [ModelZoo.md](docs/ModelZoo.md).
+- Pre-trained models and log examples are available in [ModelZoo.md](docs/ModelZoo.md).
 - We also provide training curves in [wandb](https://app.wandb.ai/xintao/basicsr):
 
 <p align="center">
