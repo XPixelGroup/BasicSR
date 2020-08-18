@@ -80,7 +80,7 @@ train:
   beta_d: [0.9, 0.99]
   lr_scheme: MultiStepLR
 
-  niter: 400000
+  total_iter: 400000
   warmup_iter: -1  # no warm up
   lr_steps: [50000, 100000, 200000, 300000]
   lr_gamma: 0.5

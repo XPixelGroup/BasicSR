@@ -95,7 +95,7 @@ def main():
                 math.ceil(
                     len(train_set) /
                     (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
-            total_iters = int(opt['train']['niter'])
+            total_iters = int(opt['train']['total_iter'])
             total_epochs = int(math.ceil(total_iters / train_size))
 
             train_sampler = EnlargedSampler(train_set, world_size, rank,

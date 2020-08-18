@@ -163,7 +163,7 @@ train:
     eta_min: !!float 1e-7
 
   # Total iterations for training
-  niter: 1000000
+  total_iter: 1000000
   # Warm up iterations. -1 indicates no warm up
   warmup_iter: -1
 

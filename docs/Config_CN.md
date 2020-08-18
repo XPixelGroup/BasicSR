@@ -162,7 +162,7 @@ train:
     eta_min: !!float 1e-7
 
   # 总共的训练迭代次数
-  niter: 1000000
+  total_iter: 1000000
   # warm up的iteration数目, 如是-1, 表示没有warm up
   warmup_iter: -1  # no warm up
 

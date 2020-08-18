@@ -69,7 +69,7 @@ train:
       milestones: [200000]
       gamma: 0.5
 
-  niter: 300000
+  total_iter: 300000
   warmup_iter: -1  # no warm up
 
   # losses
