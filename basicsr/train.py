@@ -8,7 +8,7 @@ from mmcv.runner import get_dist_info, get_time_str, init_dist
 from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
-from basicsr.data.data_sampler import DistIterSampler
+from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
@@ -97,14 +97,12 @@ def main():
                     (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
             total_iters = int(opt['train']['niter'])
             total_epochs = int(math.ceil(total_iters / train_size))
-            if opt['dist']:
-                train_sampler = DistIterSampler(train_set, world_size, rank,
-                                                dataset_enlarge_ratio)
-                total_epochs = total_iters / (
-                    train_size * dataset_enlarge_ratio)
-                total_epochs = int(math.ceil(total_epochs))
-            else:
-                train_sampler = None
+
+            train_sampler = EnlargedSampler(train_set, world_size, rank,
+                                            dataset_enlarge_ratio)
+            total_epochs = total_iters / (train_size * dataset_enlarge_ratio)
+            total_epochs = int(math.ceil(total_epochs))
+
             train_loader = create_dataloader(
                 train_set,
                 dataset_opt,

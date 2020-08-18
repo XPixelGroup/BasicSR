@@ -80,16 +80,14 @@ def create_dataloader(dataset,
         if dist:  # distributed training
             batch_size = dataset_opt['batch_size_per_gpu']
             num_workers = dataset_opt['num_worker_per_gpu']
-            shuffle = False
         else:  # non-distributed training
             multiplier = 1 if num_gpu == 0 else num_gpu
             batch_size = dataset_opt['batch_size_per_gpu'] * multiplier
             num_workers = dataset_opt['num_worker_per_gpu'] * multiplier
-            shuffle = True
         dataloader_args = dict(
             dataset=dataset,
             batch_size=batch_size,
-            shuffle=shuffle,
+            shuffle=False,
             num_workers=num_workers,
             sampler=sampler,
             drop_last=True)
