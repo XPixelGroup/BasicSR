@@ -68,14 +68,14 @@ def paired_random_crop(img_gts, img_lqs, gt_patch_size, scale, gt_path):
 
     # crop lq patch
     img_lqs = [
-        v[top:top + lq_patch_size, left:left + lq_patch_size, :]
+        v[top:top + lq_patch_size, left:left + lq_patch_size, ...]
         for v in img_lqs
     ]
 
     # crop corresponding gt patch
     top_gt, left_gt = int(top * scale), int(left * scale)
     img_gts = [
-        v[top_gt:top_gt + gt_patch_size, left_gt:left_gt + gt_patch_size, :]
+        v[top_gt:top_gt + gt_patch_size, left_gt:left_gt + gt_patch_size, ...]
         for v in img_gts
     ]
     if len(img_gts) == 1:

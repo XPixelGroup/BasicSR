@@ -134,7 +134,7 @@ def paired_paths_from_lmdb(folders, keys):
     if not (input_folder.endswith('.lmdb') and gt_folder.endswith('.lmdb')):
         raise ValueError(
             f'{input_key} folder and {gt_key} folder should both in lmdb '
-            f'format. But received {input_key}: {input_folder}; '
+            f'formats. But received {input_key}: {input_folder}; '
             f'{gt_key}: {gt_folder}')
     # ensure that the two meta_info files are the same
     with open(osp.join(input_folder, 'meta_info.txt')) as fin:
@@ -173,7 +173,7 @@ def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
         ann_file (str): Path to the annotation file.
         filename_tmpl (str): Template for each filename. Note that the
             template excludes the file extension. Usually the filename_tmpl is
-            for files in input folder.
+            for files in the input folder.
 
     Returns:
         list[str]: Returned path list.
@@ -212,7 +212,7 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
             be in consistent with folders, e.g., ['lq', 'gt'].
         filename_tmpl (str): Template for each filename. Note that the
             template excludes the file extension. Usually the filename_tmpl is
-            for files in input folder.
+            for files in the input folder.
 
     Returns:
         list[str]: Returned path list.

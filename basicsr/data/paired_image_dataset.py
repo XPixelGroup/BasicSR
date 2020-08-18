@@ -12,8 +12,8 @@ from basicsr.utils import FileClient
 class PairedImageDataset(data.Dataset):
     """Paired image dataset for image restoration.
 
-    Read LQ (Low Quality, e.g. LR (Low Resolution), blurry, noisy, etc)
-    and GT image pairs.
+    Read LQ (Low Quality, e.g. LR (Low Resolution), blurry, noisy, etc) and
+    GT image pairs.
 
     There are three modes:
     1. 'lmdb': Use lmdb files.
@@ -21,7 +21,7 @@ class PairedImageDataset(data.Dataset):
     2. 'ann_file': Use annotation file to generate paths.
         If opt['io_backend'] != lmdb and opt['ann_file'] is not None.
     3. 'folder': Scan folders to generate paths.
-        The left.
+        The rest.
 
     Args:
         opt (dict): Config for train datasets. It contains the following keys:
@@ -82,7 +82,7 @@ class PairedImageDataset(data.Dataset):
         img_bytes = self.file_client.get(lq_path, 'lq')
         img_lq = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
 
-        # augmentation
+        # augmentation for training
         if self.opt['phase'] == 'train':
             gt_size = self.opt['gt_size']
             # random crop
