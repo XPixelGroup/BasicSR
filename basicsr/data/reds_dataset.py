@@ -13,7 +13,7 @@ class REDSDataset(data.Dataset):
     """REDS dataset for training.
 
     The keys are generated from a meta info txt file.
-    meta_info_REDS_GT.txt
+    basicsr/data/meta_info/meta_info_REDS_GT.txt
 
     Each line contains:
     1. subfolder (clip) name; 2. frame number; 3. image shape, seperated by
@@ -31,7 +31,7 @@ class REDSDataset(data.Dataset):
         opt (dict): Config for train dataset. It contains the following keys:
             dataroot_gt (str): Data root path for gt.
             dataroot_lq (str): Data root path for lq.
-            dataroot_flow (str): Data root path for flow.
+            dataroot_flow (str, optional): Data root path for flow.
             meta_info_file (str): Path for meta information file.
             val_partition (str): Validation partition types. 'REDS4' or
                 'official'.
@@ -41,9 +41,9 @@ class REDSDataset(data.Dataset):
             gt_size (int): Cropped patched size for gt patches.
             interval_list (list): Interval list for temporal augmentation.
             random_reverse (bool): Random reverse input frames.
-            use_flip (bool): Use horizontal and vertical flips.
-            use_rot (bool): Use rotation (use transpose h and w for
-                implementation).
+            use_flip (bool): Use horizontal flips.
+            use_rot (bool): Use rotation (use vertical flip and transposing h
+                and w for implementation).
 
             scale (bool): Scale, which will be added automatically.
     """
@@ -55,6 +55,8 @@ class REDSDataset(data.Dataset):
             opt['dataroot_lq'])
         self.flow_root = Path(
             opt['dataroot_flow']) if opt['dataroot_flow'] is not None else None
+        assert opt['num_frame'] % 2 == 1, (
+            f'num_frame should be odd number, but got {opt["num_frame"]}')
         self.num_frame = opt['num_frame']
         self.num_half_frames = opt['num_frame'] // 2
 
@@ -73,7 +75,7 @@ class REDSDataset(data.Dataset):
         else:
             raise ValueError(
                 f'Wrong validation partition {opt["val_partition"]}.'
-                f'Supported ones are ["official", "REDS4"]')
+                f"Supported ones are ['official', 'REDS4'].")
         self.keys = [
             v for v in self.keys if v.split('/')[0] not in val_partition
         ]
@@ -118,6 +120,7 @@ class REDSDataset(data.Dataset):
         # ensure not exceeding the borders
         start_frame_idx = center_frame_idx - self.num_half_frames * interval
         end_frame_idx = center_frame_idx + self.num_half_frames * interval
+        # each clip has 100 frames starting from 0 to 99
         while (start_frame_idx < 0) or (end_frame_idx > 99):
             center_frame_idx = random.randint(0, 99)
             start_frame_idx = (
@@ -187,7 +190,9 @@ class REDSDataset(data.Dataset):
                     denorm=False)  # we use max_val 20 here.
                 img_flows.append(flow)
 
-            img_lqs.extend(img_flows)  # for random crop
+            # for random crop, here, img_flows and img_lqs have the same
+            # spatial size
+            img_lqs.extend(img_flows)
 
         # randomly crop
         img_gt, img_lqs = paired_random_crop(img_gt, img_lqs, gt_size, scale,
@@ -199,15 +204,15 @@ class REDSDataset(data.Dataset):
         # augmentation - flip, rotate
         img_lqs.append(img_gt)
         if self.flow_root is not None:
-            img_rlts, img_flows = augment(img_lqs, self.opt['use_flip'],
-                                          self.opt['use_rot'], img_flows)
+            img_results, img_flows = augment(img_lqs, self.opt['use_flip'],
+                                             self.opt['use_rot'], img_flows)
         else:
-            img_rlts = augment(img_lqs, self.opt['use_flip'],
-                               self.opt['use_rot'])
+            img_results = augment(img_lqs, self.opt['use_flip'],
+                                  self.opt['use_rot'])
 
-        img_rlts = totensor(img_rlts)
-        img_lqs = torch.stack(img_rlts[0:-1], dim=0)
-        img_gt = img_rlts[-1]
+        img_results = totensor(img_results)
+        img_lqs = torch.stack(img_results[0:-1], dim=0)
+        img_gt = img_results[-1]
 
         if self.flow_root is not None:
             img_flows = totensor(img_flows)
