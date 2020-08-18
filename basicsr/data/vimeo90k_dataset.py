@@ -13,7 +13,8 @@ class Vimeo90KDataset(data.Dataset):
     """Vimeo90K dataset for training.
 
     The keys are generated from a meta info txt file.
-    meta_info_Vimeo90K_train_GT.txt.
+    basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt
+
     Each line contains:
     1. clip name; 2. frame number; 3. image shape, seperated by a white space.
     Examples:
@@ -41,9 +42,9 @@ class Vimeo90KDataset(data.Dataset):
             num_frame (int): Window size for input frames.
             gt_size (int): Cropped patched size for gt patches.
             random_reverse (bool): Random reverse input frames.
-            use_flip (bool): Use horizontal and vertical flips.
-            use_rot (bool): Use rotation (use transpose h and w for
-                implementation).
+            use_flip (bool): Use horizontal flips.
+            use_rot (bool): Use rotation (use vertical flip and transposing h
+                and w for implementation).
 
             scale (bool): Scale, which will be added automatically.
     """
@@ -115,11 +116,12 @@ class Vimeo90KDataset(data.Dataset):
 
         # augmentation - flip, rotate
         img_lqs.append(img_gt)
-        img_rlts = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'])
+        img_results = augment(img_lqs, self.opt['use_flip'],
+                              self.opt['use_rot'])
 
-        img_rlts = totensor(img_rlts)
-        img_lqs = torch.stack(img_rlts[0:-1], dim=0)
-        img_gt = img_rlts[-1]
+        img_results = totensor(img_results)
+        img_lqs = torch.stack(img_results[0:-1], dim=0)
+        img_gt = img_results[-1]
 
         # img_lqs: (t, c, h, w)
         # img_gt: (c, h, w)
