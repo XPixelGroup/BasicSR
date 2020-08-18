@@ -43,14 +43,14 @@ def parse(opt_path, is_train=True):
         opt = yaml.load(f, Loader=Loader)
 
     opt['is_train'] = is_train
-    scale = opt['scale']
 
     # datasets
     for phase, dataset in opt['datasets'].items():
         # for several datasets, e.g., test_1, test_2
         phase = phase.split('_')[0]
         dataset['phase'] = phase
-        dataset['scale'] = scale
+        if 'scale' in opt:
+            dataset['scale'] = opt['scale']
         if dataset.get('dataroot_gt', None) is not None:
             dataset['dataroot_gt'] = osp.expanduser(dataset['dataroot_gt'])
         if dataset.get('dataroot_lq', None) is not None:
