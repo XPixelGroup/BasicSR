@@ -4,6 +4,7 @@ experiments/*
 results/*
 tb_logger/*
 wandb/*
+tmp/*
 
 .vscode
 
