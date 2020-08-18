@@ -1,8 +1,7 @@
 import glob
 import subprocess
-from os import path as osp
-
 import torch
+from os import path as osp
 
 paths = glob.glob('experiments/pretrained_models/*.pth')
 
