@@ -32,11 +32,12 @@ class PairedImageDataset(data.Dataset):
             filename_tmpl (str): Template for each filename. Note that the
                 template excludes the file extension. Default: '{}'.
             gt_size (int): Cropped patched size for gt patches.
-            use_flip (bool): Use horizontal and vertical flips.
-            use_rot (bool): Use rotation (use transposing h and w for
-                implementation).
+            use_flip (bool): Use horizontal flips.
+            use_rot (bool): Use rotation (use vertical flip and transposing h
+                and w for implementation).
 
             scale (bool): Scale, which will be added automatically.
+            phase (str): 'train' or 'val'.
     """
 
     def __init__(self, opt):
