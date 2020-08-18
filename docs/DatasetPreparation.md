@@ -116,7 +116,7 @@ We provide a script to make LMDB. Before running the script, we need to modify t
 
 ## Image Super-Resolution
 
-It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
+It is recommended to symlink the dataset root to `datasets` with the command `ln -s xxx yyy`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### DIV2K
 
@@ -227,7 +227,7 @@ We provide a list of common image super-resolution datasets.
 
 ## Video Super-Resolution
 
-It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
+It is recommended to symlink the dataset root to `datasets` with the command `ln -s xxx yyy`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### REDS
 
