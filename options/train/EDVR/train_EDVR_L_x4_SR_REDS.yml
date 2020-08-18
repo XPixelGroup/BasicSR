@@ -2,7 +2,7 @@
 name: 104_EDVR_L_x4_SR_REDS_600k_B4G8_valREDS4_103pretrain_wandb
 model_type: EDVRModel
 scale: 4
-num_gpu: 8
+num_gpu: 8  # set num_gpu: 0 for cpu mode
 
 # dataset and data loader settings
 datasets:

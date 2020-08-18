@@ -2,7 +2,7 @@
 name: 201_EDSR_Mx2_f64b16_DIV2K_300k_B16G1_wandb
 model_type: SRModel
 scale: 2
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 # dataset and data loader settings
 datasets:

@@ -74,7 +74,7 @@ def create_dataloader(dataset, dataset_opt, opt=None, sampler=None):
             batch_size = dataset_opt['batch_size'] // world_size
             shuffle = False
         else:  # non-distributed training
-            if opt.get('num_gpu', None) is None:  # cpu mode
+            if opt['num_gpu'] == 0:  # cpu mode
                 num_workers = dataset_opt['num_worker']
             else:
                 num_workers = dataset_opt['num_worker'] * opt['num_gpu']

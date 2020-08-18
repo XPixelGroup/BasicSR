@@ -1,7 +1,7 @@
 name: DUF_x4_52L_official
 model_type: VideoBaseModel
 scale: 4
-num_gpu: 8
+num_gpu: 8  # set num_gpu: 0 for cpu mode
 
 datasets:
   test:

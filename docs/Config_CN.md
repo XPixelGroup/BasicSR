@@ -42,7 +42,7 @@ model_type: SRModel
 # 输出相比输入的放大比率, 在SR中是放大倍数; 若有些任务没有这个配置, 则写1
 scale: 4
 # 训练卡数
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 #################################
 # 以下为dataset和data loader的设置
@@ -236,7 +236,7 @@ model_type: SRModel
 # 输出相比输入的放大比率, 在SR中是放大倍数; 若有些任务没有这个配置, 则写1
 scale: 4
 # 测试卡数
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 #################################
 # 以下为dataset和data loader的设置

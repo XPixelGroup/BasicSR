@@ -1,7 +1,7 @@
 name: EDSR_Mx3_f64b16_DIV2K_official
 model_type: SRModel
 scale: 3
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 datasets:
   test_1:  # the 1st test dataset

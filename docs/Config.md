@@ -42,7 +42,7 @@ model_type: SRModel
 # The scale of the output over the input. In SR, it is the upsampling ratio. If not defined, use 1
 scale: 4
 # The number of GPUs for training
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 ########################################################
 # The following are the dataset and data loader settings
@@ -238,7 +238,7 @@ model_type: SRModel
 # The scale of the output over the input. In SR, it is the upsampling ratio. If not defined, use 1
 scale: 4
 # The number of GPUs for testing
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 ########################################################
 # The following are the dataset and data loader settings

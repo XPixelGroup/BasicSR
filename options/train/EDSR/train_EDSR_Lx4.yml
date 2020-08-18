@@ -2,7 +2,7 @@
 name: 206_EDSR_Lx4_f256b32_DIV2K_300k_B16G1_204pretrain_wandb
 model_type: SRModel
 scale: 4
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 # dataset and data loader settings
 datasets:
