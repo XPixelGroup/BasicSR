@@ -43,6 +43,8 @@ model_type: SRModel
 scale: 4
 # 训练卡数
 num_gpu: 1  # set num_gpu: 0 for cpu mode
+# 随机种子设定
+manual_seed: 0
 
 #################################
 # 以下为dataset和data loader的设置
@@ -77,9 +79,9 @@ datasets:
     # data loader是否使用shuffle
     use_shuffle: true
     # 每一个GPU的data loader读取进程数目
-    num_worker: 6  # per GPU
+    num_worker_per_gpu: 6
     # 总共的训练batch size
-    batch_size: 16  # total
+    batch_size_per_gpu: 16
     # 扩大dataset的倍率. 比如数据集有15张图, 则会重复这些图片1000次, 这样一个epoch下来, 能够读取15000张图
     # (事实上是重复读的). 它经常用来加速data loader, 因为在有的机器上, 一个epoch结束, 会重启进程, 往往会很慢
     dataset_enlarge_ratio: 1000
@@ -174,8 +176,6 @@ train:
     # loss reduction方式
     reduction: mean
 
-  # 训练的随机种子设定
-  manual_seed: 0
 
 #######################
 # 以下为Validation的设置

@@ -43,6 +43,8 @@ model_type: SRModel
 scale: 4
 # The number of GPUs for training
 num_gpu: 1  # set num_gpu: 0 for cpu mode
+# Random seed
+manual_seed: 0
 
 ########################################################
 # The following are the dataset and data loader settings
@@ -77,9 +79,9 @@ datasets:
     # Whether to shuffle
     use_shuffle: true
     # Number of workers of reading data for each GPU
-    num_worker: 6  # per GPU
+    num_worker_per_gpu: 6
     # Total training batch size
-    batch_size: 16  # total
+    batch_size_per_gpu: 16
     # THe ratio of enlarging dataset. For example, it will repeat 1000 times for a dataset with 15 images
     # So that after one epoch, it will read 15000 times. It is used for accelerating data loader
     # since it costs too much time at the start of a new epoch
@@ -175,8 +177,6 @@ train:
     # Loss reduction mode
     reduction: mean
 
-  # Random seed for training
-  manual_seed: 0
 
 #######################################
 # The following are validation settings

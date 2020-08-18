@@ -4,7 +4,7 @@ import math
 import random
 import time
 import torch
-from mmcv.runner import get_time_str, init_dist
+from mmcv.runner import get_dist_info, get_time_str, init_dist
 from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
@@ -33,17 +33,16 @@ def main():
     # distributed training settings
     if args.launcher == 'none':  # disabled distributed training
         opt['dist'] = False
-        rank = 0
-        print('Disabled distributed training.', flush=True)
+        print('Disable distributed training.', flush=True)
     else:
         opt['dist'] = True
         if args.launcher == 'slurm' and 'dist_params' in opt:
             init_dist(args.launcher, **opt['dist_params'])
         else:
             init_dist(args.launcher)
-        world_size = torch.distributed.get_world_size()
-        rank = torch.distributed.get_rank()
+    rank, world_size = get_dist_info()
     opt['rank'] = rank
+    opt['world_size'] = world_size
 
     # load resume states if exists
     if opt['path'].get('resume_state', None):
@@ -75,9 +74,10 @@ def main():
         init_wandb_logger(opt)
 
     # random seed
-    seed = opt['train']['manual_seed']
+    seed = opt['manual_seed']
     if seed is None:
         seed = random.randint(1, 10000)
+        opt['manual_seed'] = seed
     logger.info(f'Random seed: {seed}')
     set_random_seed(seed + rank)
 
@@ -92,7 +92,9 @@ def main():
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
             train_set = create_dataset(dataset_opt)
             train_size = int(
-                math.ceil(len(train_set) / dataset_opt['batch_size']))
+                math.ceil(
+                    len(train_set) /
+                    (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
             total_iters = int(opt['train']['niter'])
             total_epochs = int(math.ceil(total_iters / train_size))
             if opt['dist']:
@@ -103,15 +105,27 @@ def main():
                 total_epochs = int(math.ceil(total_epochs))
             else:
                 train_sampler = None
-            train_loader = create_dataloader(train_set, dataset_opt, opt,
-                                             train_sampler)
+            train_loader = create_dataloader(
+                train_set,
+                dataset_opt,
+                num_gpu=opt['num_gpu'],
+                dist=opt['dist'],
+                sampler=train_sampler,
+                seed=seed)
             logger.info(f'Number of train images: {len(train_set)}, '
                         f'iters: {train_size}')
             logger.info(
                 f'Total epochs needed: {total_epochs} for iters {total_iters}')
         elif phase == 'val':
             val_set = create_dataset(dataset_opt)
-            val_loader = create_dataloader(val_set, dataset_opt, opt, None)
+            val_loader = create_dataloader(
+                val_set,
+                dataset_opt,
+                opt,
+                num_gpu=opt['num_gpu'],
+                dist=opt['dist'],
+                sampler=None,
+                seed=seed)
             logger.info(
                 f"Number of val images/folders in {dataset_opt['name']}: "
                 f'{len(val_set)}')

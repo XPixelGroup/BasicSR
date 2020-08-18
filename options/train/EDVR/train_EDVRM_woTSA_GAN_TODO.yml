@@ -4,6 +4,7 @@ use_tb_logger: true
 model_type: VideoGANModel
 scale: 4
 num_gpu: 8  # set num_gpu: 0 for cpu mode
+manual_seed: 0
 
 # datasets
 datasets:
@@ -27,8 +28,8 @@ datasets:
     use_rot: true
 
     use_shuffle: true
-    num_worker: 3  # per GPU
-    batch_size: 32
+    num_worker_per_gpu: 3
+    batch_size_per_gpu: 4
     dataset_enlarge_ratio: 1000
     prefetch_mode: ~
 
@@ -104,8 +105,6 @@ train:
 
   val_freq: !!float 20000
   val_func: VideoSRValidation
-
-  manual_seed: 0
 
 # logger
 logger:

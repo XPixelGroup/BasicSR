@@ -3,6 +3,7 @@ name: 103_EDVR_L_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb
 model_type: EDVRModel
 scale: 4
 num_gpu: 8  # set num_gpu: 0 for cpu mode
+manual_seed: 10
 
 # dataset and data loader settings
 datasets:
@@ -26,8 +27,8 @@ datasets:
 
     # data loader
     use_shuffle: true
-    num_worker: 3  # per GPU
-    batch_size: 32  # total
+    num_worker_per_gpu: 3
+    batch_size_per_gpu: 4
     dataset_enlarge_ratio: 1000
     prefetch_mode: ~
 
@@ -89,8 +90,6 @@ train:
     type: CharbonnierLoss
     loss_weight: 1.0
     reduction: sum
-
-  manual_seed: 10
 
 # validation settings
 val:

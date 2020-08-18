@@ -326,7 +326,7 @@ class BaseModel():
                 losses = torch.stack(losses, 0)
                 torch.distributed.reduce(losses, dst=0)
                 if self.opt['rank'] == 0:
-                    losses /= torch.distributed.get_world_size()
+                    losses /= self.opt['world_size']
                 loss_dict = {key: loss for key, loss in zip(keys, losses)}
 
             log_dict = OrderedDict()
