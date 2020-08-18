@@ -29,6 +29,7 @@ datasets:
     num_worker: 6  # per GPU
     batch_size: 16  # total
     dataset_enlarge_ratio: 1000
+    prefetch_mode: ~
 
   val:
     name: Set14
@@ -122,7 +123,7 @@ logger:
   save_checkpoint_freq: !!float 5e3
   use_tb_logger: true
   wandb:
-    project: basicsr
+    project: ~
     resume_id: ~
 
 # dist training settings

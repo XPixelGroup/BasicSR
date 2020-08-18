@@ -30,6 +30,7 @@ datasets:
     num_worker: 3  # per GPU
     batch_size: 32
     dataset_enlarge_ratio: 1000
+    prefetch_mode: ~
 
   val:
     name: REDS4
