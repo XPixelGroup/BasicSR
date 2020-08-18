@@ -10,8 +10,10 @@ In addition, we upload the training process and curves in [wandb](https://www.wa
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
-   <img src="../assets/wandb.jpg" height="350">
+   <img src="../../assets/wandb.jpg" height="350">
 </a></p>
+
+---
 
 **[下载官方提供的模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**
 
