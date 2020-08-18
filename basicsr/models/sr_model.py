@@ -121,7 +121,7 @@ class SRModel(BaseModel):
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         logger = get_root_logger()
         logger.info('Only support single GPU validation.')
-        self.nondist_val(dataloader, current_iter, tb_logger, save_img)
+        self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger,
                            save_img):
@@ -140,7 +140,7 @@ class SRModel(BaseModel):
             self.test()
 
             visuals = self.get_current_visuals()
-            sr_img = tensor2img([visuals['rlt']])
+            sr_img = tensor2img([visuals['result']])
             if 'gt' in visuals:
                 gt_img = tensor2img([visuals['gt']])
                 del self.gt
@@ -196,7 +196,7 @@ class SRModel(BaseModel):
     def get_current_visuals(self):
         out_dict = OrderedDict()
         out_dict['lq'] = self.lq.detach().cpu()
-        out_dict['rlt'] = self.output.detach().cpu()
+        out_dict['result'] = self.output.detach().cpu()
         if hasattr(self, 'gt'):
             out_dict['gt'] = self.gt.detach().cpu()
         return out_dict

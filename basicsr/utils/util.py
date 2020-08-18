@@ -128,7 +128,7 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
 
     if torch.is_tensor(tensor):
         tensor = [tensor]
-    rlt = []
+    result = []
     for _tensor in tensor:
         _tensor = _tensor.squeeze(0).float().detach().cpu().clamp_(*min_max)
         _tensor = (_tensor - min_max[0]) / (min_max[1] - min_max[0])
@@ -153,10 +153,10 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
             # Unlike MATLAB, numpy.unit8() WILL NOT round by default.
             img_np = (img_np * 255.0).round()
         img_np.astype(out_type)
-        rlt.append(img_np)
-    if len(rlt) == 1:
-        rlt = rlt[0]
-    return rlt
+        result.append(img_np)
+    if len(result) == 1:
+        result = result[0]
+    return result
 
 
 class ProgressBar(object):

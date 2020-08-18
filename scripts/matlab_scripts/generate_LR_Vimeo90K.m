@@ -18,8 +18,8 @@ for i = 1 : length(filepaths)
         disp('Ignore .. folder.');
     else
         idx = idx + 1;
-        str_rlt = sprintf('%d\t%s.\n', idx, imname);
-        fprintf(str_rlt);
+        str_result = sprintf('%d\t%s.\n', idx, imname);
+        fprintf(str_result);
         % read image
         img = imread(fullfile(folder_path, [imname, ext]));
         img = im2double(img);
