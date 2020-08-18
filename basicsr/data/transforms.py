@@ -85,17 +85,19 @@ def paired_random_crop(img_gts, img_lqs, gt_patch_size, scale, gt_path):
     return img_gts, img_lqs
 
 
-def augment(img_list, hflip=True, rotation=True, flow_list=None):
-    """Augment: horizontal flips or rotate (0, 90, 180, 270 degrees).
+def augment(imgs, hflip=True, rotation=True, flows=None):
+    """Augment: horizontal flips OR rotate (0, 90, 180, 270 degrees).
 
-    Use vertical flip and transpose for rotation implementation.
+    We use vertical flip and transpose for rotation implementation.
     All the images in the list use the same augmentation.
 
     Args:
-        img_list (list[ndarray]: Image list to be augmented.
+        imgs (list[ndarray] | ndarray): Images to be augmented. If the input
+            is an ndarray, it will be transformed to a list.
         hflip (bool): Horizontal flip. Default: True.
-        rotation (bool): Ratotation or not. Default: True.
-        flow_list (list[ndarray]: Flow list to be augmented.
+        rotation (bool): Ratotation. Default: True.
+        flows (list[ndarray]: Flows to be augmented. If the input is an
+            ndarray, it will be transformed to a list.
             Dimension is (h, w, 2). Default: None.
 
     Returns:
@@ -128,20 +130,21 @@ def augment(img_list, hflip=True, rotation=True, flow_list=None):
             flow = flow[:, :, [1, 0]]
         return flow
 
-    if flow_list is not None:
-        img_list = [_augment(img) for img in img_list]
-        flow_list = [_augment_flow(flow) for flow in flow_list]
+    if not isinstance(imgs, list):
+        imgs = [imgs]
+    imgs = [_augment(img) for img in imgs]
+    if len(imgs) == 1:
+        imgs = imgs[0]
 
-        if len(img_list) == 1:
-            img_list = img_list[0]
-        if len(flow_list) == 1:
-            flow_list = flow_list[0]
-        return img_list, flow_list
+    if flows is not None:
+        if not isinstance(flows, list):
+            flows = [flows]
+        flows = [_augment_flow(flow) for flow in flows]
+        if len(flows) == 1:
+            flows = flows[0]
+        return imgs, flows
     else:
-        img_list = [_augment(img) for img in img_list]
-        if len(img_list) == 1:
-            img_list = img_list[0]
-        return img_list
+        return imgs
 
 
 def totensor(imgs, bgr2rgb=True, float32=True):
