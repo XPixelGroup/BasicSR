@@ -9,7 +9,7 @@ def main(mode='folder'):
     """Test paired image dataset.
 
     Args:
-        mode: There are three modes: 'lmdb', 'folder', 'ann_file'.
+        mode: There are three modes: 'lmdb', 'folder', 'meta_info_file'.
     """
     opt = {}
     opt['dist'] = False
@@ -22,10 +22,10 @@ def main(mode='folder'):
         opt['dataroot_lq'] = 'datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub'
         opt['filename_tmpl'] = '{}'
         opt['io_backend'] = dict(type='disk')
-    elif mode == 'ann_file':
+    elif mode == 'meta_info_file':
         opt['dataroot_gt'] = 'datasets/DIV2K/DIV2K_train_HR_sub'
         opt['dataroot_lq'] = 'datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub'
-        opt['ann_file'] = 'basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt'
+        opt['meta_info_file'] = 'basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt'  # noqa:E501
         opt['filename_tmpl'] = '{}'
         opt['io_backend'] = dict(type='disk')
     elif mode == 'lmdb':

@@ -153,13 +153,14 @@ def paired_paths_from_lmdb(folders, keys):
         return paths
 
 
-def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
-    """Generate paired paths from an annotation file.
+def paired_paths_from_meta_info_file(folders, keys, meta_info_file,
+                                     filename_tmpl):
+    """Generate paired paths from an meta information file.
 
-    Each line in the annotation file contains the image names and
+    Each line in the meta information file contains the image names and
     image shape (usually for gt), separated by a white space.
 
-    Example of an annotation file:
+    Example of an meta information file:
     ```
     0001_s001.png (480,480,3)
     0001_s002.png (480,480,3)
@@ -170,7 +171,7 @@ def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
             be [input_folder, gt_folder].
         keys (list[str]): A list of keys identifying folders. The order should
             be in consistent with folders, e.g., ['lq', 'gt'].
-        ann_file (str): Path to the annotation file.
+        meta_info_file (str): Path to the meta information file.
         filename_tmpl (str): Template for each filename. Note that the
             template excludes the file extension. Usually the filename_tmpl is
             for files in the input folder.
@@ -187,7 +188,7 @@ def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
-    with open(ann_file, 'r') as fin:
+    with open(meta_info_file, 'r') as fin:
         gt_names = [line.split(' ')[0] for line in fin]
 
     paths = []

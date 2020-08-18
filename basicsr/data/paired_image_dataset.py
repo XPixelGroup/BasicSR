@@ -3,9 +3,9 @@ import numpy as np
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop, totensor
-from basicsr.data.util import (paired_paths_from_ann_file,
-                               paired_paths_from_folder,
-                               paired_paths_from_lmdb)
+from basicsr.data.util import (paired_paths_from_folder,
+                               paired_paths_from_lmdb,
+                               paired_paths_from_meta_info_file)
 from basicsr.utils import FileClient
 
 
@@ -18,8 +18,8 @@ class PairedImageDataset(data.Dataset):
     There are three modes:
     1. 'lmdb': Use lmdb files.
         If opt['io_backend'] == lmdb.
-    2. 'ann_file': Use annotation file to generate paths.
-        If opt['io_backend'] != lmdb and opt['ann_file'] is not None.
+    2. 'meta_info_file': Use meta information file to generate paths.
+        If opt['io_backend'] != lmdb and opt['meta_info_file'] is not None.
     3. 'folder': Scan folders to generate paths.
         The rest.
 
@@ -27,7 +27,7 @@ class PairedImageDataset(data.Dataset):
         opt (dict): Config for train datasets. It contains the following keys:
             dataroot_gt (str): Data root path for gt.
             dataroot_lq (str): Data root path for lq.
-            ann_file (str): Path for annotation file.
+            meta_info_file (str): Path for meta information file.
             io_backend (dict): IO backend type and other kwarg.
             filename_tmpl (str): Template for each filename. Note that the
                 template excludes the file extension. Default: '{}'.
@@ -58,10 +58,11 @@ class PairedImageDataset(data.Dataset):
             self.io_backend_opt['client_keys'] = ['lq', 'gt']
             self.paths = paired_paths_from_lmdb(
                 [self.lq_folder, self.gt_folder], ['lq', 'gt'])
-        elif 'ann_file' in self.opt:
-            self.paths = paired_paths_from_ann_file(
+        elif 'meta_info_file' in self.opt and self.opt[
+                'meta_info_file'] is not None:
+            self.paths = paired_paths_from_meta_info_file(
                 [self.lq_folder, self.gt_folder], ['lq', 'gt'],
-                self.opt['ann_file'], self.filename_tmpl)
+                self.opt['meta_info_file'], self.filename_tmpl)
         else:
             self.paths = paired_paths_from_folder(
                 [self.lq_folder, self.gt_folder], ['lq', 'gt'],
