@@ -129,7 +129,7 @@ path:
   pretrain_model_g: ~
   # 加载预训练模型的时候, 是否需要网络参数的名称严格对应
   strict_load: true
-  # 重启训练的状态路径, 一般在`experiments/exp_name/training_state`目录下
+  # 重启训练的状态路径, 一般在`experiments/exp_name/training_states`目录下
   # 这个设置了, 会覆盖  pretrain_model_g 的设定
   resume_state: ~
 

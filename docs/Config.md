@@ -130,7 +130,7 @@ path:
   pretrain_model_g: ~
   # Whether to load pretrained models strictly, that is the corresponding parameter names should be the same
   strict_load: true
-  # Path for resume state. Usually in the `experiments/exp_name/training_state` folder
+  # Path for resume state. Usually in the `experiments/exp_name/training_states` folder
   # This argument will over-write the `pretrain_model_g`
   resume_state: ~
 

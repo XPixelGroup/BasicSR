@@ -39,8 +39,8 @@ python setup.py develop
 ## 模型库和基准
 
 - 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
-- 预训练模型和log样例, 参见 [ModelZoo_CN.md](docs/ModelZoo_CN.md).
-- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了训练曲线等:
+- **预训练模型和log样例**, 参见 [ModelZoo_CN.md](docs/ModelZoo_CN.md).
+- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了**训练曲线**等:
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">
