@@ -16,7 +16,7 @@ class EDVRModel(VideoBaseModel):
     def __init__(self, opt):
         super(EDVRModel, self).__init__(opt)
         if self.is_train:
-            self.train_tsa_iter = opt['train']['tsa_iter']
+            self.train_tsa_iter = opt['train'].get('tsa_iter')
 
     def setup_optimizers(self):
         train_opt = self.opt['train']
