@@ -24,13 +24,12 @@ def check_resume(opt, resume_iter):
     logger = get_root_logger()
     if opt['path']['resume_state']:
         # ignore pretrained model paths
-        if opt['path'].get('pretrain_model_g',
-                           None) is not None or opt['path'].get(
-                               'pretrain_model_d', None) is not None:
+        if opt['path'].get('pretrain_model_g') is not None or opt['path'].get(
+                'pretrain_model_d') is not None:
             logger.warning(
                 'pretrain_model path will be ignored during resuming.')
 
-        # set pretrained model paths.
+        # set pretrained model paths
         opt['path']['pretrain_model_g'] = osp.join(opt['path']['models'],
                                                    f'net_g_{resume_iter}.pth')
         logger.info(
@@ -78,31 +77,32 @@ def set_random_seed(seed):
     torch.cuda.manual_seed_all(seed)
 
 
-def crop_border(img_list, crop_border):
+def crop_border(imgs, crop_border):
     """Crop borders of images.
 
     Args:
-        img_list (list [ndarray] | ndarray): Image list with shape (h, w, c).
+        imgs (list[ndarray] | ndarray): Images with shape (h, w, c).
         crop_border (int): Crop border for each end of height and weight.
 
     Returns:
-        (list [ndarray]): Cropped image list.
+        list[ndarray]: Cropped images.
     """
     if crop_border == 0:
-        return img_list
+        return imgs
     else:
-        if isinstance(img_list, list):
+        if isinstance(imgs, list):
             return [
                 v[crop_border:-crop_border, crop_border:-crop_border, ...]
-                for v in img_list
+                for v in imgs
             ]
         else:
-            return img_list[crop_border:-crop_border, crop_border:-crop_border,
-                            ...]
+            return imgs[crop_border:-crop_border, crop_border:-crop_border,
+                        ...]
 
 
 def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
-    """ Convert torch Tensors into image numpy arrays.
+    """Convert torch Tensors into image numpy arrays.
+
     After clamping to [min, max], values will be normalized to [0, 1].
 
     Args:
@@ -160,7 +160,7 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
 
 
 class ProgressBar(object):
-    """A progress bar which can print the progress.
+    """A progress bar that can print the progress.
 
     Modified from:
     https://github.com/hellock/cvbase/blob/master/cvbase/progress.py
