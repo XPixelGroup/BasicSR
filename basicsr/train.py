@@ -57,7 +57,7 @@ def main():
         resume_state = None
 
     # mkdir and loggers
-    if resume_state is None:
+    if resume_state is None and opt['rank'] == 0:
         make_exp_dirs(opt)
     log_file = osp.join(opt['path']['log'],
                         f"train_{opt['name']}_{get_time_str()}.log")
