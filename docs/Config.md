@@ -82,10 +82,10 @@ datasets:
     num_worker_per_gpu: 6
     # Total training batch size
     batch_size_per_gpu: 16
-    # THe ratio of enlarging dataset. For example, it will repeat 1000 times for a dataset with 15 images
-    # So that after one epoch, it will read 15000 times. It is used for accelerating data loader
+    # THe ratio of enlarging dataset. For example, it will repeat 100 times for a dataset with 15 images
+    # So that after one epoch, it will read 1500 times. It is used for accelerating data loader
     # since it costs too much time at the start of a new epoch
-    dataset_enlarge_ratio: 1000
+    dataset_enlarge_ratio: 100
 
   # validation dataset settings
   val:

@@ -82,9 +82,9 @@ datasets:
     num_worker_per_gpu: 6
     # 总共的训练batch size
     batch_size_per_gpu: 16
-    # 扩大dataset的倍率. 比如数据集有15张图, 则会重复这些图片1000次, 这样一个epoch下来, 能够读取15000张图
+    # 扩大dataset的倍率. 比如数据集有15张图, 则会重复这些图片100次, 这样一个epoch下来, 能够读取1500张图
     # (事实上是重复读的). 它经常用来加速data loader, 因为在有的机器上, 一个epoch结束, 会重启进程, 往往会很慢
-    dataset_enlarge_ratio: 1000
+    dataset_enlarge_ratio: 100
 
   # validation 数据集的设置
   val:
