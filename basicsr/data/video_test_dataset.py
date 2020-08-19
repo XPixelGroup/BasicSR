@@ -139,10 +139,11 @@ class VideoTestDataset(data.Dataset):
             img_paths_lq = [self.imgs_lq[folder][i] for i in select_idx]
             imgs_lq = util.read_img_seq(img_paths_lq)
             img_gt = util.read_img_seq([self.imgs_gt[folder][idx]])
+            img_gt.squeeze_(0)
 
         return {
             'lq': imgs_lq,  # (t, c, h, w)
-            'gt': img_gt,  # (1, c, h, w)
+            'gt': img_gt,  # (c, h, w)
             'folder': folder,  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/99
             'border': border,  # 1 for border, 0 for non-border
@@ -219,10 +220,11 @@ class VideoTestVimeo90KDataset(data.Dataset):
         gt_path = self.data_info['gt_path'][index]
         imgs_lq = util.read_img_seq(lq_path)
         img_gt = util.read_img_seq([gt_path])
+        img_gt.squeeze_(0)
 
         return {
             'lq': imgs_lq,  # (t, c, h, w)
-            'gt': img_gt,  # (1, c, h, w)
+            'gt': img_gt,  # (c, h, w)
             'folder': self.data_info['folder'][index],  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/843
             'border': self.data_info['border'][index],  # 0 for non-border
@@ -283,10 +285,11 @@ class VideoTestDUFDataset(VideoTestDataset):
             img_gt = util.read_img_seq([self.imgs_gt[folder][idx]],
                                        require_mod_crop=True,
                                        scale=self.opt['scale'])
+            img_gt.squeeze_(0)
 
         return {
             'lq': imgs_lq,  # (t, c, h, w)
-            'gt': img_gt,  # (1, c, h, w)
+            'gt': img_gt,  # (c, h, w)
             'folder': folder,  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/99
             'border': border,  # 1 for border, 0 for non-border
