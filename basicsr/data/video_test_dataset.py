@@ -33,11 +33,11 @@ class VideoTestDataset(data.Dataset):
             dataroot_gt (str): Data root path for gt.
             dataroot_lq (str): Data root path for lq.
             io_backend (dict): IO backend type and other kwarg.
-            cache_data (bool): Whether cache testing datasets. Default: True.
+            cache_data (bool): Whether to cache testing datasets.
             name (str): Dataset name.
             meta_info_file (str): The path to the file storing the list of test
-                folders. The folders are concatenated to the dataroot. If not
-                provided, all the folders in the dataroot will be used.
+                folders. If not provided, all the folders in the dataroot will
+                be used.
             num_frame (int): Window size for input frames.
             padding (str): Padding mode.
     """
@@ -61,7 +61,7 @@ class VideoTestDataset(data.Dataset):
             'type'] != 'lmdb', 'No need to use lmdb during validation/test.'
 
         logger = get_root_logger()
-        logger.info('Generate data info for VideoTestDataset...')
+        logger.info(f'Generate data info for VideoTestDataset - {opt["name"]}')
         self.imgs_lq, self.imgs_gt = {}, {}
         if opt['meta_info_file']:
             with open(opt['meta_info_file'], 'r') as fin:
@@ -139,21 +139,22 @@ class VideoTestDataset(data.Dataset):
             img_paths_lq = [self.imgs_lq[folder][i] for i in select_idx]
             imgs_lq = util.read_img_seq(img_paths_lq)
             img_gt = util.read_img_seq([self.imgs_gt[folder][idx]])
+            img_gt.squeeze_(0)
 
         return {
-            'lq': imgs_lq,
-            'gt': img_gt,
-            'folder': folder,
-            'idx': self.data_info['idx'][index],
-            'border': border,
-            'lq_path': lq_path
+            'lq': imgs_lq,  # (t, c, h, w)
+            'gt': img_gt,  # (c, h, w)
+            'folder': folder,  # folder name
+            'idx': self.data_info['idx'][index],  # e.g., 0/99
+            'border': border,  # 1 for border, 0 for non-border
+            'lq_path': lq_path  # center frame
         }
 
     def __len__(self):
         return len(self.data_info['gt_path'])
 
 
-class VideoTestVimeo90KDataset(VideoTestDataset):
+class VideoTestVimeo90KDataset(data.Dataset):
     """Video test dataset for Vimeo90k-Test dataset.
 
     It only keeps the center frame for testing.
@@ -164,17 +165,17 @@ class VideoTestVimeo90KDataset(VideoTestDataset):
             dataroot_gt (str): Data root path for gt.
             dataroot_lq (str): Data root path for lq.
             io_backend (dict): IO backend type and other kwarg.
-            cache_data (bool): Whether cache testing datasets. Default: True.
+            cache_data (bool): Whether to cache testing datasets.
             name (str): Dataset name.
             meta_info_file (str): The path to the file storing the list of test
-                folders. The folders are concatenated to the dataroot. If not
-                provided, all the folders in the dataroot will be used.
+                folders. If not provided, all the folders in the dataroot will
+                be used.
             num_frame (int): Window size for input frames.
             padding (str): Padding mode.
     """
 
     def __init__(self, opt):
-        super(VideoTestDataset, self).__init__()
+        super(VideoTestVimeo90KDataset, self).__init__()
         self.opt = opt
         self.cache_data = opt['cache_data']
         if self.cache_data:
@@ -199,8 +200,7 @@ class VideoTestVimeo90KDataset(VideoTestDataset):
             'type'] != 'lmdb', 'No need to use lmdb during validation/test.'
 
         logger = get_root_logger()
-        logger.info('Generate data info for VideoTestDataset...')
-
+        logger.info(f'Generate data info for VideoTestDataset - {opt["name"]}')
         with open(opt['meta_info_file'], 'r') as fin:
             subfolders = [line.split(' ')[0] for line in fin]
         for idx, subfolder in enumerate(subfolders):
@@ -220,14 +220,15 @@ class VideoTestVimeo90KDataset(VideoTestDataset):
         gt_path = self.data_info['gt_path'][index]
         imgs_lq = util.read_img_seq(lq_path)
         img_gt = util.read_img_seq([gt_path])
+        img_gt.squeeze_(0)
 
         return {
-            'lq': imgs_lq,
-            'gt': img_gt,
-            'folder': self.data_info['folder'][index],
-            'idx': self.data_info['idx'][index],
-            'border': self.data_info['border'][index],
-            'lq_path': lq_path[self.opt['num_frame'] // 2]
+            'lq': imgs_lq,  # (t, c, h, w)
+            'gt': img_gt,  # (c, h, w)
+            'folder': self.data_info['folder'][index],  # folder name
+            'idx': self.data_info['idx'][index],  # e.g., 0/843
+            'border': self.data_info['border'][index],  # 0 for non-border
+            'lq_path': lq_path[self.opt['num_frame'] // 2]  # center frame
         }
 
     def __len__(self):
@@ -235,6 +236,17 @@ class VideoTestVimeo90KDataset(VideoTestDataset):
 
 
 class VideoTestDUFDataset(VideoTestDataset):
+    """ Video test dataset for DUF dataset.
+
+    Args:
+        opt (dict): Config for train dataset.
+            Most of keys are the same as VideoTestDataset.
+            It has the follwing extra keys:
+
+            use_duf_downsampling (bool): Whether to use duf downsampling to
+                generate low-resolution frames.
+            scale (bool): Scale, which will be added automatically.
+    """
 
     def __getitem__(self, index):
         folder = self.data_info['folder'][index]
@@ -248,6 +260,7 @@ class VideoTestDUFDataset(VideoTestDataset):
 
         if self.cache_data:
             if self.opt['use_duf_downsampling']:
+                # read imgs_gt to generate low-resolution frames
                 imgs_lq = self.imgs_gt[folder].index_select(
                     0, torch.LongTensor(select_idx))
                 imgs_lq = duf_downsample(
@@ -259,6 +272,7 @@ class VideoTestDUFDataset(VideoTestDataset):
         else:
             if self.opt['use_duf_downsampling']:
                 img_paths_lq = [self.imgs_gt[folder][i] for i in select_idx]
+                # read imgs_gt to generate low-resolution frames
                 imgs_lq = util.read_img_seq(
                     img_paths_lq,
                     require_mod_crop=True,
@@ -271,19 +285,20 @@ class VideoTestDUFDataset(VideoTestDataset):
             img_gt = util.read_img_seq([self.imgs_gt[folder][idx]],
                                        require_mod_crop=True,
                                        scale=self.opt['scale'])
+            img_gt.squeeze_(0)
 
         return {
-            'lq': imgs_lq,
-            'gt': img_gt,
-            'folder': folder,
-            'idx': self.data_info['idx'][index],
-            'border': border,
-            'lq_path': lq_path
+            'lq': imgs_lq,  # (t, c, h, w)
+            'gt': img_gt,  # (c, h, w)
+            'folder': folder,  # folder name
+            'idx': self.data_info['idx'][index],  # e.g., 0/99
+            'border': border,  # 1 for border, 0 for non-border
+            'lq_path': lq_path  # center frame
         }
 
 
 class VideoRecurrentTestDataset(VideoTestDataset):
-    """Video test dataset for recurrent architectures, which take LR video
+    """Video test dataset for recurrent architectures, which takes LR video
     frames as input and output corresponding HR video frames.
 
     Args:

@@ -234,7 +234,7 @@ class DynamicUpsamplingFilter(nn.Module):
 class DUF(nn.Module):
     """Network architecture for DUF
 
-    Paper: Jo etal. Deep Video Super-Resolution Network Using Dynamic
+    Paper: Jo et.al. Deep Video Super-Resolution Network Using Dynamic
             Upsampling Filters Without Explicit Motion Compensation, CVPR, 2018
     Code reference:
         https://github.com/yhjo09/VSR-DUF

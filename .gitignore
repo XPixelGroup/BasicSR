@@ -1,13 +1,17 @@
+# ignored folders
+datasets/*
 experiments/*
 results/*
 tb_logger/*
-datasets
 wandb/*
+tmp/*
 
 .vscode
 
+# ignored files
 version.py
 
+# ignored files with suffix
 *.html
 *.png
 *.jpg

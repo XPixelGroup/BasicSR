@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from setuptools import find_packages, setup
 
 import os
@@ -8,14 +9,13 @@ import torch
 from torch.utils.cpp_extension import (BuildExtension, CppExtension,
                                        CUDAExtension)
 
+version_file = 'basicsr/version.py'
+
 
 def readme():
     with open('README.md', encoding='utf-8') as f:
         content = f.read()
     return content
-
-
-version_file = 'basicsr/version.py'
 
 
 def get_git_hash():
@@ -122,11 +122,11 @@ if __name__ == '__main__':
     setup(
         name='basicsr',
         version=get_version(),
-        description='BasicSR - Image and Video Super-Resolution Toolbox',
+        description='Open Source Image and Video Super-Resolution Toolbox',
         long_description=readme(),
         author='Xintao Wang',
         author_email='xintao.wang@outlook.com',
-        keywords='computer vision, super resolution',
+        keywords='computer vision, restoration, super resolution',
         url='https://github.com/xinntao/BasicSR',
         packages=find_packages(
             exclude=('options', 'datasets', 'experiments', 'results',
@@ -136,9 +136,8 @@ if __name__ == '__main__':
             'License :: OSI Approved :: Apache Software License',
             'Operating System :: OS Independent',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
         ],
         license='Apache License 2.0',
         setup_requires=['cython', 'numpy'],

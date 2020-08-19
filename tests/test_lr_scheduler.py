@@ -1,5 +1,4 @@
 import matplotlib as mpl
-import seaborn
 import torch
 from matplotlib import pyplot as plt
 from matplotlib import ticker as mtick
@@ -44,8 +43,6 @@ def main():
         lr_l2[i] = optimizer.param_groups[1]['lr']
 
     mpl.style.use('default')
-    seaborn.set(style='whitegrid')
-    seaborn.set_context('paper')
 
     plt.figure(1)
     plt.subplot(111)

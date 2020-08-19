@@ -1,9 +1,8 @@
 name: TOF_official
-suffix: ~  # add suffix to saved images
 model_type: VideoBaseModel
 scale: 4
-crop_border: 0  # crop border when evaluation. If None, crop the scale pixels
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
 
 datasets:
   test:
@@ -14,7 +13,7 @@ datasets:
     io_backend:
       type: disk
 
-    cache_data: True
+    cache_data: false
     num_frame: 7
     padding: reflection_circle
 
@@ -29,3 +28,18 @@ save_img: true
 path:
   pretrain_model_g: experiments/pretrained_models/tof_official-e81c455f.pth
   strict_load: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr_y: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: true
+    ssim_y:
+      type: calculate_ssim
+      crop_border: 0
+      test_y_channel: true
