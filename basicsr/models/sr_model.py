@@ -14,8 +14,7 @@ metric_module = importlib.import_module('basicsr.metrics')
 
 
 class SRModel(BaseModel):
-    """Base SR model for single image super-resolution.
-    """
+    """Base SR model for single image super-resolution."""
 
     def __init__(self, opt):
         super(SRModel, self).__init__(opt)
@@ -39,7 +38,7 @@ class SRModel(BaseModel):
         train_opt = self.opt['train']
 
         # define losses
-        if train_opt.get('pixel_opt', None):
+        if train_opt.get('pixel_opt'):
             pixel_type = train_opt['pixel_opt'].pop('type')
             cri_pix_cls = getattr(loss_module, pixel_type)
             self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
@@ -47,7 +46,7 @@ class SRModel(BaseModel):
         else:
             self.cri_pix = None
 
-        if train_opt.get('perceptual_opt', None):
+        if train_opt.get('perceptual_opt'):
             percep_type = train_opt['perceptual_opt'].pop('type')
             cri_perceptual_cls = getattr(loss_module, percep_type)
             self.cri_perceptual = cri_perceptual_cls(
@@ -126,7 +125,7 @@ class SRModel(BaseModel):
     def nondist_validation(self, dataloader, current_iter, tb_logger,
                            save_img):
         dataset_name = dataloader.dataset.opt['name']
-        with_metrics = self.opt['val']['metrics'] is not None
+        with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:
             self.metric_results = {
                 metric: 0

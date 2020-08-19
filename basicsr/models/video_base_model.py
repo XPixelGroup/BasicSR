@@ -3,6 +3,7 @@ import mmcv
 import torch
 from collections import Counter
 from copy import deepcopy
+from mmcv.runner import get_dist_info
 from os import path as osp
 from torch import distributed as dist
 
@@ -13,8 +14,7 @@ metric_module = importlib.import_module('basicsr.metrics')
 
 
 class VideoBaseModel(SRModel):
-    """Base video SR model.
-    """
+    """Base video SR model."""
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         dataset = dataloader.dataset
@@ -35,8 +35,7 @@ class VideoBaseModel(SRModel):
                     dtype=torch.float32,
                     device='cuda')
 
-        world_size = dist.get_world_size()
-        rank = dist.get_rank()
+        rank, world_size = get_dist_info
         for _, tensor in self.metric_results.items():
             tensor.zero_()
         # record all frames (border and center frames)
@@ -68,11 +67,11 @@ class VideoBaseModel(SRModel):
                     raise NotImplementedError(
                         'saving image is not supported during training.')
                 else:
-                    if 'vimeo' in dataset_name.lower():
+                    if 'vimeo' in dataset_name.lower():  # vimeo90k dataset
                         split_result = lq_path.split('/')
                         img_name = (f'{split_result[-3]}_{split_result[-2]}_'
                                     f'{split_result[-1].split(".")[0]}')
-                    else:
+                    else:  # other datasets, e.g., REDS, Vid4
                         img_name = osp.splitext(osp.basename(lq_path))[0]
 
                     if self.opt['val']['suffix']:

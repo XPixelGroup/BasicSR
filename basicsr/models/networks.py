@@ -6,7 +6,7 @@ def dynamic_instantiation(modules, cls_type, opt):
 
     Args:
         modules (list[importlib modules]): List of modules from importlib
-        files.
+            files.
         cls_type (str): Class type.
         opt (dict): Class initialization kwargs.
 
@@ -23,7 +23,7 @@ def dynamic_instantiation(modules, cls_type, opt):
     return cls_(**opt)
 
 
-# generator
+# Generator
 def define_net_g(opt):
     network_type = opt.pop('type')
     net_g = dynamic_instantiation(_arch_modules, network_type, opt)

@@ -21,7 +21,7 @@ class EDVRModel(VideoBaseModel):
     def setup_optimizers(self):
         train_opt = self.opt['train']
         dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
-        logger.info(f'multiple the learning rate for dcn with {dcn_lr_mul}.')
+        logger.info(f'Multiple the learning rate for dcn with {dcn_lr_mul}.')
         if dcn_lr_mul == 1:
             optim_params = self.net_g.parameters()
         else:  # separate dcn params and normal params for differnet lr
