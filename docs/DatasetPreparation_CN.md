@@ -138,6 +138,7 @@ DIV2K_train_HR_sub.lmdb
 
     ```yml
     prefetch_mode: cpu
+    num_prefetch_queue: 1  # 1 by default
     ```
 
 ## 图像数据

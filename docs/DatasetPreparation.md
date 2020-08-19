@@ -137,6 +137,7 @@ It can be achieved by setting `prefetch_mode` in the configuration file. Current
 
     ```yml
     prefetch_mode: cpu
+    num_prefetch_queue: 1  # 1 by default
     ```
 
 ## Image Super-Resolution
