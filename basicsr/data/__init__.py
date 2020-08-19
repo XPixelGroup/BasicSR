@@ -76,6 +76,7 @@ def create_dataloader(dataset,
         seed (int | None): Seed. Default: None
     """
     phase = dataset_opt['phase']
+    rank, _ = get_dist_info()
     if phase == 'train':
         if dist:  # distributed training
             batch_size = dataset_opt['batch_size_per_gpu']
@@ -91,6 +92,9 @@ def create_dataloader(dataset,
             num_workers=num_workers,
             sampler=sampler,
             drop_last=True)
+        dataloader_args['worker_init_fn'] = partial(
+            worker_init_fn, num_workers=num_workers, rank=rank,
+            seed=seed) if seed is not None else None
     elif phase == 'val':  # validation
         dataloader_args = dict(
             dataset=dataset, batch_size=1, shuffle=False, num_workers=1)
@@ -99,10 +103,6 @@ def create_dataloader(dataset,
                          "Supported ones are 'train' and 'val'.")
 
     dataloader_args['pin_memory'] = dataset_opt.get('pin_memory', False)
-    rank, _ = get_dist_info()
-    dataloader_args['worker_init_fn'] = partial(
-        worker_init_fn, num_workers=num_workers, rank=rank,
-        seed=seed) if seed is not None else None
 
     prefetch_mode = dataset_opt.get('prefetch_mode')
     if prefetch_mode == 'cpu':  # CPUPrefetcher
