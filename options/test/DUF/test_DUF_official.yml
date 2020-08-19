@@ -41,3 +41,7 @@ val:
       type: calculate_psnr
       crop_border: 8
       test_y_channel: true
+    ssim_y:
+      type: calculate_ssim
+      crop_border: 8
+      test_y_channel: true
