@@ -5,14 +5,24 @@ from os import path as osp
 
 paths = glob.glob('experiments/pretrained_models/*.pth')
 
-for path in paths:
-    model_basename = osp.basename(path).split('-')[0]
-    net = torch.load(path)
-    out_file = path.split('-')[0]
+for idx, path in enumerate(paths):
+    print(f'{idx+1:03d}: Processing {path}')
+    net = torch.load(path, map_location=torch.device('cpu'))
+    basename = osp.basename(path)
     if 'params' not in net:
-        print(f"Please check! Model {model_basename} does not have 'params'.")
+        raise ValueError(f'Please check! Model {basename} does not '
+                         f"have 'params' key.")
     else:
-        torch.save(dict(params=net), out_file)
-        sha = subprocess.check_output(['sha256sum', out_file]).decode()
-        final_file = out_file.rstrip('.pth') + f'-{sha[:8]}.pth'
-        subprocess.Popen(['mv', out_file, final_file])
+        if '-' in basename:
+            # check whether the sha is the latest
+            old_sha = basename.split('-')[1].split('.')[0]
+            new_sha = subprocess.check_output(['sha256sum', path]).decode()[:8]
+            if old_sha != new_sha:
+                final_file = path.split('-')[0] + f'-{new_sha}.pth'
+                print(f'\t Save from {path} to {final_file}')
+                subprocess.Popen(['mv', path, final_file])
+        else:
+            sha = subprocess.check_output(['sha256sum', path]).decode()[:8]
+            final_file = path.split('.pth')[0] + f'-{sha}.pth'
+            print(f'\t Save from {path} to {final_file}')
+            subprocess.Popen(['mv', path, final_file])
