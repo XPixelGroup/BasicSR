@@ -35,7 +35,7 @@ class VideoBaseModel(SRModel):
                     dtype=torch.float32,
                     device='cuda')
 
-        rank, world_size = get_dist_info
+        rank, world_size = get_dist_info()
         for _, tensor in self.metric_results.items():
             tensor.zero_()
         # record all frames (border and center frames)
