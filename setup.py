@@ -120,7 +120,7 @@ def get_requirements(filename='requirements.txt'):
 if __name__ == '__main__':
     write_version_py()
     setup(
-        name='BasicSR',
+        name='basicsr',
         version=get_version(),
         description='Open Source Image and Video Super-Resolution Toolbox',
         long_description=readme(),
