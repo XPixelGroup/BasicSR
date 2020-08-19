@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 import math
 import random
@@ -13,7 +14,7 @@ from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import create_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
                            get_root_logger, init_tb_logger, init_wandb_logger,
-                           make_exp_dirs, set_random_seed)
+                           make_exp_dirs, mkdir_and_rename, set_random_seed)
 from basicsr.utils.options import dict2str, parse
 
 
@@ -31,7 +32,7 @@ def main():
     opt = parse(args.opt, is_train=True)
 
     # distributed training settings
-    if args.launcher == 'none':  # disabled distributed training
+    if args.launcher == 'none':  # non-distributed training
         opt['dist'] = False
         print('Disable distributed training.', flush=True)
     else:
@@ -40,12 +41,13 @@ def main():
             init_dist(args.launcher, **opt['dist_params'])
         else:
             init_dist(args.launcher)
+
     rank, world_size = get_dist_info()
     opt['rank'] = rank
     opt['world_size'] = world_size
 
     # load resume states if exists
-    if opt['path'].get('resume_state', None):
+    if opt['path'].get('resume_state'):
         device_id = torch.cuda.current_device()
         resume_state = torch.load(
             opt['path']['resume_state'],
@@ -65,7 +67,10 @@ def main():
     # initialize tensorboard logger and wandb logger
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
-        tb_logger = init_tb_logger(log_dir='./tb_logger/' + opt['name'])
+        log_dir = './tb_logger/' + opt['name']
+        if resume_state is None:
+            mkdir_and_rename(log_dir)
+        tb_logger = init_tb_logger(log_dir=log_dir)
     if (opt['logger'].get('wandb')
             is not None) and (opt['logger']['wandb'].get('project')
                               is not None) and ('debug' not in opt['name']):
@@ -88,21 +93,10 @@ def main():
     train_loader, val_loader = None, None
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
-            # dataset_ratio: enlarge the size of datasets for each epoch
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
             train_set = create_dataset(dataset_opt)
-            train_size = int(
-                math.ceil(
-                    len(train_set) /
-                    (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
-            total_iters = int(opt['train']['total_iter'])
-            total_epochs = int(math.ceil(total_iters / train_size))
-
             train_sampler = EnlargedSampler(train_set, world_size, rank,
                                             dataset_enlarge_ratio)
-            total_epochs = total_iters / (train_size * dataset_enlarge_ratio)
-            total_epochs = int(math.ceil(total_epochs))
-
             train_loader = create_dataloader(
                 train_set,
                 dataset_opt,
@@ -110,25 +104,35 @@ def main():
                 dist=opt['dist'],
                 sampler=train_sampler,
                 seed=seed)
-            logger.info(f'Number of train images: {len(train_set)}, '
-                        f'iters: {train_size}')
+
+            num_iter_per_epoch = int(
+                math.ceil(
+                    len(train_set) * dataset_enlarge_ratio /
+                    (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
+            total_iters = int(opt['train']['total_iter'])
+            total_epochs = int(math.ceil(total_iters / (num_iter_per_epoch)))
             logger.info(
-                f'Total epochs needed: {total_epochs} for iters {total_iters}')
+                'Training statistics:'
+                f'\n\tNumber of train images: {len(train_set)}'
+                f'\n\tDataset enlarge ratio: {dataset_enlarge_ratio}'
+                f'\n\tBatch size per gpu: {dataset_opt["batch_size_per_gpu"]}'
+                f'\n\tWorld size (gpu number): {opt["world_size"]}'
+                f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
+                f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
         elif phase == 'val':
             val_set = create_dataset(dataset_opt)
             val_loader = create_dataloader(
                 val_set,
                 dataset_opt,
-                opt,
                 num_gpu=opt['num_gpu'],
                 dist=opt['dist'],
                 sampler=None,
                 seed=seed)
             logger.info(
-                f"Number of val images/folders in {dataset_opt['name']}: "
+                f'Number of val images/folders in {dataset_opt["name"]}: '
                 f'{len(val_set)}')
         else:
-            raise NotImplementedError(f'Phase {phase} is not recognized.')
+            raise ValueError(f'Dataset phase {phase} is not recognized.')
     assert train_loader is not None
 
     # create model
@@ -144,16 +148,11 @@ def main():
         current_iter = resume_state['iter']
         model.resume_training(resume_state)  # handle optimizers and schedulers
     else:
-        current_iter = 0
         start_epoch = 0
+        current_iter = 0
 
     # create message logger (formatted outputs)
     msg_logger = MessageLogger(opt, current_iter, tb_logger)
-
-    # training
-    logger.info(
-        f'Start training from epoch: {start_epoch}, iter: {current_iter}')
-    data_time, iter_time = 0, 0
 
     # dataloader prefetcher
     prefetch_mode = opt['datasets']['train'].get('prefetch_mode')
@@ -168,11 +167,17 @@ def main():
         raise ValueError(f'Wrong prefetch_mode {prefetch_mode}.'
                          "Supported ones are: None, 'cuda', 'cpu'.")
 
+    # training
+    logger.info(
+        f'Start training from epoch: {start_epoch}, iter: {current_iter}')
+    data_time, iter_time = time.time(), time.time()
+    start_time = time.time()
+
     for epoch in range(start_epoch, total_epochs + 1):
-        if opt['dist']:
-            train_sampler.set_epoch(epoch)
+        train_sampler.set_epoch(epoch)
         prefetcher.reset()
         train_data = prefetcher.next()
+
         while train_data is not None:
             data_time = time.time() - data_time
 
@@ -181,7 +186,7 @@ def main():
                 break
             # update learning rate
             model.update_learning_rate(
-                current_iter, warmup_iter=opt['train']['warmup_iter'])
+                current_iter, warmup_iter=opt['train'].get('warmup_iter', -1))
             # training
             model.feed_data(train_data)
             model.optimize_parameters(current_iter)
@@ -209,16 +214,17 @@ def main():
             iter_time = time.time()
             train_data = prefetcher.next()
         # end of iter
+
     # end of epoch
 
-    logger.info('End of training.')
-    logger.info('Saving the latest model.')
-    model.save(epoch=-1, current_iter=-1)  # -1 for the latest
-    # last validation
+    consumed_time = str(
+        datetime.timedelta(seconds=int(time.time() - start_time)))
+    logger.info(f'End of training. Time consumed: {consumed_time}')
+    logger.info('Save the latest model.')
+    model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
     if opt['val']['val_freq'] is not None:
         model.validation(val_loader, current_iter, tb_logger,
                          opt['val']['save_img'])
-
     if tb_logger:
         tb_logger.close()
 
