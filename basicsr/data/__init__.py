@@ -95,12 +95,12 @@ def create_dataloader(dataset,
         dataloader_args['worker_init_fn'] = partial(
             worker_init_fn, num_workers=num_workers, rank=rank,
             seed=seed) if seed is not None else None
-    elif phase == 'val':  # validation
+    elif phase in ['val', 'test']:  # validation
         dataloader_args = dict(
             dataset=dataset, batch_size=1, shuffle=False, num_workers=1)
     else:
         raise ValueError(f'Wrong dataset phase: {phase}. '
-                         "Supported ones are 'train' and 'val'.")
+                         "Supported ones are 'train', 'val' and 'test'.")
 
     dataloader_args['pin_memory'] = dataset_opt.get('pin_memory', False)
 
