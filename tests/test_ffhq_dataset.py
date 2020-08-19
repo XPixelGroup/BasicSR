@@ -6,7 +6,7 @@ import torchvision.utils
 from basicsr.data import create_dataloader, create_dataset
 
 
-def main(mode='folder'):
+def main():
     """Test FFHQ dataset."""
     opt = {}
     opt['dist'] = False
