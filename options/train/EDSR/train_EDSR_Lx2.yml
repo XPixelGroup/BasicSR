@@ -80,7 +80,6 @@ train:
     loss_weight: 1.0
     reduction: mean
 
-
 # validation settings
 val:
   val_freq: !!float 5e3
