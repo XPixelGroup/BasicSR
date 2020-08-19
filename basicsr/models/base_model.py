@@ -2,8 +2,8 @@ import logging
 import os
 import torch
 from collections import OrderedDict
+from copy import deepcopy
 from mmcv.runner import master_only
-from torch import nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from basicsr.models import lr_scheduler as lr_scheduler
@@ -38,7 +38,7 @@ class BaseModel():
         """Validation function.
 
         Args:
-            dataloder (torch.utils.data.DataLoader): Validation dataloader.
+            dataloader (torch.utils.data.DataLoader): Validation dataloader.
             current_iter (int): Current iteration.
             tb_logger (tensorboard logger): Tensorboard logger.
             save_img (bool): Whether to save images. Default: False.
@@ -75,12 +75,7 @@ class BaseModel():
         """Set up schedulers."""
         train_opt = self.opt['train']
         scheduler_type = train_opt['scheduler'].pop('type')
-        if scheduler_type == 'MultiStepLR':
-            for optimizer in self.optimizers:
-                self.schedulers.append(
-                    lr_scheduler.MultiStepRestartLR(optimizer,
-                                                    **train_opt['scheduler']))
-        elif scheduler_type == 'MultiStepRestartLR':
+        if scheduler_type in ['MultiStepLR', 'MultiStepRestartLR']:
             for optimizer in self.optimizers:
                 self.schedulers.append(
                     lr_scheduler.MultiStepRestartLR(optimizer,
@@ -195,9 +190,7 @@ class BaseModel():
 
         save_dict = {}
         for net_, param_key_ in zip(net, param_key):
-            if isinstance(net_, nn.DataParallel) or isinstance(
-                    net_, DistributedDataParallel):
-                net_ = net_.module
+            net_ = self.get_bare_model(net_)
             state_dict = net_.state_dict()
             for key, param in state_dict.items():
                 if key.startswith('module.'):  # remove unnecessary 'module.'
@@ -212,16 +205,14 @@ class BaseModel():
 
         1. Print keys with differnet names.
         2. If strict=False, print the same key but with different tensor size.
-            It also ignore these keys with different sizes.
+            It also ignore these keys with different sizes (not load).
 
         Args:
             crt_net (torch model): Current network.
             load_net (dict): Loaded network.
             strict (bool): Whether strictly loaded. Default: True.
         """
-        if isinstance(crt_net, nn.DataParallel) or isinstance(
-                crt_net, DistributedDataParallel):
-            crt_net = crt_net.module
+        crt_net = self.get_bare_model(crt_net)
         crt_net = crt_net.state_dict()
         crt_net_keys = set(crt_net.keys())
         load_net_keys = set(load_net.keys())
@@ -259,7 +250,7 @@ class BaseModel():
             f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(load_path)[param_key]
         # remove unnecessary 'module.'
-        for k, v in load_net.items():
+        for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):
                 load_net[k[7:]] = v
                 load_net.pop(k)
