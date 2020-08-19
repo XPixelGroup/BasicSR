@@ -21,7 +21,8 @@ from basicsr.utils.options import dict2str, parse
 def main():
     # options
     parser = argparse.ArgumentParser()
-    parser.add_argument('-opt', type=str, help='Path to option YAML file.')
+    parser.add_argument(
+        '-opt', type=str, required=True, help='Path to option YAML file.')
     parser.add_argument(
         '--launcher',
         choices=['none', 'pytorch', 'slurm'],

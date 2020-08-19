@@ -27,7 +27,7 @@ def main():
     opt = parse(args.opt, is_train=False)
 
     # distributed testing settings
-    if args.launcher == 'none':  # disabled distributed testing
+    if args.launcher == 'none':  # non-distributed testing
         opt['dist'] = False
         print('Disable distributed testing.', flush=True)
     else:
@@ -36,6 +36,7 @@ def main():
             init_dist(args.launcher, **opt['dist_params'])
         else:
             init_dist(args.launcher)
+
     rank, world_size = get_dist_info()
     opt['rank'] = rank
     opt['world_size'] = world_size
@@ -52,6 +53,7 @@ def main():
     seed = opt['manual_seed']
     if seed is None:
         seed = random.randint(1, 10000)
+        opt['manual_seed'] = seed
     logger.info(f'Random seed: {seed}')
     set_random_seed(seed + rank)
 
