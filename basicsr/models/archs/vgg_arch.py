@@ -49,8 +49,8 @@ def insert_bn(names):
     for name in names:
         names_bn.append(name)
         if 'conv' in name:
-            pos = name.replace('conv', '')
-            names_bn.append('bn' + pos)
+            position = name.replace('conv', '')
+            names_bn.append('bn' + position)
     return names_bn
 
 
@@ -63,15 +63,15 @@ class VGGFeatureExtractor(nn.Module):
 
     Args:
         layer_name_list (list[str]): Forward function returns the corresponding
-        features according to the layer_name_list. Example:
-            {'relu1_1', 'relu2_1', 'relu3_1'}.
+            features according to the layer_name_list.
+            Example: {'relu1_1', 'relu2_1', 'relu3_1'}.
         vgg_type (str): Set the type of vgg network. Default: 'vgg19'.
         use_input_norm (bool): If True, normalize the input image. Importantly,
             the input feature must in the range [0, 1]. Default: True.
         requires_grad (bool): If true, the parameters of VGG network will be
             optimized. Default: False.
         remove_pooling (bool): If true, the max pooling operations in VGG net
-            will be removed.  Default: False.
+            will be removed. Default: False.
         pooling_stride (int): The stride of max pooling operation. Default: 2.
     """
 
@@ -130,6 +130,15 @@ class VGGFeatureExtractor(nn.Module):
                 torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
 
     def forward(self, x):
+        """Forward function.
+
+        Args:
+            x (Tensor): Input tensor with shape (n, c, h, w).
+
+        Returns:
+            Tensor: Forward results.
+        """
+
         if self.use_input_norm:
             x = (x - self.mean) / self.std
 

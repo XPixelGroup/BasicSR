@@ -146,7 +146,7 @@ class PerceptualLoss(nn.Module):
     """Perceptual loss with commonly used style loss.
 
     Args:
-        layers_weights (dict): The weight for each layer of vgg feature.
+        layer_weights (dict): The weight for each layer of vgg feature.
             Here is an example: {'conv5_4': 1.}, which means the conv5_4
             feature layer (before relu5_4) will be extracted with weight
             1.0 in calculting losses.
@@ -164,8 +164,8 @@ class PerceptualLoss(nn.Module):
             this is different from the `use_input_norm` which norm the input in
             in forward function of vgg according to the statistics of dataset.
             Importantly, the input image must be in range [-1, 1].
-        pretrained (str): Path for pretrained weights. Default:
-            'torchvision://vgg19'
+            Default: False.
+        criterion (str): Criterion used for perceptual loss. Default: 'l1'.
     """
 
     def __init__(self,
@@ -173,8 +173,8 @@ class PerceptualLoss(nn.Module):
                  vgg_type='vgg19',
                  use_input_norm=True,
                  perceptual_weight=1.0,
-                 style_weight=0,
-                 norm_img=True,
+                 style_weight=0.,
+                 norm_img=False,
                  criterion='l1'):
         super(PerceptualLoss, self).__init__()
         self.norm_img = norm_img
@@ -195,13 +195,23 @@ class PerceptualLoss(nn.Module):
             self.criterion = None
         else:
             raise NotImplementedError(
-                f'{criterion} criterion has not been supported in'
-                ' this version.')
+                f'{criterion} criterion has not been supported.')
 
     def forward(self, x, gt):
+        """Forward function.
+
+        Args:
+            x (Tensor): Input tensor with shape (n, c, h, w).
+            gt (Tensor): Ground-truth tensor with shape (n, c, h, w).
+
+        Returns:
+            Tensor: Forward results.
+        """
+
         if self.norm_img:
             x = (x + 1.) * 0.5
             gt = (gt + 1.) * 0.5
+
         # extract vgg features
         x_features = self.vgg(x)
         gt_features = self.vgg(gt.detach())
@@ -225,9 +235,15 @@ class PerceptualLoss(nn.Module):
         if self.style_weight > 0:
             style_loss = 0
             for k in x_features.keys():
-                style_loss += self.criterion(
-                    self._gram_mat(x_features[k]),
-                    self._gram_mat(gt_features[k])) * self.layer_weights[k]
+                if self.criterion_type == 'fro':
+                    style_loss += torch.norm(
+                        self._gram_mat(x_features[k]) -
+                        self._gram_mat(gt_features[k]),
+                        p='fro') * self.layer_weights[k]
+                else:
+                    style_loss += self.criterion(
+                        self._gram_mat(x_features[k]),
+                        self._gram_mat(gt_features[k])) * self.layer_weights[k]
             style_loss *= self.style_weight
         else:
             style_loss = None
@@ -235,7 +251,15 @@ class PerceptualLoss(nn.Module):
         return percep_loss, style_loss
 
     def _gram_mat(self, x):
-        (n, c, h, w) = x.size()
+        """Calculate Gram matrix.
+
+        Args:
+            x (torch.Tensor): Tensor with shape of (n, c, h, w).
+
+        Returns:
+            torch.Tensor: Gram matrix.
+        """
+        n, c, h, w = x.size()
         features = x.view(n, c, w * h)
         features_t = features.transpose(1, 2)
         gram = features.bmm(features_t) / (c * h * w)
