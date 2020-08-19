@@ -57,7 +57,7 @@ def main():
         resume_state = None
 
     # mkdir and loggers
-    if resume_state is None and opt['rank'] == 0:
+    if resume_state is None:
         make_exp_dirs(opt)
     log_file = osp.join(opt['path']['log'],
                         f"train_{opt['name']}_{get_time_str()}.log")
@@ -69,7 +69,7 @@ def main():
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
         log_dir = './tb_logger/' + opt['name']
-        if resume_state is None:
+        if resume_state is None and opt['rank'] == 0:
             mkdir_and_rename(log_dir)
         tb_logger = init_tb_logger(log_dir=log_dir)
     if (opt['logger'].get('wandb')
