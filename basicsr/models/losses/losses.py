@@ -357,14 +357,14 @@ class GANLoss(nn.Module):
         return loss if is_disc else loss * self.loss_weight
 
 
-def gradient_penalty_loss(discriminator, real_data, fake_data, mask=None):
+def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
     """Calculate gradient penalty for wgan-gp.
 
     Args:
         discriminator (nn.Module): Network for the discriminator.
         real_data (Tensor): Real input data.
         fake_data (Tensor): Fake input data.
-        mask (Tensor): Masks for inpaitting. Default: None.
+        weight (Tensor): Weight tensor. Default: None.
 
     Returns:
         Tensor: A tensor for gradient penalty.
@@ -386,12 +386,12 @@ def gradient_penalty_loss(discriminator, real_data, fake_data, mask=None):
         retain_graph=True,
         only_inputs=True)[0]
 
-    if mask is not None:
-        gradients = gradients * mask
+    if weight is not None:
+        gradients = gradients * weight
 
     gradients_penalty = ((gradients.norm(2, dim=1) - 1)**2).mean()
-    if mask is not None:
-        gradients_penalty /= torch.mean(mask)
+    if weight is not None:
+        gradients_penalty /= torch.mean(weight)
 
     return gradients_penalty
 
@@ -407,18 +407,18 @@ class GradientPenaltyLoss(nn.Module):
         super(GradientPenaltyLoss, self).__init__()
         self.loss_weight = loss_weight
 
-    def forward(self, discriminator, real_data, fake_data, mask=None):
+    def forward(self, discriminator, real_data, fake_data, weight=None):
         """
         Args:
             discriminator (nn.Module): Network for the discriminator.
             real_data (Tensor): Real input data.
             fake_data (Tensor): Fake input data.
-            mask (Tensor): Masks for inpaitting. Default: None.
+            weight (Tensor): Weight tensor. Default: None.
 
         Returns:
             Tensor: Loss.
         """
         loss = gradient_penalty_loss(
-            discriminator, real_data, fake_data, mask=mask)
+            discriminator, real_data, fake_data, weight=weight)
 
         return loss * self.loss_weight
