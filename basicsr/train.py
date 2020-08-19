@@ -106,12 +106,11 @@ def main():
                 sampler=train_sampler,
                 seed=seed)
 
-            num_iter_per_epoch = int(
-                math.ceil(
-                    len(train_set) * dataset_enlarge_ratio /
-                    (dataset_opt['batch_size_per_gpu'] * opt['world_size'])))
+            num_iter_per_epoch = math.ceil(
+                len(train_set) * dataset_enlarge_ratio /
+                (dataset_opt['batch_size_per_gpu'] * opt['world_size']))
             total_iters = int(opt['train']['total_iter'])
-            total_epochs = int(math.ceil(total_iters / (num_iter_per_epoch)))
+            total_epochs = math.ceil(total_iters / (num_iter_per_epoch))
             logger.info(
                 'Training statistics:'
                 f'\n\tNumber of train images: {len(train_set)}'
