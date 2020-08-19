@@ -162,7 +162,7 @@ def main():
         prefetcher = CUDAPrefetcher(train_loader, opt)
         logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:
-            logger.warning('Please set pin_memory=True for CUDAPrefetcher.')
+            raise ValueError('Please set pin_memory=True for CUDAPrefetcher.')
     else:
         raise ValueError(f'Wrong prefetch_mode {prefetch_mode}.'
                          "Supported ones are: None, 'cuda', 'cpu'.")
