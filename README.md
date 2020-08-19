@@ -27,19 +27,19 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 ## Dataset Preparation
 
-- Please refer to [DatasetPreparation.md](docs/DatasetPreparation.md) for more details.
+- Please refer to **[DatasetPreparation.md](docs/DatasetPreparation.md)** for more details.
 - The descriptions of currently supported datasets (`torch.utils.data.Dataset` classes) are in [Datasets.md](docs/Datasets.md).
 
 ## Train and Test
 
-- **Training and testing commands**: Please see [TrainTest.md](docs/TrainTest.md) for the basic usage.
+- **Training and testing commands**: Please see **[TrainTest.md](docs/TrainTest.md)** for the basic usage.
 - **Options/Configs**: Please refer to [Config.md](docs/Config.md).
 - **Logging**: Please refer to [Logging.md](docs/Logging.md).
 
 ## Model Zoo and Baselines
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
-- **Pre-trained models and log examples** are available in [ModelZoo.md](docs/ModelZoo.md).
+- **Pre-trained models and log examples** are available in **[ModelZoo.md](docs/ModelZoo.md)**.
 - We also provide **training curves** in [wandb](https://app.wandb.ai/xintao/basicsr):
 
 <p align="center">

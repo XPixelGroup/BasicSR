@@ -27,19 +27,19 @@ python setup.py develop
 
 ## 数据准备
 
-- 数据准备步骤, 参见 [DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md).
+- 数据准备步骤, 参见 **[DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md)**.
 - 目前支持的数据集 (`torch.utils.data.Dataset`类), 参见 [Datasets_CN.md](docs/Datasets_CN.md).
 
 ## 训练和测试
 
-- **训练和测试的命令**, 参见 [TrainTest_CN.md](docs/TrainTest_CN.md).
+- **训练和测试的命令**, 参见 **[TrainTest_CN.md](docs/TrainTest_CN.md)**.
 - **Options/Configs**配置文件的说明, 参见 [Config_CN.md](docs/Config_CN.md).
 - **Logging**日志系统的说明, 参见 [Logging_CN.md](docs/Logging_CN.md).
 
 ## 模型库和基准
 
 - 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
-- **预训练模型和log样例**, 参见 [ModelZoo_CN.md](docs/ModelZoo_CN.md).
+- **预训练模型和log样例**, 参见 **[ModelZoo_CN.md](docs/ModelZoo_CN.md)**.
 - 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了**训练曲线**等:
 
 <p align="center">
