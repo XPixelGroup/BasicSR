@@ -4,23 +4,23 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 from basicsr.models.archs.vgg_arch import VGGFeatureExtractor
-from basicsr.models.losses.loss_utils import masked_loss
+from basicsr.models.losses.loss_utils import weighted_loss
 
 _reduction_modes = ['none', 'mean', 'sum']
 
 
-@masked_loss
+@weighted_loss
 def l1_loss(pred, target):
     return F.l1_loss(pred, target, reduction='none')
 
 
-@masked_loss
+@weighted_loss
 def mse_loss(pred, target):
     return F.mse_loss(pred, target, reduction='none')
 
 
-@masked_loss
-def charbonnier_loss(pred, target, eps=1e-6):
+@weighted_loss
+def charbonnier_loss(pred, target, eps=1e-12):
     return torch.sqrt((pred - target)**2 + eps)
 
 
@@ -35,11 +35,12 @@ class L1Loss(nn.Module):
 
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(L1Loss, self).__init__()
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. '
+                             f'Supported ones are: {_reduction_modes}')
+
         self.loss_weight = loss_weight
         self.reduction = reduction
-        if self.reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {self.reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
 
     def forward(self, pred, target, weight=None, **kwargs):
         """
@@ -64,11 +65,12 @@ class MSELoss(nn.Module):
 
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(MSELoss, self).__init__()
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. '
+                             f'Supported ones are: {_reduction_modes}')
+
         self.loss_weight = loss_weight
         self.reduction = reduction
-        if self.reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {self.reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
 
     def forward(self, pred, target, weight=None, **kwargs):
         """
@@ -99,12 +101,13 @@ class CharbonnierLoss(nn.Module):
 
     def __init__(self, loss_weight=1.0, reduction='mean', eps=1e-12):
         super(CharbonnierLoss, self).__init__()
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. '
+                             f'Supported ones are: {_reduction_modes}')
+
         self.loss_weight = loss_weight
         self.reduction = reduction
         self.eps = eps
-        if self.reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {self.reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
 
     def forward(self, pred, target, weight=None, **kwargs):
         """
@@ -118,16 +121,21 @@ class CharbonnierLoss(nn.Module):
             pred, target, weight, eps=self.eps, reduction=self.reduction)
 
 
-class MaskedTVLoss(L1Loss):
+class WeightedTVLoss(L1Loss):
+    """Weighted TV loss.
+
+        Args:
+            loss_weight (float): Loss weight. Default: 1.0.
+    """
 
     def __init__(self, loss_weight=1.0):
-        super(MaskedTVLoss, self).__init__(loss_weight=loss_weight)
+        super(WeightedTVLoss, self).__init__(loss_weight=loss_weight)
 
-    def forward(self, pred, mask=None):
-        y_diff = super(MaskedTVLoss, self).forward(
-            pred[:, :, :-1, :], pred[:, :, 1:, :], weight=mask[:, :, :-1, :])
-        x_diff = super(MaskedTVLoss, self).forward(
-            pred[:, :, :, :-1], pred[:, :, :, 1:], weight=mask[:, :, :, :-1])
+    def forward(self, pred, weight=None):
+        y_diff = super(WeightedTVLoss, self).forward(
+            pred[:, :, :-1, :], pred[:, :, 1:, :], weight=weight[:, :, :-1, :])
+        x_diff = super(WeightedTVLoss, self).forward(
+            pred[:, :, :, :-1], pred[:, :, :, 1:], weight=weight[:, :, :, :-1])
 
         loss = x_diff + y_diff
 
