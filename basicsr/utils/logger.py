@@ -11,7 +11,7 @@ class MessageLogger():
         opt (dict): Config. It contains the following keys:
             name (str): Exp name.
             logger (dict): Contains 'print_freq' (str) for logger interval.
-            train (dict): Contains 'niter' (int) for total iters.
+            train (dict): Contains 'total_iter' (int) for total iters.
             use_tb_logger (bool): Use tensorboard logger.
         start_iter (int): Start iter. Default: 1.
         tb_logger (obj:`tb_logger`): Tensorboard logger. Default： None.
@@ -21,7 +21,7 @@ class MessageLogger():
         self.exp_name = opt['name']
         self.interval = opt['logger']['print_freq']
         self.start_iter = start_iter
-        self.max_iters = opt['train']['niter']
+        self.max_iters = opt['train']['total_iter']
         self.use_tb_logger = opt['logger']['use_tb_logger']
         self.tb_logger = tb_logger
         self.start_time = time.time()
@@ -89,7 +89,7 @@ def init_wandb_logger(opt):
     logger = logging.getLogger('basicsr')
 
     project = opt['logger']['wandb']['project']
-    resume_id = opt['logger']['wandb'].get('resume_id', None)
+    resume_id = opt['logger']['wandb'].get('resume_id')
     if resume_id:
         wandb_id = resume_id
         resume = 'allow'
@@ -158,13 +158,19 @@ def get_env_info():
 
     from basicsr.version import __version__
     msg = r"""
+                ____                _       _____  ____
+               / __ ) ____ _ _____ (_)_____/ ___/ / __ \
+              / __  |/ __ `// ___// // ___/\__ \ / /_/ /
+             / /_/ // /_/ /(__  )/ // /__ ___/ // _, _/
+            /_____/ \__,_//____//_/ \___//____//_/ |_|
      ______                   __   __                 __      __
     / ____/____   ____   ____/ /  / /   __  __ _____ / /__   / /
    / / __ / __ \ / __ \ / __  /  / /   / / / // ___// //_/  / /
   / /_/ // /_/ // /_/ // /_/ /  / /___/ /_/ // /__ / /<    /_/
   \____/ \____/ \____/ \____/  /_____/\____/ \___//_/|_|  (_)
     """
-    msg += (f'\nVersion Information: \n\tBasicSR: {__version__}'
+    msg += ('\nVersion Information: '
+            f'\n\tBasicSR: {__version__}'
             f'\n\tPyTorch: {torch.__version__}'
             f'\n\tTorchVision: {torchvision.__version__}'
             f'\n\tMMCV: {mmcv.__version__}')

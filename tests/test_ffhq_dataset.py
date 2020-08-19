@@ -6,7 +6,7 @@ import torchvision.utils
 from basicsr.data import create_dataloader, create_dataset
 
 
-def main(mode='folder'):
+def main():
     """Test FFHQ dataset."""
     opt = {}
     opt['dist'] = False
@@ -24,17 +24,18 @@ def main(mode='folder'):
     opt['std'] = [0.5, 0.5, 0.5]
 
     opt['use_shuffle'] = True
-    opt['num_worker'] = 1
-    opt['batch_size'] = 4
+    opt['num_worker_per_gpu'] = 1
+    opt['batch_size_per_gpu'] = 4
 
     opt['dataset_enlarge_ratio'] = 1
 
     mmcv.mkdir_or_exist('tmp')
 
     dataset = create_dataset(opt)
-    data_loader = create_dataloader(dataset, opt, opt, None)
+    data_loader = create_dataloader(
+        dataset, opt, num_gpu=0, dist=opt['dist'], sampler=None)
 
-    nrow = int(math.sqrt(opt['batch_size']))
+    nrow = int(math.sqrt(opt['batch_size_per_gpu']))
     padding = 2 if opt['phase'] == 'train' else 0
 
     print('start...')

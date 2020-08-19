@@ -3,7 +3,7 @@
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
 
-BasicSR 是一个基于 PyTorch 的开源图像视频超分辨率 (Super-Resolution) 工具箱 (之后或许会支持更多的 Restoration 任务).<br>
+BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Resolution) 工具箱 (之后会支持更多的 Restoration 任务).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
 ## 依赖和安装
@@ -12,7 +12,7 @@ BasicSR 是一个基于 PyTorch 的开源图像视频超分辨率 (Super-Resolut
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-在BasicSR的根目录下运行以下命令:
+在BasicSR的**根目录**下运行以下命令:
 
 ```bash
 pip install -r requirements.txt
@@ -27,20 +27,20 @@ python setup.py develop
 
 ## 数据准备
 
-- 参见 [DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md).
-- 现支持的数据集 (`torch.utils.data.Dataset`类) 的描述在 [Datasets_CN.md](docs/Datasets_CN.md).
+- 数据准备步骤, 参见 **[DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md)**.
+- 目前支持的数据集 (`torch.utils.data.Dataset`类), 参见 [Datasets_CN.md](docs/Datasets_CN.md).
 
 ## 训练和测试
 
-- 参见 [TrainTest_CN.md](docs/TrainTest_CN.md).
-- **Options/Configs**: 参见 [Config_CN.md](docs/Config_CN.md).
-- **Logging**: 参见 [Logging_CN.md](docs/Logging_CN.md).
+- **训练和测试的命令**, 参见 **[TrainTest_CN.md](docs/TrainTest_CN.md)**.
+- **Options/Configs**配置文件的说明, 参见 [Config_CN.md](docs/Config_CN.md).
+- **Logging**日志系统的说明, 参见 [Logging_CN.md](docs/Logging_CN.md).
 
 ## 模型库和基准
 
-- 现支持的模型描述在 [Models_CN.md](docs/Models_CN.md). <br>
-- 结果, 预训练模型和log样例在 [ModelZoo_CN.md](docs/ModelZoo_CN.md).
-- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了训练曲线等:
+- 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
+- **预训练模型和log样例**, 参见 **[ModelZoo_CN.md](docs/ModelZoo_CN.md)**.
+- 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了**训练曲线**等:
 
 <p align="center">
 <a href="https://app.wandb.ai/xintao/basicsr" target="_blank">

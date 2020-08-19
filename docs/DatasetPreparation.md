@@ -8,6 +8,7 @@
     1. [How to Use](#How-to-Use)
     1. [How to Implement](#How-to-Implement)
     1. [LMDB Description](#LMDB-Description)
+    1. [Data Pre-fetcher](#Data-Pre-fetcher)
 1. [Image Super-Resolution](#Image-Super-Resolution)
     1. [DIV2K](#DIV2K)
     1. [Common Image SR Datasets](#Common-Image-SR-Datasets)
@@ -114,9 +115,34 @@ For convenience, the binary content stored in LMDB dataset is encoded image by c
 We provide a script to make LMDB. Before running the script, we need to modify the corresponding parameters accordingly. At present, we support DIV2K, REDS and Vimeo90K datasets; other datasets can also be made in a similar way.<br>
  `python scripts/create_lmdb.py`
 
+#### Data Pre-fetcher
+
+Apar from using LMDB for speed up, we could use data per-fetcher. Please refer to [prefetch_dataloader](../basicsr/data/prefetch_dataloader.py) for implementation.<br>
+It can be achieved by setting `prefetch_mode` in the configuration file. Currently, it provided three modes:
+
+1. None. It does not use data pre-fetcher by default. If you have already use LMDB or the IO is OK, you can set it to None.
+
+    ```yml
+    prefetch_mode: ~
+    ```
+
+1. `prefetch_mode: cuda`. Use CUDA prefetcher. Please see [NVIDIA/apex](https://github.com/NVIDIA/apex/issues/304#) for more details. It will occupy more GPU memory. Note that in the mode. you must also set `pin_memory=True`.
+
+    ```yml
+    prefetch_mode: cuda
+    pin_memory: true
+    ```
+
+1. `prefetch_mode: cpu`. Use CPU prefetcher, please see [IgorSusmelj/pytorch-styleguide](https://github.com/IgorSusmelj/pytorch-styleguide/issues/5#) for more details. (In my tests, this mode does not accelerate)
+
+    ```yml
+    prefetch_mode: cpu
+    num_prefetch_queue: 1  # 1 by default
+    ```
+
 ## Image Super-Resolution
 
-It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
+It is recommended to symlink the dataset root to `datasets` with the command `ln -s xxx yyy`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### DIV2K
 
@@ -137,6 +163,7 @@ Note that the size of sub-images is different from the training patch size (`gt_
 1. [Optional] Create LMDB files. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_div2k` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_paired_image_dataset.py`.
 Remember to modify the paths and configurations accordingly.
+1. [Optional] If you want to use meta_info_file, you may need to run `python scripts/generate_meta_info.py` to generate the meta_info_file.
 
 ### Common Image SR Datasets
 
@@ -227,7 +254,7 @@ We provide a list of common image super-resolution datasets.
 
 ## Video Super-Resolution
 
-It is recommended to symlink the dataset root to `datasets`. If your folder structure is different, you may need to change the corresponding paths in config files.
+It is recommended to symlink the dataset root to `datasets` with the command `ln -s xxx yyy`. If your folder structure is different, you may need to change the corresponding paths in config files.
 
 ### REDS
 

@@ -9,8 +9,7 @@ loss_module = importlib.import_module('basicsr.models.losses')
 
 
 class VideoGANModel(VideoBaseModel):
-    """ Video GAN model.
-    """
+    """Video GAN model."""
 
     def init_training_settings(self):
         train_opt = self.opt['train']
@@ -30,7 +29,7 @@ class VideoGANModel(VideoBaseModel):
         self.net_d.train()
 
         # define losses
-        if train_opt.get('pixel_opt', None):
+        if train_opt.get('pixel_opt'):
             pixel_type = train_opt['pixel_opt'].pop('type')
             cri_pix_cls = getattr(loss_module, pixel_type)
             self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
@@ -38,7 +37,7 @@ class VideoGANModel(VideoBaseModel):
         else:
             self.cri_pix = None
 
-        if train_opt.get('perceptual_opt', None):
+        if train_opt.get('perceptual_opt'):
             percep_type = train_opt['perceptual_opt'].pop('type')
             cri_perceptual_cls = getattr(loss_module, percep_type)
             self.cri_perceptual = cri_perceptual_cls(
@@ -46,7 +45,7 @@ class VideoGANModel(VideoBaseModel):
         else:
             self.cri_perceptual = None
 
-        if train_opt.get('gan_opt', None):
+        if train_opt.get('gan_opt'):
             gan_type = train_opt['gan_opt'].pop('type')
             cri_gan_cls = getattr(loss_module, gan_type)
             self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
@@ -59,8 +58,6 @@ class VideoGANModel(VideoBaseModel):
         # set up optimizers and schedulers
         self.setup_optimizers()
         self.setup_schedulers()
-
-        self.log_dict = OrderedDict()
 
     def setup_optimizers(self):
         train_opt = self.opt['train']
@@ -92,28 +89,29 @@ class VideoGANModel(VideoBaseModel):
         self.output = self.net_g(self.lq)
 
         l_g_total = 0
+        loss_dict = OrderedDict()
         if (current_iter % self.net_d_iters == 0
                 and current_iter > self.net_d_init_iters):
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)
                 l_g_total += l_g_pix
-                self.log_dict['l_g_pix'] = l_g_pix.item()
+                loss_dict['l_g_pix'] = l_g_pix
             # perceptual loss
             if self.cri_perceptual:
                 l_g_percep, l_g_style = self.cri_perceptual(
                     self.output, self.gt)
                 if l_g_percep is not None:
                     l_g_total += l_g_percep
-                    self.log_dict['l_g_percep'] = l_g_percep.item()
+                    loss_dict['l_g_percep'] = l_g_percep
                 if l_g_style is not None:
                     l_g_total += l_g_style
-                    self.log_dict['l_g_style'] = l_g_style.item()
+                    loss_dict['l_g_style'] = l_g_style
             # gan loss
             fake_g_pred = self.net_d(self.output)
             l_g_gan = self.cri_gan(fake_g_pred, True, is_disc=False)
             l_g_total += l_g_gan
-            self.log_dict['l_g_gan'] = l_g_gan.item()
+            loss_dict['l_g_gan'] = l_g_gan
 
             l_g_total.backward()
             self.optimizer_g.step()
@@ -123,20 +121,21 @@ class VideoGANModel(VideoBaseModel):
             p.requires_grad = True
 
         self.optimizer_d.zero_grad()
-        # forward and backward separately, since batch norm statistics differ
         # real
         real_d_pred = self.net_d(self.gt)
         l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
-        self.log_dict['l_d_real'] = l_d_real.item()
-        self.log_dict['out_d_real'] = torch.mean(real_d_pred.detach())
+        loss_dict['l_d_real'] = l_d_real
+        loss_dict['out_d_real'] = torch.mean(real_d_pred.detach())
         l_d_real.backward()
         # fake
         fake_d_pred = self.net_d(self.output.detach())
         l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
-        self.log_dict['l_d_fake'] = l_d_fake.item()
-        self.log_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
+        loss_dict['l_d_fake'] = l_d_fake
+        loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
         l_d_fake.backward()
         self.optimizer_d.step()
+
+        self.log_dict = self.reduce_loss_dict(loss_dict)
 
     def save(self, epoch, current_iter):
         self.save_network(self.net_g, 'net_g', current_iter)

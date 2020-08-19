@@ -1,21 +1,21 @@
+# TODO
 # general settings
 name: 107_EDVRwoTSA_CBInit_lr1e-4_400k_REDS_SyncBN
-use_tb_logger: true
-model_type: VideoGANModel
+model_type: EDVRModel
 scale: 4
-num_gpu: 8
+num_gpu: 8  # set num_gpu: 0 for cpu mode
+manual_seed: 10
 
-# datasets
+# dataset and data loader settings
 datasets:
   train:
     name: REDS
     type: REDSDataset
-
-    dataroot_gt: ../datasets/REDS/train_sharp
-    dataroot_lq: ../datasets/REDS/train_sharp_bicubic
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
     dataroot_flow: ~
-    meta_info_file: ./data/meta_info/meta_info_REDS_GT.txt
-    val_partition: REDS4
+    meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
+    val_partition: REDS4  # set to 'official' when use the official validation partition
     io_backend:
       type: disk
 
@@ -26,34 +26,40 @@ datasets:
     use_flip: true
     use_rot: true
 
+    # data loader
     use_shuffle: true
-    num_worker: 3  # per GPU
-    batch_size: 32
-    dataset_enlarge_ratio: 1000
+    num_worker_per_gpu: 3
+    batch_size_per_gpu: 4
+    dataset_enlarge_ratio: 200
     prefetch_mode: ~
 
   val:
     name: REDS4
     type: VideoTestDataset
-    dataroot_gt: ../datasets/REDS/REDS4/GT
-    dataroot_lq: ../datasets/REDS/REDS4/sharp_bicubic
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
+    meta_info_file: basicsr/data/meta_info/meta_info_REDS4_test_GT.txt
+    # change to 'meta_info_REDSofficial4_test_GT' when use the official validation partition
     io_backend:
       type: disk
 
-    cache_data: True
+    cache_data: false
     num_frame: 5
     padding: reflection_circle
 
 # network structures
 network_g:
   type: EDVR
-  num_feat: 64
+  num_in_ch: 3
+  num_out_ch: 3
+  num_feat: 128
   num_frame: 5
   deformable_groups: 8
   num_extract_block: 5
-  num_reconstruct_block: 10
-  predeblur: false
+  num_reconstruct_block: 40
+  center_frame_idx: ~
   hr_in: false
+  with_predeblur: false
   with_tsa: false
 
 network_d:
@@ -65,27 +71,36 @@ network_d:
 
 # path
 path:
-  pretrain_model_g: ../experiments/EDVRM_woTSA_scratch_REDS4/models/net_g_600000.pth
+  pretrain_model_g: experiments/101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb/models/net_g_600000.pth
   strict_load: true
   resume_state: ~
 
-# training settings: learning rate scheme, loss
+# training settings
 train:
-  lr_g: !!float 1e-4
-  weight_decay_g: 0
-  beta_g: [0.9, 0.99]
-  lr_d: !!float 1e-4
-  weight_decay_d: 0
-  beta_d: [0.9, 0.99]
-  lr_scheme: MultiStepLR
+  optim_g:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+  optim_d:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
 
-  niter: 400000
+  scheduler:
+    type: MultiStepLR
+    milestones: [50000, 100000, 200000, 300000]
+    gamma: 0.5
+
+  total_iter: 400000
   warmup_iter: -1  # no warm up
-  lr_steps: [50000, 100000, 200000, 300000]
-  lr_gamma: 0.5
 
-  pixel_criterion: CharbonnierLoss
-  pixel_weight: !!float 1e-2
+  # losses
+  pixel_opt:
+    type: CharbonnierLoss
+    loss_weight: !!float 1e-2
+    reduction: sum
   perceptual_opt:
     type: PerceptualLoss
     layer_weights:
@@ -96,22 +111,37 @@ train:
     style_weight: 0
     norm_img: false
     criterion: l1
-  gan_type: vanilla
-  gan_weight: !!float 5e-3
+  gan_opt:
+    type: GANLoss
+    gan_type: vanilla
+    real_label_val: 1.0
+    fake_label_val: 0.0
+    loss_weight: !!float 5e-3
 
   net_d_iters: 1
   net_d_init_iters: 0
 
-  val_freq: !!float 20000
-  val_func: VideoSRValidation
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: false
 
-  manual_seed: 0
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
 
-# logger
+# logging settings
 logger:
   print_freq: 100
-  save_checkpoint_freq: !!float 5000
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
 
+# dist training settings
 dist_params:
   backend: nccl
-  port: 29748
+  port: 29500

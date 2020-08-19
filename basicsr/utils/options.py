@@ -43,17 +43,17 @@ def parse(opt_path, is_train=True):
         opt = yaml.load(f, Loader=Loader)
 
     opt['is_train'] = is_train
-    scale = opt['scale']
 
     # datasets
     for phase, dataset in opt['datasets'].items():
         # for several datasets, e.g., test_1, test_2
         phase = phase.split('_')[0]
         dataset['phase'] = phase
-        dataset['scale'] = scale
-        if dataset.get('dataroot_gt', None) is not None:
+        if 'scale' in opt:
+            dataset['scale'] = opt['scale']
+        if dataset.get('dataroot_gt') is not None:
             dataset['dataroot_gt'] = osp.expanduser(dataset['dataroot_gt'])
-        if dataset.get('dataroot_lq', None) is not None:
+        if dataset.get('dataroot_lq') is not None:
             dataset['dataroot_lq'] = osp.expanduser(dataset['dataroot_lq'])
 
     # paths
@@ -67,8 +67,8 @@ def parse(opt_path, is_train=True):
                                     opt['name'])
         opt['path']['experiments_root'] = experiments_root
         opt['path']['models'] = osp.join(experiments_root, 'models')
-        opt['path']['training_state'] = osp.join(experiments_root,
-                                                 'training_state')
+        opt['path']['training_states'] = osp.join(experiments_root,
+                                                  'training_states')
         opt['path']['log'] = experiments_root
         opt['path']['visualization'] = osp.join(experiments_root,
                                                 'visualization')

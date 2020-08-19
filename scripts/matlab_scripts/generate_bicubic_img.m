@@ -44,8 +44,8 @@ for i = 1 : length(filepaths)
         disp('Ignore .. folder.');
     else
         idx = idx + 1;
-        str_rlt = sprintf('%d\t%s.\n', idx, img_name);
-        fprintf(str_rlt);
+        str_result = sprintf('%d\t%s.\n', idx, img_name);
+        fprintf(str_result);
 
         % read image
         img = imread(fullfile(input_folder, [img_name, ext]));

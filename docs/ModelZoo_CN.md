@@ -9,7 +9,14 @@
 
 下载的模型可以放在 `experiments/pretrained_models` 文件夹.
 
-**[下载官方提供的模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**<br>
+**[下载官方提供的预训练模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**
+
+你可以使用以下脚本从Google Drive下载预训练模型.
+
+```python
+python scripts/download_pretrained_models.py
+```
+
 **[下载复现的模型和log](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
 
 此外, 我们在 [wandb](https://www.wandb.com/) 上更新了模型训练的过程和曲线. 大家可以方便的比较:

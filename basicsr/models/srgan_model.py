@@ -29,7 +29,7 @@ class SRGANModel(SRModel):
         self.net_d.train()
 
         # define losses
-        if train_opt.get('pixel_opt', None):
+        if train_opt.get('pixel_opt'):
             pixel_type = train_opt['pixel_opt'].pop('type')
             cri_pix_cls = getattr(loss_module, pixel_type)
             self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
@@ -37,7 +37,7 @@ class SRGANModel(SRModel):
         else:
             self.cri_pix = None
 
-        if train_opt.get('perceptual_opt', None):
+        if train_opt.get('perceptual_opt'):
             percep_type = train_opt['perceptual_opt'].pop('type')
             cri_perceptual_cls = getattr(loss_module, percep_type)
             self.cri_perceptual = cri_perceptual_cls(
@@ -45,7 +45,7 @@ class SRGANModel(SRModel):
         else:
             self.cri_perceptual = None
 
-        if train_opt.get('gan_opt', None):
+        if train_opt.get('gan_opt'):
             gan_type = train_opt['gan_opt'].pop('type')
             cri_gan_cls = getattr(loss_module, gan_type)
             self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)

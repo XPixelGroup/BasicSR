@@ -8,8 +8,7 @@ loss_module = importlib.import_module('basicsr.models.losses')
 
 
 class ESRGANModel(SRGANModel):
-    """ESRGAN model for single image super-resolution.
-    """
+    """ESRGAN model for single image super-resolution."""
 
     def optimize_parameters(self, current_iter):
         # optimize net_g

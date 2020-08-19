@@ -2,7 +2,8 @@
 name: 203_EDSR_Mx4_f64b16_DIV2K_300k_B16G1_201pretrain_wandb
 model_type: SRModel
 scale: 4
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 10
 
 # dataset and data loader settings
 datasets:
@@ -26,9 +27,9 @@ datasets:
 
     # data loader
     use_shuffle: true
-    num_worker: 6  # per GPU
-    batch_size: 16  # total
-    dataset_enlarge_ratio: 1000
+    num_worker_per_gpu: 6
+    batch_size_per_gpu: 16
+    dataset_enlarge_ratio: 100
     prefetch_mode: ~
 
   val:
@@ -70,7 +71,7 @@ train:
     milestones: [200000]
     gamma: 0.5
 
-  niter: 300000
+  total_iter: 300000
   warmup_iter: -1  # no warm up
 
   # losses
@@ -78,8 +79,6 @@ train:
     type: L1Loss
     loss_weight: 1.0
     reduction: mean
-
-  manual_seed: 10
 
 # validation settings
 val:
