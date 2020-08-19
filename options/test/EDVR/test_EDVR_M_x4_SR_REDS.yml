@@ -1,7 +1,8 @@
 name: EDVR_M_x4_SR_REDS_official
 model_type: EDVRModel
 scale: 4
-num_gpu: 4
+num_gpu: 4  # set num_gpu: 0 for cpu mode
+manual_seed: 0
 
 datasets:
   test:

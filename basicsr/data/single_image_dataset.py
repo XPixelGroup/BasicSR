@@ -13,13 +13,13 @@ class SingleImageDataset(data.Dataset):
     Read LQ (Low Quality, e.g. LR (Low Resolution), blurry, noisy, etc).
 
     There are two modes:
-    1. 'ann_file': Use annotation file to generate paths.
+    1. 'meta_info_file': Use meta information file to generate paths.
     2. 'folder': Scan folders to generate paths.
 
     Args:
         opt (dict): Config for train datasets. It contains the following keys:
             dataroot_lq (str): Data root path for lq.
-            ann_file (str): Path for annotation file.
+            meta_info_file (str): Path for meta information file.
             io_backend (dict): IO backend type and other kwarg.
     """
 
@@ -31,8 +31,8 @@ class SingleImageDataset(data.Dataset):
         self.io_backend_opt = opt['io_backend']
 
         self.lq_folder = opt['dataroot_lq']
-        if 'ann_file' in self.opt:
-            with open(self.opt['ann_file'], 'r') as fin:
+        if 'meta_info_file' in self.opt:
+            with open(self.opt['meta_info_file'], 'r') as fin:
                 self.paths = [
                     osp.join(self.lq_folder,
                              line.split(' ')[0]) for line in fin

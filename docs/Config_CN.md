@@ -42,7 +42,9 @@ model_type: SRModel
 # 输出相比输入的放大比率, 在SR中是放大倍数; 若有些任务没有这个配置, 则写1
 scale: 4
 # 训练卡数
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+# 随机种子设定
+manual_seed: 0
 
 #################################
 # 以下为dataset和data loader的设置
@@ -77,12 +79,12 @@ datasets:
     # data loader是否使用shuffle
     use_shuffle: true
     # 每一个GPU的data loader读取进程数目
-    num_worker: 6  # per GPU
+    num_worker_per_gpu: 6
     # 总共的训练batch size
-    batch_size: 16  # total
-    # 扩大dataset的倍率. 比如数据集有15张图, 则会重复这些图片1000次, 这样一个epoch下来, 能够读取15000张图
+    batch_size_per_gpu: 16
+    # 扩大dataset的倍率. 比如数据集有15张图, 则会重复这些图片100次, 这样一个epoch下来, 能够读取1500张图
     # (事实上是重复读的). 它经常用来加速data loader, 因为在有的机器上, 一个epoch结束, 会重启进程, 往往会很慢
-    dataset_enlarge_ratio: 1000
+    dataset_enlarge_ratio: 100
 
   # validation 数据集的设置
   val:
@@ -127,7 +129,7 @@ path:
   pretrain_model_g: ~
   # 加载预训练模型的时候, 是否需要网络参数的名称严格对应
   strict_load: true
-  # 重启训练的状态路径, 一般在`experiments/exp_name/training_state`目录下
+  # 重启训练的状态路径, 一般在`experiments/exp_name/training_states`目录下
   # 这个设置了, 会覆盖  pretrain_model_g 的设定
   resume_state: ~
 
@@ -160,7 +162,7 @@ train:
     eta_min: !!float 1e-7
 
   # 总共的训练迭代次数
-  niter: 1000000
+  total_iter: 1000000
   # warm up的iteration数目, 如是-1, 表示没有warm up
   warmup_iter: -1  # no warm up
 
@@ -174,8 +176,6 @@ train:
     # loss reduction方式
     reduction: mean
 
-  # 训练的随机种子设定
-  manual_seed: 0
 
 #######################
 # 以下为Validation的设置
@@ -236,7 +236,7 @@ model_type: SRModel
 # 输出相比输入的放大比率, 在SR中是放大倍数; 若有些任务没有这个配置, 则写1
 scale: 4
 # 测试卡数
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
 
 #################################
 # 以下为dataset和data loader的设置

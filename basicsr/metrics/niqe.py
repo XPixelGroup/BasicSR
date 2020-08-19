@@ -4,7 +4,7 @@ import numpy as np
 from scipy.ndimage.filters import convolve
 from scipy.special import gamma
 
-from basicsr.metrics.metric_util import _to_y_channel, reorder_image
+from basicsr.metrics.metric_util import reorder_image, to_y_channel
 
 
 def estimate_aggd_param(block):
@@ -128,7 +128,7 @@ def niqe(img,
                 feat.append(compute_feature(block))
 
         distparam.append(np.array(feat))
-        # matlab bicubic downsample with anti-aliasing
+        # TODO: matlab bicubic downsample with anti-aliasing
         # for simplicity, now we use opencv instead, which will result in
         # a slight difference.
         if scale == 1:
@@ -190,7 +190,7 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
     if input_order != 'HW':
         img = reorder_image(img, input_order=input_order)
         if convert_to == 'y':
-            img = _to_y_channel(img)
+            img = to_y_channel(img)
         elif convert_to == 'gray':
             img = cv2.cvtColor(img / 255., cv2.COLOR_BGR2GRAY) * 255.
         img = np.squeeze(img)

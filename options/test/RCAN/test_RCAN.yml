@@ -3,7 +3,8 @@ suffix: ~  # add suffix to saved images
 model_type: SRModel
 scale: 4
 crop_border: ~  # crop border when evaluation. If None, crop the scale pixels
-num_gpu: 1
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
 
 datasets:
   test_1:  # the 1st test dataset

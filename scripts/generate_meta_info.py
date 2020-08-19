@@ -22,7 +22,8 @@ def generate_meta_info_div2k():
             elif mode == 'L':
                 n_channel = 1
             else:
-                raise ValueError(f'Unsupport mode {mode}.')
+                raise ValueError(f'Unsupported mode {mode}.')
+
             info = f'{img_path} ({height},{width},{n_channel})'
             print(idx + 1, info)
             f.write(f'{info}\n')

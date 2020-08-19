@@ -107,7 +107,11 @@ class Upsample(nn.Sequential):
         super(Upsample, self).__init__(*m)
 
 
-def flow_warp(x, flow, interp_mode='bilinear', padding_mode='zeros'):
+def flow_warp(x,
+              flow,
+              interp_mode='bilinear',
+              padding_mode='zeros',
+              align_corners=True):
     """Warp an image or feature map with optical flow.
 
     Args:
@@ -116,6 +120,9 @@ def flow_warp(x, flow, interp_mode='bilinear', padding_mode='zeros'):
         interp_mode (str): 'nearest' or 'bilinear'. Default: 'bilinear'.
         padding_mode (str): 'zeros' or 'border' or 'reflection'.
             Default: 'zeros'.
+        align_corners (bool): Before pytorch 1.3, the default value is
+            align_corners=True. After pytorch 1.3, the default value is
+            align_corners=False. Here, we use the True as default.
 
     Returns:
         Tensor: Warped image or feature map.
@@ -123,10 +130,11 @@ def flow_warp(x, flow, interp_mode='bilinear', padding_mode='zeros'):
     assert x.size()[-2:] == flow.size()[1:3]
     _, _, h, w = x.size()
     # create mesh grid
-    grid_y, grid_x = torch.meshgrid(torch.arange(0, h), torch.arange(0, w))
+    grid_y, grid_x = torch.meshgrid(
+        torch.arange(0, h).type_as(x),
+        torch.arange(0, w).type_as(x))
     grid = torch.stack((grid_x, grid_y), 2).float()  # W(x), H(y), 2
     grid.requires_grad = False
-    grid = grid.type_as(x)
 
     vgrid = grid + flow
     # scale grid to [-1,1]
@@ -139,8 +147,7 @@ def flow_warp(x, flow, interp_mode='bilinear', padding_mode='zeros'):
         mode=interp_mode,
         padding_mode=padding_mode,
         align_corners=True)
-    # Before pytorch 1.3, the default value is align_corners=True
-    # After pytorch 1.3, the default value is align_corners=False
+
     # TODO, what if align_corners=False
     return output
 
@@ -191,6 +198,7 @@ def resize_flow(flow,
     return resized_flow
 
 
+# TODO: may write a cpp file
 def pixel_unshuffle(x, scale):
     """ Pixel unshuffle.
 

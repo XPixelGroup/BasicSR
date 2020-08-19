@@ -14,7 +14,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1):
         path (list[str] | str): List of image paths or image folder path.
         require_mod_crop (bool): Require mod crop for each image.
             Default: False.
-        scale (int): Scale factor for mod_crop.
+        scale (int): Scale factor for mod_crop. Default: 1.
 
     Returns:
         Tensor: size (t, c, h, w), RGB, [0, 1].
@@ -33,18 +33,18 @@ def read_img_seq(path, require_mod_crop=False, scale=1):
 
 def generate_frame_indices(crt_idx,
                            max_frame_num,
-                           n_frames,
+                           num_frames,
                            padding='reflection'):
-    """Generate an index list for reading `n_frames` frames from a sequence
+    """Generate an index list for reading `num_frames` frames from a sequence
     of images.
 
     Args:
         crt_idx (int): Current center index.
         max_frame_num (int): Max number of the sequence of images (from 1).
-        n_frames (int): Reading n_frames frames.
+        num_frames (int): Reading num_frames frames.
         padding (str): Padding mode, one of
             'replicate' | 'reflection' | 'reflection_circle' | 'circle'
-            Examples: current_idx = 0, n_frames = 5
+            Examples: current_idx = 0, num_frames = 5
             The generated frame indices under different padding mode:
             replicate: [0, 0, 0, 1, 2]
             reflection: [2, 1, 0, 1, 2]
@@ -54,33 +54,33 @@ def generate_frame_indices(crt_idx,
     Returns:
         list[int]: A list of indices.
     """
-    assert n_frames % 2 == 1, 'n_frames should be an odd number.'
+    assert num_frames % 2 == 1, 'num_frames should be an odd number.'
     assert padding in ('replicate', 'reflection', 'reflection_circle',
                        'circle'), f'Wrong padding mode: {padding}.'
 
     max_frame_num = max_frame_num - 1  # start from 0
-    n_pad = n_frames // 2
+    num_pad = num_frames // 2
 
     indices = []
-    for i in range(crt_idx - n_pad, crt_idx + n_pad + 1):
+    for i in range(crt_idx - num_pad, crt_idx + num_pad + 1):
         if i < 0:
             if padding == 'replicate':
                 pad_idx = 0
             elif padding == 'reflection':
                 pad_idx = -i
             elif padding == 'reflection_circle':
-                pad_idx = crt_idx + n_pad - i
+                pad_idx = crt_idx + num_pad - i
             else:
-                pad_idx = n_frames + i
+                pad_idx = num_frames + i
         elif i > max_frame_num:
             if padding == 'replicate':
                 pad_idx = max_frame_num
             elif padding == 'reflection':
                 pad_idx = max_frame_num * 2 - i
             elif padding == 'reflection_circle':
-                pad_idx = (crt_idx - n_pad) - (i - max_frame_num)
+                pad_idx = (crt_idx - num_pad) - (i - max_frame_num)
             else:
-                pad_idx = i - n_frames
+                pad_idx = i - num_frames
         else:
             pad_idx = i
         indices.append(pad_idx)
@@ -134,7 +134,7 @@ def paired_paths_from_lmdb(folders, keys):
     if not (input_folder.endswith('.lmdb') and gt_folder.endswith('.lmdb')):
         raise ValueError(
             f'{input_key} folder and {gt_key} folder should both in lmdb '
-            f'format. But received {input_key}: {input_folder}; '
+            f'formats. But received {input_key}: {input_folder}; '
             f'{gt_key}: {gt_folder}')
     # ensure that the two meta_info files are the same
     with open(osp.join(input_folder, 'meta_info.txt')) as fin:
@@ -153,13 +153,14 @@ def paired_paths_from_lmdb(folders, keys):
         return paths
 
 
-def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
-    """Generate paired paths from an annotation file.
+def paired_paths_from_meta_info_file(folders, keys, meta_info_file,
+                                     filename_tmpl):
+    """Generate paired paths from an meta information file.
 
-    Each line in the annotation file contains the image names and
+    Each line in the meta information file contains the image names and
     image shape (usually for gt), separated by a white space.
 
-    Example of an annotation file:
+    Example of an meta information file:
     ```
     0001_s001.png (480,480,3)
     0001_s002.png (480,480,3)
@@ -170,10 +171,10 @@ def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
             be [input_folder, gt_folder].
         keys (list[str]): A list of keys identifying folders. The order should
             be in consistent with folders, e.g., ['lq', 'gt'].
-        ann_file (str): Path to the annotation file.
+        meta_info_file (str): Path to the meta information file.
         filename_tmpl (str): Template for each filename. Note that the
             template excludes the file extension. Usually the filename_tmpl is
-            for files in input folder.
+            for files in the input folder.
 
     Returns:
         list[str]: Returned path list.
@@ -187,7 +188,7 @@ def paired_paths_from_ann_file(folders, keys, ann_file, filename_tmpl):
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
-    with open(ann_file, 'r') as fin:
+    with open(meta_info_file, 'r') as fin:
         gt_names = [line.split(' ')[0] for line in fin]
 
     paths = []
@@ -212,7 +213,7 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
             be in consistent with folders, e.g., ['lq', 'gt'].
         filename_tmpl (str): Template for each filename. Note that the
             template excludes the file extension. Usually the filename_tmpl is
-            for files in input folder.
+            for files in the input folder.
 
     Returns:
         list[str]: Returned path list.

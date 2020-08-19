@@ -8,6 +8,7 @@
     1. [如何使用](#如何使用)
     1. [如何实现](#如何实现)
     1. [LMDB具体说明](#LMDB具体说明)
+    1. [预读取数据](#预读取数据)
 1. [图像数据](#图像数据)
     1. [DIV2K](#DIV2K)
     1. [其他常见图像超分数据集](#其他常见图像超分数据集)
@@ -115,6 +116,31 @@ DIV2K_train_HR_sub.lmdb
 我们提供了脚本来制作. 在运行脚本前, 需要根据需求修改相应的参数. 目前支持 DIV2K, REDS 和 Vimeo90K 数据集; 其他数据集可仿照进行制作. <br>
  `python scripts/create_lmdb.py`
 
+#### 预读取数据
+
+除了使用LMDB来加速外, 还可以采用预读取数据来加速, 实现参见 [prefetch_dataloader](../basicsr/data/prefetch_dataloader.py).<br>
+这个可以通过配置文件中的 `prefetch_mode` 来指定. 目前提供了三种模式:
+
+1. None. 默认不使用. 如果使用了 LMDB 或者 IO 不成问题, 则可不使用
+
+    ```yml
+    prefetch_mode: ~
+    ```
+
+1. `prefetch_mode: cuda`. 使用 CUDA prefetcher, 具体介绍参见 [NVIDIA/apex](https://github.com/NVIDIA/apex/issues/304#). 它会多占用一些GPU显存. 注意: 这个模式下, 一定要设置 `pin_memory=True`
+
+    ```yml
+    prefetch_mode: cuda
+    pin_memory: true
+    ```
+
+1. `prefetch_mode: cpu`. 使用 CPU prefetcher, 具体介绍参见 [IgorSusmelj/pytorch-styleguide](https://github.com/IgorSusmelj/pytorch-styleguide/issues/5#). (目前测试，这个加速不明显)
+
+    ```yml
+    prefetch_mode: cpu
+    num_prefetch_queue: 1  # 1 by default
+    ```
+
 ## 图像数据
 
 推荐把数据通过 `ln -s xxx yyy` 软链到`BasicSR/datasets`下. 如果你的文件结构不同, 需要相应地修改configuration yaml文件的路径.
@@ -137,6 +163,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
     **注意**: sub-image 的尺寸和训练patch的尺寸 (`gt_size`) 是不同的. 我们先把2K分辨率的图像 crop 成 sub-images (往往是 480x480), 然后存储起来. 在训练的时候, dataloader会读取这些sub-images, 然后进一步随机裁剪成 `gt_size` x `gt_size`的大小.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_div2k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `tests/test_paired_image_dataset.py`, 注意修改函数相应的配置和路径.
+1. [可选] 若需要使用 meta_info_file, 运行 `python scripts/generate_meta_info.py` 来生成 meta_info_file.
 
 ### 其他常见图像超分数据集
 

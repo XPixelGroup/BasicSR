@@ -9,12 +9,16 @@ from basicsr.utils import FileClient
 
 
 class FFHQDataset(data.Dataset):
-    """FFHQ dataset for StyleGAN2.
+    """FFHQ dataset for StyleGAN.
 
     Args:
         opt (dict): Config for train datasets. It contains the following keys:
             dataroot_gt (str): Data root path for gt.
             io_backend (dict): IO backend type and other kwarg.
+            mean (list | tuple): Image mean.
+            std (list | tuple): Image std.
+            use_hflip (bool): Whether to horizontally flip.
+
     """
 
     def __init__(self, opt):
@@ -36,6 +40,7 @@ class FFHQDataset(data.Dataset):
             with open(osp.join(self.gt_folder, 'meta_info.txt')) as fin:
                 self.paths = [line.split('.')[0] for line in fin]
         else:
+            # FFHQ has 70000 images in total
             self.paths = [
                 osp.join(self.gt_folder, f'{v:08d}.png') for v in range(70000)
             ]
@@ -51,7 +56,7 @@ class FFHQDataset(data.Dataset):
         img_gt = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
 
         # random horizontal flip
-        img_gt = augment([img_gt], hflip=self.opt['use_hflip'], rotation=False)
+        img_gt = augment(img_gt, hflip=self.opt['use_hflip'], rotation=False)
         # BGR to RGB, HWC to CHW, numpy to tensor
         img_gt = totensor(img_gt, bgr2rgb=True, float32=True)
         # normalize
