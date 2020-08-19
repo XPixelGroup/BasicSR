@@ -287,7 +287,7 @@ class BaseModel():
             for s in self.schedulers:
                 state['schedulers'].append(s.state_dict())
             save_filename = f'{current_iter}.state'
-            save_path = os.path.join(self.opt['path']['training_state'],
+            save_path = os.path.join(self.opt['path']['training_states'],
                                      save_filename)
             torch.save(state, save_path)
 
