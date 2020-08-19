@@ -7,7 +7,7 @@ def reduce_loss(loss, reduction):
 
     Args:
         loss (Tensor): Elementwise loss tensor.
-        reduction (str): Options are "none", "mean" and "sum".
+        reduction (str): Options are 'none', 'mean' and 'sum'.
 
     Returns:
         Tensor: Reduced loss tensor.
@@ -22,17 +22,17 @@ def reduce_loss(loss, reduction):
         return loss.sum()
 
 
-def mask_reduce_loss(loss, weight=None, reduction='mean'):
+def weight_reduce_loss(loss, weight=None, reduction='mean'):
     """Apply element-wise weight and reduce loss.
 
     Args:
         loss (Tensor): Element-wise loss.
         weight (Tensor): Element-wise weights. Default: None.
         reduction (str): Same as built-in losses of PyTorch. Options are
-            "none", "mean" and "sum". Default: 'mean'.
+            'none', 'mean' and 'sum'. Default: 'mean'.
 
     Returns:
-        Tensor: Processed loss values.
+        Tensor: Loss values.
     """
     # if weight is specified, apply element-wise weight
     if weight is not None:
@@ -43,7 +43,7 @@ def mask_reduce_loss(loss, weight=None, reduction='mean'):
     # if weight is not specified or reduction is sum, just reduce the loss
     if weight is None or reduction == 'sum':
         loss = reduce_loss(loss, reduction)
-    # if reduction is mean, then compute mean over masked region
+    # if reduction is mean, then compute mean over weight region
     elif reduction == 'mean':
         if weight.size(1) > 1:
             weight = weight.sum()
@@ -54,20 +54,20 @@ def mask_reduce_loss(loss, weight=None, reduction='mean'):
     return loss
 
 
-def masked_loss(loss_func):
-    """Create a masked version of a given loss function.
+def weighted_loss(loss_func):
+    """Create a weighted version of a given loss function.
 
     To use this decorator, the loss function must have the signature like
     `loss_func(pred, target, **kwargs)`. The function only needs to compute
     element-wise loss without any reduction. This decorator will add weight
     and reduction arguments to the function. The decorated function will have
     the signature like `loss_func(pred, target, weight=None, reduction='mean',
-    avg_factor=None, **kwargs)`.
+    **kwargs)`.
 
     :Example:
 
     >>> import torch
-    >>> @masked_loss
+    >>> @weighted_loss
     >>> def l1_loss(pred, target):
     >>>     return (pred - target).abs()
 
@@ -89,7 +89,7 @@ def masked_loss(loss_func):
     def wrapper(pred, target, weight=None, reduction='mean', **kwargs):
         # get element-wise loss
         loss = loss_func(pred, target, **kwargs)
-        loss = mask_reduce_loss(loss, weight, reduction)
+        loss = weight_reduce_loss(loss, weight, reduction)
         return loss
 
     return wrapper
