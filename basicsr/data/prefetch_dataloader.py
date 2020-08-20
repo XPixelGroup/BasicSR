@@ -123,3 +123,4 @@ class CUDAPrefetcher():
 
     def reset(self):
         self.loader = iter(self.ori_loader)
+        self.preload()
