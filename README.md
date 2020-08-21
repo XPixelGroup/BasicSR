@@ -12,7 +12,8 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-Please run the following commands in the **BasicSR root path** to install BasicSR:
+Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
+Make sure that your GCC version: gcc >= 5.
 
 ```bash
 pip install -r requirements.txt
