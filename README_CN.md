@@ -1,4 +1,4 @@
-# BasicSR
+# :rocket: BasicSR
 
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
@@ -13,7 +13,7 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 在BasicSR的**根目录**下运行以下命令:<br>
-确保 GCC 版本: gcc >= 5.
+(确保 GCC 版本: gcc >= 5)
 
 ```bash
 pip install -r requirements.txt
