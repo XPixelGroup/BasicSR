@@ -12,7 +12,8 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-在BasicSR的**根目录**下运行以下命令:
+在BasicSR的**根目录**下运行以下命令:<br>
+确保 GCC 版本: gcc >= 5.
 
 ```bash
 pip install -r requirements.txt
