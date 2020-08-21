@@ -1,4 +1,4 @@
-# BasicSR
+# :rocket: BasicSR
 
 [GitHub](https://github.com/xinntao/BasicSR) | [Gitee码云](https://gitee.com/xinntao/BasicSR) <br>
 [English](README.md) | [简体中文](README_CN.md)
@@ -13,7 +13,7 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
-Make sure that your GCC version: gcc >= 5.
+(Make sure that your GCC version: gcc >= 5)
 
 ```bash
 pip install -r requirements.txt
