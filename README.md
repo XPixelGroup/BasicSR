@@ -22,6 +22,14 @@ python setup.py develop
 
 Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
 
+## HOWTOs
+
+We provides simple pipelines to train/test/inference models for quick start.
+
+- [How to train StyleGAN2](docs/HOWTOs#How-to-train-StyleGAN2)
+- [How to test StyleGAN2](docs/HOWTOs#How-to-test-StyleGAN2)
+
+
 ## TODO List
 
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
