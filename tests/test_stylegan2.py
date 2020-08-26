@@ -1,4 +1,5 @@
 import argparse
+import mmcv
 import torch
 from torchvision import utils
 
@@ -19,7 +20,7 @@ def generate(args, g_ema, device, mean_latent):
 
             utils.save_image(
                 sample,
-                f'sample/{str(i).zfill(6)}.png',
+                f'samples/{str(i).zfill(6)}.png',
                 nrow=1,
                 normalize=True,
                 range=(-1, 1),
@@ -37,13 +38,18 @@ if __name__ == '__main__':
     parser.add_argument('--truncation', type=float, default=1)
     parser.add_argument('--truncation_mean', type=int, default=4096)
     parser.add_argument(
-        '--ckpt', type=str, default='stylegan2_ffhq_config_f_official.pth')
+        '--ckpt',
+        type=str,
+        default=  # noqa: E251
+        'experiments/pretrained_models/stylegan2_ffhq_config_f_1024_official-f8a4b805.pth'  # noqa: E501
+    )
     parser.add_argument('--channel_multiplier', type=int, default=2)
 
     args = parser.parse_args()
 
     args.latent = 512
     args.n_mlp = 8
+    mmcv.mkdir_or_exist('samples')
 
     g_ema = StyleGAN2Generator(
         args.size,
