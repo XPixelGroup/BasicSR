@@ -10,13 +10,13 @@
 
         > python scripts/extract_images_from_tfrecords.py
 
-1. Modify the config file in `options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ_800k.yml`
-1. Train with distributed training:
+1. 修改配置文件 `options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ.yml`
+1. 使用分布式训练. 更多训练命令: [TrainTest_CN.md](TrainTest_CN.md)
 
-    > python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ_800k.yml --launcher pytorch
+    > python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ.yml --launcher pytorch
 
-## How to test StyleGAN2
+## 如何测试 StyleGAN2
 
-1. Test:
+1. 测试:
 
     > python tests/test_stylegan2.py
