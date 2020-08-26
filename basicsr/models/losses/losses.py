@@ -1,3 +1,4 @@
+import math
 import torch
 from torch import autograd as autograd
 from torch import nn as nn
@@ -295,6 +296,8 @@ class GANLoss(nn.Module):
             self.loss = nn.MSELoss()
         elif self.gan_type == 'wgan':
             self.loss = self._wgan_loss
+        elif self.gan_type == 'wgan_softplus':
+            self.loss = self._wgan_softplus_loss
         elif self.gan_type == 'hinge':
             self.loss = nn.ReLU()
         else:
@@ -313,6 +316,24 @@ class GANLoss(nn.Module):
         """
         return -input.mean() if target else input.mean()
 
+    def _wgan_softplus_loss(self, input, target):
+        """wgan loss with soft plus. softplus is a smooth approximation to the
+        ReLU function.
+
+        In StyleGAN2, it is called:
+            Logistic loss for discriminator;
+            Non-saturating loss for generator.
+
+        Args:
+            input (Tensor): Input tensor.
+            target (bool): Target label.
+
+        Returns:
+            Tensor: wgan loss.
+        """
+        return F.softplus(-input).mean() if target else F.softplus(
+            input).mean()
+
     def get_target_label(self, input, target_is_real):
         """Get target label.
 
@@ -325,7 +346,7 @@ class GANLoss(nn.Module):
                 return Tensor.
         """
 
-        if self.gan_type == 'wgan':
+        if self.gan_type in ['wgan', 'wgan_softplus']:
             return target_is_real
         target_val = (
             self.real_label_val if target_is_real else self.fake_label_val)
@@ -355,6 +376,39 @@ class GANLoss(nn.Module):
 
         # loss_weight is always 1.0 for discriminators
         return loss if is_disc else loss * self.loss_weight
+
+
+def r1_penalty(real_pred, real_img):
+    """R1 regularization for discriminator. The core idea is to
+        penalize the gradient on real data alone: when the
+        generator distribution produces the true data distribution
+        and the discriminator is equal to 0 on the data manifold, the
+        gradient penalty ensures that the discriminator cannot create
+        a non-zero gradient orthogonal to the data manifold without
+        suffering a loss in the GAN game.
+
+        Ref:
+        Eq. 9 in Which training methods for GANs do actually converge.
+        """
+    grad_real = autograd.grad(
+        outputs=real_pred.sum(), inputs=real_img, create_graph=True)[0]
+    grad_penalty = grad_real.pow(2).view(grad_real.shape[0], -1).sum(1).mean()
+    return grad_penalty
+
+
+def g_path_regularize(fake_img, latents, mean_path_length, decay=0.01):
+    noise = torch.randn_like(fake_img) / math.sqrt(
+        fake_img.shape[2] * fake_img.shape[3])
+    grad = autograd.grad(
+        outputs=(fake_img * noise).sum(), inputs=latents, create_graph=True)[0]
+    path_lengths = torch.sqrt(grad.pow(2).sum(2).mean(1))
+
+    path_mean = mean_path_length + decay * (
+        path_lengths.mean() - mean_path_length)
+
+    path_penalty = (path_lengths - path_mean).pow(2).mean()
+
+    return path_penalty, path_lengths.detach().mean(), path_mean.detach()
 
 
 def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
@@ -394,31 +448,3 @@ def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
         gradients_penalty /= torch.mean(weight)
 
     return gradients_penalty
-
-
-class GradientPenaltyLoss(nn.Module):
-    """Gradient penalty loss for wgan-gp.
-
-    Args:
-        loss_weight (float): Loss weight. Default: 1.0.
-    """
-
-    def __init__(self, loss_weight=1.):
-        super(GradientPenaltyLoss, self).__init__()
-        self.loss_weight = loss_weight
-
-    def forward(self, discriminator, real_data, fake_data, weight=None):
-        """
-        Args:
-            discriminator (nn.Module): Network for the discriminator.
-            real_data (Tensor): Real input data.
-            fake_data (Tensor): Fake input data.
-            weight (Tensor): Weight tensor. Default: None.
-
-        Returns:
-            Tensor: Loss.
-        """
-        loss = gradient_penalty_loss(
-            discriminator, real_data, fake_data, weight=weight)
-
-        return loss * self.loss_weight

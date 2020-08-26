@@ -17,6 +17,7 @@
 | [ESRGANModel](../basicsr/models/esrgan_model.py) | ESRGAN图像超分类 |ESRGAN|
 | [VideoBaseModel](../basicsr/models/video_base_model.py) | 基础视频超分类 | |
 | [EDVRModel](../basicsr/models/edvr_model.py) | EDVR视频超分类 |EDVR|
+| [StyleGAN2Model](../basicsr/models/stylegan2_model.py) | StyleGAN2图像生成类 |StyleGAN2|
 
 ## 继承关系
 
@@ -25,8 +26,9 @@
 ```txt
 BaseModel
 ├── SRModel
-    ├── SRGANModel
-        ├── ESRGANModel
-    ├── VideoBaseModel
-        ├── EDVRModel
+│   ├── SRGANModel
+│   │   ├── ESRGANModel
+│   ├── VideoBaseModel
+│       ├── EDVRModel
+├── StyleGAN2Model
 ```

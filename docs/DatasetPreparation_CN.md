@@ -15,6 +15,8 @@
 1. [视频帧数据](#视频帧数据)
     1. [REDS](#REDS)
     1. [Vimeo90K](#Vimeo90K)
+1. [StylgeGAN2](#StyleGAN2)
+    1. [FFHQ](#FFHQ)
 
 ## 数据存储形式
 
@@ -290,3 +292,16 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 The low-resolution images in the Vimeo90K test dataset are generated with the MATLAB bicubic downsampling kernel. Use the script `data_scripts/generate_LR_Vimeo90K.m` (run in MATLAB) to generate the low-resolution images.
 1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_vimeo90k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `python tests/test_vimeo90k_dataset.py`, 注意修改函数相应的配置和路径.
+
+## StyleGAN2
+
+### FFHQ
+
+训练数据集: [FFHQ](https://github.com/NVlabs/ffhq-dataset).
+
+1. 下载 FFHQ 数据集. 推荐从 [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset) 下载 tfrecords 文件.
+1. 从 tfrecords 提取到*图片*或者*LMDB*. (需要安装 TensorFlow 来读取 tfrecords). 我们对每一个分辨率的人脸都单独创建文件夹或者LMDB文件.
+
+    ```bash
+    python scripts/extract_images_from_tfrecords.py
+    ```
