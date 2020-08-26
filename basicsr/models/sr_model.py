@@ -20,7 +20,7 @@ class SRModel(BaseModel):
         super(SRModel, self).__init__(opt)
 
         # define network
-        self.net_g = networks.define_net_g(opt['network_g'])
+        self.net_g = networks.define_net_g(deepcopy(opt['network_g']))
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
 
