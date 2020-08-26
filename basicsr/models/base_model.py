@@ -248,7 +248,8 @@ class BaseModel():
         net = self.get_bare_model(net)
         logger.info(
             f'Loading {net.__class__.__name__} model from {load_path}.')
-        load_net = torch.load(load_path)[param_key]
+        load_net = torch.load(
+            load_path, map_location=lambda storage, loc: storage)[param_key]
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):

@@ -13,5 +13,6 @@
 | [VideoTestDataset](../basicsr/data/video_test_dataset.py) | 视频超分 | 测试|基础的视频超分测试集, 支持Vid4, REDS测试集|
 | [VideoTestVimeo90KDataset](../basicsr/data/video_test_dataset.py) | 视频超分 |测试| 继承`VideoTestDataset`, Vimeo90K的测试数据集|
 | [VideoTestDUFDataset](../basicsr/data/video_test_dataset.py) | 视频超分 |测试| 继承`VideoTestDataset`, 方法DUF的测试数据集, 支持Vid4|
+| [FFHQDataset](../basicsr/data/ffhq_dataset.py) | 人脸生成 |训练| FFHQ的训练数据集|
 
-1. 共有的变换和函数分别在 [transforms.py](../basicsr/data/transforms.py) 和 [util.py](../basicsr/data/util.py) 中
+1. 共用的变换和函数分别在 [transforms.py](../basicsr/data/transforms.py) 和 [util.py](../basicsr/data/util.py) 中

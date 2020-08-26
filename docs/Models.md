@@ -17,6 +17,7 @@
 | [ESRGANModel](../basicsr/models/esrgan_model.py) | ESRGAN image SR class|ESRGAN|
 | [VideoBaseModel](../basicsr/models/video_base_model.py) | Base video SR class | |
 | [EDVRModel](../basicsr/models/edvr_model.py) | EDVR video SR class |EDVR|
+| [StyleGAN2Model](../basicsr/models/stylegan2_model.py) | StyleGAN2 generation class |StyleGAN2|
 
 ## Inheritance Relationship
 
@@ -25,8 +26,9 @@ In order to reuse components among models, we use a lot of inheritance. The foll
 ```txt
 BaseModel
 ├── SRModel
-    ├── SRGANModel
-        ├── ESRGANModel
-    ├── VideoBaseModel
-        ├── EDVRModel
+│   ├── SRGANModel
+│   │   ├── ESRGANModel
+│   ├── VideoBaseModel
+│       ├── EDVRModel
+├── StyleGAN2Model
 ```
