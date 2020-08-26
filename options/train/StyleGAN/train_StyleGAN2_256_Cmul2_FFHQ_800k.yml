@@ -64,12 +64,20 @@ train:
   total_iter: 800000
   warmup_iter: -1  # no warm up
 
+  # losses
+  gan_opt:
+    type: GANLoss
+    gan_type: wgan_softplus
+    loss_weight: !!float 1
+  # r1 regularization for discriminator
+  r1_reg_weight: 10
+  # path length regularization for generator
+  path_batch_shrink: 2
+  path_reg_weight: 2
+
   net_g_reg_every: 4
   net_d_reg_every: 16
   mixing_prob: 0.9
-  r1_weight: 10
-  path_batch_shrink: 2
-  path_weight: 2
 
   net_d_iters: 1
   net_d_init_iters: 0
