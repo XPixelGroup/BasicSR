@@ -16,7 +16,7 @@
     1. [REDS](#REDS)
     1. [Vimeo90K](#Vimeo90K)
 1. [StylgeGAN2](#StyleGAN2)
-    1. [FFHQ][#FFHQ]
+    1. [FFHQ](#FFHQ)
 
 ## Data Storage Format
 

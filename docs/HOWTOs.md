@@ -2,7 +2,7 @@
 
 ## How to train StyleGAN2
 
-1. Prepare training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset). More details in [DatasetPreparation.md](docs/DatasetPreparation.md#StyleGAN2)
+1. Prepare training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset). More details in [DatasetPreparation.md](DatasetPreparation.md#StyleGAN2)
     1. Download FFHQ dataset. Recommend to download the tfrecords files from [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset).
     1. Extract tfrecords to images or LMDBs (TensorFlow is required to read tfrecords):
 
