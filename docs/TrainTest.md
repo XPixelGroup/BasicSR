@@ -35,19 +35,13 @@ python basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml
 
 **8 GPUs**
 
-```bash
-PYTHONPATH="./:${PYTHONPATH}" \
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
-python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
-```
+> PYTHONPATH="./:${PYTHONPATH}" CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
 
 **4 GPUs**
 
-```bash
-PYTHONPATH="./:${PYTHONPATH}" \
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
-```
+> PYTHONPATH="./:${PYTHONPATH}" \
+> CUDA_VISIBLE_DEVICES=0,1,2,3 \
+> python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
 
 ### Slurm Training
 
