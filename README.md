@@ -25,7 +25,7 @@ Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows.
 ## HOWTOs
 
 We provides simple pipelines to train/test/inference models for quick start.
-These pipelines/commands are not complete and more details are in the following sections.
+These pipelines/commands cannot cover all the cases and more details are in the following sections.
 
 - [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
 - [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
