@@ -1,3 +1,4 @@
+import importlib
 import math
 import mmcv
 import random
@@ -5,12 +6,13 @@ import torch
 from collections import OrderedDict
 from copy import deepcopy
 from os import path as osp
-from torch import autograd
-from torch.nn import functional as F
 
 from basicsr.models import networks as networks
 from basicsr.models.base_model import BaseModel
+from basicsr.models.losses.losses import g_path_regularize, r1_penalty
 from basicsr.utils import tensor2img
+
+loss_module = importlib.import_module('basicsr.models.losses')
 
 
 class StyleGAN2Model(BaseModel):
@@ -45,6 +47,7 @@ class StyleGAN2Model(BaseModel):
         self.net_d = networks.define_net_d(deepcopy(self.opt['network_d']))
         self.net_d = self.model_to_device(self.net_d)
         self.print_network(self.net_d)
+
         # load pretrained model
         load_path = self.opt['path'].get('pretrain_model_d', None)
         if load_path is not None:
@@ -68,8 +71,14 @@ class StyleGAN2Model(BaseModel):
         self.net_d.train()
         self.net_g_ema.eval()
 
-        self.net_d_iters = train_opt.get('net_d_iters', 1)
-        self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)
+        # define losses
+        # gan loss (wgan)
+        cri_gan_cls = getattr(loss_module, train_opt['gan_opt'].pop('type'))
+        self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
+        # regularization weights
+        self.r1_reg_weight = train_opt['r1_reg_weight']  # for discriminator
+        self.path_reg_weight = train_opt['path_reg_weight']  # for generator
+
         self.net_g_reg_every = train_opt['net_g_reg_every']
         self.net_d_reg_every = train_opt['net_d_reg_every']
         self.mixing_prob = train_opt['mixing_prob']
@@ -153,7 +162,7 @@ class StyleGAN2Model(BaseModel):
             ]
         else:
             normal_params = []
-            for name, param in self.net_g.named_parameters():
+            for name, param in self.net_d.named_parameters():
                 normal_params.append(param)
             optim_params_d = [{  # add normal params first
                 'params': normal_params,
@@ -214,9 +223,12 @@ class StyleGAN2Model(BaseModel):
         fake_pred = self.net_d(fake_img.detach())
 
         real_pred = self.net_d(self.real_img)
-        l_d = self.d_logistic_loss(real_pred, fake_pred)
+        # wgan loss with softplus (logistic loss) for discriminator
+        l_d = self.cri_gan(
+            real_pred, True, is_disc=True) + self.cri_gan(
+                fake_pred, False, is_disc=True)
         loss_dict['l_d'] = l_d
-        # In WGAN, real_score should be positive and fake_score should be
+        # In wgan, real_score should be positive and fake_score should be
         # negative
         loss_dict['real_score'] = real_pred.detach().mean()
         loss_dict['fake_score'] = fake_pred.detach().mean()
@@ -225,10 +237,10 @@ class StyleGAN2Model(BaseModel):
         if current_iter % self.net_d_reg_every == 0:
             self.real_img.requires_grad = True
             real_pred = self.net_d(self.real_img)
-            l_d_r1 = self.d_r1_loss(real_pred, self.real_img)
+            l_d_r1 = r1_penalty(real_pred, self.real_img)
             l_d_r1 = (
-                self.opt['train']['r1_weight'] / 2 * l_d_r1 *
-                self.net_d_reg_every + 0 * real_pred[0])
+                self.r1_reg_weight / 2 * l_d_r1 * self.net_d_reg_every +
+                0 * real_pred[0])
             # TODO: why do we need to add 0 * real_pred, otherwise, a runtime
             # error will arise: RuntimeError: Expected to have finished
             # reduction in the prior iteration before starting a new one.
@@ -248,7 +260,8 @@ class StyleGAN2Model(BaseModel):
         fake_img, _ = self.net_g(noise)
         fake_pred = self.net_d(fake_img)
 
-        l_g = self.g_nonsaturating_loss(fake_pred)
+        # wgan loss with softplus (non-saturating loss) for generator
+        l_g = self.cri_gan(fake_pred, True, is_disc=False)
         loss_dict['l_g'] = l_g
         l_g.backward()
 
@@ -257,11 +270,12 @@ class StyleGAN2Model(BaseModel):
                 1, batch // self.opt['train']['path_batch_shrink'])
             noise = self.mixing_noise(path_batch_size, self.mixing_prob)
             fake_img, latents = self.net_g(noise, return_latents=True)
-            l_g_path, path_lengths = self.g_path_regularize(fake_img, latents)
+            l_g_path, path_lengths, self.mean_path_length = g_path_regularize(
+                fake_img, latents, self.mean_path_length)
 
             l_g_path = (
-                self.opt['train']['path_weight'] * self.net_g_reg_every *
-                l_g_path + 0 * fake_img[0, 0, 0, 0])
+                self.path_reg_weight * self.net_g_reg_every * l_g_path +
+                0 * fake_img[0, 0, 0, 0])
             # TODO:  why do we need to add 0 * fake_img[0, 0, 0, 0]
             l_g_path.backward()
             loss_dict['l_g_path'] = l_g_path.detach().mean()
@@ -273,53 +287,6 @@ class StyleGAN2Model(BaseModel):
 
         # EMA
         self.model_ema(decay=0.5**(32 / (10 * 1000)))
-
-    def d_logistic_loss(self, real_pred, fake_pred):
-        """Logistic loss for discriminator. Actually the WGAN loss"""
-        # softplus is a smooth approximation to the ReLU function
-        real_loss = F.softplus(-real_pred)
-        fake_loss = F.softplus(fake_pred)
-        return real_loss.mean() + fake_loss.mean()
-
-    def d_r1_loss(self, real_pred, real_img):
-        """R1 regularization for discriminator. The core idea is to
-        penalize the gradient on real data alone: when the
-        generator distribution produces the true data distribution
-        and the discriminator is equal to 0 on the data manifold, the
-        gradient penalty ensures that the discriminator cannot create
-        a non-zero gradient orthogonal to the data manifold without
-        suffering a loss in the GAN game.
-
-        Ref:
-        Eq. 9 in Which training methods for GANs do actually converge.
-        """
-        grad_real = autograd.grad(
-            outputs=real_pred.sum(), inputs=real_img, create_graph=True)[0]
-        grad_penalty = grad_real.pow(2).view(grad_real.shape[0],
-                                             -1).sum(1).mean()
-        return grad_penalty
-
-    def g_nonsaturating_loss(self, fake_pred):
-        """Non-saturating loss for generator. Like d_logistic_loss"""
-        loss = F.softplus(-fake_pred).mean()
-        return loss
-
-    def g_path_regularize(self, fake_img, latents, decay=0.01):
-        noise = torch.randn_like(fake_img) / math.sqrt(
-            fake_img.shape[2] * fake_img.shape[3])
-        grad = autograd.grad(
-            outputs=(fake_img * noise).sum(),
-            inputs=latents,
-            create_graph=True)[0]
-        path_lengths = torch.sqrt(grad.pow(2).sum(2).mean(1))
-
-        path_mean = self.mean_path_length + decay * (
-            path_lengths.mean() - self.mean_path_length)
-        self.mean_path_length = path_mean.detach()
-
-        path_penalty = (path_lengths - path_mean).pow(2).mean()
-
-        return path_penalty, path_lengths.detach().mean()
 
     def test(self):
         with torch.no_grad():
