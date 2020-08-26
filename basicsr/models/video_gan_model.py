@@ -51,10 +51,8 @@ class VideoGANModel(VideoBaseModel):
             cri_gan_cls = getattr(loss_module, gan_type)
             self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
 
-        self.net_d_iters = train_opt['net_d_iters'] if train_opt[
-            'net_d_iters'] else 1
-        self.net_d_init_iters = train_opt['net_d_init_iters'] if train_opt[
-            'net_d_init_iters'] else 0
+        self.net_d_iters = train_opt.get('net_d_iters', 1)
+        self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)
 
         # set up optimizers and schedulers
         self.setup_optimizers()
