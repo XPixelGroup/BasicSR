@@ -18,5 +18,7 @@
 ## 如何测试 StyleGAN2
 
 1. 测试:
+    1. 从 [ModelZoo_CN.md](ModelZoo_CN.md) 下载预训练模型.
+    1. 测试.
 
-    > python tests/test_stylegan2.py
+        > python tests/test_stylegan2.py
