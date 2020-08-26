@@ -25,10 +25,10 @@ Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows.
 ## HOWTOs
 
 We provides simple pipelines to train/test/inference models for quick start.
+These pipelines/commands are not complete and more details are in the following sections.
 
 - [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
 - [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
-
 
 ## TODO List
 
@@ -64,13 +64,11 @@ The figure below shows the overall framework. More descriptions for each compone
 
 ![overall_structure](./assets/overall_structure.png)
 
-## License
+## License and Acknowledgement
 
 This project is released under the Apache 2.0 license.
-More details are in [LICENSE](LICENSE/README.md).
+More details about license and acknowledgement are in [LICENSE](LICENSE/README.md).
 
-#### Contact
+## Contact
 
 If you have any question, please email `xintao.wang@outlook.com`.
-
-<sub><sup>[BasicSR-private](https://github.com/xinntao/BasicSR-private)</sup></sub>
