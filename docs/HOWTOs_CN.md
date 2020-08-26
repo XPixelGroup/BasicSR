@@ -2,11 +2,11 @@
 
 [English](HOWTOs.md) | [简体中文](HOWTOs_CN.md)
 
-## How to train StyleGAN2
+## 如何训练 StyleGAN2
 
-1. Prepare training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset). More details in [DatasetPreparation.md](DatasetPreparation.md#StyleGAN2)
-    1. Download FFHQ dataset. Recommend to download the tfrecords files from [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset).
-    1. Extract tfrecords to images or LMDBs (TensorFlow is required to read tfrecords):
+1. 准备训练数据集: [FFHQ](https://github.com/NVlabs/ffhq-dataset). 更多细节: [DatasetPreparation_CN.md](DatasetPreparation_CN.md#StyleGAN2)
+    1. 下载 FFHQ 数据集. 推荐从 [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset) 下载 tfrecords 文件.
+    1. 从tfrecords 提取到*图片*或者*LMDB*. (需要安装 TensorFlow 来读取 tfrecords).
 
         > python scripts/extract_images_from_tfrecords.py
 

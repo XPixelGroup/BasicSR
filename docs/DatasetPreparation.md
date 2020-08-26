@@ -300,7 +300,7 @@ Remember to modify the paths and configurations accordingly.
 Training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset).
 
 1. Download FFHQ dataset. Recommend to download the tfrecords files from [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset).
-1. Extract tfrecords to images or LMDBs. (TensorFlow is required to read tfrecords). For each resolution, we will create separately.
+1. Extract tfrecords to images or LMDBs. (TensorFlow is required to read tfrecords). For each resolution, we will create images folder or LMDB files separately.
 
     ```bash
     python scripts/extract_images_from_tfrecords.py
