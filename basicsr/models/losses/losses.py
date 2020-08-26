@@ -448,31 +448,3 @@ def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
         gradients_penalty /= torch.mean(weight)
 
     return gradients_penalty
-
-
-class GradientPenaltyLoss(nn.Module):
-    """Gradient penalty loss for wgan-gp.
-
-    Args:
-        loss_weight (float): Loss weight. Default: 1.0.
-    """
-
-    def __init__(self, loss_weight=1.):
-        super(GradientPenaltyLoss, self).__init__()
-        self.loss_weight = loss_weight
-
-    def forward(self, discriminator, real_data, fake_data, weight=None):
-        """
-        Args:
-            discriminator (nn.Module): Network for the discriminator.
-            real_data (Tensor): Real input data.
-            fake_data (Tensor): Fake input data.
-            weight (Tensor): Weight tensor. Default: None.
-
-        Returns:
-            Tensor: Loss.
-        """
-        loss = gradient_penalty_loss(
-            discriminator, real_data, fake_data, weight=weight)
-
-        return loss * self.loss_weight
