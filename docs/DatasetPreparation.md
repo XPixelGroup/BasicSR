@@ -15,6 +15,8 @@
 1. [Video Super-Resolution](#Video-Super-Resolution)
     1. [REDS](#REDS)
     1. [Vimeo90K](#Vimeo90K)
+1. [StylgeGAN2](#StyleGAN2)
+    1. [FFHQ](#FFHQ)
 
 ## Data Storage Format
 
@@ -290,3 +292,16 @@ The low-resolution images in the Vimeo90K test dataset are generated with the MA
 1. [Optional] Make LMDB files when necessary. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_vimeo90k` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_vimeo90k_dataset.py`.
 Remember to modify the paths and configurations accordingly.
+
+## StyleGAN2
+
+### FFHQ
+
+Training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset).
+
+1. Download FFHQ dataset. Recommend to download the tfrecords files from [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset).
+1. Extract tfrecords to images or LMDBs. (TensorFlow is required to read tfrecords). For each resolution, we will create images folder or LMDB files separately.
+
+    ```bash
+    python scripts/extract_images_from_tfrecords.py
+    ```

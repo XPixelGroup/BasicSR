@@ -82,7 +82,10 @@ class SPyNetTOF(nn.Module):
 
         self.basic_module = nn.ModuleList([BasicModule() for _ in range(4)])
         if load_path:
-            self.load_state_dict(torch.load(load_path)['params'])
+            self.load_state_dict(
+                torch.load(
+                    load_path,
+                    map_location=lambda storage, loc: storage)['params'])
 
     def forward(self, ref, supp):
         """
