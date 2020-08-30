@@ -63,7 +63,7 @@ class VideoTestDataset(data.Dataset):
         logger = get_root_logger()
         logger.info(f'Generate data info for VideoTestDataset - {opt["name"]}')
         self.imgs_lq, self.imgs_gt = {}, {}
-        if opt['meta_info_file']:
+        if 'meta_info_file' in opt:
             with open(opt['meta_info_file'], 'r') as fin:
                 subfolders = [line.split(' ')[0] for line in fin]
                 subfolders_lq = [

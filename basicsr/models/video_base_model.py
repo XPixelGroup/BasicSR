@@ -102,10 +102,13 @@ class VideoBaseModel(SRModel):
                                 f'{int(frame_idx) + world_size}/{max_idx}')
 
         if with_metrics:
-            # collect data among GPUs
-            for _, tensor in self.metric_results.items():
-                dist.reduce(tensor, 0)
-            dist.barrier()
+            if self.opt['dist']:
+                # collect data among GPUs
+                for _, tensor in self.metric_results.items():
+                    dist.reduce(tensor, 0)
+                dist.barrier()
+            else:
+                pass  # assume use one gpu in non-dist testing
 
             if rank == 0:
                 self._log_validation_metric_values(current_iter, dataset_name,
@@ -113,7 +116,10 @@ class VideoBaseModel(SRModel):
 
     def nondist_validation(self, dataloader, current_iter, tb_logger,
                            save_img):
-        raise NotImplementedError('nondist_validation is not implemented.')
+        logger = get_root_logger()
+        logger.warning(
+            'nondist_validation is not implemented. Run dist_validation.')
+        self.dist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def _log_validation_metric_values(self, current_iter, dataset_name,
                                       tb_logger):
