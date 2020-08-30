@@ -584,7 +584,8 @@ class StyleGAN2Generator(nn.Module):
                 False. Default: True.
             truncation (float): TODO. Default: 1.
             truncation_latent (Tensor | None): TODO. Default: None.
-            inject_index (int | None): TODO. Default: None.
+            inject_index (int | None): The injection index for mixing noise.
+                Default: None.
             return_latents (bool): Whether to return style latents.
                 Default: False.
         """
@@ -608,15 +609,15 @@ class StyleGAN2Generator(nn.Module):
                                         (style - truncation_latent))
             styles = style_truncation
         # get style latent with injection
-        if len(styles) < 2:
+        if len(styles) == 1:
             inject_index = self.num_latent
 
             if styles[0].ndim < 3:
                 # repeat latent code for all the layers
                 latent = styles[0].unsqueeze(1).repeat(1, inject_index, 1)
-            else:
+            else:  # used for encoder with different latent code for each layer
                 latent = styles[0]
-        else:
+        elif len(styles) == 2:  # mixing noises
             if inject_index is None:
                 inject_index = random.randint(1, self.num_latent - 1)
             latent1 = styles[0].unsqueeze(1).repeat(1, inject_index, 1)

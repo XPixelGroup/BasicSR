@@ -9,9 +9,9 @@ for idx, path in enumerate(paths):
     print(f'{idx+1:03d}: Processing {path}')
     net = torch.load(path, map_location=torch.device('cpu'))
     basename = osp.basename(path)
-    if 'params' not in net:
+    if 'params' not in net and 'params_ema' not in net:
         raise ValueError(f'Please check! Model {basename} does not '
-                         f"have 'params' key.")
+                         f"have 'params'/'params_ema' key.")
     else:
         if '-' in basename:
             # check whether the sha is the latest
