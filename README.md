@@ -47,6 +47,9 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 ## Model Zoo and Baselines
 
+**[Download official pre-trained models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**<br>
+**[Download reproduced models and logs](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
+
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
 - **Pre-trained models and log examples** are available in **[ModelZoo.md](docs/ModelZoo.md)**.
 - We also provide **training curves** in [wandb](https://app.wandb.ai/xintao/basicsr):
