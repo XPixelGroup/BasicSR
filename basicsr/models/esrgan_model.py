@@ -38,8 +38,8 @@ class ESRGANModel(SRGANModel):
                     l_g_total += l_g_style
                     loss_dict['l_g_style'] = l_g_style
             # gan loss (relativistic gan)
-            fake_g_pred = self.net_d(self.output)
             real_d_pred = self.net_d(self.gt).detach()
+            fake_g_pred = self.net_d(self.output)
             l_g_real = self.cri_gan(
                 real_d_pred - torch.mean(fake_g_pred), False, is_disc=False)
             l_g_fake = self.cri_gan(
@@ -58,15 +58,27 @@ class ESRGANModel(SRGANModel):
 
         self.optimizer_d.zero_grad()
         # gan loss (relativistic gan)
-        real_d_pred = self.net_d(self.gt)
-        fake_d_pred = self.net_d(self.output.detach())
 
+        # In order to avoid the error in distributed training:
+        # "Error detected in CudnnBatchNormBackward: RuntimeError: one of
+        # the variables needed for gradient computation has been modified by
+        # an inplace operation",
+        # we separate the backwards for real and fake, and also detach the
+        # tensor for calculating mean.
+
+        # real
+        fake_d_pred = self.net_d(self.output).detach()
+        real_d_pred = self.net_d(self.gt)
         l_d_real = self.cri_gan(
-            real_d_pred - torch.mean(fake_d_pred), True, is_disc=True)
+            real_d_pred - torch.mean(fake_d_pred), True, is_disc=True) * 0.5
+        l_d_real.backward()
+        # fake
+        fake_d_pred = self.net_d(self.output.detach())
         l_d_fake = self.cri_gan(
-            fake_d_pred - torch.mean(real_d_pred), False, is_disc=True)
-        l_d_total = (l_d_real + l_d_fake) / 2
-        l_d_total.backward()
+            fake_d_pred - torch.mean(real_d_pred.detach()),
+            False,
+            is_disc=True) * 0.5
+        l_d_fake.backward()
         self.optimizer_d.step()
 
         loss_dict['l_d_real'] = l_d_real
