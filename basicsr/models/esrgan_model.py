@@ -58,6 +58,14 @@ class ESRGANModel(SRGANModel):
 
         self.optimizer_d.zero_grad()
         # gan loss (relativistic gan)
+
+        # In order to avoid the error in distributed training:
+        # "Error detected in CudnnBatchNormBackward: RuntimeError: one of
+        # the variables needed for gradient computation has been modified by
+        # an inplace operation",
+        # we separate the backwards for real and fake, and also detach the
+        # tensor for calculating mean.
+
         # real
         fake_d_pred = self.net_d(self.output).detach()
         real_d_pred = self.net_d(self.gt)
