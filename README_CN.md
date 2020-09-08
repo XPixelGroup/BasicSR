@@ -6,6 +6,32 @@
 BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Resolution) 工具箱 (之后会支持更多的 Restoration 任务).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
+## :sparkles: 新的特性
+
+- Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
+   > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
+   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
+   > European Conference on Computer Vision (ECCV), 2020
+- Aug 27, 2020. 添加 **StyleGAN2  训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
+   > Analyzing and Improving the Image Quality of StyleGAN <br>
+   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
+   > Computer Vision and Pattern Recognition (CVPR), 2020
+
+<details>
+  <summary>更多</summary>
+<ul>
+  <li>Aug 19, 2020. 全新的 BasicSR v1.0.0 上线.</li>
+</ul>
+</details>
+
+## :zap:HOWTOs
+
+我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
+
+- :zap: [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
+- :zap: [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
+- :zap: [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
+
 ## 依赖和安装
 
 - Python >= 3.7 (推荐使用 [Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
@@ -21,14 +47,6 @@ python setup.py develop
 ```
 
 注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
-
-## HOWTOs
-
-我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
-
-- :zap: [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
-- :zap: [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
-- :zap: [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
 
 ## TODO 清单
 
@@ -75,5 +93,3 @@ python setup.py develop
 #### 联系
 
 若有任何问题, 请电邮 `xintao.wang@outlook.com`.
-
-<sub><sup>[BasicSR-private](https://github.com/xinntao/BasicSR-private)</sup></sub>
