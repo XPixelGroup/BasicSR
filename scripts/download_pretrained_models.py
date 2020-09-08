@@ -5,8 +5,8 @@ from os import path as osp
 from basicsr.utils.download import download_file_from_google_drive
 
 
-def download_pretrained_models(file_ids):
-    save_path_root = './experiments/pretrained_models'
+def download_pretrained_models(method, file_ids):
+    save_path_root = f'./experiments/pretrained_models/{method}'
     mmcv.mkdir_or_exist(save_path_root)
 
     for file_name, file_id in file_ids.items():
@@ -101,7 +101,24 @@ if __name__ == '__main__':
             'DUF_x4_28L_official-cbada450.pth':
             '1M8w0AMBJW65MYYD-_8_be0cSH_SHhDQ4',
             'DUF_x4_52L_official-483d2c78.pth':
-            '1GcmEWNr7mjTygi-QCOVgQWOo5OCNbh_T'}
+            '1GcmEWNr7mjTygi-QCOVgQWOo5OCNbh_T'
+        },
+        'DFDNet': {
+            'DFDNet_dict_512-f79685f0.pth':
+            '1iH00oMsoN_1OJaEQw3zP7_wqiAYMnY79',
+            'DFDNet_official-d1fa5650.pth':
+            '1u6Sgcp8gVoy4uVTrOJKD3y9RuqH2JBAe',
+            'FFHQ_5_landmarks_template_1024-90a00515.npy':
+            '1IQdQcq9QnpW6YzRwDaNbpV-rJ1Cq7RUq'
+        },
+        'dlib': {
+            'mmod_human_face_detector-4cb19393.dat':
+            '1FUM-hcoxNzFCOpCWbAUStBBMiU4uIGIL',
+            'shape_predictor_5_face_landmarks-c4b1e980.dat':
+            '1PNPSmFjmbuuUDd5Mg5LDxyk7tu7TQv2F',
+            'shape_predictor_68_face_landmarks-fbdc2cb8.dat':
+            '1IneH-O-gNkG0SQpNCplwxtOAtRCkG2ni'
+        }
     }
 
-    download_pretrained_models(file_ids[args.method])
+    download_pretrained_models(args.method, file_ids[args.method])
