@@ -17,10 +17,32 @@
 
 ## How to test StyleGAN2
 
-1. Test:
-    1. Download pre-trained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models` folder.
-    1. Test.
+1. Download pre-trained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models` folder.
+1. Test.
 
-        > python tests/test_stylegan2.py
+    > python tests/test_stylegan2.py
 
-    1. The results are in the `samples` folder.
+1. The results are in the `samples` folder.
+
+## How to test DFDNet
+
+1. DFDNet uses [dlib](http://dlib.net/) to do face recognition and landmark detection. So you should install dlib first. [Installation reference](https://github.com/davisking/dlib).
+    1. Clone dlib codes: `git clone git@github.com:davisking/dlib.git`.
+    1. `cd dlib`
+    1. Install: `python setup.py install`
+2. Download the [dlib](http://dlib.net/) pretrained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/dlib` folder.
+    You can download by run the script OR manually download the pretrained models.
+
+    > python scripts/download_pretrained_models.py --method dlib
+
+3. Download pretrained DFDNet models, dictionary and face template from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/DFDNet` folder.
+    You can download by run the script OR manually download the pretrained models.
+
+    > python scripts/download_pretrained_models.py --method DFDNet
+
+4. Prepare the testing dataset in the `datasets`, for example, we put images in the `datasets/TestWhole` folder.
+5. Test.
+
+    >  python tests/test_face_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
+
+6. The results are in the `results/DFDNet` folder.
