@@ -26,16 +26,16 @@
 
 ## How to test DFDNet
 
-1. DFDNet uses [dlib](http://dlib.net/) to do face recognition and landmark detection. So you should install dlib first. [Installation reference](https://github.com/davisking/dlib).
-    1. Clone dlib codes: `git clone git@github.com:davisking/dlib.git`.
+1. Install [dlib](http://dlib.net/), because DFDNet uses dlib to do face recognition and landmark detection. [Installation reference](https://github.com/davisking/dlib).
+    1. Clone dlib repo: `git clone git@github.com:davisking/dlib.git`
     1. `cd dlib`
     1. Install: `python setup.py install`
-2. Download the [dlib](http://dlib.net/) pretrained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/dlib` folder.
+2. Download the dlib pretrained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/dlib` folder.<br>
     You can download by run the script OR manually download the pretrained models.
 
     > python scripts/download_pretrained_models.py --method dlib
 
-3. Download pretrained DFDNet models, dictionary and face template from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/DFDNet` folder.
+3. Download pretrained DFDNet models, dictionary and face template from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/DFDNet` folder.<br>
     You can download by run the script OR manually download the pretrained models.
 
     > python scripts/download_pretrained_models.py --method DFDNet

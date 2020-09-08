@@ -29,6 +29,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 
 - [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
 - [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
+- [How to test DFDNet](docs/HOWTOs.md#How-to-test-DFDNet)
 
 ## TODO List
 
