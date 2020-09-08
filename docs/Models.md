@@ -27,8 +27,9 @@ In order to reuse components among models, we use a lot of inheritance. The foll
 BaseModel
 ├── SRModel
 │   ├── SRGANModel
-│   │   ├── ESRGANModel
-│   ├── VideoBaseModel
-│       ├── EDVRModel
-├── StyleGAN2Model
+│   │   └── ESRGANModel
+│   └── VideoBaseModel
+│       ├── VideoGANModel
+│       └── EDVRModel
+└── StyleGAN2Model
 ```
