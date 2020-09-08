@@ -6,6 +6,7 @@ mmcv>=0.6
 numpy
 opencv-python
 pyyaml
+scikit-image
 scipy
 tb-nightly
 torch>=1.3
