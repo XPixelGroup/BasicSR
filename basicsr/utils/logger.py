@@ -97,6 +97,7 @@ def init_wandb_logger(opt):
     else:
         wandb_id = wandb.util.generate_id()
         resume = 'never'
+
     wandb.init(
         id=wandb_id,
         resume=resume,
