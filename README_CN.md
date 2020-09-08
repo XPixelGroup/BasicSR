@@ -8,7 +8,7 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 ## :sparkles: 新的特性
 
-- Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
+- Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**. 注意和官方代码有些微差异.
    > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
    > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
    > European Conference on Computer Vision (ECCV), 2020

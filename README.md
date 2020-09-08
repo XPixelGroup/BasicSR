@@ -8,7 +8,7 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 
 ## :sparkles: New Feature
 
-- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
+- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**. Note that it is slightly different from the official testing codes.
    > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
    > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
    > European Conference on Computer Vision (ECCV), 2020
