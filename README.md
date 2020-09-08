@@ -6,6 +6,22 @@
 BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
+## :boom: Updates
+
+- Sep 8, 2020. Add blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
+   > Blind Face Restoration via Deep Multi-scale Component Dictionaries
+   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang
+   > European Conference on Computer Vision (ECCV), 2020
+- Aug 27, 2020. Add StyleGAN2 training and testing codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
+   > Analyzing and Improving the Image Quality of StyleGAN
+   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila
+   > Computer Vision and Pattern Recognition (CVPR), 2020
+
+<details>
+  <summary>More</summary>
+- Aug 19, 2020. A brand-new BasicSR v1.0.0 online.
+</details>
+
 ## Dependencies and Installation
 
 - Python >= 3.7 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
