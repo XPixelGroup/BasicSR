@@ -116,8 +116,13 @@ class VGGFeatureExtractor(nn.Module):
         self.vgg_net = nn.Sequential(modified_net)
 
         if not requires_grad:
+            self.vgg_net.eval()
             for param in self.parameters():
                 param.requires_grad = False
+        else:
+            self.vgg_net.train()
+            for param in self.parameters():
+                param.requires_grad = True
 
         if self.use_input_norm:
             # the mean is for image with range [0, 1]
