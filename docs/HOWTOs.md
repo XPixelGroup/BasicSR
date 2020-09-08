@@ -31,12 +31,12 @@
     1. `cd dlib`
     1. Install: `python setup.py install`
 2. Download the dlib pretrained models from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/dlib` folder.<br>
-    You can download by run the script OR manually download the pretrained models.
+    You can download by run the following command OR manually download the pretrained models.
 
     > python scripts/download_pretrained_models.py --method dlib
 
 3. Download pretrained DFDNet models, dictionary and face template from [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) to the `experiments/pretrained_models/DFDNet` folder.<br>
-    You can download by run the script OR manually download the pretrained models.
+    You can download by run the the following command OR manually download the pretrained models.
 
     > python scripts/download_pretrained_models.py --method DFDNet
 

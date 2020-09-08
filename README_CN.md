@@ -26,8 +26,9 @@ python setup.py develop
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-- [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
-- [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
+- :zap: [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
+- :zap: [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
+- :zap: [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
 
 ## TODO 清单
 
