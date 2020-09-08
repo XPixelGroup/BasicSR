@@ -235,8 +235,6 @@ if __name__ == '__main__':
         default=  # noqa: E251
         'experiments/pretrained_models/DFDNet/DFDNet_dict_512-f79685f0.pth')
     parser.add_argument('--test_path', type=str, default='datasets/TestWhole')
-    parser.add_argument(
-        '--result_root', type=str, default='results/DFDNet/TestWholeResults')
     parser.add_argument('--upsample_num_times', type=int, default=1)
     # The official codes use skimage.io to read the cropped images from disk
     # instead of directly using the intermediate results in the memory (as we
@@ -272,6 +270,7 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
+    result_root = f'results/DFDNet/{args.test_path.split("/")[-1]}'
 
     # set up the DFDNet
     net = DFDNet(64, dict_path=args.dict_path).to(device)
@@ -280,9 +279,9 @@ if __name__ == '__main__':
     net.load_state_dict(checkpoint['params'])
     net.eval()
 
-    save_crop_root = os.path.join(args.result_root, 'cropped_faces')
-    save_restore_root = os.path.join(args.result_root, 'restored_faces')
-    save_final_root = os.path.join(args.result_root, 'final_results')
+    save_crop_root = os.path.join(result_root, 'cropped_faces')
+    save_restore_root = os.path.join(result_root, 'restored_faces')
+    save_final_root = os.path.join(result_root, 'final_results')
 
     face_helper = FaceRestorationHelper(
         args.upscale_factor, args.face_template_path, out_size=512)
@@ -351,4 +350,4 @@ if __name__ == '__main__':
         # clean all the intermediate results to process the next image
         face_helper.clean_all()
 
-    print(f'\nAll results are saved in {args.result_root}')
+    print(f'\nAll results are saved in {result_root}')
