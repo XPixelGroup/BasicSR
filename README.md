@@ -8,19 +8,30 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 
 ## :boom: Updates
 
-- Sep 8, 2020. Add blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
-   > Blind Face Restoration via Deep Multi-scale Component Dictionaries
-   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang
+- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
+   > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
+   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
    > European Conference on Computer Vision (ECCV), 2020
-- Aug 27, 2020. Add StyleGAN2 training and testing codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-   > Analyzing and Improving the Image Quality of StyleGAN
-   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila
+- Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
+   > Analyzing and Improving the Image Quality of StyleGAN <br>
+   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
    > Computer Vision and Pattern Recognition (CVPR), 2020
 
 <details>
   <summary>More</summary>
-- Aug 19, 2020. A brand-new BasicSR v1.0.0 online.
+<ul>
+  <li>Aug 19, 2020. A brand-new BasicSR v1.0.0 online.</li>
+</ul>
 </details>
+
+## HOWTOs
+
+We provides simple pipelines to train/test/inference models for quick start.
+These pipelines/commands cannot cover all the cases and more details are in the following sections.
+
+- :zap: [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
+- :zap: [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
+- :zap: [How to test DFDNet](docs/HOWTOs.md#How-to-test-DFDNet)
 
 ## Dependencies and Installation
 
@@ -37,15 +48,6 @@ python setup.py develop
 ```
 
 Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
-
-## HOWTOs
-
-We provides simple pipelines to train/test/inference models for quick start.
-These pipelines/commands cannot cover all the cases and more details are in the following sections.
-
-- :zap: [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
-- :zap: [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
-- :zap: [How to test DFDNet](docs/HOWTOs.md#How-to-test-DFDNet)
 
 ## TODO List
 
