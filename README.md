@@ -6,7 +6,7 @@
 BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
-## :boom: Updates
+## :sparkles: New Feature
 
 - Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
    > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
@@ -24,7 +24,7 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 </ul>
 </details>
 
-## HOWTOs
+## :zap: HOWTOs
 
 We provides simple pipelines to train/test/inference models for quick start.
 These pipelines/commands cannot cover all the cases and more details are in the following sections.
