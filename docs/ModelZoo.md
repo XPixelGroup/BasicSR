@@ -15,7 +15,7 @@ You can use the scrip to download pre-trained models from Google Drive.
 
 ```python
 python scripts/download_pretrained_models.py --method ESRGAN
-# method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF
+# method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
 **[Download reproduced models and logs](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
@@ -71,7 +71,6 @@ Experiment name conventions are in [Config.md](Config.md).
 | 204_EDSR_Lx2_f256b32_DIV2K_300k_B16G1_wandb | 35.9792 / 0.9453 | 31.7284 / 0.8959 | 34.9544 / 0.9399 |
 | 205_EDSR_Lx3_f256b32_DIV2K_300k_B16G1_204pretrain_wandb | 32.6467 / 0.9057 | 28.6859 / 0.8152 | 31.2664 / 0.8793 |
 | 206_EDSR_Lx4_f256b32_DIV2K_300k_B16G1_204pretrain_wandb | 30.4718 / 0.8695 | 26.9616 / 0.7502 | 29.2621 / 0.8265 |
-
 
 ## Video Super-Resolution
 

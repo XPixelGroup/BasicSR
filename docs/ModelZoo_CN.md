@@ -15,7 +15,7 @@
 
 ```python
 python scripts/download_pretrained_models.py --method ESRGAN
-# method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF
+# method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
 **[下载复现的模型和log](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
