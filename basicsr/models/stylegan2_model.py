@@ -1,6 +1,7 @@
 import importlib
 import math
 import mmcv
+import numpy as np
 import random
 import torch
 from collections import OrderedDict
@@ -311,7 +312,8 @@ class StyleGAN2Model(BaseModel):
                                      f'test_{self.opt["name"]}.png')
         mmcv.imwrite(result, save_img_path)
         # add sample images to tb_logger
-        result = mmcv.bgr2rgb(result / 255.)
+        result = (result / 255.).astype(np.float32)
+        result = mmcv.bgr2rgb(result)
         if tb_logger is not None:
             tb_logger.add_image(
                 'samples', result, global_step=current_iter, dataformats='HWC')
