@@ -17,7 +17,7 @@
 
 ## 如何测试 StyleGAN2
 
-1. 从 **ModelZoo**([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载预训练模型到 `experiments/pretrained_models` 文件夹.
+1. 从 **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载预训练模型到 `experiments/pretrained_models` 文件夹.
 1. 测试.
 
     > python tests/test_stylegan2.py
@@ -30,12 +30,12 @@
     1. 克隆 dlib repo: `git clone git@github.com:davisking/dlib.git`
     1. `cd dlib`
     1. 安装: `python setup.py install`
-2. 从 [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) 下载预训练的 dlib 模型到 `experiments/pretrained_models/dlib` 文件夹.<br>
+2. 从 **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载预训练的 dlib 模型到 `experiments/pretrained_models/dlib` 文件夹.<br>
     你可以通过运行下面的命令下载 或 手动下载.
 
     > python scripts/download_pretrained_models.py --method dlib
 
-3. 从 [ModelZoo](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) 下载 DFDNet 模型, 字典和人脸关键点模板到 `experiments/pretrained_models/DFDNet` 文件夹.<br>
+3. 从 **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载 DFDNet 模型, 字典和人脸关键点模板到 `experiments/pretrained_models/DFDNet` 文件夹.<br>
      你可以通过运行下面的命令下载 或 手动下载.
 
     > python scripts/download_pretrained_models.py --method DFDNet
