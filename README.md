@@ -56,7 +56,7 @@ python setup.py develop
 
 Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
 
-## TODO List
+## :hourglass_flowing_sand: TODO List
 
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
@@ -65,13 +65,13 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 - Please refer to **[DatasetPreparation.md](docs/DatasetPreparation.md)** for more details.
 - The descriptions of currently supported datasets (`torch.utils.data.Dataset` classes) are in [Datasets.md](docs/Datasets.md).
 
-## Train and Test
+## :computer: Train and Test
 
 - **Training and testing commands**: Please see **[TrainTest.md](docs/TrainTest.md)** for the basic usage.
 - **Options/Configs**: Please refer to [Config.md](docs/Config.md).
 - **Logging**: Please refer to [Logging.md](docs/Logging.md).
 
-## Model Zoo and Baselines
+## :card_file_box: Model Zoo and Baselines
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
 - **Pre-trained models and log examples** are available in **[ModelZoo.md](docs/ModelZoo.md)**.
@@ -82,7 +82,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
    <img src="./assets/wandb.jpg" height="280">
 </a></p>
 
-## Codebase Designs and Conventions
+## :memo: Codebase Designs and Conventions
 
 Please see [DesignConvention.md](docs/DesignConvention.md) for the designs and conventions of the BasicSR codebase.<br>
 The figure below shows the overall framework. More descriptions for each component: <br>
@@ -90,11 +90,11 @@ The figure below shows the overall framework. More descriptions for each compone
 
 ![overall_structure](./assets/overall_structure.png)
 
-## License and Acknowledgement
+## :page_facing_up: License and Acknowledgement
 
 This project is released under the Apache 2.0 license.
 More details about license and acknowledgement are in [LICENSE](LICENSE/README.md).
 
-## Contact
+## :email: Contact
 
 If you have any question, please email `xintao.wang@outlook.com`.
