@@ -3,7 +3,7 @@ import torch
 from collections import OrderedDict
 from copy import deepcopy
 
-from basicsr.models import networks as networks
+from basicsr.models.archs import define_network
 from basicsr.models.video_base_model import VideoBaseModel
 
 loss_module = importlib.import_module('basicsr.models.losses')
@@ -16,7 +16,7 @@ class VideoGANModel(VideoBaseModel):
         train_opt = self.opt['train']
 
         # define network net_d
-        self.net_d = networks.define_net_d(deepcopy(self.opt['network_d']))
+        self.net_d = define_network(deepcopy(self.opt['network_d']))
         self.net_d = self.model_to_device(self.net_d)
         self.print_network(self.net_d)
 
