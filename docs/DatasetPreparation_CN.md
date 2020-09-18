@@ -1,6 +1,6 @@
 # 数据准备
 
-[English](DatasetPreparation.md) | [简体中文](DatasetPreparation_CN.md)
+[English](DatasetPreparation.md) **|** [简体中文](DatasetPreparation_CN.md)
 
 #### 目录
 

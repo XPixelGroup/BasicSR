@@ -1,6 +1,6 @@
 # 配置文件
 
-[English](Config.md) | [简体中文](Config_CN.md)
+[English](Config.md) **|** [简体中文](Config_CN.md)
 
 #### 目录
 

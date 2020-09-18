@@ -1,6 +1,6 @@
 # 模型
 
-[English](Models.md) | [简体中文](Models_CN.md)
+[English](Models.md) **|** [简体中文](Models_CN.md)
 
 #### 目录
 

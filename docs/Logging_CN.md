@@ -1,6 +1,6 @@
 # Logging日志
 
-[English](Logging.md) | [简体中文](Logging_CN.md)
+[English](Logging.md) **|** [简体中文](Logging_CN.md)
 
 #### 目录
 
