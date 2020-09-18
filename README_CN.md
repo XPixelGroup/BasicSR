@@ -5,7 +5,7 @@
 :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
 :chart_with_upwards_trend: [wandb的训练曲线](https://app.wandb.ai/xintao/basicsr) <br>
-:computer: [训练和测试的命令](docs/TrainTest.md)
+:computer: [训练和测试的命令](docs/TrainTest.md) <br>
 :zap: [HOWTOs](#zap-howtos)
 
 ---
@@ -15,11 +15,11 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 ## :sparkles: 新的特性
 
-- :sparkles: Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**. 注意和官方代码有些微差异.
+- Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**. 注意和官方代码有些微差异.
    > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
    > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
    > European Conference on Computer Vision (ECCV), 2020
-- :sparkles: Aug 27, 2020. 添加 **StyleGAN2  训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
+- Aug 27, 2020. 添加 **StyleGAN2  训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
    > Analyzing and Improving the Image Quality of StyleGAN <br>
    > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
    > Computer Vision and Pattern Recognition (CVPR), 2020
@@ -35,9 +35,9 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-- :zap: [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
-- :zap: [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
-- :zap: [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
+- [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
+- [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
+- [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
 
 ## :wrench: 依赖和安装
 
