@@ -55,22 +55,22 @@ python setup.py develop
 
 注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
 
-## TODO 清单
+## :hourglass_flowing_sand: TODO 清单
 
 参见 [project boards](https://github.com/xinntao/BasicSR/projects).
 
-## 数据准备
+## turtle: 数据准备
 
 - 数据准备步骤, 参见 **[DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md)**.
 - 目前支持的数据集 (`torch.utils.data.Dataset`类), 参见 [Datasets_CN.md](docs/Datasets_CN.md).
 
-## 训练和测试
+## :computer: 训练和测试
 
 - **训练和测试的命令**, 参见 **[TrainTest_CN.md](docs/TrainTest_CN.md)**.
 - **Options/Configs**配置文件的说明, 参见 [Config_CN.md](docs/Config_CN.md).
 - **Logging**日志系统的说明, 参见 [Logging_CN.md](docs/Logging_CN.md).
 
-## 模型库和基准
+## :card_file_box: 模型库和基准
 
 - 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
 - **预训练模型和log样例**, 参见 **[ModelZoo_CN.md](docs/ModelZoo_CN.md)**.
@@ -81,7 +81,7 @@ python setup.py develop
    <img src="./assets/wandb.jpg" height="280">
 </a></p>
 
-## 代码库的设计和约定
+## :memo: 代码库的设计和约定
 
 参见 [DesignConvention_CN.md](docs/DesignConvention_CN.md).<br>
 下图概括了整体的框架. 每个模块更多的描述参见: <br>
@@ -89,11 +89,11 @@ python setup.py develop
 
 ![overall_structure](./assets/overall_structure.png)
 
-## 许可
+## :scroll: 许可
 
 本项目使用 Apache 2.0 license.
 更多细节参见 [LICENSE](LICENSE/README.md).
 
-#### 联系
+## :e-mail: 联系
 
 若有任何问题, 请电邮 `xintao.wang@outlook.com`.

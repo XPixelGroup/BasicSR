@@ -60,7 +60,7 @@ Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows.
 
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
-## Dataset Preparation
+## :turtle: Dataset Preparation
 
 - Please refer to **[DatasetPreparation.md](docs/DatasetPreparation.md)** for more details.
 - The descriptions of currently supported datasets (`torch.utils.data.Dataset` classes) are in [Datasets.md](docs/Datasets.md).
@@ -90,11 +90,11 @@ The figure below shows the overall framework. More descriptions for each compone
 
 ![overall_structure](./assets/overall_structure.png)
 
-## :page_facing_up: License and Acknowledgement
+## :scroll: License and Acknowledgement
 
 This project is released under the Apache 2.0 license.
 More details about license and acknowledgement are in [LICENSE](LICENSE/README.md).
 
-## :email: Contact
+## :e-mail: Contact
 
 If you have any question, please email `xintao.wang@outlook.com`.
