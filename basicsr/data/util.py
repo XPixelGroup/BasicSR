@@ -246,6 +246,21 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     return paths
 
 
+def paths_from_folder(folder):
+    """Generate paths from folder.
+
+    Args:
+        folder (str): Folder path.
+
+    Returns:
+        list[str]: Returned path list.
+    """
+
+    paths = list(mmcv.scandir(folder))
+    paths = [osp.join(folder, path) for path in paths]
+    return paths
+
+
 def generate_gaussian_kernel(kernel_size=13, sigma=1.6):
     """Generate Gaussian kernel used in `duf_downsample`.
 
