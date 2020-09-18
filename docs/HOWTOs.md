@@ -33,12 +33,12 @@
 2. Download the dlib pretrained models from **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) to the `experiments/pretrained_models/dlib` folder.<br>
     You can download by run the following command OR manually download the pretrained models.
 
-    > python scripts/download_pretrained_models.py --method dlib
+    > python scripts/download_pretrained_models.py dlib
 
 3. Download pretrained DFDNet models, dictionary and face template from **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) to the `experiments/pretrained_models/DFDNet` folder.<br>
     You can download by run the the following command OR manually download the pretrained models.
 
-    > python scripts/download_pretrained_models.py --method DFDNet
+    > python scripts/download_pretrained_models.py DFDNet
 
 4. Prepare the testing dataset in the `datasets`, for example, we put images in the `datasets/TestWhole` folder.
 5. Test.

@@ -13,7 +13,7 @@
 你可以使用以下脚本从Google Drive下载预训练模型.
 
 ```python
-python scripts/download_pretrained_models.py --method ESRGAN
+python scripts/download_pretrained_models.py ESRGAN
 # method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
