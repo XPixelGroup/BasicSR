@@ -29,7 +29,12 @@ def download_pretrained_models(method, file_ids):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--method', type=str, default='ESRGAN')
+    parser.add_argument(
+        'method',
+        type=str,
+        help=(
+            "Options: 'ESRGAN', 'EDVR', 'StyleGAN', 'EDSR', 'DUF', 'DFDNet', "
+            "'dlib'. Set to 'all' if you want to download all the models."))
     args = parser.parse_args()
 
     file_ids = {
@@ -121,4 +126,8 @@ if __name__ == '__main__':
         }
     }
 
-    download_pretrained_models(args.method, file_ids[args.method])
+    if args.method == 'all':
+        for method in file_ids.keys():
+            download_pretrained_models(method, file_ids[method])
+    else:
+        download_pretrained_models(args.method, file_ids[args.method])

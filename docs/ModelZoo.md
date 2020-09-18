@@ -14,7 +14,7 @@ You can put the downloaded models in the `experiments/pretrained_models` folder.
 You can use the scrip to download pre-trained models from Google Drive.
 
 ```python
-python scripts/download_pretrained_models.py --method ESRGAN
+python scripts/download_pretrained_models.py ESRGAN
 # method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
