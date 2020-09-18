@@ -72,9 +72,6 @@ python setup.py develop
 
 ## 模型库和基准
 
-**[下载官方提供的预训练模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)** <br>
-**[下载复现的模型和log](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
-
 - 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
 - **预训练模型和log样例**, 参见 **[ModelZoo_CN.md](docs/ModelZoo_CN.md)**.
 - 我们也在 [wandb](https://app.wandb.ai/xintao/basicsr) 上提供了**训练曲线**等:
