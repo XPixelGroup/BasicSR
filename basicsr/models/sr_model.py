@@ -5,7 +5,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from os import path as osp
 
-from basicsr.models import networks as networks
+from basicsr.models.archs import define_network
 from basicsr.models.base_model import BaseModel
 from basicsr.utils import ProgressBar, get_root_logger, tensor2img
 
@@ -20,7 +20,7 @@ class SRModel(BaseModel):
         super(SRModel, self).__init__(opt)
 
         # define network
-        self.net_g = networks.define_net_g(deepcopy(opt['network_g']))
+        self.net_g = define_network(deepcopy(opt['network_g']))
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
 
