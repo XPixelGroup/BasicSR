@@ -6,6 +6,12 @@
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) | [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
 :arrow_double_down: 百度网盘: [[预训练模型](https://pan.baidu.com/s/1aASpNRkYBMaWQtNFRauwZA)] (提取码: zqmx) [[复现实验](https://pan.baidu.com/s/17kMSm-SXJ3iDs9AO1Ynbuw)] (提取码: 7qa4)
 
+[BaiduNetDisk](https://pan.baidu.com/s/1K4fzjPiezVSMl5NjHoJCGQ) (s9ht)
+
+[Baidu](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)
+
+[百度](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)
+
 BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
 
