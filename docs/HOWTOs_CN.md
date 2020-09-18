@@ -1,6 +1,6 @@
 # HOWTOs
 
-[English](HOWTOs.md) | [简体中文](HOWTOs_CN.md)
+[English](HOWTOs.md) **|** [简体中文](HOWTOs_CN.md)
 
 ## 如何训练 StyleGAN2
 

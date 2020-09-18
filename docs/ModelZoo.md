@@ -1,6 +1,6 @@
 # Model Zoo and Baselines
 
-[English](ModelZoo.md) | [简体中文](ModelZoo_CN.md)
+[English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
 We provide:
 

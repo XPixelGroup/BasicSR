@@ -1,6 +1,6 @@
 # 数据处理
 
-[English](Datasets.md) | [简体中文](Datasets_CN.md)
+[English](Datasets.md) **|** [简体中文](Datasets_CN.md)
 
 ## 支持的数据处理
 

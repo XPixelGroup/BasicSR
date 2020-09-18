@@ -1,6 +1,6 @@
 # 模型库和基准
 
-[English](ModelZoo.md) | [简体中文](ModelZoo_CN.md)
+[English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
 我们提供了:
 
