@@ -1,6 +1,6 @@
 # Training and Testing
 
-[English](TrainTest.md) | [简体中文](TrainTest_CN.md)
+[English](TrainTest.md) **|** [简体中文](TrainTest_CN.md)
 
 Please run the commands in the root path of `BasicSR`. <br>
 In general, both the training and testing include the following steps:

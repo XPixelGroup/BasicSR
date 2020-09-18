@@ -1,6 +1,6 @@
 # Configuration
 
-[English](Config.md) | [简体中文](Config_CN.md)
+[English](Config.md) **|** [简体中文](Config_CN.md)
 
 #### Contents
 

@@ -1,6 +1,6 @@
 # 训练和测试
 
-[English](TrainTest.md) | [简体中文](TrainTest_CN.md)
+[English](TrainTest.md) **|** [简体中文](TrainTest_CN.md)
 
 所有的命令都在 `BasicSR` 的根目录下运行. <br>
 一般来说, 训练和测试都有以下的步骤:

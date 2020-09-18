@@ -1,6 +1,6 @@
 # Datasets
 
-[English](Datasets.md) | [简体中文](Datasets_CN.md)
+[English](Datasets.md) **|** [简体中文](Datasets_CN.md)
 
 ## Supported Datasets
 

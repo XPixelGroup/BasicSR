@@ -1,6 +1,6 @@
 # Codebase Designs and Conventions
 
-[English](DesignConvention.md) | [简体中文](DesignConvention_CN.md)
+[English](DesignConvention.md) **|** [简体中文](DesignConvention_CN.md)
 
 #### Contents
 

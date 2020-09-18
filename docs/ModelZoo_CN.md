@@ -1,6 +1,6 @@
 # 模型库和基准
 
-[English](ModelZoo.md) | [简体中文](ModelZoo_CN.md)
+[English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
 我们提供了:
 
@@ -9,8 +9,7 @@
 
 下载的模型可以放在 `experiments/pretrained_models` 文件夹.
 
-**[下载官方提供的预训练模型](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**
-
+**[下载官方提供的预训练模型]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))
 你可以使用以下脚本从Google Drive下载预训练模型.
 
 ```python
@@ -18,7 +17,7 @@ python scripts/download_pretrained_models.py --method ESRGAN
 # method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
-**[下载复现的模型和log](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
+**[下载复现的模型和log]** ([Google Drive](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing), [百度网盘](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ))
 
 此外, 我们在 [wandb](https://www.wandb.com/) 上更新了模型训练的过程和曲线. 大家可以方便的比较:
 
