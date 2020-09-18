@@ -205,8 +205,8 @@ def main():
                 model.save(epoch, current_iter)
 
             # validation
-            if opt['val']['val_freq'] is not None and current_iter % opt[
-                    'val']['val_freq'] == 0:
+            if opt.get('val') is not None and (current_iter %
+                                               opt['val']['val_freq'] == 0):
                 model.validation(val_loader, current_iter, tb_logger,
                                  opt['val']['save_img'])
 
@@ -222,7 +222,7 @@ def main():
     logger.info(f'End of training. Time consumed: {consumed_time}')
     logger.info('Save the latest model.')
     model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
-    if opt['val']['val_freq'] is not None:
+    if opt.get('val') is not None:
         model.validation(val_loader, current_iter, tb_logger,
                          opt['val']['save_img'])
     if tb_logger:
