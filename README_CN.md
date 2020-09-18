@@ -59,7 +59,7 @@ python setup.py develop
 
 参见 [project boards](https://github.com/xinntao/BasicSR/projects).
 
-## turtle: 数据准备
+## :turtle: 数据准备
 
 - 数据准备步骤, 参见 **[DatasetPreparation_CN.md](docs/DatasetPreparation_CN.md)**.
 - 目前支持的数据集 (`torch.utils.data.Dataset`类), 参见 [Datasets_CN.md](docs/Datasets_CN.md).
