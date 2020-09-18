@@ -1,6 +1,6 @@
 # Logging
 
-[English](Logging.md) | [简体中文](Logging_CN.md)
+[English](Logging.md) **|** [简体中文](Logging_CN.md)
 
 #### Contents
 

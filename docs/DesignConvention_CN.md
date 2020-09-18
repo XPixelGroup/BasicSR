@@ -1,6 +1,6 @@
 # 代码库的设计和约定
 
-[English](DesignConvention.md) | [简体中文](DesignConvention_CN.md)
+[English](DesignConvention.md) **|** [简体中文](DesignConvention_CN.md)
 
 #### 目录
 

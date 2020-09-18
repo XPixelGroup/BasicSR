@@ -1,6 +1,6 @@
 # Model Zoo and Baselines
 
-[English](ModelZoo.md) | [简体中文](ModelZoo_CN.md)
+[English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
 We provide:
 
@@ -9,7 +9,7 @@ We provide:
 
 You can put the downloaded models in the `experiments/pretrained_models` folder.
 
-**[Download official pre-trained models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**
+**[Download official pre-trained models]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))(https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing))
 
 You can use the scrip to download pre-trained models from Google Drive.
 
@@ -18,7 +18,7 @@ python scripts/download_pretrained_models.py --method ESRGAN
 # method can be ESRGAN, EDVR, StyleGAN, EDSR, DUF, DFDNet, dlib
 ```
 
-**[Download reproduced models and logs](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)**
+**[Download reproduced models and logs]** ([Google Drive](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing), [百度网盘](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ))
 
 In addition, we upload the training process and curves in [wandb](https://www.wandb.com/).
 
