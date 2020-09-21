@@ -85,8 +85,9 @@ def get_version():
     return locals()['__version__']
 
 
-def make_cuda_ext(name, module, sources, sources_cuda=[]):
-
+def make_cuda_ext(name, module, sources, sources_cuda=None):
+    if sources_cuda is None:
+        sources_cuda = []
     define_macros = []
     extra_compile_args = {'cxx': []}
 
