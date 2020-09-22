@@ -25,9 +25,9 @@ def reorder_image(img, input_order='HWC'):
             "'HWC' and 'CHW'")
     if len(img.shape) == 2:
         img = img[..., None]
-        return img
     if input_order == 'CHW':
         img = img.transpose(1, 2, 0)
+    img = img.astype(np.float64)
     return img
 
 
