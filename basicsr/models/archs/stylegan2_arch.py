@@ -211,7 +211,7 @@ class ModulatedConv2d(nn.Module):
         sample_mode (str | None): Indicating 'upsample', 'downsample' or None.
             Default: None.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
-            magnitude. Default: [1, 3, 3, 1].
+            magnitude. Default: (1, 3, 3, 1).
         eps (float): A value added to the denominator for numerical stability.
             Default: 1e-8.
     """
@@ -223,7 +223,7 @@ class ModulatedConv2d(nn.Module):
                  num_style_feat,
                  demodulate=True,
                  sample_mode=None,
-                 resample_kernel=[1, 3, 3, 1],
+                 resample_kernel=(1, 3, 3, 1),
                  eps=1e-8):
         super(ModulatedConv2d, self).__init__()
         self.in_channels = in_channels
@@ -333,7 +333,7 @@ class StyleConv(nn.Module):
         sample_mode (str | None): Indicating 'upsample', 'downsample' or None.
             Default: None.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
-            magnitude. Default: [1, 3, 3, 1].
+            magnitude. Default: (1, 3, 3, 1).
     """
 
     def __init__(self,
@@ -343,7 +343,7 @@ class StyleConv(nn.Module):
                  num_style_feat,
                  demodulate=True,
                  sample_mode=None,
-                 resample_kernel=[1, 3, 3, 1]):
+                 resample_kernel=(1, 3, 3, 1)):
         super(StyleConv, self).__init__()
         self.modulated_conv = ModulatedConv2d(
             in_channels,
@@ -377,14 +377,14 @@ class ToRGB(nn.Module):
         num_style_feat (int): Channel number of style features.
         upsample (bool): Whether to upsample. Default: True.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
-            magnitude. Default: [1, 3, 3, 1].
+            magnitude. Default: (1, 3, 3, 1).
     """
 
     def __init__(self,
                  in_channels,
                  num_style_feat,
                  upsample=True,
-                 resample_kernel=[1, 3, 3, 1]):
+                 resample_kernel=(1, 3, 3, 1)):
         super(ToRGB, self).__init__()
         if upsample:
             self.upsample = UpFirDnUpsample(resample_kernel, factor=2)
@@ -447,7 +447,7 @@ class StyleGAN2Generator(nn.Module):
             StyleGAN2. Default: 2.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
             magnitude. A cross production will be applied to extent 1D resample
-            kenrel to 2D resample kernel. Default: [1, 3, 3, 1].
+            kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
         lr_mlp (float): Learning rate multiplier for mlp layers. Default: 0.01.
     """
 
@@ -456,7 +456,7 @@ class StyleGAN2Generator(nn.Module):
                  num_style_feat=512,
                  num_mlp=8,
                  channel_multiplier=2,
-                 resample_kernel=[1, 3, 3, 1],
+                 resample_kernel=(1, 3, 3, 1),
                  lr_mlp=0.01):
         super(StyleGAN2Generator, self).__init__()
         # Style MLP layers
@@ -736,7 +736,7 @@ class ConvLayer(nn.Sequential):
         resample_kernel (list[int]): A list indicating the 1D resample
             kernel magnitude. A cross production will be applied to
             extent 1D resample kenrel to 2D resample kernel.
-            Default: [1, 3, 3, 1].
+            Default: (1, 3, 3, 1).
         bias (bool): Whether with bias. Default: True.
         activate (bool): Whether use activateion. Default: True.
     """
@@ -746,7 +746,7 @@ class ConvLayer(nn.Sequential):
                  out_channels,
                  kernel_size,
                  downsample=False,
-                 resample_kernel=[1, 3, 3, 1],
+                 resample_kernel=(1, 3, 3, 1),
                  bias=True,
                  activate=True):
         layers = []
@@ -791,13 +791,11 @@ class ResBlock(nn.Module):
         resample_kernel (list[int]): A list indicating the 1D resample
             kernel magnitude. A cross production will be applied to
             extent 1D resample kenrel to 2D resample kernel.
-            Default: [1, 3, 3, 1].
+            Default: (1, 3, 3, 1).
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 resample_kernel=[1, 3, 3, 1]):
+    def __init__(self, in_channels, out_channels,
+                 resample_kernel=(1, 3, 3, 1)):
         super(ResBlock, self).__init__()
 
         self.conv1 = ConvLayer(
@@ -836,13 +834,13 @@ class StyleGAN2Discriminator(nn.Module):
             StyleGAN2. Default: 2.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
             magnitude. A cross production will be applied to extent 1D resample
-            kenrel to 2D resample kernel. Default: [1, 3, 3, 1].
+            kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
     """
 
     def __init__(self,
                  out_size,
                  channel_multiplier=2,
-                 resample_kernel=[1, 3, 3, 1]):
+                 resample_kernel=(1, 3, 3, 1)):
         super(StyleGAN2Discriminator, self).__init__()
 
         channels = {
