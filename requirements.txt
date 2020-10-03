@@ -4,7 +4,9 @@ lmdb
 matplotlib
 numpy
 opencv-python
+Pillow
 pyyaml
+requests
 scikit-image
 scipy
 tb-nightly
