@@ -1,5 +1,4 @@
 import cv2
-import mmcv
 import random
 import torch
 
@@ -111,20 +110,20 @@ def augment(imgs, hflip=True, rotation=True, flows=None):
     rot90 = rotation and random.random() < 0.5
 
     def _augment(img):
-        if hflip:
-            mmcv.imflip_(img, 'horizontal')
-        if vflip:
-            mmcv.imflip_(img, 'vertical')
+        if hflip:  # horizontal
+            cv2.flip(img, 1, img)
+        if vflip:  # vertical
+            cv2.flip(img, 0, img)
         if rot90:
             img = img.transpose(1, 0, 2)
         return img
 
     def _augment_flow(flow):
-        if hflip:
-            mmcv.imflip_(flow, 'horizontal')
+        if hflip:  # horizontal
+            cv2.flip(flow, 1, flow)
             flow[:, :, 0] *= -1
-        if vflip:
-            mmcv.imflip_(flow, 'vertical')
+        if vflip:  # vertical
+            cv2.flip(flow, 0, flow)
             flow[:, :, 1] *= -1
         if rot90:
             flow = flow.transpose(1, 0, 2)
