@@ -1,3 +1,4 @@
+import cv2
 import mmcv
 import random
 import torch
@@ -162,7 +163,7 @@ def totensor(imgs, bgr2rgb=True, float32=True):
 
     def _totensor(img, bgr2rgb, float32):
         if img.shape[2] == 3 and bgr2rgb:
-            img = mmcv.bgr2rgb(img)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = torch.from_numpy(img.transpose(2, 0, 1))
         if float32:
             img = img.float()

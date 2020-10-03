@@ -1,12 +1,11 @@
 import glob
-import mmcv
 import torch
 from os import path as osp
 from torch.utils import data as data
 
 from basicsr.data import util as util
 from basicsr.data.util import duf_downsample
-from basicsr.utils import get_root_logger
+from basicsr.utils import get_root_logger, scandir
 
 
 class VideoTestDataset(data.Dataset):
@@ -81,14 +80,10 @@ class VideoTestDataset(data.Dataset):
                                                   subfolders_gt):
                 # get frame list for lq and gt
                 subfolder_name = osp.basename(subfolder_lq)
-                img_paths_lq = sorted([
-                    osp.join(subfolder_lq, v)
-                    for v in mmcv.scandir(subfolder_lq)
-                ])
-                img_paths_gt = sorted([
-                    osp.join(subfolder_gt, v)
-                    for v in mmcv.scandir(subfolder_gt)
-                ])
+                img_paths_lq = sorted(
+                    list(scandir(subfolder_lq, full_path=True)))
+                img_paths_gt = sorted(
+                    list(scandir(subfolder_gt, full_path=True)))
 
                 max_idx = len(img_paths_lq)
                 assert max_idx == len(img_paths_gt), (

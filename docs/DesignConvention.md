@@ -34,7 +34,7 @@ Specifically, we implement it through `importlib` and `getattr`. Taking the data
 # scan all the files under the data folder with '_dataset' in file names
 data_folder = osp.dirname(osp.abspath(__file__))
 dataset_filenames = [
-    osp.splitext(osp.basename(v))[0] for v in mmcv.scandir(data_folder)
+    osp.splitext(osp.basename(v))[0] for v in scandir(data_folder)
     if v.endswith('_dataset.py')
 ]
 # import all the dataset modules

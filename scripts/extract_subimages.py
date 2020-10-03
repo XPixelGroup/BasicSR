@@ -1,12 +1,11 @@
 import cv2
-import mmcv
 import numpy as np
 import os
 import sys
 from multiprocessing import Pool
 from os import path as osp
 
-from basicsr.utils.util import ProgressBar
+from basicsr.utils.util import ProgressBar, scandir
 
 
 def main():
@@ -94,8 +93,7 @@ def extract_subimages(opt):
         print(f'Folder {save_folder} already exists. Exit.')
         sys.exit(1)
 
-    img_list = list(mmcv.scandir(input_folder))
-    img_list = [osp.join(input_folder, v) for v in img_list]
+    img_list = list(scandir(input_folder, full_path=True))
 
     pbar = ProgressBar(len(img_list))
     pool = Pool(opt['n_thread'])

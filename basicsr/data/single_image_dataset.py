@@ -5,7 +5,7 @@ from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
 from basicsr.data.transforms import totensor
-from basicsr.utils import FileClient
+from basicsr.utils import FileClient, scandir
 
 
 class SingleImageDataset(data.Dataset):
@@ -40,10 +40,7 @@ class SingleImageDataset(data.Dataset):
                              line.split(' ')[0]) for line in fin
                 ]
         else:
-            self.paths = [
-                osp.join(self.lq_folder, v)
-                for v in mmcv.scandir(self.lq_folder)
-            ]
+            self.paths = sorted(list(scandir(self.lq_folder, full_path=True)))
 
     def __getitem__(self, index):
         if self.file_client is None:

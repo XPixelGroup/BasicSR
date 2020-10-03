@@ -1,6 +1,6 @@
-import mmcv
 from os import path as osp
 
+from basicsr.utils import scandir
 from basicsr.utils.lmdb import make_lmdb_from_imgs
 
 
@@ -53,7 +53,7 @@ def prepare_keys_div2k(folder_path):
     """
     print('Reading image path list ...')
     img_path_list = sorted(
-        list(mmcv.scandir(folder_path, suffix='png', recursive=False)))
+        list(scandir(folder_path, suffix='png', recursive=False)))
     keys = [img_path.split('.png')[0] for img_path in sorted(img_path_list)]
 
     return img_path_list, keys
@@ -96,7 +96,7 @@ def prepare_keys_reds(folder_path):
     """
     print('Reading image path list ...')
     img_path_list = sorted(
-        list(mmcv.scandir(folder_path, suffix='png', recursive=True)))
+        list(scandir(folder_path, suffix='png', recursive=True)))
     keys = [v.split('.png')[0] for v in img_path_list]  # example: 000/00000000
 
     return img_path_list, keys

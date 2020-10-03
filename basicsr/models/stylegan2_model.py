@@ -1,3 +1,4 @@
+import cv2
 import importlib
 import math
 import mmcv
@@ -314,7 +315,7 @@ class StyleGAN2Model(BaseModel):
         mmcv.imwrite(result, save_img_path)
         # add sample images to tb_logger
         result = (result / 255.).astype(np.float32)
-        result = mmcv.bgr2rgb(result)
+        result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
         if tb_logger is not None:
             tb_logger.add_image(
                 'samples', result, global_step=current_iter, dataformats='HWC')
