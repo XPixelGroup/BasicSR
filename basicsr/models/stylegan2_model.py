@@ -1,7 +1,6 @@
 import cv2
 import importlib
 import math
-import mmcv
 import numpy as np
 import random
 import torch
@@ -12,7 +11,7 @@ from os import path as osp
 from basicsr.models.archs import define_network
 from basicsr.models.base_model import BaseModel
 from basicsr.models.losses.losses import g_path_regularize, r1_penalty
-from basicsr.utils import tensor2img
+from basicsr.utils import imwrite, tensor2img
 
 loss_module = importlib.import_module('basicsr.models.losses')
 
@@ -312,7 +311,7 @@ class StyleGAN2Model(BaseModel):
         else:
             save_img_path = osp.join(self.opt['path']['visualization'], 'test',
                                      f'test_{self.opt["name"]}.png')
-        mmcv.imwrite(result, save_img_path)
+        imwrite(result, save_img_path)
         # add sample images to tb_logger
         result = (result / 255.).astype(np.float32)
         result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)

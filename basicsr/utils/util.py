@@ -1,5 +1,5 @@
+import cv2
 import math
-import mmcv
 import numpy as np
 import os
 import random
@@ -55,7 +55,7 @@ def mkdir_and_rename(path):
         new_name = path + '_archived_' + get_time_str()
         print(f'Path already exists. Rename it to {new_name}', flush=True)
         os.rename(path, new_name)
-    mmcv.mkdir_or_exist(path)
+    os.makedirs(path, exist_ok=False)
 
 
 @master_only
@@ -69,7 +69,26 @@ def make_exp_dirs(opt):
     path_opt.pop('strict_load')
     for key, path in path_opt.items():
         if 'pretrain_network' not in key and 'resume' not in key:
-            mmcv.mkdir_or_exist(path)
+            os.makedirs(path, exist_ok=False)
+
+
+def imwrite(img, file_path, params=None, auto_mkdir=True):
+    """Write image to file.
+
+    Args:
+        img (ndarray): Image array to be written.
+        file_path (str): Image file path.
+        params (None or list): Same as opencv's :func:`imwrite` interface.
+        auto_mkdir (bool): If the parent folder of `file_path` does not exist,
+            whether to create it automatically.
+
+    Returns:
+        bool: Successful or not.
+    """
+    if auto_mkdir:
+        dir_name = osp.abspath(osp.dirname(file_path))
+        os.makedirs(dir_name, exist_ok=True)
+    return cv2.imwrite(file_path, img, params)
 
 
 def set_random_seed(seed):

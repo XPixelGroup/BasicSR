@@ -1,5 +1,4 @@
 import importlib
-import mmcv
 import torch
 from collections import Counter
 from copy import deepcopy
@@ -7,7 +6,7 @@ from os import path as osp
 from torch import distributed as dist
 
 from basicsr.models.sr_model import SRModel
-from basicsr.utils import ProgressBar, get_root_logger, tensor2img
+from basicsr.utils import ProgressBar, get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
 
 metric_module = importlib.import_module('basicsr.metrics')
@@ -83,7 +82,7 @@ class VideoBaseModel(SRModel):
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
                             folder, f'{img_name}_{self.opt["name"]}.png')
-                mmcv.imwrite(result_img, save_img_path)
+                imwrite(result_img, save_img_path)
 
             if with_metrics:
                 # calculate metrics
