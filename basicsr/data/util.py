@@ -4,8 +4,8 @@ import torch
 from os import path as osp
 from torch.nn import functional as F
 
-from basicsr.data.transforms import mod_crop, totensor
-from basicsr.utils import scandir
+from basicsr.data.transforms import mod_crop
+from basicsr.utils import img2tensor, scandir
 
 
 def read_img_seq(path, require_mod_crop=False, scale=1):
@@ -27,7 +27,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1):
     imgs = [cv2.imread(v).astype(np.float32) / 255. for v in img_paths]
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
-    imgs = totensor(imgs, bgr2rgb=True, float32=True)
+    imgs = img2tensor(imgs, bgr2rgb=True, float32=True)
     imgs = torch.stack(imgs, dim=0)
     return imgs
 

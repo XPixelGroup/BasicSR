@@ -24,7 +24,7 @@
 
 1. 直接以图像/视频帧的格式存放在硬盘
 2. 制作成 [LMDB](https://lmdb.readthedocs.io/en/release/). 训练数据使用这种形式, 一般会加快读取速度.
-3. 若是支持 [Memcached](https://memcached.org/) 或 [Ceph](https://ceph.io/), 则可以使用. 它们一般应用在集群上.
+3. 若是支持 [Memcached](https://memcached.org/), 则可以使用. 它们一般应用在集群上.
 
 #### 如何使用
 
