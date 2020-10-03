@@ -6,12 +6,16 @@ import random
 import sys
 import time
 import torch
-from mmcv.runner import get_time_str, master_only
 from os import path as osp
 from shutil import get_terminal_size
 from torchvision.utils import make_grid
 
 from basicsr.utils import get_root_logger
+from basicsr.utils.dist_util import master_only
+
+
+def get_time_str():
+    return time.strftime('%Y%m%d_%H%M%S', time.localtime())
 
 
 def check_resume(opt, resume_iter):

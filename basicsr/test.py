@@ -2,13 +2,13 @@ import argparse
 import logging
 import random
 import torch
-from mmcv.runner import get_dist_info, get_time_str, init_dist
 from os import path as osp
 
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.models import create_model
-from basicsr.utils import (get_env_info, get_root_logger, make_exp_dirs,
-                           set_random_seed)
+from basicsr.utils import (get_env_info, get_root_logger, get_time_str,
+                           make_exp_dirs, set_random_seed)
+from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
 
