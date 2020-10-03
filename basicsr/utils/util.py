@@ -34,7 +34,7 @@ def mkdir_and_rename(path):
         new_name = path + '_archived_' + get_time_str()
         print(f'Path already exists. Rename it to {new_name}', flush=True)
         os.rename(path, new_name)
-    os.makedirs(path, exist_ok=False)
+    os.makedirs(path, exist_ok=True)
 
 
 @master_only
@@ -49,7 +49,7 @@ def make_exp_dirs(opt):
         if ('strict_load' not in key) and ('pretrain_network'
                                            not in key) and ('resume'
                                                             not in key):
-            os.makedirs(path, exist_ok=False)
+            os.makedirs(path, exist_ok=True)
 
 
 def scandir(dir_path, suffix=None, recursive=False, full_path=False):
