@@ -1,11 +1,8 @@
-import mmcv
-import numpy as np
 from os import path as osp
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
-from basicsr.data.transforms import totensor
-from basicsr.utils import FileClient
+from basicsr.utils import FileClient, imfrombytes, img2tensor, scandir
 
 
 class SingleImageDataset(data.Dataset):
@@ -40,10 +37,7 @@ class SingleImageDataset(data.Dataset):
                              line.split(' ')[0]) for line in fin
                 ]
         else:
-            self.paths = [
-                osp.join(self.lq_folder, v)
-                for v in mmcv.scandir(self.lq_folder)
-            ]
+            self.paths = sorted(list(scandir(self.lq_folder, full_path=True)))
 
     def __getitem__(self, index):
         if self.file_client is None:
@@ -53,11 +47,11 @@ class SingleImageDataset(data.Dataset):
         # load lq image
         lq_path = self.paths[index]
         img_bytes = self.file_client.get(lq_path)
-        img_lq = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+        img_lq = imfrombytes(img_bytes, float32=True)
 
         # TODO: color space transform
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_lq = totensor(img_lq, bgr2rgb=True, float32=True)
+        img_lq = img2tensor(img_lq, bgr2rgb=True, float32=True)
         # normalize
         if self.mean is not None or self.std is not None:
             normalize(img_lq, self.mean, self.std, inplace=True)

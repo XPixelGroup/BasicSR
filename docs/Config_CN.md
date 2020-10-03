@@ -126,11 +126,11 @@ network_g:
 ######################################
 path:
   # 预训练模型的路径, 需要以pth结尾的模型
-  pretrain_model_g: ~
+  pretrain_network_g: ~
   # 加载预训练模型的时候, 是否需要网络参数的名称严格对应
-  strict_load: true
+  strict_load_g: true
   # 重启训练的状态路径, 一般在`experiments/exp_name/training_states`目录下
-  # 这个设置了, 会覆盖  pretrain_model_g 的设定
+  # 这个设置了, 会覆盖  pretrain_network_g 的设定
   resume_state: ~
 
 
@@ -299,9 +299,9 @@ network_g:
 #############################
 path:
   # 预训练模型的路径, 需要以pth结尾的模型
-  pretrain_model_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
+  pretrain_network_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
   # 加载预训练模型的时候, 是否需要网络参数的名称严格对应
-  strict_load: true
+  strict_load_g: true
 
 ##################################
 # 以下为Validation (也是测试)的设置

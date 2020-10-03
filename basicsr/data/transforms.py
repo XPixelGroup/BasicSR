@@ -1,6 +1,5 @@
-import mmcv
+import cv2
 import random
-import torch
 
 
 def mod_crop(img, scale):
@@ -110,20 +109,20 @@ def augment(imgs, hflip=True, rotation=True, flows=None):
     rot90 = rotation and random.random() < 0.5
 
     def _augment(img):
-        if hflip:
-            mmcv.imflip_(img, 'horizontal')
-        if vflip:
-            mmcv.imflip_(img, 'vertical')
+        if hflip:  # horizontal
+            cv2.flip(img, 1, img)
+        if vflip:  # vertical
+            cv2.flip(img, 0, img)
         if rot90:
             img = img.transpose(1, 0, 2)
         return img
 
     def _augment_flow(flow):
-        if hflip:
-            mmcv.imflip_(flow, 'horizontal')
+        if hflip:  # horizontal
+            cv2.flip(flow, 1, flow)
             flow[:, :, 0] *= -1
-        if vflip:
-            mmcv.imflip_(flow, 'vertical')
+        if vflip:  # vertical
+            cv2.flip(flow, 0, flow)
             flow[:, :, 1] *= -1
         if rot90:
             flow = flow.transpose(1, 0, 2)
@@ -145,30 +144,3 @@ def augment(imgs, hflip=True, rotation=True, flows=None):
         return imgs, flows
     else:
         return imgs
-
-
-def totensor(imgs, bgr2rgb=True, float32=True):
-    """Numpy array to tensor.
-
-    Args:
-        imgs (list[ndarray] | ndarray): Input images.
-        bgr2rgb (bool): Whether to change bgr to rgb.
-        float32 (bool): Whether to change to float32.
-
-    Returns:
-        list[tensor] | tensor: Tensor images. If returned results only have
-            one element, just return tensor.
-    """
-
-    def _totensor(img, bgr2rgb, float32):
-        if img.shape[2] == 3 and bgr2rgb:
-            img = mmcv.bgr2rgb(img)
-        img = torch.from_numpy(img.transpose(2, 0, 1))
-        if float32:
-            img = img.float()
-        return img
-
-    if isinstance(imgs, list):
-        return [_totensor(img, bgr2rgb, float32) for img in imgs]
-    else:
-        return _totensor(imgs, bgr2rgb, float32)

@@ -1,5 +1,5 @@
 import math
-import mmcv
+import os
 import torch
 import torchvision.utils
 
@@ -29,7 +29,7 @@ def main():
 
     opt['dataset_enlarge_ratio'] = 1
 
-    mmcv.mkdir_or_exist('tmp')
+    os.makedirs('tmp', exist_ok=True)
 
     dataset = create_dataset(opt)
     data_loader = create_dataloader(

@@ -1,12 +1,10 @@
-import mmcv
-import numpy as np
 from torch.utils import data as data
 
-from basicsr.data.transforms import augment, paired_random_crop, totensor
+from basicsr.data.transforms import augment, paired_random_crop
 from basicsr.data.util import (paired_paths_from_folder,
                                paired_paths_from_lmdb,
                                paired_paths_from_meta_info_file)
-from basicsr.utils import FileClient
+from basicsr.utils import FileClient, imfrombytes, img2tensor
 
 
 class PairedImageDataset(data.Dataset):
@@ -79,10 +77,10 @@ class PairedImageDataset(data.Dataset):
         # image range: [0, 1], float32.
         gt_path = self.paths[index]['gt_path']
         img_bytes = self.file_client.get(gt_path, 'gt')
-        img_gt = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+        img_gt = imfrombytes(img_bytes, float32=True)
         lq_path = self.paths[index]['lq_path']
         img_bytes = self.file_client.get(lq_path, 'lq')
-        img_lq = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+        img_lq = imfrombytes(img_bytes, float32=True)
 
         # augmentation for training
         if self.opt['phase'] == 'train':
@@ -96,7 +94,9 @@ class PairedImageDataset(data.Dataset):
 
         # TODO: color space transform
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_gt, img_lq = totensor([img_gt, img_lq], bgr2rgb=True, float32=True)
+        img_gt, img_lq = img2tensor([img_gt, img_lq],
+                                    bgr2rgb=True,
+                                    float32=True)
 
         return {
             'lq': img_lq,

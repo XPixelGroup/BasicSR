@@ -1,7 +1,6 @@
 import argparse
 import cv2
 import glob
-import mmcv
 import numpy as np
 import os
 import torch
@@ -10,7 +9,7 @@ from skimage import io
 from skimage import transform as trans
 
 from basicsr.models.archs.dfdnet_arch import DFDNet
-from basicsr.utils import tensor2img
+from basicsr.utils import imwrite, tensor2img
 
 try:
     import dlib
@@ -116,7 +115,8 @@ class FaceRestorationHelper(object):
             if save_cropped_path is not None:
                 path, ext = os.path.splitext(save_cropped_path)
                 save_path = f'{path}_{idx:02d}{ext}'
-                mmcv.imwrite(mmcv.rgb2bgr(cropped_face), save_path)
+                imwrite(
+                    cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR), save_path)
 
             # get inverse affine matrix
             self.similarity_trans.estimate(self.face_template,
@@ -129,7 +129,7 @@ class FaceRestorationHelper(object):
 
     def paste_faces_to_input_image(self, save_path):
         # operate in the BGR order
-        input_img = mmcv.rgb2bgr(self.input_img)
+        input_img = cv2.cvtColor(self.input_img, cv2.COLOR_RGB2BGR)
         h, w, _ = input_img.shape
         h_up, w_up = h * self.upscale_factor, w * self.upscale_factor
         # simply resize the background
@@ -158,7 +158,7 @@ class FaceRestorationHelper(object):
                                              (blur_size + 1, blur_size + 1), 0)
             upsample_img = inv_soft_mask * inv_restored_remove_border + (
                 1 - inv_soft_mask) * upsample_img
-        mmcv.imwrite(upsample_img.astype(np.uint8), save_path)
+        imwrite(upsample_img.astype(np.uint8), save_path)
 
     def clean_all(self):
         self.all_landmarks_5 = []
@@ -339,7 +339,7 @@ if __name__ == '__main__':
                 path, ext = os.path.splitext(
                     os.path.join(save_restore_root, img_name))
                 save_path = f'{path}_{idx:02d}{ext}'
-                mmcv.imwrite(im, save_path)
+                imwrite(im, save_path)
                 face_helper.add_restored_face(im)
 
         print('\tGenerate the final result ...')

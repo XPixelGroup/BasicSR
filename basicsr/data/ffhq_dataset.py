@@ -1,11 +1,9 @@
-import mmcv
-import numpy as np
 from os import path as osp
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
-from basicsr.data.transforms import augment, totensor
-from basicsr.utils import FileClient
+from basicsr.data.transforms import augment
+from basicsr.utils import FileClient, imfrombytes, img2tensor
 
 
 class FFHQDataset(data.Dataset):
@@ -53,12 +51,12 @@ class FFHQDataset(data.Dataset):
         # load gt image
         gt_path = self.paths[index]
         img_bytes = self.file_client.get(gt_path)
-        img_gt = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+        img_gt = imfrombytes(img_bytes, float32=True)
 
         # random horizontal flip
         img_gt = augment(img_gt, hflip=self.opt['use_hflip'], rotation=False)
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_gt = totensor(img_gt, bgr2rgb=True, float32=True)
+        img_gt = img2tensor(img_gt, bgr2rgb=True, float32=True)
         # normalize
         normalize(img_gt, self.mean, self.std, inplace=True)
         return {'gt': img_gt, 'gt_path': gt_path}

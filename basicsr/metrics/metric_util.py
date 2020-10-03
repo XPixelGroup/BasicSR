@@ -1,5 +1,6 @@
-import mmcv
 import numpy as np
+
+from basicsr.utils.matlab_functions import bgr2ycbcr
 
 
 def reorder_image(img, input_order='HWC'):
@@ -42,6 +43,6 @@ def to_y_channel(img):
     """
     img = img.astype(np.float32) / 255.
     if img.ndim == 3 and img.shape[2] == 3:
-        img = mmcv.bgr2ycbcr(img, y_only=True)
+        img = bgr2ycbcr(img, y_only=True)
         img = img[..., None]
     return img * 255.

@@ -24,7 +24,7 @@ At present, there are three types of data storage formats supported:
 
 1. Store in `hard disk` directly in the format of images / video frames.
 1. Make [LMDB](https://lmdb.readthedocs.io/en/release/), which could accelerate the IO and decompression speed during training.
-1. [memcached](https://memcached.org/) or [CEPH](https://ceph.io/) are also supported, if they are installed (usually on clusters).
+1. [memcached](https://memcached.org/) is also supported, if they are installed (usually on clusters).
 
 #### How to Use
 
