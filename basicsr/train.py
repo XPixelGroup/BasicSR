@@ -19,7 +19,7 @@ from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
 
-def parse_options():
+def parse_options(is_train=True):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-opt', type=str, required=True, help='Path to option YAML file.')
@@ -32,10 +32,10 @@ def parse_options():
     args = parser.parse_args()
     opt = parse(args.opt, is_train=True)
 
-    # distributed training settings
-    if args.launcher == 'none':  # non-distributed training
+    # distributed settings
+    if args.launcher == 'none':
         opt['dist'] = False
-        print('Disable distributed training.', flush=True)
+        print('Disable distributed.', flush=True)
     else:
         opt['dist'] = True
         if args.launcher == 'slurm' and 'dist_params' in opt:
@@ -126,8 +126,8 @@ def create_train_val_dataloader(opt, logger):
 
 
 def main():
-    # parse options
-    opt = parse_options()
+    # parse options, set distributed setting, set ramdom seed
+    opt = parse_options(is_train=True)
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
