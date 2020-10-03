@@ -19,8 +19,7 @@ from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
 
-def main():
-    # options
+def parse_options():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-opt', type=str, required=True, help='Path to option YAML file.')
@@ -44,68 +43,55 @@ def main():
         else:
             init_dist(args.launcher)
 
-    rank, world_size = get_dist_info()
-    opt['rank'] = rank
-    opt['world_size'] = world_size
+    opt['rank'], opt['world_size'] = get_dist_info()
 
-    # load resume states if exists
-    if opt['path'].get('resume_state'):
-        device_id = torch.cuda.current_device()
-        resume_state = torch.load(
-            opt['path']['resume_state'],
-            map_location=lambda storage, loc: storage.cuda(device_id))
-    else:
-        resume_state = None
+    # random seed
+    seed = opt.get('manual_seed')
+    if seed is None:
+        seed = random.randint(1, 10000)
+        opt['manual_seed'] = seed
+    set_random_seed(seed + opt['rank'])
 
-    # mkdir and loggers
-    if resume_state is None:
-        make_exp_dirs(opt)
+    return opt
+
+
+def init_loggers(opt):
     log_file = osp.join(opt['path']['log'],
                         f"train_{opt['name']}_{get_time_str()}.log")
     logger = get_root_logger(
         logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
     logger.info(dict2str(opt))
+
     # initialize tensorboard logger and wandb logger
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
-        log_dir = './tb_logger/' + opt['name']
-        if resume_state is None and opt['rank'] == 0:
-            mkdir_and_rename(log_dir)
-        tb_logger = init_tb_logger(log_dir=log_dir)
+        tb_logger = init_tb_logger(log_dir=osp.join('tb_logger', opt['name']))
     if (opt['logger'].get('wandb')
             is not None) and (opt['logger']['wandb'].get('project')
                               is not None) and ('debug' not in opt['name']):
         assert opt['logger'].get('use_tb_logger') is True, (
             'should turn on tensorboard when using wandb')
         init_wandb_logger(opt)
+    return logger, tb_logger
 
-    # random seed
-    seed = opt['manual_seed']
-    if seed is None:
-        seed = random.randint(1, 10000)
-        opt['manual_seed'] = seed
-    logger.info(f'Random seed: {seed}')
-    set_random_seed(seed + rank)
 
-    torch.backends.cudnn.benchmark = True
-    # torch.backends.cudnn.deterministic = True
-
+def create_train_val_dataloader(opt, logger):
     # create train and val dataloaders
     train_loader, val_loader = None, None
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
             train_set = create_dataset(dataset_opt)
-            train_sampler = EnlargedSampler(train_set, world_size, rank,
-                                            dataset_enlarge_ratio)
+            train_sampler = EnlargedSampler(train_set, opt['world_size'],
+                                            opt['rank'], dataset_enlarge_ratio)
             train_loader = create_dataloader(
                 train_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
                 dist=opt['dist'],
                 sampler=train_sampler,
-                seed=seed)
+                seed=opt['manual_seed'])
 
             num_iter_per_epoch = math.ceil(
                 len(train_set) * dataset_enlarge_ratio /
@@ -120,6 +106,7 @@ def main():
                 f'\n\tWorld size (gpu number): {opt["world_size"]}'
                 f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
                 f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
+
         elif phase == 'val':
             val_set = create_dataset(dataset_opt)
             val_loader = create_dataloader(
@@ -128,28 +115,57 @@ def main():
                 num_gpu=opt['num_gpu'],
                 dist=opt['dist'],
                 sampler=None,
-                seed=seed)
+                seed=opt['manual_seed'])
             logger.info(
                 f'Number of val images/folders in {dataset_opt["name"]}: '
                 f'{len(val_set)}')
         else:
             raise ValueError(f'Dataset phase {phase} is not recognized.')
-    assert train_loader is not None
+
+    return train_loader, train_sampler, val_loader, total_epochs, total_iters
+
+
+def main():
+    # parse options
+    opt = parse_options()
+
+    torch.backends.cudnn.benchmark = True
+    # torch.backends.cudnn.deterministic = True
+
+    # load resume states if necessary
+    if opt['path'].get('resume_state'):
+        device_id = torch.cuda.current_device()
+        resume_state = torch.load(
+            opt['path']['resume_state'],
+            map_location=lambda storage, loc: storage.cuda(device_id))
+    else:
+        resume_state = None
+
+    # mkdir for experiments and logger
+    if resume_state is None:
+        make_exp_dirs(opt)
+        if opt['logger'].get('use_tb_logger') and 'debug' not in opt[
+                'name'] and opt['rank'] == 0:
+            mkdir_and_rename(osp.join('tb_logger', opt['name']))
+
+    # initialize loggers
+    logger, tb_logger = init_loggers(opt)
+
+    # create train and validation dataloaders
+    result = create_train_val_dataloader(opt, logger)
+    train_loader, train_sampler, val_loader, total_epochs, total_iters = result
 
     # create model
-    if resume_state:
-        # modify pretrain_network paths
+    if resume_state:  # resume training
         check_resume(opt, resume_state['iter'])
-    model = create_model(opt)
-
-    # resume training
-    if resume_state:
+        model = create_model(opt)
+        model.resume_training(resume_state)  # handle optimizers and schedulers
         logger.info(f"Resuming training from epoch: {resume_state['epoch']}, "
                     f"iter: {resume_state['iter']}.")
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
-        model.resume_training(resume_state)  # handle optimizers and schedulers
     else:
+        model = create_model(opt)
         start_epoch = 0
         current_iter = 0
 
