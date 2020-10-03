@@ -1,5 +1,5 @@
 import math
-import mmcv
+import os
 import torchvision.utils
 
 from basicsr.data import create_dataloader, create_dataset
@@ -44,7 +44,7 @@ def main(mode='folder'):
 
     opt['dataset_enlarge_ratio'] = 1
 
-    mmcv.mkdir_or_exist('tmp')
+    os.makedirs('tmp', exist_ok=True)
 
     dataset = create_dataset(opt)
     data_loader = create_dataloader(

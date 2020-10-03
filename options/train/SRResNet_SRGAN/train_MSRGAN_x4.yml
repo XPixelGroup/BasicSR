@@ -60,8 +60,8 @@ network_d:
 
 # path
 path:
-  pretrain_model_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
-  strict_load: true
+  pretrain_network_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
+  strict_load_g: true
   resume_state: ~
 
 # training settings

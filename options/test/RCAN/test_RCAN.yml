@@ -49,5 +49,5 @@ save_img: true
 
 # path
 path:
-  pretrain_model_g: ./experiments/pretrained_models/RCAN_BIX4-official.pth
-  strict_load: true
+  pretrain_network_g: ./experiments/pretrained_models/RCAN_BIX4-official.pth
+  strict_load_g: true

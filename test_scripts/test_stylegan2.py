@@ -1,6 +1,6 @@
 import argparse
 import math
-import mmcv
+import os
 import torch
 from torchvision import utils
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     args.latent = 512
     args.n_mlp = 8
-    mmcv.mkdir_or_exist('samples')
+    os.makedirs('samples', exist_ok=True)
     set_random_seed(2020)
 
     g_ema = StyleGAN2Generator(

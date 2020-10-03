@@ -40,8 +40,8 @@ network_g:
 
 # path
 path:
-  pretrain_model_g: experiments/004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb/models/net_g_400000.pth
-  strict_load: true
+  pretrain_network_g: experiments/004_MSRGAN_x4_f64b16_DIV2K_400k_B16G1_wandb/models/net_g_400000.pth
+  strict_load_g: true
 
 # validation settings
 val:

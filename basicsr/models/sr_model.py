@@ -1,5 +1,4 @@
 import importlib
-import mmcv
 import torch
 from collections import OrderedDict
 from copy import deepcopy
@@ -7,7 +6,7 @@ from os import path as osp
 
 from basicsr.models.archs import define_network
 from basicsr.models.base_model import BaseModel
-from basicsr.utils import ProgressBar, get_root_logger, tensor2img
+from basicsr.utils import ProgressBar, get_root_logger, imwrite, tensor2img
 
 loss_module = importlib.import_module('basicsr.models.losses')
 metric_module = importlib.import_module('basicsr.metrics')
@@ -25,10 +24,10 @@ class SRModel(BaseModel):
         self.print_network(self.net_g)
 
         # load pretrained models
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             self.load_network(self.net_g, load_path,
-                              self.opt['path']['strict_load'])
+                              self.opt['path'].get('strict_load_g', True))
 
         if self.is_train:
             self.init_training_settings()
@@ -163,7 +162,7 @@ class SRModel(BaseModel):
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
                             f'{img_name}_{self.opt["name"]}.png')
-                mmcv.imwrite(sr_img, save_img_path)
+                imwrite(sr_img, save_img_path)
 
             if with_metrics:
                 # calculate metrics

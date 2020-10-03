@@ -1,12 +1,12 @@
-import mmcv
 import numpy as np
 import random
 import torch
 from pathlib import Path
 from torch.utils import data as data
 
-from basicsr.data.transforms import augment, paired_random_crop, totensor
-from basicsr.utils import FileClient, get_root_logger
+from basicsr.data.transforms import augment, paired_random_crop
+from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
+from basicsr.utils.flow_util import dequantize_flow
 
 
 class REDSDataset(data.Dataset):
@@ -144,7 +144,7 @@ class REDSDataset(data.Dataset):
         else:
             img_gt_path = self.gt_root / clip_name / f'{frame_name}.png'
         img_bytes = self.file_client.get(img_gt_path, 'gt')
-        img_gt = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+        img_gt = imfrombytes(img_bytes, float32=True)
 
         # get the neighboring LQ frames
         img_lqs = []
@@ -154,7 +154,7 @@ class REDSDataset(data.Dataset):
             else:
                 img_lq_path = self.lq_root / clip_name / f'{neighbor:08d}.png'
             img_bytes = self.file_client.get(img_lq_path, 'lq')
-            img_lq = mmcv.imfrombytes(img_bytes).astype(np.float32) / 255.
+            img_lq = imfrombytes(img_bytes, float32=True)
             img_lqs.append(img_lq)
 
         # get flows
@@ -168,10 +168,11 @@ class REDSDataset(data.Dataset):
                     flow_path = (
                         self.flow_root / clip_name / f'{frame_name}_p{i}.png')
                 img_bytes = self.file_client.get(flow_path, 'flow')
-                cat_flow = mmcv.imfrombytes(
-                    img_bytes, flag='grayscale')  # uint8, [0, 255]
+                cat_flow = imfrombytes(
+                    img_bytes, flag='grayscale',
+                    float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
-                flow = mmcv.video.dequantize_flow(
+                flow = dequantize_flow(
                     dx, dy, max_val=20,
                     denorm=False)  # we use max_val 20 here.
                 img_flows.append(flow)
@@ -183,9 +184,11 @@ class REDSDataset(data.Dataset):
                     flow_path = (
                         self.flow_root / clip_name / f'{frame_name}_n{i}.png')
                 img_bytes = self.file_client.get(flow_path, 'flow')
-                cat_flow = mmcv.imfrombytes(img_bytes, flag='grayscale')
+                cat_flow = imfrombytes(
+                    img_bytes, flag='grayscale',
+                    float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
-                flow = mmcv.video.dequantize_flow(
+                flow = dequantize_flow(
                     dx, dy, max_val=20,
                     denorm=False)  # we use max_val 20 here.
                 img_flows.append(flow)
@@ -210,12 +213,12 @@ class REDSDataset(data.Dataset):
             img_results = augment(img_lqs, self.opt['use_flip'],
                                   self.opt['use_rot'])
 
-        img_results = totensor(img_results)
+        img_results = img2tensor(img_results)
         img_lqs = torch.stack(img_results[0:-1], dim=0)
         img_gt = img_results[-1]
 
         if self.flow_root is not None:
-            img_flows = totensor(img_flows)
+            img_flows = img2tensor(img_flows)
             # add the zero center flow
             img_flows.insert(self.num_half_frames,
                              torch.zeros_like(img_flows[0]))

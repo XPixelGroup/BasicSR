@@ -1,6 +1,6 @@
+import cv2
 import importlib
 import math
-import mmcv
 import numpy as np
 import random
 import torch
@@ -11,7 +11,7 @@ from os import path as osp
 from basicsr.models.archs import define_network
 from basicsr.models.base_model import BaseModel
 from basicsr.models.losses.losses import g_path_regularize, r1_penalty
-from basicsr.utils import tensor2img
+from basicsr.utils import imwrite, tensor2img
 
 loss_module = importlib.import_module('basicsr.models.losses')
 
@@ -27,11 +27,12 @@ class StyleGAN2Model(BaseModel):
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             param_key = self.opt['path'].get('param_key_g', 'params')
             self.load_network(self.net_g, load_path,
-                              self.opt['path']['strict_load'], param_key)
+                              self.opt['path'].get('strict_load_g',
+                                                   True), param_key)
 
         # latent dimension: self.num_style_feat
         self.num_style_feat = opt['network_g']['num_style_feat']
@@ -51,10 +52,10 @@ class StyleGAN2Model(BaseModel):
         self.print_network(self.net_d)
 
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_d', None)
+        load_path = self.opt['path'].get('pretrain_network_d', None)
         if load_path is not None:
             self.load_network(self.net_d, load_path,
-                              self.opt['path']['strict_load'])
+                              self.opt['path'].get('strict_load_d', True))
 
         # define network net_g with Exponential Moving Average (EMA)
         # net_g_ema only used for testing on one GPU and saving, do not need to
@@ -62,10 +63,11 @@ class StyleGAN2Model(BaseModel):
         self.net_g_ema = define_network(deepcopy(self.opt['network_g'])).to(
             self.device)
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             self.load_network(self.net_g_ema, load_path,
-                              self.opt['path']['strict_load'], 'params_ema')
+                              self.opt['path'].get('strict_load_g',
+                                                   True), 'params_ema')
         else:
             self.model_ema(0)  # copy net_g weight
 
@@ -311,10 +313,10 @@ class StyleGAN2Model(BaseModel):
         else:
             save_img_path = osp.join(self.opt['path']['visualization'], 'test',
                                      f'test_{self.opt["name"]}.png')
-        mmcv.imwrite(result, save_img_path)
+        imwrite(result, save_img_path)
         # add sample images to tb_logger
         result = (result / 255.).astype(np.float32)
-        result = mmcv.bgr2rgb(result)
+        result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
         if tb_logger is not None:
             tb_logger.add_image(
                 'samples', result, global_step=current_iter, dataformats='HWC')

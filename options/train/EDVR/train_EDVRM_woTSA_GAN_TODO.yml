@@ -71,8 +71,8 @@ network_d:
 
 # path
 path:
-  pretrain_model_g: experiments/101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb/models/net_g_600000.pth
-  strict_load: true
+  pretrain_network_g: experiments/101_EDVR_M_x4_SR_REDS_woTSA_600k_B4G8_valREDS4_wandb/models/net_g_600000.pth
+  strict_load_g: true
   resume_state: ~
 
 # training settings

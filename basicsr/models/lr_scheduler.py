@@ -20,8 +20,8 @@ class MultiStepRestartLR(_LRScheduler):
                  optimizer,
                  milestones,
                  gamma=0.1,
-                 restarts=(0),
-                 restart_weights=(1),
+                 restarts=(0, ),
+                 restart_weights=(1, ),
                  last_epoch=-1):
         self.milestones = Counter(milestones)
         self.gamma = gamma
@@ -90,7 +90,7 @@ class CosineAnnealingRestartLR(_LRScheduler):
     def __init__(self,
                  optimizer,
                  periods,
-                 restart_weights=(1),
+                 restart_weights=(1, ),
                  eta_min=0,
                  last_epoch=-1):
         self.periods = periods

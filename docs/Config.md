@@ -127,11 +127,11 @@ network_g:
 #########################################################
 path:
   # Path for pretrained models, usually end with pth
-  pretrain_model_g: ~
+  pretrain_network_g: ~
   # Whether to load pretrained models strictly, that is the corresponding parameter names should be the same
-  strict_load: true
+  strict_load_g: true
   # Path for resume state. Usually in the `experiments/exp_name/training_states` folder
-  # This argument will over-write the `pretrain_model_g`
+  # This argument will over-write the `pretrain_network_g`
   resume_state: ~
 
 
@@ -302,9 +302,9 @@ network_g:
 #################################################
 path:
   ## Path for pretrained models, usually end with pth
-  pretrain_model_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
+  pretrain_network_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
   # Whether to load pretrained models strictly, that is the corresponding parameter names should be the same
-  strict_load: true
+  strict_load_g: true
 
 ##########################################################
 # The following are validation settings (Also for testing)

@@ -1,6 +1,5 @@
 import cv2
 import lmdb
-import mmcv
 import sys
 from multiprocessing import Pool
 from os import path as osp
@@ -96,8 +95,8 @@ def make_lmdb_from_imgs(data_path,
     # create lmdb environment
     if map_size is None:
         # obtain data size for one image
-        img = mmcv.imread(
-            osp.join(data_path, img_path_list[0]), flag='unchanged')
+        img = cv2.imread(
+            osp.join(data_path, img_path_list[0]), cv2.IMREAD_UNCHANGED)
         _, img_byte = cv2.imencode(
             '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
         data_size_per_img = img_byte.nbytes
@@ -148,7 +147,7 @@ def read_img_worker(path, key, compress_level):
         tuple[int]: Image shape.
     """
 
-    img = mmcv.imread(path, flag='unchanged')
+    img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     if img.ndim == 2:
         h, w = img.shape
         c = 1

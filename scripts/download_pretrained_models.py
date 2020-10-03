@@ -1,5 +1,5 @@
 import argparse
-import mmcv
+import os
 from os import path as osp
 
 from basicsr.utils.download import download_file_from_google_drive
@@ -7,7 +7,7 @@ from basicsr.utils.download import download_file_from_google_drive
 
 def download_pretrained_models(method, file_ids):
     save_path_root = f'./experiments/pretrained_models/{method}'
-    mmcv.mkdir_or_exist(save_path_root)
+    os.makedirs(save_path_root, exist_ok=True)
 
     for file_name, file_id in file_ids.items():
         save_path = osp.abspath(osp.join(save_path_root, file_name))

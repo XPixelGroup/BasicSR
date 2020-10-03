@@ -1,10 +1,11 @@
-import mmcv
+import cv2
 import numpy as np
 import torch
 from os import path as osp
 from torch.nn import functional as F
 
-from basicsr.data.transforms import mod_crop, totensor
+from basicsr.data.transforms import mod_crop
+from basicsr.utils import img2tensor, scandir
 
 
 def read_img_seq(path, require_mod_crop=False, scale=1):
@@ -22,11 +23,11 @@ def read_img_seq(path, require_mod_crop=False, scale=1):
     if isinstance(path, list):
         img_paths = path
     else:
-        img_paths = sorted([osp.join(path, v) for v in mmcv.scandir(path)])
-    imgs = [mmcv.imread(v).astype(np.float32) / 255. for v in img_paths]
+        img_paths = sorted(list(scandir(path, full_path=True)))
+    imgs = [cv2.imread(v).astype(np.float32) / 255. for v in img_paths]
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
-    imgs = totensor(imgs, bgr2rgb=True, float32=True)
+    imgs = img2tensor(imgs, bgr2rgb=True, float32=True)
     imgs = torch.stack(imgs, dim=0)
     return imgs
 
@@ -227,8 +228,8 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
-    input_paths = list(mmcv.scandir(input_folder))
-    gt_paths = list(mmcv.scandir(gt_folder))
+    input_paths = list(scandir(input_folder))
+    gt_paths = list(scandir(gt_folder))
     assert len(input_paths) == len(gt_paths), (
         f'{input_key} and {gt_key} datasets have different number of images: '
         f'{len(input_paths)}, {len(gt_paths)}.')
@@ -256,7 +257,7 @@ def paths_from_folder(folder):
         list[str]: Returned path list.
     """
 
-    paths = list(mmcv.scandir(folder))
+    paths = list(scandir(folder))
     paths = [osp.join(folder, path) for path in paths]
     return paths
 
