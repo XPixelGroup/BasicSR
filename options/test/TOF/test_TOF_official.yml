@@ -27,7 +27,7 @@ save_img: true
 # path
 path:
   pretrain_network_g: experiments/pretrained_models/tof_official-e81c455f.pth
-  strict_load: true
+  strict_load_g: true
 
 # validation settings
 val:

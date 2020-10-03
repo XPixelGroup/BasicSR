@@ -1,65 +1,6 @@
 import numpy as np
 
 
-def _convert_input_type_range(img):
-    """Convert the type and range of the input image.
-
-    It converts the input image to np.float32 type and range of [0, 1].
-    It is mainly used for pre-processing the input image in colorspace
-    convertion functions such as rgb2ycbcr and ycbcr2rgb.
-
-    Args:
-        img (ndarray): The input image. It accepts:
-            1. np.uint8 type with range [0, 255];
-            2. np.float32 type with range [0, 1].
-
-    Returns:
-        (ndarray): The converted image with type of np.float32 and range of
-            [0, 1].
-    """
-    img_type = img.dtype
-    img = img.astype(np.float32)
-    if img_type == np.float32:
-        pass
-    elif img_type == np.uint8:
-        img /= 255.
-    else:
-        raise TypeError('The img type should be np.float32 or np.uint8, '
-                        f'but got {img_type}')
-    return img
-
-
-def _convert_output_type_range(img, dst_type):
-    """Convert the type and range of the image according to dst_type.
-
-    It converts the image to desired type and range. If `dst_type` is np.uint8,
-    images will be converted to np.uint8 type with range [0, 255]. If
-    `dst_type` is np.float32, it converts the image to np.float32 type with
-    range [0, 1].
-    It is mainly used for post-processing images in colorspace convertion
-    functions such as rgb2ycbcr and ycbcr2rgb.
-
-    Args:
-        img (ndarray): The image to be converted with np.float32 type and
-            range [0, 255].
-        dst_type (np.uint8 | np.float32): If dst_type is np.uint8, it
-            converts the image to np.uint8 type with range [0, 255]. If
-            dst_type is np.float32, it converts the image to np.float32 type
-            with range [0, 1].
-
-    Returns:
-        (ndarray): The converted image with desired type and range.
-    """
-    if dst_type not in (np.uint8, np.float32):
-        raise TypeError('The dst_type should be np.float32 or np.uint8, '
-                        f'but got {dst_type}')
-    if dst_type == np.uint8:
-        img = img.round()
-    else:
-        img /= 255.
-    return img.astype(dst_type)
-
-
 def rgb2ycbcr(img, y_only=False):
     """Convert a RGB image to YCbCr image.
 
@@ -190,3 +131,62 @@ def ycbcr2bgr(img):
                               ]  # noqa: E126
     out_img = _convert_output_type_range(out_img, img_type)
     return out_img
+
+
+def _convert_input_type_range(img):
+    """Convert the type and range of the input image.
+
+    It converts the input image to np.float32 type and range of [0, 1].
+    It is mainly used for pre-processing the input image in colorspace
+    convertion functions such as rgb2ycbcr and ycbcr2rgb.
+
+    Args:
+        img (ndarray): The input image. It accepts:
+            1. np.uint8 type with range [0, 255];
+            2. np.float32 type with range [0, 1].
+
+    Returns:
+        (ndarray): The converted image with type of np.float32 and range of
+            [0, 1].
+    """
+    img_type = img.dtype
+    img = img.astype(np.float32)
+    if img_type == np.float32:
+        pass
+    elif img_type == np.uint8:
+        img /= 255.
+    else:
+        raise TypeError('The img type should be np.float32 or np.uint8, '
+                        f'but got {img_type}')
+    return img
+
+
+def _convert_output_type_range(img, dst_type):
+    """Convert the type and range of the image according to dst_type.
+
+    It converts the image to desired type and range. If `dst_type` is np.uint8,
+    images will be converted to np.uint8 type with range [0, 255]. If
+    `dst_type` is np.float32, it converts the image to np.float32 type with
+    range [0, 1].
+    It is mainly used for post-processing images in colorspace convertion
+    functions such as rgb2ycbcr and ycbcr2rgb.
+
+    Args:
+        img (ndarray): The image to be converted with np.float32 type and
+            range [0, 255].
+        dst_type (np.uint8 | np.float32): If dst_type is np.uint8, it
+            converts the image to np.uint8 type with range [0, 255]. If
+            dst_type is np.float32, it converts the image to np.float32 type
+            with range [0, 1].
+
+    Returns:
+        (ndarray): The converted image with desired type and range.
+    """
+    if dst_type not in (np.uint8, np.float32):
+        raise TypeError('The dst_type should be np.float32 or np.uint8, '
+                        f'but got {dst_type}')
+    if dst_type == np.uint8:
+        img = img.round()
+    else:
+        img /= 255.
+    return img.astype(dst_type)

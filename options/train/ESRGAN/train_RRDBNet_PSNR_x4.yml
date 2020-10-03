@@ -52,7 +52,7 @@ network_g:
 # path
 path:
   pretrain_network_g: ~
-  strict_load: true
+  strict_load_g: true
   resume_state: ~
 
 # training settings

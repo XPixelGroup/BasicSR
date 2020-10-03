@@ -56,7 +56,7 @@ network_d:
 # path
 path:
   pretrain_network_g: experiments/051_RRDBNet_PSNR_x4_f64b23_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
-  strict_load: true
+  strict_load_g: true
   resume_state: ~
 
 # training settings

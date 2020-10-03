@@ -58,7 +58,7 @@ def parse(opt_path, is_train=True):
 
     # paths
     for key, path in opt['path'].items():
-        if path and key != 'strict_load':
+        if path and 'strict_load' not in key:
             opt['path'][key] = osp.expanduser(path)
     opt['path']['root'] = osp.abspath(
         osp.join(__file__, osp.pardir, osp.pardir, osp.pardir))

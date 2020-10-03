@@ -55,7 +55,7 @@ network_g:
 # path
 path:
   pretrain_network_g: experiments/201_EDSR_Mx2_f64b16_DIV2K_300k_B16G1_wandb/models/net_g_300000.pth
-  strict_load: false
+  strict_load_g: false
   resume_state: ~
 
 # training settings

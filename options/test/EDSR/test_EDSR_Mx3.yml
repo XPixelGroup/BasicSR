@@ -44,7 +44,7 @@ network_g:
 # path
 path:
   pretrain_network_g: experiments/pretrained_models/EDSR_Mx3_f64b16_DIV2K_official-6908f88a.pth
-  strict_load: true
+  strict_load_g: true
 
 # validation settings
 val:

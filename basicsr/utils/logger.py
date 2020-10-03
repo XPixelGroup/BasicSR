@@ -2,7 +2,7 @@ import datetime
 import logging
 import time
 
-from basicsr.utils.dist_util import get_dist_info, master_only
+from .dist_util import get_dist_info, master_only
 
 
 class MessageLogger():
@@ -154,7 +154,6 @@ def get_env_info():
 
     Currently, only log the software version.
     """
-    import mmcv
     import torch
     import torchvision
 
@@ -174,6 +173,5 @@ def get_env_info():
     msg += ('\nVersion Information: '
             f'\n\tBasicSR: {__version__}'
             f'\n\tPyTorch: {torch.__version__}'
-            f'\n\tTorchVision: {torchvision.__version__}'
-            f'\n\tMMCV: {mmcv.__version__}')
+            f'\n\tTorchVision: {torchvision.__version__}')
     return msg

@@ -31,7 +31,8 @@ class StyleGAN2Model(BaseModel):
         if load_path is not None:
             param_key = self.opt['path'].get('param_key_g', 'params')
             self.load_network(self.net_g, load_path,
-                              self.opt['path']['strict_load'], param_key)
+                              self.opt['path'].get('strict_load_g',
+                                                   True), param_key)
 
         # latent dimension: self.num_style_feat
         self.num_style_feat = opt['network_g']['num_style_feat']
@@ -54,7 +55,7 @@ class StyleGAN2Model(BaseModel):
         load_path = self.opt['path'].get('pretrain_network_d', None)
         if load_path is not None:
             self.load_network(self.net_d, load_path,
-                              self.opt['path']['strict_load'])
+                              self.opt['path'].get('strict_load_d', True))
 
         # define network net_g with Exponential Moving Average (EMA)
         # net_g_ema only used for testing on one GPU and saving, do not need to
@@ -65,7 +66,8 @@ class StyleGAN2Model(BaseModel):
         load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             self.load_network(self.net_g_ema, load_path,
-                              self.opt['path']['strict_load'], 'params_ema')
+                              self.opt['path'].get('strict_load_g',
+                                                   True), 'params_ema')
         else:
             self.model_ema(0)  # copy net_g weight
 
