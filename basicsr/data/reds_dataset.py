@@ -1,4 +1,3 @@
-import mmcv
 import numpy as np
 import random
 import torch
@@ -7,6 +6,7 @@ from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop
 from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
+from basicsr.utils.flow_util import dequantize_flow
 
 
 class REDSDataset(data.Dataset):
@@ -172,7 +172,7 @@ class REDSDataset(data.Dataset):
                     img_bytes, flag='grayscale',
                     float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
-                flow = mmcv.video.dequantize_flow(
+                flow = dequantize_flow(
                     dx, dy, max_val=20,
                     denorm=False)  # we use max_val 20 here.
                 img_flows.append(flow)
@@ -188,7 +188,7 @@ class REDSDataset(data.Dataset):
                     img_bytes, flag='grayscale',
                     float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
-                flow = mmcv.video.dequantize_flow(
+                flow = dequantize_flow(
                     dx, dy, max_val=20,
                     denorm=False)  # we use max_val 20 here.
                 img_flows.append(flow)
