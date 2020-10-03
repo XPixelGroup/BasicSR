@@ -5,11 +5,11 @@ import random
 import torch
 import torch.utils.data
 from functools import partial
-from mmcv.runner import get_dist_info
 from os import path as osp
 
 from basicsr.data.prefetch_dataloader import PrefetchDataLoader
 from basicsr.utils import get_root_logger
+from basicsr.utils.dist_util import get_dist_info
 
 __all__ = ['create_dataset', 'create_dataloader']
 

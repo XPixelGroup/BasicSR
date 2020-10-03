@@ -1,7 +1,8 @@
 import datetime
 import logging
 import time
-from mmcv.runner import get_dist_info, master_only
+
+from basicsr.utils.dist_util import get_dist_info, master_only
 
 
 class MessageLogger():
