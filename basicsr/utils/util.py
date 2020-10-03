@@ -105,7 +105,7 @@ def check_resume(opt, resume_iter):
     logger = get_root_logger()
     if opt['path']['resume_state']:
         # get all the networks
-        networks = [key for key in opt.keys() if key.startwith('network_')]
+        networks = [key for key in opt.keys() if key.startswith('network_')]
         flag_pretrain = False
         for network in networks:
             if opt['path'].get(f'pretrain_{network}') is not None:
