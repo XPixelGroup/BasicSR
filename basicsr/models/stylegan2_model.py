@@ -27,7 +27,7 @@ class StyleGAN2Model(BaseModel):
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             param_key = self.opt['path'].get('param_key_g', 'params')
             self.load_network(self.net_g, load_path,
@@ -51,7 +51,7 @@ class StyleGAN2Model(BaseModel):
         self.print_network(self.net_d)
 
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_d', None)
+        load_path = self.opt['path'].get('pretrain_network_d', None)
         if load_path is not None:
             self.load_network(self.net_d, load_path,
                               self.opt['path']['strict_load'])
@@ -62,7 +62,7 @@ class StyleGAN2Model(BaseModel):
         self.net_g_ema = define_network(deepcopy(self.opt['network_g'])).to(
             self.device)
         # load pretrained model
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             self.load_network(self.net_g_ema, load_path,
                               self.opt['path']['strict_load'], 'params_ema')

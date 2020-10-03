@@ -137,7 +137,8 @@ def main():
 
     # create model
     if resume_state:
-        check_resume(opt, resume_state['iter'])  # modify pretrain_model paths
+        # modify pretrain_network paths
+        check_resume(opt, resume_state['iter'])
     model = create_model(opt)
 
     # resume training

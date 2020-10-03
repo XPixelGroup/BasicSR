@@ -25,7 +25,7 @@ class SRModel(BaseModel):
         self.print_network(self.net_g)
 
         # load pretrained models
-        load_path = self.opt['path'].get('pretrain_model_g', None)
+        load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             self.load_network(self.net_g, load_path,
                               self.opt['path']['strict_load'])

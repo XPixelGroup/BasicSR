@@ -15,7 +15,7 @@ from basicsr.utils import get_root_logger
 
 
 def check_resume(opt, resume_iter):
-    """Check resume states and pretrain_model paths.
+    """Check resume states and pretrain_network paths.
 
     Args:
         opt (dict): Options.
@@ -23,22 +23,22 @@ def check_resume(opt, resume_iter):
     """
     logger = get_root_logger()
     if opt['path']['resume_state']:
-        # ignore pretrained model paths
-        if opt['path'].get('pretrain_model_g') is not None or opt['path'].get(
-                'pretrain_model_d') is not None:
+        # get all the networks
+        networks = [key for key in opt.keys() if key.startwith('network_')]
+        flag_pretrain = False
+        for network in networks:
+            if opt['path'].get(f'pretrain_{network}') is not None:
+                flag_pretrain = True
+        if flag_pretrain:
             logger.warning(
-                'pretrain_model path will be ignored during resuming.')
-
+                'pretrain_network path will be ignored during resuming.')
         # set pretrained model paths
-        opt['path']['pretrain_model_g'] = osp.join(opt['path']['models'],
-                                                   f'net_g_{resume_iter}.pth')
-        logger.info(
-            f"Set pretrain_model_g to {opt['path']['pretrain_model_g']}")
-
-        opt['path']['pretrain_model_d'] = osp.join(opt['path']['models'],
-                                                   f'net_d_{resume_iter}.pth')
-        logger.info(
-            f"Set pretrain_model_d to {opt['path']['pretrain_model_d']}")
+        for network in networks:
+            name = f'pretrain_{network}'
+            basename = network.replace('network_', '')
+            opt['path'][name] = osp.join(opt['path']['models'],
+                                         f'net_{basename}_{resume_iter}.pth')
+            logger.info(f"Set {name} to {opt['path'][name]}")
 
 
 def mkdir_and_rename(path):
@@ -64,7 +64,7 @@ def make_exp_dirs(opt):
         mkdir_and_rename(path_opt.pop('results_root'))
     path_opt.pop('strict_load')
     for key, path in path_opt.items():
-        if 'pretrain_model' not in key and 'resume' not in key:
+        if 'pretrain_network' not in key and 'resume' not in key:
             mmcv.mkdir_or_exist(path)
 
 
