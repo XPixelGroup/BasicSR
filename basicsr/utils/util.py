@@ -7,8 +7,8 @@ import torch
 from os import path as osp
 from shutil import get_terminal_size
 
-from basicsr.utils.dist_util import master_only
-from basicsr.utils.logger import get_root_logger
+from .dist_util import master_only
+from .logger import get_root_logger
 
 
 def set_random_seed(seed):

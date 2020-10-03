@@ -1,7 +1,7 @@
 import math
 import requests
 
-from basicsr.util.util import ProgressBar
+from .util import ProgressBar
 
 
 def download_file_from_google_drive(file_id, save_path):
