@@ -11,7 +11,8 @@ try:
 except ImportError:
     print('Cannot import dcn. Ignore this warning if dcn is not used. '
           'Otherwise install BasicSR with compiling dcn.')
-    ModulatedDeformConvPack, modulated_deform_conv = None, None
+    ModulatedDeformConvPack = object
+    modulated_deform_conv = None
 from basicsr.utils import get_root_logger
 
 
