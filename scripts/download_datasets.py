@@ -29,7 +29,7 @@ def download_dataset(dataset, file_ids):
         # unzip
         if save_path.endswith('.zip'):
             extracted_path = save_path.replace('.zip', '')
-            print(f'Extrtact {save_path} to {extracted_path}')
+            print(f'Extract {save_path} to {extracted_path}')
             import zipfile
             with zipfile.ZipFile(save_path, 'r') as zip_ref:
                 zip_ref.extractall(extracted_path)
