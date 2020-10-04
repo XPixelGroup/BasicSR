@@ -13,7 +13,7 @@ def download_pretrained_models(method, file_ids):
         save_path = osp.abspath(osp.join(save_path_root, file_name))
         if osp.exists(save_path):
             user_response = input(
-                f'{file_name} already exist. Do you want to cover it? Y/N')
+                f'{file_name} already exist. Do you want to cover it? Y/N\n')
             if user_response.lower() == 'y':
                 print(f'Covering {file_name} to {save_path}')
                 download_file_from_google_drive(file_id, save_path)
