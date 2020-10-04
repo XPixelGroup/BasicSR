@@ -10,6 +10,7 @@ try:
 except ImportError:
     print('Cannot import fused_act and upfirdn2d. Ignore this warning if '
           'they are not used. Otherwise install BasicSR with compiling them.')
+    FusedLeakyReLU, fused_leaky_relu, upfirdn2d = None, None, None
 
 
 class NormStyleCode(nn.Module):
