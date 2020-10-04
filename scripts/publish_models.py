@@ -53,6 +53,7 @@ def convert_to_backward_compatible_models(paths):
 
 
 if __name__ == '__main__':
-    paths = glob.glob('experiments/pretrained_models/*.pth')
+    paths = glob.glob('experiments/pretrained_models/*.pth') + glob.glob(
+        'experiments/pretrained_models/**/*.pth')
     convert_to_backward_compatible_models(paths)
     update_sha(paths)

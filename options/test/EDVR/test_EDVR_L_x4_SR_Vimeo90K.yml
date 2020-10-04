@@ -35,7 +35,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: experiments/pretrained_models/EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth
+  pretrain_network_g: experiments/pretrained_models/EDVR/EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth
   strict_load_g: true
 
 # validation settings

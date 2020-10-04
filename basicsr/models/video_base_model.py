@@ -4,9 +4,10 @@ from collections import Counter
 from copy import deepcopy
 from os import path as osp
 from torch import distributed as dist
+from tqdm import tqdm
 
 from basicsr.models.sr_model import SRModel
-from basicsr.utils import ProgressBar, get_root_logger, imwrite, tensor2img
+from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
 
 metric_module = importlib.import_module('basicsr.metrics')
@@ -39,7 +40,7 @@ class VideoBaseModel(SRModel):
             tensor.zero_()
         # record all frames (border and center frames)
         if rank == 0:
-            pbar = ProgressBar(len(dataset))
+            pbar = tqdm(total=len(dataset), unit='frame')
         for idx in range(rank, len(dataset), world_size):
             val_data = dataset[idx]
             val_data['lq'].unsqueeze_(0)
@@ -97,8 +98,12 @@ class VideoBaseModel(SRModel):
             # progress bar
             if rank == 0:
                 for _ in range(world_size):
-                    pbar.update(f'Test {folder} - '
-                                f'{int(frame_idx) + world_size}/{max_idx}')
+                    pbar.update(1)
+                    pbar.set_description(
+                        f'Test {folder}:'
+                        f'{int(frame_idx) + world_size}/{max_idx}')
+        if rank == 0:
+            pbar.close()
 
         if with_metrics:
             if self.opt['dist']:

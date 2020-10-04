@@ -4,8 +4,13 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from basicsr.models.ops.fused_act import FusedLeakyReLU, fused_leaky_relu
-from basicsr.models.ops.upfirdn2d import upfirdn2d
+try:
+    from basicsr.models.ops.fused_act import FusedLeakyReLU, fused_leaky_relu
+    from basicsr.models.ops.upfirdn2d import upfirdn2d
+except ImportError:
+    print('Cannot import fused_act and upfirdn2d. Ignore this warning if '
+          'they are not used. Otherwise install BasicSR with compiling them.')
+    FusedLeakyReLU, fused_leaky_relu, upfirdn2d = None, None, None
 
 
 class NormStyleCode(nn.Module):

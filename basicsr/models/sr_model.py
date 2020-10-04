@@ -3,10 +3,11 @@ import torch
 from collections import OrderedDict
 from copy import deepcopy
 from os import path as osp
+from tqdm import tqdm
 
 from basicsr.models.archs import define_network
 from basicsr.models.base_model import BaseModel
-from basicsr.utils import ProgressBar, get_root_logger, imwrite, tensor2img
+from basicsr.utils import get_root_logger, imwrite, tensor2img
 
 loss_module = importlib.import_module('basicsr.models.losses')
 metric_module = importlib.import_module('basicsr.metrics')
@@ -130,7 +131,7 @@ class SRModel(BaseModel):
                 metric: 0
                 for metric in self.opt['val']['metrics'].keys()
             }
-        pbar = ProgressBar(len(dataloader))
+        pbar = tqdm(total=len(dataloader), unit='image')
 
         for idx, val_data in enumerate(dataloader):
             img_name = osp.splitext(osp.basename(val_data['lq_path'][0]))[0]
@@ -171,7 +172,9 @@ class SRModel(BaseModel):
                     metric_type = opt_.pop('type')
                     self.metric_results[name] += getattr(
                         metric_module, metric_type)(sr_img, gt_img, **opt_)
-            pbar.update(f'Test {img_name}')
+            pbar.update(1)
+            pbar.set_description(f'Test {img_name}')
+        pbar.close()
 
         if with_metrics:
             for metric in self.metric_results.keys():

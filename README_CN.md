@@ -2,6 +2,7 @@
 
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
+<a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
 :chart_with_upwards_trend: [wandb的训练曲线](https://app.wandb.ai/xintao/basicsr) <br>
@@ -16,13 +17,11 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 ## :sparkles: 新的特性
 
 - Sep 8, 2020. 添加 **盲人脸复原推理代码: [DFDNet](https://github.com/csxmli2016/DFDNet)**. 注意和官方代码有些微差异.
-   > Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
+   > ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
    > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
-   > European Conference on Computer Vision (ECCV), 2020
 - Aug 27, 2020. 添加 **StyleGAN2  训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-   > Analyzing and Improving the Image Quality of StyleGAN <br>
+   > CVPR20: Analyzing and Improving the Image Quality of StyleGAN <br>
    > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
-   > Computer Vision and Pattern Recognition (CVPR), 2020
 
 <details>
   <summary>更多</summary>
@@ -45,13 +44,37 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-在BasicSR的**根目录**下运行以下命令:<br>
-(确保 GCC 版本: gcc >= 5)
+1. Clone repo
 
-```bash
-pip install -r requirements.txt
-python setup.py develop
-```
+    ```bash
+    git clone https://github.com/xinntao/BasicSR.git
+    ```
+
+1. 安装依赖包
+
+    ```bash
+    cd BasicSR
+    pip install -r requirements.txt
+    ```
+
+1. 安装 BasicSR
+
+    在BasicSR的**根目录**下运行以下命令:<br>
+    (确保 GCC 版本: gcc >= 5) <br>
+    如果你不需要以下 cuda 扩展算子: <br>
+    &emsp;[*dcn* for EDVR](basicsr/models/ops)<br>
+    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/models/ops)<br>
+    在安装命令后添加 `--no_cuda_ext`
+
+    ```bash
+    python setup.py develop --no_cuda_ext
+    ```
+
+    如果使用 EDVR 和 StyleGAN2 模型, 则需要使用上面的 cuda 扩展算子.
+
+    ```bash
+    python setup.py develop
+    ```
 
 注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
 
@@ -70,7 +93,7 @@ python setup.py develop
 - **Options/Configs**配置文件的说明, 参见 [Config_CN.md](docs/Config_CN.md).
 - **Logging**日志系统的说明, 参见 [Logging_CN.md](docs/Logging_CN.md).
 
-## :card_file_box: 模型库和基准
+## :european_castle: 模型库和基准
 
 - 目前支持的模型描述, 参见 [Models_CN.md](docs/Models_CN.md).
 - **预训练模型和log样例**, 参见 **[ModelZoo_CN.md](docs/ModelZoo_CN.md)**.

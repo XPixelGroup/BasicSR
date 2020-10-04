@@ -1,0 +1,7 @@
+# Colab
+
+<a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
+
+To maintain a small size of BasicSR repo, we do not include the original colab notebooks in this repo, but provide links to the google colab.
+
+- [BasicSR_inference_ESRGAN.ipynb](https://colab.research.google.com/drive/1JQScYICvEC3VqaabLu-lxvq9h7kSV1ML?usp=sharing)
