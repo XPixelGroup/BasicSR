@@ -38,7 +38,7 @@ def main():
     for idx, path in enumerate(
             sorted(glob.glob(os.path.join(args.folder, '*')))):
         imgname = os.path.splitext(os.path.basename(path))[0]
-        print(idx, imgname)
+        print('Testing', idx, imgname)
         # read image
         img = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
         img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]],
