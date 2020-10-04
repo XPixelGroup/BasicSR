@@ -12,4 +12,5 @@ scipy
 tb-nightly
 torch>=1.3
 torchvision
+tqdm
 yapf
