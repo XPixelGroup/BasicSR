@@ -99,8 +99,8 @@ class VideoBaseModel(SRModel):
             if rank == 0:
                 for _ in range(world_size):
                     pbar.update(1)
-                    pbar.set_postfix_str(
-                        f'Test {folder} - '
+                    pbar.set_description(
+                        f'Test {folder}:'
                         f'{int(frame_idx) + world_size}/{max_idx}')
         if rank == 0:
             pbar.close()
