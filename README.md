@@ -2,7 +2,7 @@
 
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
-<img title="google colab" alt="google colab logo" img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="30"> [Google Colab](colab) <br>
+<img title="google colab" alt="google colab logo" img src="https://colab.research.google.com/assets/colab-badge.svg" height="20"> [Google Colab](colab) <br>
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
 :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ) <br>
 :chart_with_upwards_trend: [Training curves in wandb](https://app.wandb.ai/xintao/basicsr) <br>
@@ -49,18 +49,19 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 
 1. Clone repo
 
-```bash
-git clone https://github.com/xinntao/BasicSR.git
-```
+    ```bash
+    git clone https://github.com/xinntao/BasicSR.git
+    ```
 
 1. Install dependent packages
 
-```bash
-cd BasicSR
-pip install -r requirements.txt
-```
+    ```bash
+    cd BasicSR
+    pip install -r requirements.txt
+    ```
 
 1. Install BasicSR
+
 Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
 (Make sure that your GCC version: gcc >= 5) <br>
 If you do not need the cuda extensions: <br>
