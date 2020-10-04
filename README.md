@@ -2,7 +2,7 @@
 
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
-<img title="google colab" alt="google colab logo" img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="20"> [Google Colab](colab) <br>
+<img title="google colab" alt="google colab logo" img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="30"> [Google Colab](colab) <br>
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
 :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ) <br>
 :chart_with_upwards_trend: [Training curves in wandb](https://app.wandb.ai/xintao/basicsr) <br>
@@ -47,21 +47,33 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
-(Make sure that your GCC version: gcc >= 5)
+1. Clone repo
 
-If you do not need the cuda extensions (*dcn* for EDVR, *upfirdn2d* and *fused_act* for StyleGAN2),
+```bash
+git clone https://github.com/xinntao/BasicSR.git
+```
+
+1. Install dependent packages
+
+```bash
+cd BasicSR
+pip install -r requirements.txt
+```
+
+1. Install BasicSR
+Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
+(Make sure that your GCC version: gcc >= 5) <br>
+If you do not need the cuda extensions: <br>
+&emsp;[(*dcn* for EDVR, *upfirdn2d* and *fused_act* for StyleGAN2)](basicsr/models/ops) <br>
 please add `--no_cuda_ext` when installing.
 
 ```bash
-pip install -r requirements.txt
 python setup.py develop --no_cuda_ext
 ```
 
 If you use the EDVR and StyleGAN2 model, the above cuda extensions are necessary.
 
 ```bash
-pip install -r requirements.txt
 python setup.py develop
 ```
 
@@ -82,7 +94,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 - **Options/Configs**: Please refer to [Config.md](docs/Config.md).
 - **Logging**: Please refer to [Logging.md](docs/Logging.md).
 
-## :card_index_dividers: Model Zoo and Baselines
+## :classical_building: Model Zoo and Baselines
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
 - **Pre-trained models and log examples** are available in **[ModelZoo.md](docs/ModelZoo.md)**.
