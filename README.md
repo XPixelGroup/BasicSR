@@ -82,7 +82,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 - **Options/Configs**: Please refer to [Config.md](docs/Config.md).
 - **Logging**: Please refer to [Logging.md](docs/Logging.md).
 
-## card_index_dividers: Model Zoo and Baselines
+## :card_index_dividers: Model Zoo and Baselines
 
 - The descriptions of currently supported models are in [Models.md](docs/Models.md).
 - **Pre-trained models and log examples** are available in **[ModelZoo.md](docs/ModelZoo.md)**.
