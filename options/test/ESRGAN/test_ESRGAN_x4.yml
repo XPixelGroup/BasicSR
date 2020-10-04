@@ -40,7 +40,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: experiments/pretrained_models/ESRGAN_SRx4_DF2KOST_official-ff704c30.pth
+  pretrain_network_g: experiments/pretrained_models/ESRGAN/ESRGAN_SRx4_DF2KOST_official-ff704c30.pth
   strict_load_g: true
 
 # validation settings
