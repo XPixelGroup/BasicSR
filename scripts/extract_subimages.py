@@ -4,8 +4,9 @@ import os
 import sys
 from multiprocessing import Pool
 from os import path as osp
+from tqdm import tqdm
 
-from basicsr.utils.util import ProgressBar, scandir
+from basicsr.utils.util import scandir
 
 
 def main():
@@ -95,13 +96,14 @@ def extract_subimages(opt):
 
     img_list = list(scandir(input_folder, full_path=True))
 
-    pbar = ProgressBar(len(img_list))
+    pbar = tqdm(total=len(img_list), unit='image', desc='Extract')
     pool = Pool(opt['n_thread'])
     for path in img_list:
         pool.apply_async(
-            worker, args=(path, opt), callback=lambda arg: pbar.update(arg))
+            worker, args=(path, opt), callback=lambda arg: pbar.update(1))
     pool.close()
     pool.join()
+    pbar.close()
     print('All processes done.')
 
 
