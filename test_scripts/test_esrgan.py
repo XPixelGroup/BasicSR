@@ -21,12 +21,9 @@ def main():
         type=str,
         default='datasets/Set14/LRbicx4',
         help='input test image folder')
-    parser.add_argument(
-        '--device', type=str, default='cuda', help='Options: cuda, cpu.')
     args = parser.parse_args()
 
-    device = torch.device(args.device)
-
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # set up model
     model = RRDBNet(
         num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32)

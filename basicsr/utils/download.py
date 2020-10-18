@@ -2,6 +2,8 @@ import math
 import requests
 from tqdm import tqdm
 
+from .util import sizeof_fmt
+
 
 def download_file_from_google_drive(file_id, save_path):
     """Download files from google drive.
@@ -66,20 +68,3 @@ def save_response_content(response,
                 f.write(chunk)
         if pbar is not None:
             pbar.close()
-
-
-def sizeof_fmt(size, suffix='B'):
-    """Get human readable file size.
-
-    Args:
-        size (int): File size.
-        suffix (str): Suffix. Default: 'B'.
-
-    Return:
-        str: Formated file siz.
-    """
-    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
-        if abs(size) < 1024.0:
-            return f'{size:3.1f} {unit}{suffix}'
-        size /= 1024.0
-    return f'{size:3.1f} Y{suffix}'

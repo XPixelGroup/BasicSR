@@ -57,9 +57,10 @@ def parse(opt_path, is_train=True):
             dataset['dataroot_lq'] = osp.expanduser(dataset['dataroot_lq'])
 
     # paths
-    for key, path in opt['path'].items():
-        if path and 'strict_load' not in key:
-            opt['path'][key] = osp.expanduser(path)
+    for key, val in opt['path'].items():
+        if (val is not None) and ('resume_state' in key
+                                  or 'pretrain_network' in key):
+            opt['path'][key] = osp.expanduser(val)
     opt['path']['root'] = osp.abspath(
         osp.join(__file__, osp.pardir, osp.pardir, osp.pardir))
     if is_train:

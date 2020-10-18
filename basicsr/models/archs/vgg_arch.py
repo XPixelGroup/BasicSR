@@ -1,8 +1,10 @@
+import os
 import torch
 from collections import OrderedDict
 from torch import nn as nn
 from torchvision.models import vgg as vgg
 
+VGG_PRETRAIN_PATH = 'experiments/pretrained_models/vgg19-dcbb9e9d.pth'
 NAMES = {
     'vgg11': [
         'conv1_1', 'relu1_1', 'pool1', 'conv2_1', 'relu2_1', 'pool2',
@@ -97,8 +99,16 @@ class VGGFeatureExtractor(nn.Module):
             idx = self.names.index(v)
             if idx > max_idx:
                 max_idx = idx
-        features = getattr(vgg,
-                           vgg_type)(pretrained=True).features[:max_idx + 1]
+
+        if os.path.exists(VGG_PRETRAIN_PATH):
+            vgg_net = getattr(vgg, vgg_type)(pretrained=False)
+            state_dict = torch.load(
+                VGG_PRETRAIN_PATH, map_location=lambda storage, loc: storage)
+            vgg_net.load_state_dict(state_dict)
+        else:
+            vgg_net = getattr(vgg, vgg_type)(pretrained=True)
+
+        features = vgg_net.features[:max_idx + 1]
 
         modified_net = OrderedDict()
         for k, v in zip(self.names, features):

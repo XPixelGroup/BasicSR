@@ -36,6 +36,7 @@ class FaceRestorationHelper(object):
         self.inverse_affine_matrices = []
         self.cropped_faces = []
         self.restored_faces = []
+        self.save_png = True
 
     def init_dlib(self, detection_path, landmark5_path, landmark68_path):
         """Initialize the dlib detectors and predictors."""
@@ -97,7 +98,9 @@ class FaceRestorationHelper(object):
                 print('Should only have one face at most.')
         return num_detected_face
 
-    def warp_crop_faces(self, save_cropped_path=None):
+    def warp_crop_faces(self,
+                        save_cropped_path=None,
+                        save_inverse_affine_path=None):
         """Get affine matrix, warp and cropped faces.
 
         Also get inverse affine matrix for post-processing.
@@ -114,7 +117,11 @@ class FaceRestorationHelper(object):
             # save the cropped face
             if save_cropped_path is not None:
                 path, ext = os.path.splitext(save_cropped_path)
-                save_path = f'{path}_{idx:02d}{ext}'
+                if self.save_png:
+                    save_path = f'{path}_{idx:02d}.png'
+                else:
+                    save_path = f'{path}_{idx:02d}{ext}'
+
                 imwrite(
                     cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR), save_path)
 
@@ -123,6 +130,11 @@ class FaceRestorationHelper(object):
                                            landmark * self.upscale_factor)
             inverse_affine = self.similarity_trans.params[0:2, :]
             self.inverse_affine_matrices.append(inverse_affine)
+            # save inverse affine matrices
+            if save_inverse_affine_path is not None:
+                path, _ = os.path.splitext(save_inverse_affine_path)
+                save_path = f'{path}_{idx:02d}.pth'
+                torch.save(inverse_affine, save_path)
 
     def add_restored_face(self, face):
         self.restored_faces.append(face)
@@ -158,6 +170,9 @@ class FaceRestorationHelper(object):
                                              (blur_size + 1, blur_size + 1), 0)
             upsample_img = inv_soft_mask * inv_restored_remove_border + (
                 1 - inv_soft_mask) * upsample_img
+        if self.save_png:
+            save_path = save_path.replace('.jpg',
+                                          '.png').replace('.jpeg', '.png')
         imwrite(upsample_img.astype(np.uint8), save_path)
 
     def clean_all(self):
@@ -220,7 +235,7 @@ if __name__ == '__main__':
     differences: 1) we use dlib for 68 landmark detection; 2) the used image
     package are different (especially for reading and writing.)
     """
-    device = 'cuda'
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--upscale_factor', type=int, default=2)
@@ -236,6 +251,7 @@ if __name__ == '__main__':
         'experiments/pretrained_models/DFDNet/DFDNet_dict_512-f79685f0.pth')
     parser.add_argument('--test_path', type=str, default='datasets/TestWhole')
     parser.add_argument('--upsample_num_times', type=int, default=1)
+    parser.add_argument('--save_inverse_affine', action='store_true')
     # The official codes use skimage.io to read the cropped images from disk
     # instead of directly using the intermediate results in the memory (as we
     # do). Such a different operation brings slight differences due to
@@ -280,6 +296,8 @@ if __name__ == '__main__':
     net.eval()
 
     save_crop_root = os.path.join(result_root, 'cropped_faces')
+    save_inverse_affine_root = os.path.join(result_root, 'inverse_affine')
+    os.makedirs(save_inverse_affine_root, exist_ok=True)
     save_restore_root = os.path.join(result_root, 'restored_faces')
     save_final_root = os.path.join(result_root, 'final_results')
 
@@ -287,10 +305,16 @@ if __name__ == '__main__':
         args.upscale_factor, args.face_template_path, out_size=512)
 
     # scan all the jpg and png images
-    for img_path in glob.glob(os.path.join(args.test_path, '*.[jp][pn]g')):
+    for img_path in sorted(
+            glob.glob(os.path.join(args.test_path, '*.[jp][pn]g'))):
         img_name = os.path.basename(img_path)
         print(f'Processing {img_name} image ...')
         save_crop_path = os.path.join(save_crop_root, img_name)
+        if args.save_inverse_affine:
+            save_inverse_affine_path = os.path.join(save_inverse_affine_root,
+                                                    img_name)
+        else:
+            save_inverse_affine_path = None
 
         face_helper.init_dlib(args.detection_path, args.landmark5_path,
                               args.landmark68_path)
@@ -301,11 +325,11 @@ if __name__ == '__main__':
         num_landmarks = face_helper.get_face_landmarks_5()
         print(f'\tDetect {num_det_faces} faces, {num_landmarks} landmarks.')
         # warp and crop each face
-        face_helper.warp_crop_faces(save_crop_path)
+        face_helper.warp_crop_faces(save_crop_path, save_inverse_affine_path)
 
         if args.official_adaption:
             path, ext = os.path.splitext(save_crop_path)
-            pathes = sorted(glob.glob(f'{path}_[0-9]*{ext}'))
+            pathes = sorted(glob.glob(f'{path}_[0-9]*.png'))
             cropped_faces = [io.imread(path) for path in pathes]
         else:
             cropped_faces = face_helper.cropped_faces
@@ -336,9 +360,9 @@ if __name__ == '__main__':
                     im = tensor2img(output, min_max=(-1, 1))
                     del output
                 torch.cuda.empty_cache()
-                path, ext = os.path.splitext(
-                    os.path.join(save_restore_root, img_name))
-                save_path = f'{path}_{idx:02d}{ext}'
+                path = os.path.splitext(
+                    os.path.join(save_restore_root, img_name))[0]
+                save_path = f'{path}_{idx:02d}.png'
                 imwrite(im, save_path)
                 face_helper.add_restored_face(im)
 
