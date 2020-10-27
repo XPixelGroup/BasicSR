@@ -34,7 +34,6 @@ class VideoBaseModel(SRModel):
                     len(self.opt['val']['metrics']),
                     dtype=torch.float32,
                     device='cuda')
-            
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
         rank, world_size = get_dist_info()
