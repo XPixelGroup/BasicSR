@@ -201,5 +201,5 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
         img = img[crop_border:-crop_border, crop_border:-crop_border]
 
     niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)
-    
+
     return niqe_result
