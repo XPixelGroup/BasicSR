@@ -141,7 +141,11 @@ def niqe(img,
 
     # fit a MVG (multivariate Gaussian) model to distorted patch features
     mu_distparam = np.nanmean(distparam, axis=0)
-    cov_distparam = np.cov(distparam, rowvar=False)  # TODO: use nancov
+    # use nancov. ref: https://ww2.mathworks.cn/help/stats/nancov.html
+    distparam_removeNan = distparam[~np.isnan(distparam).any(axis=1)]
+    cov_distparam = np.cov(distparam_removeNan, rowvar=False)
+    
+    #cov_distparam = np.cov(distparam, rowvar=False)  # TODO: use nancov
 
     # compute niqe quality, Eq. 10 in the paper
     invcov_param = np.linalg.pinv((cov_pris_param + cov_distparam) / 2)
@@ -198,6 +202,6 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y'):
     if crop_border != 0:
         img = img[crop_border:-crop_border, crop_border:-crop_border]
 
-    niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)
+    niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)[0][0]
 
     return niqe_result
