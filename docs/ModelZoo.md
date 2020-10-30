@@ -2,6 +2,11 @@
 
 [English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
+:arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
+:arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
+
+---
+
 We provide:
 
 1. Official models converted directly from official released models
@@ -9,7 +14,7 @@ We provide:
 
 You can put the downloaded models in the `experiments/pretrained_models` folder.
 
-**[Download official pre-trained models]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))(https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing))
+**[Download official pre-trained models]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))
 
 You can use the scrip to download pre-trained models from Google Drive.
 
@@ -93,7 +98,6 @@ EDVR\_(training dataset)\_(track name)\_(model complexity)
     - **L** (Large): # of channels = 128, # of back residual blocks = 40. This setting is used in our competition submission.
     - **M** (Moderate): # of channels = 64, # of back residual blocks = 10.
 
-[Download Models from Google Drive](https://drive.google.com/open?id=1WfROVUqKOBS5gGvQzBfU1DNZ4XwPA3LD)
 
 | Model name |[Test Set] PSNR/SSIM |
 |:----------:|:----------:|
@@ -107,7 +111,6 @@ EDVR\_(training dataset)\_(track name)\_(model complexity)
 <sup>1</sup> Y or RGB denotes the evaluation on Y (luminance) or RGB channels.
 
 #### Stage 2 models for the NTIRE19 Competition
-[Download Models from Google Drive](https://drive.google.com/drive/folders/1PMoy1cKlIYWly6zY0tG2Q4YAH7V_HZns?usp=sharing)
 
 | Model name |[Test Set] PSNR/SSIM |
 |:----------:|:----------:|
@@ -119,7 +122,6 @@ EDVR\_(training dataset)\_(track name)\_(model complexity)
 
 ## DUF
 The models are converted from the [officially released models](https://github.com/yhjo09/VSR-DUF). <br/>
-[Download Models from Google Drive](https://drive.google.com/open?id=1seY9nclMuwk_SpqKQhx1ItTcQShM5R50)
 
 | Model name | [Test Set] PSNR/SSIM<sup>1</sup> | Official Results<sup>2</sup> |
 |:----------:|:----------:|:----------:|
@@ -136,7 +138,6 @@ The models are converted from the [officially released models](https://github.co
 
 ## TOF
 The models are converted from the [officially released models](https://github.com/anchen1011/toflow).<br/>
-[Download Models from Google Drive](https://drive.google.com/open?id=18kJcxPLeNK8e0kYEiwmsnu9wVmhdMFFG)
 
 | Model name | [Test Set] PSNR/SSIM | Official Results<sup>1</sup> |
 |:----------:|:----------:|:----------:|
