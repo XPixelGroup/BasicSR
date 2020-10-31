@@ -118,6 +118,23 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 本项目使用 Apache 2.0 license.
 更多细节参见 [LICENSE](LICENSE/README.md).
 
+## :earth_asia: 引用
+
+如果 BasicSR 对你有所帮助, 可以考虑引用BasicSR. <br>
+下面是一个 BibTex 引用条目, 它需要 `url` LaTeX package.
+
+``` latex
+@misc{wang2020basicsr,
+  author =       {Xintao Wang and Ke Yu and Kelvin C.K. Chan and
+                  Chao Dong and Chen Change Loy},
+  title =        {BasicSR},
+  howpublished = {\url{https://github.com/xinntao/BasicSR}},
+  year =         {2020}
+}
+```
+
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR. https://github.com/xinntao/BasicSR, 2020.
+
 ## :e-mail: 联系
 
 若有任何问题, 请电邮 `xintao.wang@outlook.com`.
