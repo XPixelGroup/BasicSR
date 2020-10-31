@@ -3,8 +3,9 @@
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
-:arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
+:m: [模型库](docs/ModelZoo_CN.md) :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
+:file_folder: [数据](docs/DatasetPreparation_CN.md) :arrow_double_down: [百度网盘](https://pan.baidu.com/s/baidutodo) (提取码:wdix) :arrow_double_down: [Google Drive](https://drive.google.com/drive/folders/1gt5eT293esqY0yr1Anbm36EdnxWW_5oH?usp=sharing) <br>
 :chart_with_upwards_trend: [wandb的训练曲线](https://app.wandb.ai/xintao/basicsr) <br>
 :computer: [训练和测试的命令](docs/TrainTest_CN.md) <br>
 :zap: [HOWTOs](#zap-howtos)
@@ -116,6 +117,23 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 本项目使用 Apache 2.0 license.
 更多细节参见 [LICENSE](LICENSE/README.md).
+
+## :earth_asia: 引用
+
+如果 BasicSR 对你有所帮助, 可以考虑引用BasicSR. <br>
+下面是一个 BibTex 引用条目, 它需要 `url` LaTeX package.
+
+``` latex
+@misc{wang2020basicsr,
+  author =       {Xintao Wang and Ke Yu and Kelvin C.K. Chan and
+                  Chao Dong and Chen Change Loy},
+  title =        {BasicSR},
+  howpublished = {\url{https://github.com/xinntao/BasicSR}},
+  year =         {2020}
+}
+```
+
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR. https://github.com/xinntao/BasicSR, 2020.
 
 ## :e-mail: 联系
 
