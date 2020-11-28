@@ -128,6 +128,46 @@ def convert_ffhq_tfrecords(tf_file,
         lmdb_maker.close()
 
 
+def make_ffhq_lmdb_from_imgs(folder_path,
+                             log_resolution,
+                             save_root,
+                             save_type='lmdb',
+                             compress_level=1):
+    """Make FFHQ lmdb from images.
+
+    Args:
+        folder_path (str): Folder path.
+        log_resolution (int): Log scale of resolution.
+        save_root (str): Path root to save.
+        save_type (str): Save type. Options: img | lmdb. Default: img.
+        compress_level (int):  Compress level when encoding images. Default: 1.
+    """
+
+    if save_type == 'lmdb':
+        save_path = os.path.join(save_root,
+                                 f'ffhq_{2**log_resolution}_crop1.2.lmdb')
+        lmdb_maker = LmdbMaker(save_path)
+    else:
+        raise ValueError('Wrong save type.')
+
+    os.makedirs(save_path, exist_ok=True)
+
+    img_list = sorted(glob.glob(os.path.join(folder_path, '*')))
+    for idx, img_path in enumerate(img_list):
+        print(f'Processing {idx}: ', img_path)
+        img = cv2.imread(img_path)
+        h, w, c = img.shape
+
+        if save_type == 'lmdb':
+            _, img_byte = cv2.imencode(
+                '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
+            key = f'{idx:08d}/r{log_resolution:02d}'
+            lmdb_maker.put(img_byte, key, (h, w, c))
+
+    if save_type == 'lmdb':
+        lmdb_maker.close()
+
+
 if __name__ == '__main__':
     """Read tfrecords w/o define a graph.
 
