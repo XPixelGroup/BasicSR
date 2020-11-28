@@ -78,6 +78,15 @@ These pipelines/commands cannot cover all the cases and more details are in the 
     python setup.py develop
     ```
 
+    You may also want to specify the CUDA paths:
+
+      ```bash
+      CUDA_HOME=/usr/local/cuda \
+      CUDNN_INCLUDE_DIR=/usr/local/cuda \
+      CUDNN_LIB_DIR=/usr/local/cuda \
+      python setup.py develop
+      ```
+
 Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
 
 ## :hourglass_flowing_sand: TODO List
