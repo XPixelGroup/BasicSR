@@ -2,7 +2,7 @@ from os import path as osp
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
-from basicsr.data.util import paths_from_lmdb
+from basicsr.data.data_util import paths_from_lmdb
 from basicsr.utils import FileClient, imfrombytes, img2tensor, scandir
 
 

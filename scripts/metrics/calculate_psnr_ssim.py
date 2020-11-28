@@ -25,7 +25,7 @@ def main():
     crop_border = 4
     suffix = '_expname'
     test_y_channel = False
-    correct_mean_var = True
+    correct_mean_var = False
     # -------------------------------------------------------------------------
 
     psnr_all = []

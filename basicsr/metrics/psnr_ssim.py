@@ -34,6 +34,8 @@ def calculate_psnr(img1,
             '"HWC" and "CHW"')
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
+    img1 = img1.astype(np.float64)
+    img2 = img2.astype(np.float64)
 
     if crop_border != 0:
         img1 = img1[crop_border:-crop_border, crop_border:-crop_border, ...]
@@ -122,6 +124,8 @@ def calculate_ssim(img1,
             '"HWC" and "CHW"')
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
+    img1 = img1.astype(np.float64)
+    img2 = img2.astype(np.float64)
 
     if crop_border != 0:
         img1 = img1[crop_border:-crop_border, crop_border:-crop_border, ...]

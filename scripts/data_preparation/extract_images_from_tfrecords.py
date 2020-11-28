@@ -4,7 +4,7 @@ import glob
 import numpy as np
 import os
 
-from basicsr.utils.lmdb import LmdbMaker
+from basicsr.utils.lmdb_util import LmdbMaker
 
 
 def convert_celeba_tfrecords(tf_file,
@@ -171,7 +171,7 @@ def make_ffhq_lmdb_from_imgs(folder_path,
 if __name__ == '__main__':
     """Read tfrecords w/o define a graph.
 
-    We have tested it on  on TensorFlow 1.15
+    We have tested it on TensorFlow 1.15
 
     Ref:
     http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/

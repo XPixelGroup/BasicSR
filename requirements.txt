@@ -1,7 +1,6 @@
 addict
 future
 lmdb
-matplotlib
 numpy
 opencv-python
 Pillow
