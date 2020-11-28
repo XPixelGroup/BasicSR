@@ -66,7 +66,7 @@ class DFDNet(nn.Module):
         # part_sizes: [80, 80, 50, 110]
         channel_sizes = [128, 256, 512, 512]
         self.feature_sizes = np.array([256, 128, 64, 32])
-        self.vgg_layers = ['conv2_2', 'conv3_4', 'conv4_4', 'conv5_4']
+        self.vgg_layers = ['relu2_2', 'relu3_4', 'relu4_4', 'relu5_4']
         self.flag_dict_device = False
 
         # dict
@@ -170,7 +170,7 @@ class DFDNet(nn.Module):
 
             updated_vgg_features.append(updated_feat)
 
-        vgg_feat_dilation = self.multi_scale_dilation(vgg_features['conv5_4'])
+        vgg_feat_dilation = self.multi_scale_dilation(vgg_features['relu5_4'])
         # use updated vgg features to modulate the upsampled features with
         # SFT (Spatial Feature Transform) scaling and shifting manner.
         upsampled_feat = self.upsample0(vgg_feat_dilation,
