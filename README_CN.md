@@ -36,10 +36,21 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-|  |  | |
-| :--- | :---:        |     :---:      |
-| StyleGAN2   | [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2) |
-| DFDNet | - | [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet) |
+| GAN |  |  |  | | |
+| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
+| StyleGAN2   | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) | | | |
+| **Face Restoration** |  |  |  | | |
+| DFDNet | - | [测试](docs/HOWTOs_CN.md#如何测试-DFDNet) | | | |
+| **Super Resolution** |  |  |  | | |
+| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
+| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
+| RCAN | *TODO* | *TODO* |  |  | |
+| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
+| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
+| **Deblurring** |  |  |  | | |
+| DeblurGANv2 | - | *TODO* |  | | |
+| **Denoise** |  |  |  | | |
+| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
 
 ## :wrench: 依赖和安装
 

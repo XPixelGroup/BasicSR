@@ -37,10 +37,21 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and vide
 We provides simple pipelines to train/test/inference models for quick start.
 These pipelines/commands cannot cover all the cases and more details are in the following sections.
 
-|  |  | |
-| :--- | :---:        |     :---:      |
-| StyleGAN2   | [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2) | [How to inference StyleGAN2](docs/HOWTOs.md#How-to-inference-StyleGAN2) |
-| DFDNet | *TODO* | [How to inference DFDNet](docs/HOWTOs.md#How-to-inference-DFDNet) |
+| GAN |  |  |  | | |
+| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
+| StyleGAN2   | [Train](docs/HOWTOs.md#How-to-train-StyleGAN2) | [Inference](docs/HOWTOs.md#How-to-inference-StyleGAN2) | | | |
+| **Face Restoration** |  |  |  | | |
+| DFDNet | - | [Inference](docs/HOWTOs.md#How-to-inference-DFDNet) | | | |
+| **Super Resolution** |  |  |  | | |
+| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
+| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
+| RCAN | *TODO* | *TODO* |  |  | |
+| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
+| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
+| **Deblurring** |  |  |  | | |
+| DeblurGANv2 | - | *TODO* |  | | |
+| **Denoise** |  |  |  | | |
+| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
 
 ## :wrench: Dependencies and Installation
 
