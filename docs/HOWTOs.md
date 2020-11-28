@@ -20,7 +20,7 @@
 1. Download pre-trained models from **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) to the `experiments/pretrained_models` folder.
 1. Test.
 
-    > python tests/test_stylegan2.py
+    > python inference/inference_stylegan2.py
 
 1. The results are in the `samples` folder.
 
@@ -43,6 +43,6 @@
 4. Prepare the testing dataset in the `datasets`, for example, we put images in the `datasets/TestWhole` folder.
 5. Test.
 
-    >  python tests/test_face_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
+    >  python inference/inference_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
 
 6. The results are in the `results/DFDNet` folder.

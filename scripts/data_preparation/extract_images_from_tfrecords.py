@@ -4,7 +4,7 @@ import glob
 import numpy as np
 import os
 
-from basicsr.utils.lmdb import LmdbMaker
+from basicsr.utils.lmdb_util import LmdbMaker
 
 
 def convert_celeba_tfrecords(tf_file,

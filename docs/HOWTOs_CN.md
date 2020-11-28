@@ -20,7 +20,7 @@
 1. 从 **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载预训练模型到 `experiments/pretrained_models` 文件夹.
 1. 测试.
 
-    > python tests/test_stylegan2.py
+    > python inference/inference_stylegan2.py
 
 1. 结果在 `samples` 文件夹
 
@@ -43,6 +43,6 @@
 4. 准备测试图片到 `datasets`, 比如说我们把测试图片放在 `datasets/TestWhole` 文件夹.
 5. 测试.
 
-    >  python tests/test_face_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
+    >  python inference/inference_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
 
 6. 结果在 `results/DFDNet` 文件夹.
