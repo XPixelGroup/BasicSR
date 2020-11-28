@@ -77,6 +77,15 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
     python setup.py develop
     ```
 
+    你或许需要指定 CUDA 路径:
+
+      ```bash
+      CUDA_HOME=/usr/local/cuda \
+      CUDNN_INCLUDE_DIR=/usr/local/cuda \
+      CUDNN_LIB_DIR=/usr/local/cuda \
+      python setup.py develop
+      ```
+
 注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
 
 ## :hourglass_flowing_sand: TODO 清单
