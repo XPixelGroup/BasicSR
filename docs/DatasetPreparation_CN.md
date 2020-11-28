@@ -116,7 +116,7 @@ DIV2K_train_HR_sub.lmdb
 **如何制作**
 
 我们提供了脚本来制作. 在运行脚本前, 需要根据需求修改相应的参数. 目前支持 DIV2K, REDS 和 Vimeo90K 数据集; 其他数据集可仿照进行制作. <br>
- `python scripts/create_lmdb.py`
+ `python scripts/data_preparation/create_lmdb.py`
 
 #### 预读取数据
 
@@ -155,17 +155,17 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 
 1. 从[官网](https://data.vision.ee.ethz.ch/cvl/DIV2K)下载数据.
 1. Crop to sub-images: 因为 DIV2K 数据集是 2K 分辨率的 (比如: 2048x1080), 而我们在训练的时候往往并不要那么大 (常见的是 128x128 或者 192x192 的训练patch). 因此我们可以先把2K的图片裁剪成有overlap的 480x480 的子图像块. 然后再由 dataloader 从这个 480x480 的子图像块中随机crop出 128x128 或者 192x192 的训练patch.<br>
-    运行脚本 [extract_subimages.py](../scripts/extract_subimages.py):
+    运行脚本 [extract_subimages.py](../scripts/data_preparation/extract_subimages.py):
 
     ```python
-    python scripts/extract_subimages.py
+    python scripts/data_preparation/extract_subimages.py
     ```
 
     使用之前可能需要修改文件里面的路径和配置参数.
     **注意**: sub-image 的尺寸和训练patch的尺寸 (`gt_size`) 是不同的. 我们先把2K分辨率的图像 crop 成 sub-images (往往是 480x480), 然后存储起来. 在训练的时候, dataloader会读取这些sub-images, 然后进一步随机裁剪成 `gt_size` x `gt_size`的大小.
-1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_div2k`函数, 并需要修改函数相应的配置和路径.
+1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/data_preparation/create_lmdb.py`, 注意选择`create_lmdb_for_div2k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `tests/test_paired_image_dataset.py`, 注意修改函数相应的配置和路径.
-1. [可选] 若需要使用 meta_info_file, 运行 `python scripts/generate_meta_info.py` 来生成 meta_info_file.
+1. [可选] 若需要使用 meta_info_file, 运行 `python scripts/data_preparation/generate_meta_info.py` 来生成 meta_info_file.
 
 ### 其他常见图像超分数据集
 
@@ -277,8 +277,8 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 **数据准备步骤**
 
 1. 从[官网](https://seungjunnah.github.io/Datasets/reds.html)下载数据
-1. 整合 training 和 validation 数据: `python scripts/regroup_reds_dataset.py`
-1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_reds`函数, 并需要修改函数相应的配置和路径.
+1. 整合 training 和 validation 数据: `python scripts/data_preparation/regroup_reds_dataset.py`
+1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/data_preparation/create_lmdb.py`, 注意选择`create_lmdb_for_reds`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `python tests/test_reds_dataset.py`, 注意修改函数相应的配置和路径.
 
 ### Vimeo90K
@@ -290,7 +290,7 @@ DIV2K 数据集被广泛使用在图像复原的任务中.
 1. 下载数据: [`Septuplets dataset --> The original training + test set (82GB)`](http://data.csail.mit.edu/tofu/dataset/vimeo_septuplet.zip). 这些是Ground-Truth. 里面有`sep_trainlist.txt`文件来区分训练数据.
 1. 生成低分辨率图片. (TODO)
 The low-resolution images in the Vimeo90K test dataset are generated with the MATLAB bicubic downsampling kernel. Use the script `data_scripts/generate_LR_Vimeo90K.m` (run in MATLAB) to generate the low-resolution images.
-1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/create_lmdb.py`, 注意选择`create_lmdb_for_vimeo90k`函数, 并需要修改函数相应的配置和路径.
+1. [可选] 若需要使用 LMDB, 则需要制作 LMDB, 参考 [LMDB具体说明](#LMDB具体说明).  `python scripts/data_preparation/create_lmdb.py`, 注意选择`create_lmdb_for_vimeo90k`函数, 并需要修改函数相应的配置和路径.
 1. 测试: `python tests/test_vimeo90k_dataset.py`, 注意修改函数相应的配置和路径.
 
 ## StyleGAN2
@@ -303,5 +303,5 @@ The low-resolution images in the Vimeo90K test dataset are generated with the MA
 1. 从 tfrecords 提取到*图片*或者*LMDB*. (需要安装 TensorFlow 来读取 tfrecords). 我们对每一个分辨率的人脸都单独创建文件夹或者LMDB文件.
 
     ```bash
-    python scripts/extract_images_from_tfrecords.py
+    python scripts/data_preparation/extract_images_from_tfrecords.py
     ```

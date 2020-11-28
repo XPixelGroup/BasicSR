@@ -8,7 +8,7 @@
     1. Download FFHQ dataset. Recommend to download the tfrecords files from [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset).
     1. Extract tfrecords to images or LMDBs (TensorFlow is required to read tfrecords):
 
-        > python scripts/extract_images_from_tfrecords.py
+        > python scripts/data_preparation/extract_images_from_tfrecords.py
 
 1. Modify the config file in `options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ.yml`
 1. Train with distributed training. More training commands are in [TrainTest.md](TrainTest.md).

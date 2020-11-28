@@ -115,7 +115,7 @@ For convenience, the binary content stored in LMDB dataset is encoded image by c
 
 **How to Make LMDB**
 We provide a script to make LMDB. Before running the script, we need to modify the corresponding parameters accordingly. At present, we support DIV2K, REDS and Vimeo90K datasets; other datasets can also be made in a similar way.<br>
- `python scripts/create_lmdb.py`
+ `python scripts/data_preparation/create_lmdb.py`
 
 #### Data Pre-fetcher
 
@@ -155,17 +155,17 @@ It is recommended to symlink the dataset root to `datasets` with the command `ln
 1. Download the datasets from the [official DIV2K website](https://data.vision.ee.ethz.ch/cvl/DIV2K/).<br>
 1. Crop to sub-images: DIV2K has 2K resolution (e.g., 2048 × 1080) images but the training patches are usually small (e.g., 128x128 or 192x192). So there is a waste if reading the whole image but only using a very small part of it. In order to accelerate the IO speed during training, we crop the 2K resolution images to sub-images (here, we crop to 480x480 sub-images). <br>
 Note that the size of sub-images is different from the training patch size (`gt_size`) defined in the config file. Specifically, the cropped sub-images with 480x480 are stored. The dataloader will further randomly crop the sub-images to `GT_size x GT_size` patches for training. <br/>
-    Run the script [extract_subimages.py](../scripts/extract_subimages.py):
+    Run the script [extract_subimages.py](../scripts/data_preparation/extract_subimages.py):
 
     ```python
-    python scripts/extract_subimages.py
+    python scripts/data_preparation/extract_subimages.py
     ```
 
     Remember to modify the paths and configurations if you have different settings.
-1. [Optional] Create LMDB files. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_div2k` function and remember to modify the paths and configurations accordingly.
+1. [Optional] Create LMDB files. Please refer to [LMDB Description](#LMDB-Description). `python scripts/data_preparation/create_lmdb.py`. Use the `create_lmdb_for_div2k` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_paired_image_dataset.py`.
 Remember to modify the paths and configurations accordingly.
-1. [Optional] If you want to use meta_info_file, you may need to run `python scripts/generate_meta_info.py` to generate the meta_info_file.
+1. [Optional] If you want to use meta_info_file, you may need to run `python scripts/data_preparation/generate_meta_info.py` to generate the meta_info_file.
 
 ### Common Image SR Datasets
 
@@ -277,8 +277,8 @@ All the left clips are used for training. Note that it it not required to explic
 **Preparation Steps**
 
 1. Download the datasets from the [official website](https://seungjunnah.github.io/Datasets/reds.html).
-1. Regroup the training and validation datasets: `python scripts/regroup_reds_dataset.py`
-1. [Optional] Make LMDB files when necessary. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_reds` function and remember to modify the paths and configurations accordingly.
+1. Regroup the training and validation datasets: `python scripts/data_preparation/regroup_reds_dataset.py`
+1. [Optional] Make LMDB files when necessary. Please refer to [LMDB Description](#LMDB-Description). `python scripts/data_preparation/create_lmdb.py`. Use the `create_lmdb_for_reds` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_reds_dataset.py`.
 Remember to modify the paths and configurations accordingly.
 
@@ -289,7 +289,7 @@ Remember to modify the paths and configurations accordingly.
 1. Download the dataset: [`Septuplets dataset --> The original training + test set (82GB)`](http://data.csail.mit.edu/tofu/dataset/vimeo_septuplet.zip).This is the Ground-Truth (GT). There is a `sep_trainlist.txt` file listing the training samples in the download zip file.
 1. Generate the low-resolution images (TODO)
 The low-resolution images in the Vimeo90K test dataset are generated with the MATLAB bicubic downsampling kernel. Use the script `data_scripts/generate_LR_Vimeo90K.m` (run in MATLAB) to generate the low-resolution images.
-1. [Optional] Make LMDB files when necessary. Please refer to [LMDB Description](#LMDB-Description). `python scripts/create_lmdb.py`. Use the `create_lmdb_for_vimeo90k` function and remember to modify the paths and configurations accordingly.
+1. [Optional] Make LMDB files when necessary. Please refer to [LMDB Description](#LMDB-Description). `python scripts/data_preparation/create_lmdb.py`. Use the `create_lmdb_for_vimeo90k` function and remember to modify the paths and configurations accordingly.
 1. Test the dataloader with the script `tests/test_vimeo90k_dataset.py`.
 Remember to modify the paths and configurations accordingly.
 
@@ -303,5 +303,5 @@ Training dataset: [FFHQ](https://github.com/NVlabs/ffhq-dataset).
 1. Extract tfrecords to images or LMDBs. (TensorFlow is required to read tfrecords). For each resolution, we will create images folder or LMDB files separately.
 
     ```bash
-    python scripts/extract_images_from_tfrecords.py
+    python scripts/data_preparation/extract_images_from_tfrecords.py
     ```

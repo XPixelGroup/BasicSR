@@ -40,7 +40,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 |  |  | |
 | :--- | :---:        |     :---:      |
 | StyleGAN2   | [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2) | [How to inference StyleGAN2](docs/HOWTOs.md#How-to-inference-StyleGAN2) |
-| DFDNet | - | [How to inference DFDNet](docs/HOWTOs.md#How-to-inference-DFDNet) |
+| DFDNet | *TODO* | [How to inference DFDNet](docs/HOWTOs.md#How-to-inference-DFDNet) |
 
 ## :wrench: Dependencies and Installation
 

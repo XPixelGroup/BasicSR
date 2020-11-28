@@ -8,7 +8,7 @@
     1. 下载 FFHQ 数据集. 推荐从 [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset) 下载 tfrecords 文件.
     1. 从tfrecords 提取到*图片*或者*LMDB*. (需要安装 TensorFlow 来读取 tfrecords).
 
-        > python scripts/extract_images_from_tfrecords.py
+        > python scripts/data_preparation/extract_images_from_tfrecords.py
 
 1. 修改配置文件 `options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ.yml`
 1. 使用分布式训练. 更多训练命令: [TrainTest_CN.md](TrainTest_CN.md)
