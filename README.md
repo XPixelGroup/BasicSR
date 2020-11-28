@@ -12,10 +12,11 @@
 
 ---
 
-BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
+BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and video restoration** toolbox based on PyTorch, such as super-resolution, denoise, deblurring, JPEG artifacts removal, *etc*.<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
+<sub>([HandyView](https://github.com/xinntao/HandyView), [HandyFigure](https://github.com/xinntao/HandyFigure), [HandyCrawler](https://github.com/xinntao/HandyCrawler), [HandyWriting](https://github.com/xinntao/HandyWriting))</sub>
 
-## :sparkles: New Feature
+## :sparkles: New Features
 
 - Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**. Note that it is slightly different from the official testing codes.
    > ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
@@ -36,9 +37,10 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 We provides simple pipelines to train/test/inference models for quick start.
 These pipelines/commands cannot cover all the cases and more details are in the following sections.
 
-- [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
-- [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
-- [How to test DFDNet](docs/HOWTOs.md#How-to-test-DFDNet)
+|  |  | |
+| :--- | :---:        |     :---:      |
+| StyleGAN2   | [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2) | [How to inference StyleGAN2](docs/HOWTOs.md#How-to-inference-StyleGAN2) |
+| DFDNet | - | [How to inference DFDNet](docs/HOWTOs.md#How-to-inference-DFDNet) |
 
 ## :wrench: Dependencies and Installation
 
@@ -125,8 +127,8 @@ The figure below shows the overall framework. More descriptions for each compone
 
 ## :scroll: License and Acknowledgement
 
-This project is released under the Apache 2.0 license.
-More details about license and acknowledgement are in [LICENSE](LICENSE/README.md).
+This project is released under the Apache 2.0 license.<br>
+More details about **license** and **acknowledgement** are in [LICENSE](LICENSE/README.md).
 
 ## :earth_asia: Citations
 

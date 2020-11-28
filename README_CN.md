@@ -12,8 +12,9 @@
 
 ---
 
-BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Resolution) 工具箱 (之后会支持更多的 Restoration 任务).<br>
+BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源图像视频复原工具箱, 比如 超分辨率, 去噪, 去模糊, 去 JPEG 压缩噪声等.<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
+<sub>([HandyView](https://gitee.com/xinntao/HandyView), [HandyFigure](https://gitee.com/xinntao/HandyFigure), [HandyCrawler](https://gitee.com/xinntao/HandyCrawler), [HandyWriting](https://gitee.com/xinntao/HandyWriting))</sub>
 
 ## :sparkles: 新的特性
 
@@ -35,9 +36,10 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-- [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2)
-- [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2)
-- [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet)
+|  |  | |
+| :--- | :---:        |     :---:      |
+| StyleGAN2   | [如何训练 StyleGAN2](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [如何测试 StyleGAN2](docs/HOWTOs_CN.md#如何测试-StyleGAN2) |
+| DFDNet | - | [如何测试 DFDNet](docs/HOWTOs_CN.md#如何测试-DFDNet) |
 
 ## :wrench: 依赖和安装
 
@@ -124,8 +126,8 @@ BasicSR 是一个基于 PyTorch 的**开源**图像视频超分辨率 (Super-Res
 
 ## :scroll: 许可
 
-本项目使用 Apache 2.0 license.
-更多细节参见 [LICENSE](LICENSE/README.md).
+本项目使用 Apache 2.0 license.<br>
+更多关于**许可**和**致谢**, 请参见 [LICENSE](LICENSE/README.md).
 
 ## :earth_asia: 引用
 
