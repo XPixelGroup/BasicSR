@@ -53,7 +53,10 @@ class FaceRestorationHelper(object):
         # self.input_img is Numpy array, (h, w, c) with RGB order
         self.input_img = dlib.load_rgb_image(img_path)
 
-    def detect_faces(self, img_path, upsample_num_times=1):
+    def detect_faces(self,
+                     img_path,
+                     upsample_num_times=1,
+                     only_keep_largest=False):
         """
         Args:
             img_path (str): Image path.
@@ -64,9 +67,23 @@ class FaceRestorationHelper(object):
             int: Number of detected faces.
         """
         self.read_input_image(img_path)
-        self.det_faces = self.face_detector(self.input_img, upsample_num_times)
-        if len(self.det_faces) == 0:
+        det_faces = self.face_detector(self.input_img, upsample_num_times)
+        if len(det_faces) == 0:
             print('No face detected. Try to increase upsample_num_times.')
+        else:
+            if only_keep_largest:
+                print('Detect several faces and only keep the largest.')
+                face_areas = []
+                for i in range(len(det_faces)):
+                    face_area = (det_faces[i].rect.right() -
+                                 det_faces[i].rect.left()) * (
+                                     det_faces[i].rect.bottom() -
+                                     det_faces[i].rect.top())
+                    face_areas.append(face_area)
+                largest_idx = face_areas.index(max(face_areas))
+                self.det_faces = [det_faces[largest_idx]]
+            else:
+                self.det_faces = det_faces
         return len(self.det_faces)
 
     def get_face_landmarks_5(self):
@@ -88,14 +105,28 @@ class FaceRestorationHelper(object):
             if len(det_face) == 0:
                 print(f'Cannot find faces in cropped image with index {idx}.')
                 self.all_landmarks_68.append(None)
-            elif len(det_face) == 1:
-                shape = self.shape_predictor_68(face, det_face[0].rect)
+            else:
+                if len(det_face) > 1:
+                    print('Detect several faces in the cropped face. Use the '
+                          ' largest one. Note that it will also cause overlap '
+                          'during paste_faces_to_input_image.')
+                    face_areas = []
+                    for i in range(len(det_face)):
+                        face_area = (det_face[i].rect.right() -
+                                     det_face[i].rect.left()) * (
+                                         det_face[i].rect.bottom() -
+                                         det_face[i].rect.top())
+                        face_areas.append(face_area)
+                    largest_idx = face_areas.index(max(face_areas))
+                    face_rect = det_face[largest_idx].rect
+                else:
+                    face_rect = det_face[0].rect
+                shape = self.shape_predictor_68(face, face_rect)
                 landmark = np.array([[part.x, part.y]
                                      for part in shape.parts()])
                 self.all_landmarks_68.append(landmark)
                 num_detected_face += 1
-            else:
-                print('Should only have one face at most.')
+
         return num_detected_face
 
     def warp_crop_faces(self,
@@ -146,6 +177,8 @@ class FaceRestorationHelper(object):
         h_up, w_up = h * self.upscale_factor, w * self.upscale_factor
         # simply resize the background
         upsample_img = cv2.resize(input_img, (w_up, h_up))
+        assert len(self.restored_faces) == len(self.inverse_affine_matrices), (
+            'length of restored_faces and affine_matrices are different.')
         for restored_face, inverse_affine in zip(self.restored_faces,
                                                  self.inverse_affine_matrices):
             inv_restored = cv2.warpAffine(restored_face, inverse_affine,
@@ -252,6 +285,7 @@ if __name__ == '__main__':
     parser.add_argument('--test_path', type=str, default='datasets/TestWhole')
     parser.add_argument('--upsample_num_times', type=int, default=1)
     parser.add_argument('--save_inverse_affine', action='store_true')
+    parser.add_argument('--only_keep_largest', action='store_true')
     # The official codes use skimage.io to read the cropped images from disk
     # instead of directly using the intermediate results in the memory (as we
     # do). Such a different operation brings slight differences due to
@@ -286,7 +320,9 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-    result_root = f'results/DFDNet/{args.test_path.split("/")[-1]}'
+    if args.test_path.endswith('/'):  # solve when path ends with /
+        args.test_path = args.test_path[:-1]
+    result_root = f'results/DFDNet/{os.path.basename(args.test_path)}'
 
     # set up the DFDNet
     net = DFDNet(64, dict_path=args.dict_path).to(device)
@@ -320,7 +356,9 @@ if __name__ == '__main__':
                               args.landmark68_path)
         # detect faces
         num_det_faces = face_helper.detect_faces(
-            img_path, upsample_num_times=args.upsample_num_times)
+            img_path,
+            upsample_num_times=args.upsample_num_times,
+            only_keep_largest=args.only_keep_largest)
         # get 5 face landmarks for each face
         num_landmarks = face_helper.get_face_landmarks_5()
         print(f'\tDetect {num_det_faces} faces, {num_landmarks} landmarks.')
@@ -342,10 +380,13 @@ if __name__ == '__main__':
 
         print('\tFace restoration ...')
         # face restoration for each cropped face
+        assert len(cropped_faces) == len(face_helper.all_landmarks_68)
         for idx, (cropped_face, landmarks) in enumerate(
                 zip(cropped_faces, face_helper.all_landmarks_68)):
             if landmarks is None:
                 print(f'Landmarks is None, skip cropped faces with idx {idx}.')
+                # just copy the cropped faces to the restored faces
+                restored_face = cropped_face
             else:
                 # prepare data
                 part_locations = get_part_location(landmarks)
@@ -355,16 +396,21 @@ if __name__ == '__main__':
                                                         cropped_face)
                 cropped_face = cropped_face.unsqueeze(0).to(device)
 
-                with torch.no_grad():
-                    output = net(cropped_face, part_locations)
-                    im = tensor2img(output, min_max=(-1, 1))
+                try:
+                    with torch.no_grad():
+                        output = net(cropped_face, part_locations)
+                        restored_face = tensor2img(output, min_max=(-1, 1))
                     del output
-                torch.cuda.empty_cache()
-                path = os.path.splitext(
-                    os.path.join(save_restore_root, img_name))[0]
-                save_path = f'{path}_{idx:02d}.png'
-                imwrite(im, save_path)
-                face_helper.add_restored_face(im)
+                    torch.cuda.empty_cache()
+                except Exception as e:
+                    print(f'DFDNet inference fail: {e}')
+                    restored_face = tensor2img(cropped_face, min_max=(-1, 1))
+
+            path = os.path.splitext(os.path.join(save_restore_root,
+                                                 img_name))[0]
+            save_path = f'{path}_{idx:02d}.png'
+            imwrite(restored_face, save_path)
+            face_helper.add_restored_face(restored_face)
 
         print('\tGenerate the final result ...')
         # paste each restored face to the input image
