@@ -287,7 +287,7 @@ class EDVR(nn.Module):
         num_reconstruct_block (int): Number of blocks for reconstruction.
             Default: 10.
         center_frame_idx (int): The index of center frame. Frame counting from
-            0. Default: 2.
+            0. Default: Middle of input frames.
         hr_in (bool): Whether the input has high resolution. Default: False.
         with_predeblur (bool): Whether has predeblur module.
             Default: False.
@@ -302,7 +302,7 @@ class EDVR(nn.Module):
                  deformable_groups=8,
                  num_extract_block=5,
                  num_reconstruct_block=10,
-                 center_frame_idx=2,
+                 center_frame_idx,
                  hr_in=False,
                  with_predeblur=False,
                  with_tsa=True):
