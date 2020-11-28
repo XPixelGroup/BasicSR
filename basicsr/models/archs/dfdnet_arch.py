@@ -77,6 +77,7 @@ class DFDNet(nn.Module):
             layer_name_list=self.vgg_layers,
             vgg_type='vgg19',
             use_input_norm=True,
+            range_norm=True,
             requires_grad=False)
 
         # attention block for fusing dictionary features and input features
