@@ -70,6 +70,8 @@ class VGGFeatureExtractor(nn.Module):
         vgg_type (str): Set the type of vgg network. Default: 'vgg19'.
         use_input_norm (bool): If True, normalize the input image. Importantly,
             the input feature must in the range [0, 1]. Default: True.
+        range_norm (bool): If True, norm images with range [-1, 1] to [0, 1].
+            Default: False.
         requires_grad (bool): If true, the parameters of VGG network will be
             optimized. Default: False.
         remove_pooling (bool): If true, the max pooling operations in VGG net
@@ -81,6 +83,7 @@ class VGGFeatureExtractor(nn.Module):
                  layer_name_list,
                  vgg_type='vgg19',
                  use_input_norm=True,
+                 range_norm=False,
                  requires_grad=False,
                  remove_pooling=False,
                  pooling_stride=2):
@@ -88,6 +91,7 @@ class VGGFeatureExtractor(nn.Module):
 
         self.layer_name_list = layer_name_list
         self.use_input_norm = use_input_norm
+        self.range_norm = range_norm
 
         self.names = NAMES[vgg_type.replace('_bn', '')]
         if 'bn' in vgg_type:
@@ -153,7 +157,8 @@ class VGGFeatureExtractor(nn.Module):
         Returns:
             Tensor: Forward results.
         """
-
+        if self.range_norm:
+            x = (x + 1) / 2
         if self.use_input_norm:
             x = (x - self.mean) / self.std
 
