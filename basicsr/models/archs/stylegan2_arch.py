@@ -454,6 +454,7 @@ class StyleGAN2Generator(nn.Module):
             magnitude. A cross production will be applied to extent 1D resample
             kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
         lr_mlp (float): Learning rate multiplier for mlp layers. Default: 0.01.
+        narrow (float): Narrow ratio for channels. Default: 1.0.
     """
 
     def __init__(self,
@@ -462,7 +463,8 @@ class StyleGAN2Generator(nn.Module):
                  num_mlp=8,
                  channel_multiplier=2,
                  resample_kernel=(1, 3, 3, 1),
-                 lr_mlp=0.01):
+                 lr_mlp=0.01,
+                 narrow=1):
         super(StyleGAN2Generator, self).__init__()
         # Style MLP layers
         self.num_style_feat = num_style_feat
@@ -479,16 +481,17 @@ class StyleGAN2Generator(nn.Module):
         self.style_mlp = nn.Sequential(*style_mlp_layers)
 
         channels = {
-            '4': 512,
-            '8': 512,
-            '16': 512,
-            '32': 512,
-            '64': 256 * channel_multiplier,
-            '128': 128 * channel_multiplier,
-            '256': 64 * channel_multiplier,
-            '512': 32 * channel_multiplier,
-            '1024': 16 * channel_multiplier
+            '4': int(512 * narrow),
+            '8': int(512 * narrow),
+            '16': int(512 * narrow),
+            '32': int(512 * narrow),
+            '64': int(256 * channel_multiplier * narrow),
+            '128': int(128 * channel_multiplier * narrow),
+            '256': int(64 * channel_multiplier * narrow),
+            '512': int(32 * channel_multiplier * narrow),
+            '1024': int(16 * channel_multiplier * narrow)
         }
+        self.channels = channels
 
         self.constant_input = ConstantInput(channels['4'], size=4)
         self.style_conv1 = StyleConv(
@@ -840,25 +843,30 @@ class StyleGAN2Discriminator(nn.Module):
         resample_kernel (list[int]): A list indicating the 1D resample kernel
             magnitude. A cross production will be applied to extent 1D resample
             kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
+        stddev_group (int): For group stddev statistics. Default: 4.
+        narrow (float): Narrow ratio for channels. Default: 1.0.
     """
 
     def __init__(self,
                  out_size,
                  channel_multiplier=2,
-                 resample_kernel=(1, 3, 3, 1)):
+                 resample_kernel=(1, 3, 3, 1),
+                 stddev_group=4,
+                 narrow=1):
         super(StyleGAN2Discriminator, self).__init__()
 
         channels = {
-            '4': 512,
-            '8': 512,
-            '16': 512,
-            '32': 512,
-            '64': 256 * channel_multiplier,
-            '128': 128 * channel_multiplier,
-            '256': 64 * channel_multiplier,
-            '512': 32 * channel_multiplier,
-            '1024': 16 * channel_multiplier
+            '4': int(512 * narrow),
+            '8': int(512 * narrow),
+            '16': int(512 * narrow),
+            '32': int(512 * narrow),
+            '64': int(256 * channel_multiplier * narrow),
+            '128': int(128 * channel_multiplier * narrow),
+            '256': int(64 * channel_multiplier * narrow),
+            '512': int(32 * channel_multiplier * narrow),
+            '1024': int(16 * channel_multiplier * narrow)
         }
+
         log_size = int(math.log(out_size, 2))
 
         conv_body = [
@@ -891,7 +899,7 @@ class StyleGAN2Discriminator(nn.Module):
                 lr_mul=1,
                 activation=None),
         )
-        self.stddev_group = 4
+        self.stddev_group = stddev_group
         self.stddev_feat = 1
 
     def forward(self, x):
