@@ -17,17 +17,15 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and vide
 <sub>([HandyView](https://github.com/xinntao/HandyView), [HandyFigure](https://github.com/xinntao/HandyFigure), [HandyCrawler](https://github.com/xinntao/HandyCrawler), [HandyWriting](https://github.com/xinntao/HandyWriting))</sub>
 
 ## :sparkles: New Features
-
-- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**. Note that it is slightly different from the official testing codes.
-   > ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
-   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
+- Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab).
+- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**.
 - Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-   > CVPR20: Analyzing and Improving the Image Quality of StyleGAN <br>
-   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
 
 <details>
   <summary>More</summary>
 <ul>
+  <li> Sep 8, 2020. Add blind face restoration inference codes: DFDNet. <br> <i><font color="#A9A9A9">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#A9A9A9">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
+  <li> Aug 27, 2020. Add StyleGAN2 training and testing codes. <br> <i><font color="#A9A9A9">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#A9A9A9">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
   <li>Aug 19, 2020. A brand-new BasicSR v1.0.0 online.</li>
 </ul>
 </details>
