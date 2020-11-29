@@ -66,7 +66,7 @@ class DFDNet(nn.Module):
         # part_sizes: [80, 80, 50, 110]
         channel_sizes = [128, 256, 512, 512]
         self.feature_sizes = np.array([256, 128, 64, 32])
-        self.vgg_layers = ['conv2_2', 'conv3_4', 'conv4_4', 'conv5_4']
+        self.vgg_layers = ['relu2_2', 'relu3_4', 'relu4_4', 'conv5_4']
         self.flag_dict_device = False
 
         # dict
@@ -77,6 +77,7 @@ class DFDNet(nn.Module):
             layer_name_list=self.vgg_layers,
             vgg_type='vgg19',
             use_input_norm=True,
+            range_norm=True,
             requires_grad=False)
 
         # attention block for fusing dictionary features and input features
