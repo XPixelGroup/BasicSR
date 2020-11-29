@@ -25,8 +25,8 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 <details>
   <summary>更多</summary>
 <ul>
-  <li> Sep 8, 2020. 添加 <b>盲人脸复原</b> 测试代码: <b>DFDNet</b>. <br> <i><font color="#A9A9A9">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#A9A9A9">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
-  <li> Aug 27, 2020. 添加 <b>StyleGAN2</b> 训练和测试代码. <br> <i><font color="#A9A9A9">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#A9A9A9">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
+  <li> Sep 8, 2020. 添加 <b>盲人脸复原</b> 测试代码: <b>DFDNet</b>. <br> <i><font color="#DCDCDC">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#DCDCDC">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
+  <li> Aug 27, 2020. 添加 <b>StyleGAN2</b> 训练和测试代码. <br> <i><font color="#DCDCDC">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#DCDCDC">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
   <li>Aug 19, 2020. <b>全新的</b> BasicSR v1.0.0 上线.</li>
 </ul>
 </details>
