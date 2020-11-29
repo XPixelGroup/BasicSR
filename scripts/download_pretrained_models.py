@@ -112,9 +112,7 @@ if __name__ == '__main__':
             'DFDNet_dict_512-f79685f0.pth':
             '1iH00oMsoN_1OJaEQw3zP7_wqiAYMnY79',
             'DFDNet_official-d1fa5650.pth':
-            '1u6Sgcp8gVoy4uVTrOJKD3y9RuqH2JBAe',
-            'FFHQ_5_landmarks_template_1024-90a00515.npy':
-            '1IQdQcq9QnpW6YzRwDaNbpV-rJ1Cq7RUq'
+            '1u6Sgcp8gVoy4uVTrOJKD3y9RuqH2JBAe'
         },
         'dlib': {
             'mmod_human_face_detector-4cb19393.dat':
