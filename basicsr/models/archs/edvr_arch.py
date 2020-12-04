@@ -302,7 +302,7 @@ class EDVR(nn.Module):
                  deformable_groups=8,
                  num_extract_block=5,
                  num_reconstruct_block=10,
-                 center_frame_idx,
+                 center_frame_idx=None,
                  hr_in=False,
                  with_predeblur=False,
                  with_tsa=True):
