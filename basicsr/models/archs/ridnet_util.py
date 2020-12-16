@@ -51,7 +51,9 @@ class ResidualBlock(nn.Module):
 
 
 class EResidualBlock(nn.Module):
-    """Enhanced Residual block with three convolution layers in residual branch.
+    """Enhanced Residual block.
+
+    There are three convolution layers in residual branch.
 
     It has a style of:
         ---Conv-ReLU-Conv-ReLU-Conv-+-ReLU-
@@ -108,7 +110,8 @@ class MergeRun(nn.Module):
         )
 
         self.aggregation = nn.Sequential(
-            nn.Conv2d(out_channels * 2, out_channels, kernel_size, stride, padding),
+            nn.Conv2d(
+                out_channels * 2, out_channels, kernel_size, stride, padding),
             nn.ReLU(inplace=True)
         )
 
