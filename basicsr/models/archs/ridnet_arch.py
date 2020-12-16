@@ -1,7 +1,8 @@
 import torch.nn as nn
+
 from basicsr.models.archs.arch_util import make_layer
-from basicsr.models.archs.ridnet_util import (ResidualBlock, EResidualBlock,
-                                              MergeRun, MeanShift)
+from basicsr.models.archs.ridnet_util import (EResidualBlock, MeanShift,
+                                              MergeRun, ResidualBlock)
 
 
 class ChannelAttention(nn.Module):
@@ -9,7 +10,7 @@ class ChannelAttention(nn.Module):
 
     Args:
         num_feat (int): Channel number of intermediate features.
-        squeeze_factor (int): Channel squeeze factor. Default: 16.
+        squeeze_factor (int): Channel squeeze factor. Default:
     """
 
     def __init__(self, mid_channels, squeeze_factor=16):
@@ -41,10 +42,7 @@ class EAM(nn.Module):
         ca: The feature/channel attention unit.
     """
 
-    def __init__(self,
-                 in_channels,
-                 mid_channels,
-                 out_channels):
+    def __init__(self, in_channels, mid_channels, out_channels):
         super(EAM, self).__init__()
 
         self.merge = MergeRun(in_channels, mid_channels)
