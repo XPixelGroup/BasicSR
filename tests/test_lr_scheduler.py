@@ -1,9 +1,13 @@
-import matplotlib as mpl
 import torch
-from matplotlib import pyplot as plt
-from matplotlib import ticker as mtick
 
 from basicsr.models.lr_scheduler import CosineAnnealingRestartLR
+
+try:
+    import matplotlib as mpl
+    from matplotlib import pyplot as plt
+    from matplotlib import ticker as mtick
+except ImportError:
+    print('Please install matplotlib.')
 
 mpl.use('Agg')
 

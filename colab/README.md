@@ -4,4 +4,10 @@
 
 To maintain a small size of BasicSR repo, we do not include the original colab notebooks in this repo, but provide links to the google colab.
 
-- [BasicSR_inference_ESRGAN.ipynb](https://colab.research.google.com/drive/1JQScYICvEC3VqaabLu-lxvq9h7kSV1ML?usp=sharing)
+| Face Restoration| |
+| :--- | :---:        |
+|DFDNet | [BasicSR_inference_DFDNet.ipynb](https://colab.research.google.com/drive/1RoNDeipp9yPjI3EbpEbUhn66k5Uzg4n8?usp=sharing)|
+| **Super-Resolution**| |
+|ESRGAN |[BasicSR_inference_ESRGAN.ipynb](https://colab.research.google.com/drive/1JQScYICvEC3VqaabLu-lxvq9h7kSV1ML?usp=sharing)|
+| **Deblurring**| |
+| **Denoise**| |

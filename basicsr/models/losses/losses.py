@@ -5,7 +5,7 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 from basicsr.models.archs.vgg_arch import VGGFeatureExtractor
-from basicsr.models.losses.loss_utils import weighted_loss
+from basicsr.models.losses.loss_util import weighted_loss
 
 _reduction_modes = ['none', 'mean', 'sum']
 
@@ -155,17 +155,14 @@ class PerceptualLoss(nn.Module):
             Default: 'vgg19'.
         use_input_norm (bool):  If True, normalize the input image in vgg.
             Default: True.
+        range_norm (bool): If True, norm images with range [-1, 1] to [0, 1].
+            Default: False.
         perceptual_weight (float): If `perceptual_weight > 0`, the perceptual
             loss will be calculated and the loss will multiplied by the
             weight. Default: 1.0.
         style_weight (float): If `style_weight > 0`, the style loss will be
             calculated and the loss will multiplied by the weight.
             Default: 0.
-        norm_img (bool): If True, the image will be normed to [0, 1]. Note that
-            this is different from the `use_input_norm` which norm the input in
-            in forward function of vgg according to the statistics of dataset.
-            Importantly, the input image must be in range [-1, 1].
-            Default: False.
         criterion (str): Criterion used for perceptual loss. Default: 'l1'.
     """
 
@@ -173,19 +170,19 @@ class PerceptualLoss(nn.Module):
                  layer_weights,
                  vgg_type='vgg19',
                  use_input_norm=True,
+                 range_norm=False,
                  perceptual_weight=1.0,
                  style_weight=0.,
-                 norm_img=False,
                  criterion='l1'):
         super(PerceptualLoss, self).__init__()
-        self.norm_img = norm_img
         self.perceptual_weight = perceptual_weight
         self.style_weight = style_weight
         self.layer_weights = layer_weights
         self.vgg = VGGFeatureExtractor(
             layer_name_list=list(layer_weights.keys()),
             vgg_type=vgg_type,
-            use_input_norm=use_input_norm)
+            use_input_norm=use_input_norm,
+            range_norm=range_norm)
 
         self.criterion_type = criterion
         if self.criterion_type == 'l1':
@@ -208,11 +205,6 @@ class PerceptualLoss(nn.Module):
         Returns:
             Tensor: Forward results.
         """
-
-        if self.norm_img:
-            x = (x + 1.) * 0.5
-            gt = (gt + 1.) * 0.5
-
         # extract vgg features
         x_features = self.vgg(x)
         gt_features = self.vgg(gt.detach())

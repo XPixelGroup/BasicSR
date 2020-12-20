@@ -8,7 +8,7 @@
     1. 下载 FFHQ 数据集. 推荐从 [NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset) 下载 tfrecords 文件.
     1. 从tfrecords 提取到*图片*或者*LMDB*. (需要安装 TensorFlow 来读取 tfrecords).
 
-        > python scripts/extract_images_from_tfrecords.py
+        > python scripts/data_preparation/extract_images_from_tfrecords.py
 
 1. 修改配置文件 `options/train/StyleGAN/train_StyleGAN2_256_Cmul2_FFHQ.yml`
 1. 使用分布式训练. 更多训练命令: [TrainTest_CN.md](TrainTest_CN.md)
@@ -20,7 +20,7 @@
 1. 从 **ModelZoo** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g)) 下载预训练模型到 `experiments/pretrained_models` 文件夹.
 1. 测试.
 
-    > python tests/test_stylegan2.py
+    > python inference/inference_stylegan2.py
 
 1. 结果在 `samples` 文件夹
 
@@ -43,6 +43,6 @@
 4. 准备测试图片到 `datasets`, 比如说我们把测试图片放在 `datasets/TestWhole` 文件夹.
 5. 测试.
 
-    >  python tests/test_face_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
+    >  python inference/inference_dfdnet.py --upscale_factor=2 --test_path datasets/TestWhole
 
 6. 结果在 `results/DFDNet` 文件夹.

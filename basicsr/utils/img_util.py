@@ -78,8 +78,11 @@ def tensor2img(tensor, rgb2bgr=True, out_type=np.uint8, min_max=(0, 1)):
         elif n_dim == 3:
             img_np = _tensor.numpy()
             img_np = img_np.transpose(1, 2, 0)
-            if rgb2bgr:
-                img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
+            if img_np.shape[2] == 1:  # gray image
+                img_np = np.squeeze(img_np, axis=2)
+            else:
+                if rgb2bgr:
+                    img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
         elif n_dim == 2:
             img_np = _tensor.numpy()
         else:

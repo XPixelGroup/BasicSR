@@ -2,7 +2,7 @@ import math
 import requests
 from tqdm import tqdm
 
-from .util import sizeof_fmt
+from .misc import sizeof_fmt
 
 
 def download_file_from_google_drive(file_id, save_path):

@@ -28,7 +28,6 @@ def reorder_image(img, input_order='HWC'):
         img = img[..., None]
     if input_order == 'CHW':
         img = img.transpose(1, 2, 0)
-    img = img.astype(np.float64)
     return img
 
 

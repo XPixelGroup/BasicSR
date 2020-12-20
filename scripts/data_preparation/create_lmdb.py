@@ -1,7 +1,8 @@
+import argparse
 from os import path as osp
 
 from basicsr.utils import scandir
-from basicsr.utils.lmdb import make_lmdb_from_imgs
+from basicsr.utils.lmdb_util import make_lmdb_from_imgs
 
 
 def create_lmdb_for_div2k():
@@ -160,6 +161,22 @@ def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
 
 
 if __name__ == '__main__':
-    create_lmdb_for_div2k()
-    # create_lmdb_for_reds()
-    # create_lmdb_for_vimeo90k()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--dataset',
+        type=str,
+        help=(
+            "Options: 'DIV2K', 'REDS', 'Vimeo90K' "
+            'You may need to modify the corresponding configurations in codes.'
+        ))
+    args = parser.parse_args()
+    dataset = args.dataset.lower()
+    if dataset == 'div2k':
+        create_lmdb_for_div2k()
+    elif dataset == 'reds':
+        create_lmdb_for_reds()
+    elif dataset == 'vimeo90k':
+        create_lmdb_for_vimeo90k()
+    else:
+        raise ValueError('Wrong dataset.')

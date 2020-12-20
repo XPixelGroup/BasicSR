@@ -3,7 +3,7 @@ import glob
 import os
 from os import path as osp
 
-from basicsr.utils.download import download_file_from_google_drive
+from basicsr.utils.download_util import download_file_from_google_drive
 
 
 def download_dataset(dataset, file_ids):

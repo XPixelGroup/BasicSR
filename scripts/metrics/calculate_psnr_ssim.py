@@ -25,6 +25,7 @@ def main():
     crop_border = 4
     suffix = '_expname'
     test_y_channel = False
+    correct_mean_var = False
     # -------------------------------------------------------------------------
 
     psnr_all = []
@@ -43,6 +44,26 @@ def main():
         img_restored = cv2.imread(
             osp.join(folder_restored, basename + suffix + ext),
             cv2.IMREAD_UNCHANGED).astype(np.float32) / 255.
+
+        if correct_mean_var:
+            mean_l = []
+            std_l = []
+            for j in range(3):
+                mean_l.append(np.mean(img_gt[:, :, j]))
+                std_l.append(np.std(img_gt[:, :, j]))
+            for j in range(3):
+                # correct twice
+                mean = np.mean(img_restored[:, :, j])
+                img_restored[:, :,
+                             j] = img_restored[:, :, j] - mean + mean_l[j]
+                std = np.std(img_restored[:, :, j])
+                img_restored[:, :, j] = img_restored[:, :, j] / std * std_l[j]
+
+                mean = np.mean(img_restored[:, :, j])
+                img_restored[:, :,
+                             j] = img_restored[:, :, j] - mean + mean_l[j]
+                std = np.std(img_restored[:, :, j])
+                img_restored[:, :, j] = img_restored[:, :, j] / std * std_l[j]
 
         if test_y_channel and img_gt.ndim == 3 and img_gt.shape[2] == 3:
             img_gt = bgr2ycbcr(img_gt, y_only=True)
@@ -63,6 +84,8 @@ def main():
               f'\tSSIM: {ssim:.6f}')
         psnr_all.append(psnr)
         ssim_all.append(ssim)
+    print(folder_gt)
+    print(folder_restored)
     print(f'Average: PSNR: {sum(psnr_all) / len(psnr_all):.6f} dB, '
           f'SSIM: {sum(ssim_all) / len(ssim_all):.6f}')
 

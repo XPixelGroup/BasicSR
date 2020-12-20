@@ -54,28 +54,6 @@ class SFTUpBlock(nn.Module):
         return out
 
 
-class VGGFaceFeatureExtractor(VGGFeatureExtractor):
-
-    def preprocess(self, x):
-        # norm to [0, 1]
-        x = (x + 1) / 2
-        if self.use_input_norm:
-            x = (x - self.mean) / self.std
-        if x.shape[3] < 224:
-            x = torch.nn.functional.interpolate(
-                x, size=(224, 224), mode='bilinear', align_corners=False)
-        return x
-
-    def forward(self, x):
-        x = self.preprocess(x)
-        features = []
-        for key, layer in self.vgg_net._modules.items():
-            x = layer(x)
-            if key in self.layer_name_list:
-                features.append(x)
-        return features
-
-
 class DFDNet(nn.Module):
     """DFDNet: Deep Face Dictionary Network.
 
@@ -88,16 +66,18 @@ class DFDNet(nn.Module):
         # part_sizes: [80, 80, 50, 110]
         channel_sizes = [128, 256, 512, 512]
         self.feature_sizes = np.array([256, 128, 64, 32])
+        self.vgg_layers = ['relu2_2', 'relu3_4', 'relu4_4', 'conv5_4']
         self.flag_dict_device = False
 
         # dict
         self.dict = torch.load(dict_path)
 
         # vgg face extractor
-        self.vgg_extractor = VGGFaceFeatureExtractor(
-            layer_name_list=['conv2_2', 'conv3_4', 'conv4_4', 'conv5_4'],
+        self.vgg_extractor = VGGFeatureExtractor(
+            layer_name_list=self.vgg_layers,
             vgg_type='vgg19',
             use_input_norm=True,
+            range_norm=True,
             requires_grad=False)
 
         # attention block for fusing dictionary features and input features
@@ -175,9 +155,9 @@ class DFDNet(nn.Module):
         # update vggface features using the dictionary for each part
         updated_vgg_features = []
         batch = 0  # only supports testing with batch size = 0
-        for i, f_size in enumerate(self.feature_sizes):
+        for vgg_layer, f_size in zip(self.vgg_layers, self.feature_sizes):
             dict_features = self.dict[f'{f_size}']
-            vgg_feat = vgg_features[i]
+            vgg_feat = vgg_features[vgg_layer]
             updated_feat = vgg_feat.clone()
 
             # swap features from dictionary
@@ -190,7 +170,7 @@ class DFDNet(nn.Module):
 
             updated_vgg_features.append(updated_feat)
 
-        vgg_feat_dilation = self.multi_scale_dilation(vgg_features[3])
+        vgg_feat_dilation = self.multi_scale_dilation(vgg_features['conv5_4'])
         # use updated vgg features to modulate the upsampled features with
         # SFT (Spatial Feature Transform) scaling and shifting manner.
         upsampled_feat = self.upsample0(vgg_feat_dilation,

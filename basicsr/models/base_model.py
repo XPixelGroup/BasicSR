@@ -242,14 +242,17 @@ class BaseModel():
             load_path (str): The path of networks to be loaded.
             net (nn.Module): Network.
             strict (bool): Whether strictly loaded.
-            param_key (str): The parameter key of loaded network.
+            param_key (str): The parameter key of loaded network. If set to
+                None, use the root 'path'.
                 Default: 'params'.
         """
         net = self.get_bare_model(net)
         logger.info(
             f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(
-            load_path, map_location=lambda storage, loc: storage)[param_key]
+            load_path, map_location=lambda storage, loc: storage)
+        if param_key is not None:
+            load_net = load_net[param_key]
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):

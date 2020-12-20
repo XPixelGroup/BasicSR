@@ -12,22 +12,22 @@
 
 ---
 
-BasicSR is an **open source** image and video super-resolution toolbox based on PyTorch (will extend to more restoration tasks in the future).<br>
+BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and video restoration** toolbox based on PyTorch, such as super-resolution, denoise, deblurring, JPEG artifacts removal, *etc*.<br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
+<sub>([HandyView](https://github.com/xinntao/HandyView), [HandyFigure](https://github.com/xinntao/HandyFigure), [HandyCrawler](https://github.com/xinntao/HandyCrawler), [HandyWriting](https://github.com/xinntao/HandyWriting))</sub>
 
-## :sparkles: New Feature
+## :sparkles: New Features
 
-- Sep 8, 2020. Add **blind face restoration inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet)**. Note that it is slightly different from the official testing codes.
-   > ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries <br>
-   > Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang <br>
+- Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab).
+- Sep 8, 2020. Add **blind face restoration** inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
 - Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-   > CVPR20: Analyzing and Improving the Image Quality of StyleGAN <br>
-   > Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila <br>
 
 <details>
   <summary>More</summary>
 <ul>
-  <li>Aug 19, 2020. A brand-new BasicSR v1.0.0 online.</li>
+  <li> Sep 8, 2020. Add <b>blind face restoration</b> inference codes: <b>DFDNet</b>. <br> <i><font color="#DCDCDC">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#DCDCDC">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
+  <li> Aug 27, 2020. Add <b>StyleGAN2</b> training and testing codes. <br> <i><font color="#DCDCDC">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#DCDCDC">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
+  <li>Aug 19, 2020. A <b>brand-new</b> BasicSR v1.0.0 online.</li>
 </ul>
 </details>
 
@@ -36,9 +36,21 @@ BasicSR is an **open source** image and video super-resolution toolbox based on 
 We provides simple pipelines to train/test/inference models for quick start.
 These pipelines/commands cannot cover all the cases and more details are in the following sections.
 
-- [How to train StyleGAN2](docs/HOWTOs.md#How-to-train-StyleGAN2)
-- [How to test StyleGAN2](docs/HOWTOs.md#How-to-test-StyleGAN2)
-- [How to test DFDNet](docs/HOWTOs.md#How-to-test-DFDNet)
+| GAN |  |  |  | | |
+| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
+| StyleGAN2   | [Train](docs/HOWTOs.md#How-to-train-StyleGAN2) | [Inference](docs/HOWTOs.md#How-to-inference-StyleGAN2) | | | |
+| **Face Restoration** |  |  |  | | |
+| DFDNet | - | [Inference](docs/HOWTOs.md#How-to-inference-DFDNet) | | | |
+| **Super Resolution** |  |  |  | | |
+| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
+| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
+| RCAN | *TODO* | *TODO* |  |  | |
+| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
+| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
+| **Deblurring** |  |  |  | | |
+| DeblurGANv2 | - | *TODO* |  | | |
+| **Denoise** |  |  |  | | |
+| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
 
 ## :wrench: Dependencies and Installation
 
@@ -78,6 +90,15 @@ These pipelines/commands cannot cover all the cases and more details are in the 
     python setup.py develop
     ```
 
+    You may also want to specify the CUDA paths:
+
+      ```bash
+      CUDA_HOME=/usr/local/cuda \
+      CUDNN_INCLUDE_DIR=/usr/local/cuda \
+      CUDNN_LIB_DIR=/usr/local/cuda \
+      python setup.py develop
+      ```
+
 Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
 
 ## :hourglass_flowing_sand: TODO List
@@ -116,8 +137,8 @@ The figure below shows the overall framework. More descriptions for each compone
 
 ## :scroll: License and Acknowledgement
 
-This project is released under the Apache 2.0 license.
-More details about license and acknowledgement are in [LICENSE](LICENSE/README.md).
+This project is released under the Apache 2.0 license.<br>
+More details about **license** and **acknowledgement** are in [LICENSE](LICENSE/README.md).
 
 ## :earth_asia: Citations
 
