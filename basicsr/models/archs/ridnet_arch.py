@@ -7,23 +7,29 @@ from basicsr.models.archs.arch_util import ResidualBlockNoBN, make_layer
 class MeanShift(nn.Conv2d):
     """ Data normalization with mean and std.
 
-    Note that the self.weight and self.data will update during training.
-
     Args:
         rgb_range (int): Maximum value of RGB.
-        rgb_mean (list): Mean for RGB channels.
-        rgb_std (list): Std for RGB channels.
-        sign (int): for substraction, sign is -1, for addition, sign is 1.
+        rgb_mean (list[float]): Mean for RGB channels.
+        rgb_std (list[float]): Std for RGB channels.
+        sign (int): For substraction, sign is -1, for addition, sign is 1.
+            Default: -1.
+        requires_grad (bool): Whether to update the self.weight and self.bias.
+            Default: True.
     """
 
-    def __init__(self, rgb_range, rgb_mean, rgb_std, sign=-1):
+    def __init__(self,
+                 rgb_range,
+                 rgb_mean,
+                 rgb_std,
+                 sign=-1,
+                 requires_grad=True):
         super(MeanShift, self).__init__(3, 3, kernel_size=1)
         std = torch.Tensor(rgb_std)
         self.weight.data = torch.eye(3).view(3, 3, 1, 1)
         self.weight.data.div_(std.view(3, 1, 1, 1))
         self.bias.data = sign * rgb_range * torch.Tensor(rgb_mean)
         self.bias.data.div_(std)
-        self.requires_grad = False
+        self.requires_grad = requires_grad
 
 
 class EResidualBlockNoBN(nn.Module):

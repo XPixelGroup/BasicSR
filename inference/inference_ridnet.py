@@ -4,8 +4,10 @@ import glob
 import numpy as np
 import os
 import torch
+from tqdm import tqdm
 
 from basicsr.models.archs.ridnet_arch import RIDNet
+from basicsr.utils.img_util import img2tensor, tensor2img
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -33,20 +35,23 @@ if __name__ == '__main__':
     net.eval()
 
     # scan all the jpg and png images
-    for img_path in sorted(glob.glob(os.path.join(test_root, '*.[jp][pn]g'))):
+    img_list = sorted(glob.glob(os.path.join(test_root, '*.[jp][pn]g')))
+    pbar = tqdm(total=len(img_list), desc='')
+    for idx, img_path in enumerate(img_list):
         img_name = os.path.basename(img_path).split('.')[0]
-        print(f'Processing {img_name} image ...')
+        pbar.update(1)
+        pbar.set_description(f'{idx}: {img_name}')
         # read image
-        img = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
-        img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]],
-                                            (2, 0, 1))).float()
-        img = img.unsqueeze(0).to(device)
+        img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        img = img2tensor(
+            img, bgr2rgb=True, float32=True).unsqueeze(0).to(device)
         # inference
         with torch.no_grad():
             output = net(img)
         # save image
-        output = output.data.squeeze().float().cpu().clamp_(0, 255).numpy()
-        output = np.transpose(output[[2, 1, 0], :, :], (1, 2, 0))
-        output = output.round().astype(np.uint8)
-        save_img_path = f'{result_root}/{img_name}_x{args.noise_g}_RIDNet.png'
+        output = tensor2img(
+            output, rgb2bgr=True, out_type=np.uint8, min_max=(0, 255))
+        save_img_path = os.path.join(
+            result_root, f'{img_name}_x'
+            f'{args.noise_g}_RIDNet.png')
         cv2.imwrite(save_img_path, output)
