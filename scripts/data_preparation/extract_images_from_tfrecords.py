@@ -28,11 +28,11 @@ def convert_celeba_tfrecords(tf_file,
         phase = 'train'
     if save_type == 'lmdb':
         save_path = os.path.join(save_root,
-                                 f'celeba_{2**log_resolution}_{phase}.lmdb')
+                                 'celeba_%d_%s.lmdb' % (2 ** log_resolution, phase))
         lmdb_maker = LmdbMaker(save_path)
     elif save_type == 'img':
         save_path = os.path.join(save_root,
-                                 f'celeba_{2**log_resolution}_{phase}')
+                                 'celeba_%d_%s' % (2 ** log_resolution, phase))
     else:
         raise ValueError('Wrong save type.')
 
@@ -59,11 +59,11 @@ def convert_celeba_tfrecords(tf_file,
             img = img[:, :, [2, 1, 0]]
 
             if save_type == 'img':
-                cv2.imwrite(os.path.join(save_path, f'{idx:08d}.png'), img)
+                cv2.imwrite(os.path.join(save_path, '{:08d}.png'.format(idx)), img)
             elif save_type == 'lmdb':
                 _, img_byte = cv2.imencode(
                     '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
-                key = f'{idx:08d}/r{log_resolution:02d}'
+                key = '{:08d}/r{:02d}'.format(idx, log_resolution)
                 lmdb_maker.put(img_byte, key, (h, w, c))
 
             idx += 1
@@ -89,10 +89,10 @@ def convert_ffhq_tfrecords(tf_file,
     """
 
     if save_type == 'lmdb':
-        save_path = os.path.join(save_root, f'ffhq_{2**log_resolution}.lmdb')
+        save_path = os.path.join(save_root, 'ffhq_%d.lmdb' % 2 ** log_resolution)
         lmdb_maker = LmdbMaker(save_path)
     elif save_type == 'img':
-        save_path = os.path.join(save_root, f'ffhq_{2**log_resolution}')
+        save_path = os.path.join(save_root, 'ffhq_%d' % 2 ** log_resolution)
     else:
         raise ValueError('Wrong save type.')
 
@@ -114,11 +114,11 @@ def convert_ffhq_tfrecords(tf_file,
             img = img.transpose(1, 2, 0)
             img = img[:, :, [2, 1, 0]]
             if save_type == 'img':
-                cv2.imwrite(os.path.join(save_path, f'{idx:08d}.png'), img)
+                cv2.imwrite(os.path.join(save_path, '{:08d}.png'.format(idx)), img)
             elif save_type == 'lmdb':
                 _, img_byte = cv2.imencode(
                     '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
-                key = f'{idx:08d}/r{log_resolution:02d}'
+                key = '{:08d}/r{:02d}'.format(idx, log_resolution)
                 lmdb_maker.put(img_byte, key, (h, w, c))
 
             idx += 1
@@ -145,7 +145,7 @@ def make_ffhq_lmdb_from_imgs(folder_path,
 
     if save_type == 'lmdb':
         save_path = os.path.join(save_root,
-                                 f'ffhq_{2**log_resolution}_crop1.2.lmdb')
+                                 'ffhq_%d_crop1.2.lmdb' % 2 ** log_resolution)
         lmdb_maker = LmdbMaker(save_path)
     else:
         raise ValueError('Wrong save type.')
@@ -154,14 +154,14 @@ def make_ffhq_lmdb_from_imgs(folder_path,
 
     img_list = sorted(glob.glob(os.path.join(folder_path, '*')))
     for idx, img_path in enumerate(img_list):
-        print(f'Processing {idx}: ', img_path)
+        print('Processing %d: ' % idx, img_path)
         img = cv2.imread(img_path)
         h, w, c = img.shape
 
         if save_type == 'lmdb':
             _, img_byte = cv2.imencode(
                 '.png', img, [cv2.IMWRITE_PNG_COMPRESSION, compress_level])
-            key = f'{idx:08d}/r{log_resolution:02d}'
+            key = '{:08d}/r{:02d}'.format(idx, log_resolution)
             lmdb_maker.put(img_byte, key, (h, w, c))
 
     if save_type == 'lmdb':

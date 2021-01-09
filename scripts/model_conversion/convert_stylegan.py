@@ -39,9 +39,9 @@ def convert_net_g(ori_net, crt_net):
 
         # replace
         if crt_net[crt_k].size() != ori_net[ori_k].size():
-            raise ValueError('Wrong tensor size: \n'
-                             f'crt_net: {crt_net[crt_k].size()}\n'
-                             f'ori_net: {ori_net[ori_k].size()}')
+            raise ValueError('Wrong tensor size: \n' +
+                             'crt_net: %s\n' % crt_net[crt_k].size() +
+                             'ori_net: %s' % ori_net[ori_k].size())
         else:
             crt_net[crt_k] = ori_net[ori_k]
 
@@ -59,9 +59,9 @@ def convert_net_d(ori_net, crt_net):
 
         # replace
         if crt_net[crt_k].size() != ori_net[ori_k].size():
-            raise ValueError('Wrong tensor size: \n'
-                             f'crt_net: {crt_net[crt_k].size()}\n'
-                             f'ori_net: {ori_net[ori_k].size()}')
+            raise ValueError('Wrong tensor size: \n' +
+                             'crt_net: %s\n' % crt_net[crt_k].size() +
+                             'ori_net: %s' % ori_net[ori_k].size())
         else:
             crt_net[crt_k] = ori_net[ori_k]
     return crt_net

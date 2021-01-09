@@ -60,8 +60,8 @@ def calculate_stylegan2_fid():
     features = features.numpy()
     total_len = features.shape[0]
     features = features[:args.num_sample]
-    print(f'Extracted {total_len} features, '
-          f'use the first {features.shape[0]} features to calculate stats.')
+    print('Extracted %d features, ' % total_len +
+          'use the first %d features to calculate stats.' % features.shape[0])
     sample_mean = np.mean(features, 0)
     sample_cov = np.cov(features, rowvar=False)
 

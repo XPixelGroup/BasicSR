@@ -149,8 +149,8 @@ def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
     for line in train_list:
         folder, sub_folder = line.split('/')
         img_path_list.extend(
-            [osp.join(folder, sub_folder, f'im{j + 1}.png') for j in range(7)])
-        keys.extend([f'{folder}/{sub_folder}/im{j + 1}' for j in range(7)])
+            [osp.join(folder, sub_folder, 'im%d.png' % (j + 1)) for j in range(7)])
+        keys.extend(['%s/%s/im%d' % (folder, sub_folder, j + 1) for j in range(7)])
 
     if mode == 'gt':
         print('Only keep the 4th frame for the gt mode.')

@@ -6,23 +6,22 @@ from basicsr.utils.download_util import download_file_from_google_drive
 
 
 def download_pretrained_models(method, file_ids):
-    save_path_root = f'./experiments/pretrained_models/{method}'
+    save_path_root = './experiments/pretrained_models/%s' % method
     os.makedirs(save_path_root, exist_ok=True)
 
     for file_name, file_id in file_ids.items():
         save_path = osp.abspath(osp.join(save_path_root, file_name))
         if osp.exists(save_path):
-            user_response = input(
-                f'{file_name} already exist. Do you want to cover it? Y/N\n')
+            user_response = input('%s already exist. Do you want to cover it? Y/N\n' % file_name)
             if user_response.lower() == 'y':
-                print(f'Covering {file_name} to {save_path}')
+                print('Covering %s to %s' % (file_name, save_path))
                 download_file_from_google_drive(file_id, save_path)
             elif user_response.lower() == 'n':
-                print(f'Skipping {file_name}')
+                print('Skipping %s' % file_name)
             else:
                 raise ValueError('Wrong input. Only accpets Y/N.')
         else:
-            print(f'Downloading {file_name} to {save_path}')
+            print('Downloading %s to %s' % (file_name, save_path))
             download_file_from_google_drive(file_id, save_path)
 
 

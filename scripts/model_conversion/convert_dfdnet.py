@@ -18,9 +18,9 @@ def convert_net(ori_net, crt_net):
             else:
                 idx = NAMES['vgg19'].index(crt_k.split('.')[2])
                 if 'weight' in crt_k:
-                    ori_k = f'VggExtract.model.features.{idx}.weight'
+                    ori_k = 'VggExtract.model.features.%s.weight' % idx
                 else:
-                    ori_k = f'VggExtract.model.features.{idx}.bias'
+                    ori_k = 'VggExtract.model.features.%s.bias' % idx
         elif 'attn_blocks' in crt_k:
             if 'left_eye' in crt_k:
                 ori_k = crt_k.replace('attn_blocks.left_eye', 'le')
@@ -35,7 +35,7 @@ def convert_net(ori_net, crt_net):
         elif 'multi_scale_dilation' in crt_k:
             if 'conv_blocks' in crt_k:
                 a, b, c, d, e = crt_k.split('.')
-                ori_k = f'MSDilate.conv{int(c)+1}.{d}.{e}'
+                ori_k = 'MSDilate.conv%s.%s.%s' % (int(c) + 1, d, e)
             else:
                 ori_k = crt_k.replace('multi_scale_dilation.conv_fusion',
                                       'MSDilate.convi')
@@ -55,9 +55,9 @@ def convert_net(ori_net, crt_net):
 
         # replace
         if crt_net[crt_k].size() != ori_net[ori_k].size():
-            raise ValueError('Wrong tensor size: \n'
-                             f'crt_net: {crt_net[crt_k].size()}\n'
-                             f'ori_net: {ori_net[ori_k].size()}')
+            raise ValueError('Wrong tensor size: \n' +
+                             'crt_net: %s\n' % crt_net[crt_k].size() +
+                             'ori_net: %s' % ori_net[ori_k].size())
         else:
             crt_net[crt_k] = ori_net[ori_k]
 

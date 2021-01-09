@@ -26,7 +26,7 @@ def calculate_stats_from_dataset():
     opt = {}
     opt['name'] = 'FFHQ'
     opt['type'] = 'FFHQDataset'
-    opt['dataroot_gt'] = f'datasets/ffhq/ffhq_{args.size}.lmdb'
+    opt['dataroot_gt'] = 'datasets/ffhq/ffhq_%s.lmdb' % args.size
     opt['io_backend'] = dict(type='lmdb')
     opt['use_hflip'] = False
     opt['mean'] = [0.5, 0.5, 0.5]
@@ -56,12 +56,12 @@ def calculate_stats_from_dataset():
     features = features.numpy()
     total_len = features.shape[0]
     features = features[:args.num_sample]
-    print(f'Extracted {total_len} features, '
-          f'use the first {features.shape[0]} features to calculate stats.')
+    print('Extracted %d features, ' % total_len +
+          'use the first %d features to calculate stats.' % features.shape[0])
     mean = np.mean(features, 0)
     cov = np.cov(features, rowvar=False)
 
-    save_path = f'inception_{opt["name"]}_{args.size}.pth'
+    save_path = 'inception_%s_%s.pth' % (opt["name"], args.size)
     torch.save(
         dict(name=opt['name'], size=args.size, mean=mean, cov=cov),
         save_path,

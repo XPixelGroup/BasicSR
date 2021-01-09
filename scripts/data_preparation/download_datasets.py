@@ -14,22 +14,22 @@ def download_dataset(dataset, file_ids):
         save_path = osp.abspath(osp.join(save_path_root, file_name))
         if osp.exists(save_path):
             user_response = input(
-                f'{file_name} already exist. Do you want to cover it? Y/N\n')
+                '%s already exist. Do you want to cover it? Y/N\n' % file_name)
             if user_response.lower() == 'y':
-                print(f'Covering {file_name} to {save_path}')
+                print('Covering %s to %s' % (file_name, save_path))
                 download_file_from_google_drive(file_id, save_path)
             elif user_response.lower() == 'n':
-                print(f'Skipping {file_name}')
+                print('Skipping %s' % file_name)
             else:
                 raise ValueError('Wrong input. Only accpets Y/N.')
         else:
-            print(f'Downloading {file_name} to {save_path}')
+            print('Downloading %s to %s' % (file_name, save_path))
             download_file_from_google_drive(file_id, save_path)
 
         # unzip
         if save_path.endswith('.zip'):
             extracted_path = save_path.replace('.zip', '')
-            print(f'Extract {save_path} to {extracted_path}')
+            print('Extract %s to %s' % (save_path, extracted_path))
             import zipfile
             with zipfile.ZipFile(save_path, 'r') as zip_ref:
                 zip_ref.extractall(extracted_path)
@@ -37,7 +37,7 @@ def download_dataset(dataset, file_ids):
             file_name = file_name.replace('.zip', '')
             subfolder = osp.join(extracted_path, file_name)
             if osp.isdir(subfolder):
-                print(f'Move {subfolder} to {extracted_path}')
+                print('Move %s to %s' % (subfolder, extracted_path))
                 import shutil
                 for path in glob.glob(osp.join(subfolder, '*')):
                     shutil.move(path, extracted_path)

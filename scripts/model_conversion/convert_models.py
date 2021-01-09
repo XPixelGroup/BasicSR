@@ -42,7 +42,7 @@ def convert_edvr():
             ori_k = crt_k.replace('predeblur.resblock_l', 'pre_deblur.RB_L')
         elif 'predeblur.resblock_l1' in crt_k:
             a, b, c, d, e = crt_k.split('.')
-            ori_k = f'pre_deblur.RB_L1_{int(c)+1}.{d}.{e}'
+            ori_k = 'pre_deblur.RB_L1_%d.%s.%s' % (int(c)+1, d, e)
 
         elif 'conv_l2' in crt_k:
             ori_k = crt_k.replace('conv_l2_', 'fea_L2_conv')
@@ -53,20 +53,20 @@ def convert_edvr():
         elif 'pcd_align.dcn_pack' in crt_k:
             idx = crt_k.split('.l')[1].split('.')[0]
             name = crt_k.split('.l')[1].split('.')[1]
-            ori_k = f'pcd_align.L{idx}_dcnpack.{name}'
+            ori_k = 'pcd_align.L%s_dcnpack.%s' % (idx, name)
             if 'conv_offset' in crt_k:
                 name = name.replace('conv_offset', 'conv_offset_mask')
                 weight_bias = crt_k.split('.l')[1].split('.')[2]
-                ori_k = f'pcd_align.L{idx}_dcnpack.{name}.{weight_bias}'
+                ori_k = 'pcd_align.L%s_dcnpack.%s.%s' % (idx, name, weight_bias)
         elif 'pcd_align.offset_conv' in crt_k:
             a, b, c, d = crt_k.split('.')
             idx = b.split('conv')[1]
             level = c.split('l')[1]
-            ori_k = f'pcd_align.L{level}_offset_conv{idx}.{d}'
+            ori_k = 'pcd_align.L%s_offset_conv%d.%s' % (level, idx, d)
         elif 'pcd_align.feat_conv' in crt_k:
             a, b, c, d = crt_k.split('.')
             level = c.split('l')[1]
-            ori_k = f'pcd_align.L{level}_fea_conv.{d}'
+            ori_k = 'pcd_align.L%s_fea_conv.%s' % (level, d)
         elif 'pcd_align.cas_dcnpack' in crt_k:
             ori_k = crt_k.replace('conv_offset', 'conv_offset_mask')
         elif ('conv_first' in crt_k or 'feature_extraction' in crt_k
@@ -127,7 +127,7 @@ def convert_edsr(ori_net_path, crt_net_path, save_path, num_block=32):
             ori_k = crt_k.replace('conv_first', 'head.0')
             crt_net[crt_k] = ori_net[ori_k]
         elif 'conv_after_body' in crt_k:
-            ori_k = crt_k.replace('conv_after_body', f'body.{num_block}')
+            ori_k = crt_k.replace('conv_after_body', 'body.%d' % num_block)
         elif 'body' in crt_k:
             ori_k = crt_k.replace('conv1', 'body.0').replace('conv2', 'body.2')
         elif 'upsample.0' in crt_k:
@@ -167,10 +167,10 @@ def convert_rcan_model():
 
         elif 'attention' in crt_k:
             a, ai, b, bi, c, ci, d, di, e = crt_k.split('.')
-            ori_k = f'body.{ai}.body.{bi}.body.{ci}.conv_du.{int(di)-1}.{e}'
+            ori_k = 'body.%s.body.%s.body.%s.conv_du.%d.%s' % (ai, bi, ci, int(di) - 1, e)
         elif 'rcab' in crt_k:
             a, ai, b, bi, c, ci, d = crt_k.split('.')
-            ori_k = f'body.{ai}.body.{bi}.body.{ci}.{d}'
+            ori_k = 'body.%s.body.%s.body.%s.%s' % (ai, bi, ci, d)
         elif 'body' in crt_k:
             ori_k = crt_k.replace('conv.', 'body.20.')
         else:

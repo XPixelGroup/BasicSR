@@ -46,10 +46,10 @@ def main():
             img_restored.unsqueeze(0).cuda(),
             img_gt.unsqueeze(0).cuda())
 
-        print(f'{i+1:3d}: {basename:25}. \tLPIPS: {lpips_val:.6f}.')
+        print('{:3d}: {:25}. \tLPIPS: {:.6f}.'.format(i + 1, basename, lpips_val))
         lpips_all.append(lpips_val)
 
-    print(f'Average: LPIPS: {sum(lpips_all) / len(lpips_all):.6f}')
+    print('Average: LPIPS: {:.6f}'.format(sum(lpips_all) / len(lpips_all)))
 
 
 if __name__ == '__main__':

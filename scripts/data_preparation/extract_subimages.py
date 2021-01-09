@@ -89,9 +89,9 @@ def extract_subimages(opt):
     save_folder = opt['save_folder']
     if not osp.exists(save_folder):
         os.makedirs(save_folder)
-        print(f'mkdir {save_folder} ...')
+        print('mkdir %s ...' % save_folder)
     else:
-        print(f'Folder {save_folder} already exists. Exit.')
+        print('Folder %s already exists. Exit.' % save_folder)
         sys.exit(1)
 
     img_list = list(scandir(input_folder, full_path=True))
@@ -141,7 +141,7 @@ def worker(path, opt):
     elif img.ndim == 3:
         h, w, c = img.shape
     else:
-        raise ValueError(f'Image ndim should be 2 or 3, but got {img.ndim}')
+        raise ValueError('Image ndim should be 2 or 3, but got %d' % img.ndim)
 
     h_space = np.arange(0, h - crop_size + 1, step)
     if h - (h_space[-1] + crop_size) > thresh_size:
@@ -157,10 +157,13 @@ def worker(path, opt):
             cropped_img = img[x:x + crop_size, y:y + crop_size, ...]
             cropped_img = np.ascontiguousarray(cropped_img)
             cv2.imwrite(
-                osp.join(opt['save_folder'],
-                         f'{img_name}_s{index:03d}{extension}'), cropped_img,
+                osp.join(
+                    opt['save_folder'],
+                    '{}_s{:03d}{}'.format(img_name, index, extension)
+                ),
+                cropped_img,
                 [cv2.IMWRITE_PNG_COMPRESSION, opt['compression_level']])
-    process_info = f'Processing {img_name} ...'
+    process_info = 'Processing %s ...' % img_name
     return process_info
 
 

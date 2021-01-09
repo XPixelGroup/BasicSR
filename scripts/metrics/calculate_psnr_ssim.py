@@ -80,14 +80,15 @@ def main():
             img_restored * 255,
             crop_border=crop_border,
             input_order='HWC')
-        print(f'{i+1:3d}: {basename:25}. \tPSNR: {psnr:.6f} dB, '
-              f'\tSSIM: {ssim:.6f}')
+        print('{:3d}: {:25}. '.format(i + 1, basename) +
+              '\tPSNR: {:.6f} dB, '.format(psnr) +
+              '\tSSIM: {:.6f}'.format(ssim))
         psnr_all.append(psnr)
         ssim_all.append(ssim)
     print(folder_gt)
     print(folder_restored)
-    print(f'Average: PSNR: {sum(psnr_all) / len(psnr_all):.6f} dB, '
-          f'SSIM: {sum(ssim_all) / len(ssim_all):.6f}')
+    print('Average: PSNR: {:.6f} dB, '.format(sum(psnr_all) / len(psnr_all)) +
+          'SSIM: {:.6f}'.format(sum(ssim_all) / len(ssim_all)))
 
 
 if __name__ == '__main__':

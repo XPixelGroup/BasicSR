@@ -23,11 +23,11 @@ def generate_meta_info_div2k():
             elif mode == 'L':
                 n_channel = 1
             else:
-                raise ValueError(f'Unsupported mode {mode}.')
+                raise ValueError('Unsupported mode %s.' % mode)
 
-            info = f'{img_path} ({height},{width},{n_channel})'
+            info = '%s (%d,%d,%d)' % (img_path, height, width, n_channel)
             print(idx + 1, info)
-            f.write(f'{info}\n')
+            f.write(info + '\n')
 
 
 if __name__ == '__main__':
