@@ -22,7 +22,7 @@ def generate(args, g_ema, device, mean_latent, randomize_noise):
 
             utils.save_image(
                 sample,
-                f'samples/{str(i).zfill(6)}.png',
+                'samples/%s.png' % str(i).zfill(6),
                 nrow=int(math.sqrt(args.sample)),
                 normalize=True,
                 range=(-1, 1),

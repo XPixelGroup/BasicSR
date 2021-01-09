@@ -48,7 +48,7 @@ def main():
         output = output.data.squeeze().float().cpu().clamp_(0, 1).numpy()
         output = np.transpose(output[[2, 1, 0], :, :], (1, 2, 0))
         output = (output * 255.0).round().astype(np.uint8)
-        cv2.imwrite(f'results/ESRGAN/{imgname}_ESRGAN.png', output)
+        cv2.imwrite('results/ESRGAN/%s_ESRGAN.png' % imgname, output)
 
 
 if __name__ == '__main__':

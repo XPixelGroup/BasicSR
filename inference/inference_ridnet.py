@@ -23,8 +23,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.test_path.endswith('/'):  # solve when path ends with /
         args.test_path = args.test_path[:-1]
-    test_root = os.path.join(args.test_path, f'X{args.noise_g}')
-    result_root = f'results/RIDNet/{os.path.basename(args.test_path)}'
+    test_root = os.path.join(args.test_path, 'X%s' % args.noise_g)
+    result_root = 'results/RIDNet/%s' % os.path.basename(args.test_path)
     os.makedirs(result_root, exist_ok=True)
 
     # set up the RIDNet
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     for idx, img_path in enumerate(img_list):
         img_name = os.path.basename(img_path).split('.')[0]
         pbar.update(1)
-        pbar.set_description(f'{idx}: {img_name}')
+        pbar.set_description('%d: %s' % (idx, img_name))
         # read image
         img = cv2.imread(img_path, cv2.IMREAD_COLOR)
         img = img2tensor(
@@ -52,6 +52,6 @@ if __name__ == '__main__':
         output = tensor2img(
             output, rgb2bgr=True, out_type=np.uint8, min_max=(0, 255))
         save_img_path = os.path.join(
-            result_root, f'{img_name}_x'
-            f'{args.noise_g}_RIDNet.png')
+            result_root, '%s_x' % img_name,
+            '%s_RIDNet.png' % args.noise_g)
         cv2.imwrite(save_img_path, output)

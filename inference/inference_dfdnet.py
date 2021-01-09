@@ -110,7 +110,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.test_path.endswith('/'):  # solve when path ends with /
         args.test_path = args.test_path[:-1]
-    result_root = f'results/DFDNet/{os.path.basename(args.test_path)}'
+    result_root = 'results/DFDNet/%s' % os.path.basename(args.test_path)
 
     # set up the DFDNet
     net = DFDNet(64, dict_path=args.dict_path).to(device)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     for img_path in sorted(
             glob.glob(os.path.join(args.test_path, '*.[jp][pn]g'))):
         img_name = os.path.basename(img_path)
-        print(f'Processing {img_name} image ...')
+        print('Processing %s image ...' % img_name)
         save_crop_path = os.path.join(save_crop_root, img_name)
         if args.save_inverse_affine:
             save_inverse_affine_path = os.path.join(save_inverse_affine_root,
@@ -148,20 +148,20 @@ if __name__ == '__main__':
             only_keep_largest=args.only_keep_largest)
         # get 5 face landmarks for each face
         num_landmarks = face_helper.get_face_landmarks_5()
-        print(f'\tDetect {num_det_faces} faces, {num_landmarks} landmarks.')
+        print('\tDetect %d faces, %d landmarks.' % (num_det_faces, num_landmarks))
         # warp and crop each face
         face_helper.warp_crop_faces(save_crop_path, save_inverse_affine_path)
 
         if args.official_adaption:
             path, ext = os.path.splitext(save_crop_path)
-            pathes = sorted(glob.glob(f'{path}_[0-9]*.png'))
+            pathes = sorted(glob.glob('%s_[0-9]*.png' % path))
             cropped_faces = [io.imread(path) for path in pathes]
         else:
             cropped_faces = face_helper.cropped_faces
 
         # get 68 landmarks for each cropped face
         num_landmarks = face_helper.get_face_landmarks_68()
-        print(f'\tDetect {num_landmarks} faces for 68 landmarks.')
+        print('\tDetect %d faces for 68 landmarks.' % num_landmarks)
 
         face_helper.free_dlib_gpu_memory()
 
@@ -171,7 +171,7 @@ if __name__ == '__main__':
         for idx, (cropped_face, landmarks) in enumerate(
                 zip(cropped_faces, face_helper.all_landmarks_68)):
             if landmarks is None:
-                print(f'Landmarks is None, skip cropped faces with idx {idx}.')
+                print('Landmarks is None, skip cropped faces with idx %d.' % idx)
                 # just copy the cropped faces to the restored faces
                 restored_face = cropped_face
             else:
@@ -190,12 +190,12 @@ if __name__ == '__main__':
                     del output
                     torch.cuda.empty_cache()
                 except Exception as e:
-                    print(f'DFDNet inference fail: {e}')
+                    print('DFDNet inference fail: %s' % e)
                     restored_face = tensor2img(cropped_face, min_max=(-1, 1))
 
             path = os.path.splitext(os.path.join(save_restore_root,
                                                  img_name))[0]
-            save_path = f'{path}_{idx:02d}.png'
+            save_path = '{}_{:02d}.png'.format(path, idx)
             imwrite(restored_face, save_path)
             face_helper.add_restored_face(restored_face)
 
@@ -207,4 +207,4 @@ if __name__ == '__main__':
         # clean all the intermediate results to process the next image
         face_helper.clean_all()
 
-    print(f'\nAll results are saved in {result_root}')
+    print('\nAll results are saved in %s' % result_root)
