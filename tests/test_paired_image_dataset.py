@@ -66,13 +66,13 @@ def main(mode='folder'):
         print(lq_path, gt_path)
         torchvision.utils.save_image(
             lq,
-            f'tmp/lq_{i:03d}.png',
+            'tmp/lq_{:03d}.png'.format(i),
             nrow=nrow,
             padding=padding,
             normalize=False)
         torchvision.utils.save_image(
             gt,
-            f'tmp/gt_{i:03d}.png',
+            'tmp/gt_{:03d}.png'.format(i),
             nrow=nrow,
             padding=padding,
             normalize=False)

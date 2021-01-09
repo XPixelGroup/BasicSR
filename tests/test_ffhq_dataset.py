@@ -50,7 +50,7 @@ def main():
         print(gt_path)
         torchvision.utils.save_image(
             gt,
-            f'tmp/gt_{i:03d}.png',
+            'tmp/gt_{:03d}.png'.format(i),
             nrow=nrow,
             padding=padding,
             normalize=True,
