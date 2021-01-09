@@ -57,7 +57,7 @@ def parse_options(is_train=True):
 
 def init_loggers(opt):
     log_file = osp.join(opt['path']['log'],
-                        f"train_{opt['name']}_{get_time_str()}.log")
+                        "train_%s_%s.log" % (opt['name'], get_time_str()))
     logger = get_root_logger(
         logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
@@ -100,12 +100,12 @@ def create_train_val_dataloader(opt, logger):
             total_epochs = math.ceil(total_iters / (num_iter_per_epoch))
             logger.info(
                 'Training statistics:'
-                f'\n\tNumber of train images: {len(train_set)}'
-                f'\n\tDataset enlarge ratio: {dataset_enlarge_ratio}'
-                f'\n\tBatch size per gpu: {dataset_opt["batch_size_per_gpu"]}'
-                f'\n\tWorld size (gpu number): {opt["world_size"]}'
-                f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
-                f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
+                '\n\tNumber of train images: %d' % len(train_set) +
+                '\n\tDataset enlarge ratio: %s' % dataset_enlarge_ratio +
+                '\n\tBatch size per gpu: %d' % dataset_opt["batch_size_per_gpu"] +
+                '\n\tWorld size (gpu number): %d' % opt["world_size"] +
+                '\n\tRequire iter number per epoch: %d' % num_iter_per_epoch +
+                '\n\tTotal epochs: %d; iters: %d.' % (total_epochs, total_iters))
 
         elif phase == 'val':
             val_set = create_dataset(dataset_opt)
@@ -117,10 +117,10 @@ def create_train_val_dataloader(opt, logger):
                 sampler=None,
                 seed=opt['manual_seed'])
             logger.info(
-                f'Number of val images/folders in {dataset_opt["name"]}: '
-                f'{len(val_set)}')
+                'Number of val images/folders in %s: %d' %
+                (dataset_opt["name"], len(val_set)))
         else:
-            raise ValueError(f'Dataset phase {phase} is not recognized.')
+            raise ValueError('Dataset phase %s is not recognized.' % phase)
 
     return train_loader, train_sampler, val_loader, total_epochs, total_iters
 
@@ -160,8 +160,8 @@ def main():
         check_resume(opt, resume_state['iter'])
         model = create_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
-        logger.info(f"Resuming training from epoch: {resume_state['epoch']}, "
-                    f"iter: {resume_state['iter']}.")
+        logger.info("Resuming training from epoch: %d, " % resume_state['epoch'] +
+                    "iter: %d." % resume_state['iter'])
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:
@@ -178,16 +178,16 @@ def main():
         prefetcher = CPUPrefetcher(train_loader)
     elif prefetch_mode == 'cuda':
         prefetcher = CUDAPrefetcher(train_loader, opt)
-        logger.info(f'Use {prefetch_mode} prefetch dataloader')
+        logger.info('Use %s prefetch dataloader' % prefetch_mode)
         if opt['datasets']['train'].get('pin_memory') is not True:
             raise ValueError('Please set pin_memory=True for CUDAPrefetcher.')
     else:
-        raise ValueError(f'Wrong prefetch_mode {prefetch_mode}.'
+        raise ValueError('Wrong prefetch_mode %s.' % prefetch_mode +
                          "Supported ones are: None, 'cuda', 'cpu'.")
 
     # training
     logger.info(
-        f'Start training from epoch: {start_epoch}, iter: {current_iter}')
+        'Start training from epoch: %d, iter: %d' % (start_epoch, current_iter))
     data_time, iter_time = time.time(), time.time()
     start_time = time.time()
 
@@ -237,7 +237,7 @@ def main():
 
     consumed_time = str(
         datetime.timedelta(seconds=int(time.time() - start_time)))
-    logger.info(f'End of training. Time consumed: {consumed_time}')
+    logger.info('End of training. Time consumed: %s' % consumed_time)
     logger.info('Save the latest model.')
     model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
     if opt.get('val') is not None:
