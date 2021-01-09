@@ -58,7 +58,7 @@ def tensor2img(tensor, rgb2bgr=True, out_type=np.uint8, min_max=(0, 1)):
             (isinstance(tensor, list)
              and all(torch.is_tensor(t) for t in tensor))):
         raise TypeError(
-            f'tensor or list of tensors expected, got {type(tensor)}')
+            'tensor or list of tensors expected, got %s' % type(tensor))
 
     if torch.is_tensor(tensor):
         tensor = [tensor]
@@ -87,7 +87,7 @@ def tensor2img(tensor, rgb2bgr=True, out_type=np.uint8, min_max=(0, 1)):
             img_np = _tensor.numpy()
         else:
             raise TypeError('Only support 4D, 3D or 2D tensor. '
-                            f'But received with dimension: {n_dim}')
+                            'But received with dimension: %d' % n_dim)
         if out_type == np.uint8:
             # Unlike MATLAB, numpy.unit8() WILL NOT round by default.
             img_np = (img_np * 255.0).round()

@@ -62,8 +62,8 @@ def save_response_content(response,
             downloaded_size += chunk_size
             if pbar is not None:
                 pbar.update(1)
-                pbar.set_description(f'Download {sizeof_fmt(downloaded_size)} '
-                                     f'/ {readable_file_size}')
+                pbar.set_description('Download %s ' % sizeof_fmt(downloaded_size) +
+                                     f'/ %s' % readable_file_size)
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
         if pbar is not None:

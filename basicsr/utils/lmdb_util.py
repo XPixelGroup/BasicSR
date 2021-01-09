@@ -60,27 +60,27 @@ def make_lmdb_from_imgs(data_path,
 
     assert len(img_path_list) == len(keys), (
         'img_path_list and keys should have the same length, '
-        f'but got {len(img_path_list)} and {len(keys)}')
-    print(f'Create lmdb for {data_path}, save to {lmdb_path}...')
-    print(f'Totoal images: {len(img_path_list)}')
+        'but got %d and %d' % (len(img_path_list), len(keys)))
+    print('Create lmdb for %s, save to %s...' % (data_path, lmdb_path))
+    print('Totoal images: %d' % len(img_path_list))
     if not lmdb_path.endswith('.lmdb'):
         raise ValueError("lmdb_path must end with '.lmdb'.")
     if osp.exists(lmdb_path):
-        print(f'Folder {lmdb_path} already exists. Exit.')
+        print('Folder %s already exists. Exit.' % lmdb_path)
         sys.exit(1)
 
     if multiprocessing_read:
         # read all the images to memory (multiprocessing)
         dataset = {}  # use dict to keep the order for multiprocessing
         shapes = {}
-        print(f'Read images with multiprocessing, #thread: {n_thread} ...')
+        print('Read images with multiprocessing, #thread: %s ...' % n_thread)
         pbar = tqdm(total=len(img_path_list), unit='image')
 
         def callback(arg):
             """get the image data and update pbar."""
             key, dataset[key], shapes[key] = arg
             pbar.update(1)
-            pbar.set_description(f'Read {key}')
+            pbar.set_description('Read %s' % key)
 
         pool = Pool(n_thread)
         for path, key in zip(img_path_list, keys):
@@ -91,7 +91,7 @@ def make_lmdb_from_imgs(data_path,
         pool.close()
         pool.join()
         pbar.close()
-        print(f'Finish reading {len(img_path_list)} images.')
+        print('Finish reading %d images.' % len(img_path_list))
 
     # create lmdb environment
     if map_size is None:
@@ -113,7 +113,7 @@ def make_lmdb_from_imgs(data_path,
     txt_file = open(osp.join(lmdb_path, 'meta_info.txt'), 'w')
     for idx, (path, key) in enumerate(zip(img_path_list, keys)):
         pbar.update(1)
-        pbar.set_description(f'Write {key}')
+        pbar.set_description('Write %s' % key)
         key_byte = key.encode('ascii')
         if multiprocessing_read:
             img_byte = dataset[key]
@@ -125,7 +125,7 @@ def make_lmdb_from_imgs(data_path,
 
         txn.put(key_byte, img_byte)
         # write meta information
-        txt_file.write(f'{key}.png ({h},{w},{c}) {compress_level}\n')
+        txt_file.write('%s.png (%d,%d,%d) %s\n' % (key, h, w, c, compress_level))
         if idx % batch == 0:
             txn.commit()
             txn = env.begin(write=True)
@@ -180,7 +180,7 @@ class LmdbMaker():
         if not lmdb_path.endswith('.lmdb'):
             raise ValueError("lmdb_path must end with '.lmdb'.")
         if osp.exists(lmdb_path):
-            print(f'Folder {lmdb_path} already exists. Exit.')
+            print('Folder %s already exists. Exit.' % lmdb_path)
             sys.exit(1)
 
         self.lmdb_path = lmdb_path
@@ -197,7 +197,7 @@ class LmdbMaker():
         self.txn.put(key_byte, img_byte)
         # write meta information
         h, w, c = img_shape
-        self.txt_file.write(f'{key}.png ({h},{w},{c}) {self.compress_level}\n')
+        self.txt_file.write('%s.png (%d,%d,%d) %s\n' % (key, h, w, c, self.compress_level))
         if self.counter % self.batch == 0:
             self.txn.commit()
             self.txn = self.env.begin(write=True)

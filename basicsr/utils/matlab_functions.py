@@ -326,7 +326,7 @@ def _convert_input_type_range(img):
         img /= 255.
     else:
         raise TypeError('The img type should be np.float32 or np.uint8, '
-                        f'but got {img_type}')
+                        'but got %s' % img_type)
     return img
 
 
@@ -353,7 +353,7 @@ def _convert_output_type_range(img, dst_type):
     """
     if dst_type not in (np.uint8, np.float32):
         raise TypeError('The dst_type should be np.float32 or np.uint8, '
-                        f'but got {dst_type}')
+                        'but got %s' % dst_type)
     if dst_type == np.uint8:
         img = img.round()
     else:

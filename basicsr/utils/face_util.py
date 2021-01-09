@@ -103,7 +103,7 @@ class FaceRestorationHelper(object):
             # face detection
             det_face = self.face_detector(face, 1)  # TODO: can we remove it?
             if len(det_face) == 0:
-                print(f'Cannot find faces in cropped image with index {idx}.')
+                print('Cannot find faces in cropped image with index %d.' % idx)
                 self.all_landmarks_68.append(None)
             else:
                 if len(det_face) > 1:
@@ -149,9 +149,9 @@ class FaceRestorationHelper(object):
             if save_cropped_path is not None:
                 path, ext = os.path.splitext(save_cropped_path)
                 if self.save_png:
-                    save_path = f'{path}_{idx:02d}.png'
+                    save_path = '{}_{:02d}.png'.format(path, idx)
                 else:
-                    save_path = f'{path}_{idx:02d}{ext}'
+                    save_path = '{}_{:02d}{}'.format(path, idx, ext)
 
                 imwrite(
                     cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR), save_path)
@@ -164,7 +164,7 @@ class FaceRestorationHelper(object):
             # save inverse affine matrices
             if save_inverse_affine_path is not None:
                 path, _ = os.path.splitext(save_inverse_affine_path)
-                save_path = f'{path}_{idx:02d}.pth'
+                save_path = '{}_{:02d}.pth'.format(path, idx)
                 torch.save(inverse_affine, save_path)
 
     def add_restored_face(self, face):

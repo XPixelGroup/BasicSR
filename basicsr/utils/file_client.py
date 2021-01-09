@@ -114,7 +114,7 @@ class LmdbBackend(BaseStorageBackend):
             self.db_paths = [str(db_paths)]
         assert len(client_keys) == len(self.db_paths), (
             'client_keys and db_paths should have the same length, '
-            f'but received {len(client_keys)} and {len(self.db_paths)}.')
+            'but received %d and %d.' % (len(client_keys), len(self.db_paths)))
 
         self._client = {}
         for client, path in zip(client_keys, self.db_paths):
@@ -133,7 +133,7 @@ class LmdbBackend(BaseStorageBackend):
             client_key (str): Used for distinguishing differnet lmdb envs.
         """
         filepath = str(filepath)
-        assert client_key in self._client, (f'client_key {client_key} is not '
+        assert client_key in self._client, ('client_key %s is not ' % client_key +
                                             'in lmdb clients.')
         client = self._client[client_key]
         with client.begin(write=False) as txn:
@@ -166,8 +166,8 @@ class FileClient(object):
     def __init__(self, backend='disk', **kwargs):
         if backend not in self._backends:
             raise ValueError(
-                f'Backend {backend} is not supported. Currently supported ones'
-                f' are {list(self._backends.keys())}')
+                'Backend %s is not supported. Currently supported ones' % backend +
+                ' are %s' % list(self._backends.keys()))
         self.backend = backend
         self.client = self._backends[backend](**kwargs)
 
