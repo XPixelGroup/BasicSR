@@ -84,7 +84,7 @@ class DFDNet(nn.Module):
         self.attn_blocks = nn.ModuleDict()
         for idx, feat_size in enumerate(self.feature_sizes):
             for name in self.parts:
-                self.attn_blocks[f'{name}_{feat_size}'] = AttentionBlock(
+                self.attn_blocks['%s_%d' % (name, feat_size)] = AttentionBlock(
                     channel_sizes[idx])
 
         # multi scale dilation block
@@ -126,7 +126,7 @@ class DFDNet(nn.Module):
         swap_feat = F.interpolate(dict_feat[select_idx:select_idx + 1],
                                   part_feat.size()[2:4])
         # attention
-        attn = self.attn_blocks[f'{part_name}_' + str(f_size)](
+        attn = self.attn_blocks['%s_%s' % (part_name, f_size)](
             swap_feat - part_feat)
         attn_feat = attn * swap_feat
         # update features
@@ -156,7 +156,7 @@ class DFDNet(nn.Module):
         updated_vgg_features = []
         batch = 0  # only supports testing with batch size = 0
         for vgg_layer, f_size in zip(self.vgg_layers, self.feature_sizes):
-            dict_features = self.dict[f'{f_size}']
+            dict_features = self.dict[str(f_size)]
             vgg_feat = vgg_features[vgg_layer]
             updated_feat = vgg_feat.clone()
 

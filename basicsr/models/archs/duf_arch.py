@@ -188,10 +188,10 @@ class DynamicUpsamplingFilter(nn.Module):
         super(DynamicUpsamplingFilter, self).__init__()
         if not isinstance(filter_size, tuple):
             raise TypeError('The type of filter_size must be tuple, '
-                            f'but got type{filter_size}')
+                            'but got type%s' % filter_size)
         if len(filter_size) != 2:
             raise ValueError('The length of filter size must be 2, '
-                             f'but got {len(filter_size)}.')
+                             'but got %d.' % len(filter_size))
         # generate a local expansion filter, similar to im2col
         self.filter_size = filter_size
         filter_prod = np.prod(filter_size)
@@ -278,7 +278,7 @@ class DUF(nn.Module):
             num_grow_ch = 16
         else:
             raise ValueError(
-                f'Only supported (16, 28, 52) layers, but got {num_layer}.')
+                'Only supported (16, 28, 52) layers, but got %d.' % num_layer)
 
         self.dense_block1 = DenseBlocks(
             num_block=num_block,

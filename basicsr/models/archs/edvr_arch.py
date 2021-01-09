@@ -33,7 +33,7 @@ class PCDAlignment(nn.Module):
 
         # Pyramids
         for i in range(3, 0, -1):
-            level = f'l{i}'
+            level = 'l%d' % i
             self.offset_conv1[level] = nn.Conv2d(num_feat * 2, num_feat, 3, 1,
                                                  1)
             if i == 3:
@@ -86,7 +86,7 @@ class PCDAlignment(nn.Module):
         # Pyramids
         upsampled_offset, upsampled_feat = None, None
         for i in range(3, 0, -1):
-            level = f'l{i}'
+            level = 'l%d' % i
             offset = torch.cat([nbr_feat_l[i - 1], ref_feat_l[i - 1]], dim=1)
             offset = self.lrelu(self.offset_conv1[level](offset))
             if i == 3:

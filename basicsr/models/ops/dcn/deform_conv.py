@@ -23,7 +23,7 @@ class DeformConvFunction(Function):
                 deformable_groups=1,
                 im2col_step=64):
         if input is not None and input.dim() != 4:
-            raise ValueError(f'Expected 4D tensor as input, got {input.dim()}'
+            raise ValueError('Expected 4D tensor as input, got %d' % input.dim() +
                              'D tensor instead.')
         ctx.stride = _pair(stride)
         ctx.padding = _pair(padding)
@@ -104,7 +104,7 @@ class DeformConvFunction(Function):
             output_size += ((in_size + (2 * pad) - kernel) // stride_ + 1, )
         if not all(map(lambda s: s > 0, output_size)):
             raise ValueError('convolution input is too small (output would be '
-                             f'{"x".join(map(str, output_size))})')
+                             '%s)' % "x".join(map(str, output_size)))
         return output_size
 
 
@@ -201,10 +201,9 @@ class DeformConv(nn.Module):
 
         assert not bias
         assert in_channels % groups == 0, \
-            f'in_channels {in_channels} is not divisible by groups {groups}'
+            'in_channels %d is not divisible by groups %d' % (in_channels, groups)
         assert out_channels % groups == 0, \
-            f'out_channels {out_channels} is not divisible ' \
-            f'by groups {groups}'
+            'out_channels %d is not divisible by groups %d' % (out_channels, groups)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

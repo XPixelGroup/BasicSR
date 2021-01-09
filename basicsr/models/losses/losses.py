@@ -37,8 +37,8 @@ class L1Loss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(L1Loss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError('Unsupported reduction mode: %s. ' % reduction +
+                             'Supported ones are: %s' % _reduction_modes)
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -67,8 +67,8 @@ class MSELoss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(MSELoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError('Unsupported reduction mode: %s. ' % reduction +
+                             'Supported ones are: %s' % _reduction_modes)
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -103,8 +103,8 @@ class CharbonnierLoss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean', eps=1e-12):
         super(CharbonnierLoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError('Unsupported reduction mode: %s. ' % reduction +
+                             'Supported ones are: %s' % _reduction_modes)
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -193,7 +193,7 @@ class PerceptualLoss(nn.Module):
             self.criterion = None
         else:
             raise NotImplementedError(
-                f'{criterion} criterion has not been supported.')
+                '%s criterion has not been supported.' % criterion)
 
     def forward(self, x, gt):
         """Forward function.
@@ -294,7 +294,7 @@ class GANLoss(nn.Module):
             self.loss = nn.ReLU()
         else:
             raise NotImplementedError(
-                f'GAN type {self.gan_type} is not implemented.')
+                'GAN type %s is not implemented.' % self.gan_type)
 
     def _wgan_loss(self, input, target):
         """wgan loss.

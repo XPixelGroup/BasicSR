@@ -87,7 +87,7 @@ class BaseModel():
                         optimizer, **train_opt['scheduler']))
         else:
             raise NotImplementedError(
-                f'Scheduler {scheduler_type} is not implemented yet.')
+                'Scheduler %s is not implemented yet.' % scheduler_type)
 
     def get_bare_model(self, net):
         """Get bare model, especially under wrapping with
@@ -105,17 +105,16 @@ class BaseModel():
             net (nn.Module)
         """
         if isinstance(net, (DataParallel, DistributedDataParallel)):
-            net_cls_str = (f'{net.__class__.__name__} - '
-                           f'{net.module.__class__.__name__}')
+            net_cls_str = ('%s - %s' % (net.__class__.__name__, net.module.__class__.__name__))
         else:
-            net_cls_str = f'{net.__class__.__name__}'
+            net_cls_str = net.__class__.__name__
 
         net = self.get_bare_model(net)
         net_str = str(net)
         net_params = sum(map(lambda x: x.numel(), net.parameters()))
 
         logger.info(
-            f'Network: {net_cls_str}, with parameters: {net_params:,d}')
+            'Network: {}, with parameters: {:,d}'.format(net_cls_str, net_params))
         logger.info(net_str)
 
     def _set_lr(self, lr_groups_l):
@@ -180,7 +179,7 @@ class BaseModel():
         """
         if current_iter == -1:
             current_iter = 'latest'
-        save_filename = f'{net_label}_{current_iter}.pth'
+        save_filename = '%s_%d.pth' % (net_label, current_iter)
         save_path = os.path.join(self.opt['path']['models'], save_filename)
 
         net = net if isinstance(net, list) else [net]
@@ -220,10 +219,10 @@ class BaseModel():
         if crt_net_keys != load_net_keys:
             logger.warning('Current net - loaded net:')
             for v in sorted(list(crt_net_keys - load_net_keys)):
-                logger.warning(f'  {v}')
+                logger.warning('  %s' % v)
             logger.warning('Loaded net - current net:')
             for v in sorted(list(load_net_keys - crt_net_keys)):
-                logger.warning(f'  {v}')
+                logger.warning('  %s' % v)
 
         # check the size for the same keys
         if not strict:
@@ -231,8 +230,8 @@ class BaseModel():
             for k in common_keys:
                 if crt_net[k].size() != load_net[k].size():
                     logger.warning(
-                        f'Size different, ignore [{k}]: crt_net: '
-                        f'{crt_net[k].shape}; load_net: {load_net[k].shape}')
+                        'Size different, ignore [%s]: crt_net: ' % k +
+                        '%d; load_net: %s' % (crt_net[k].shape, load_net[k].shape))
                     load_net[k + '.ignore'] = load_net.pop(k)
 
     def load_network(self, net, load_path, strict=True, param_key='params'):
@@ -248,7 +247,7 @@ class BaseModel():
         """
         net = self.get_bare_model(net)
         logger.info(
-            f'Loading {net.__class__.__name__} model from {load_path}.')
+            'Loading %s model from %s.' % (net.__class__.__name__, load_path))
         load_net = torch.load(
             load_path, map_location=lambda storage, loc: storage)
         if param_key is not None:
@@ -281,7 +280,7 @@ class BaseModel():
                 state['optimizers'].append(o.state_dict())
             for s in self.schedulers:
                 state['schedulers'].append(s.state_dict())
-            save_filename = f'{current_iter}.state'
+            save_filename = '%d.state' % current_iter
             save_path = os.path.join(self.opt['path']['training_states'],
                                      save_filename)
             torch.save(state, save_path)

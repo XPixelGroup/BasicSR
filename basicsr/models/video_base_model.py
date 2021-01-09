@@ -69,8 +69,7 @@ class VideoBaseModel(SRModel):
                 else:
                     if 'vimeo' in dataset_name.lower():  # vimeo90k dataset
                         split_result = lq_path.split('/')
-                        img_name = (f'{split_result[-3]}_{split_result[-2]}_'
-                                    f'{split_result[-1].split(".")[0]}')
+                        img_name = '%s_%s_%s' % (split_result[-3], split_result[-2], split_result[-1].split(".")[0])
                     else:  # other datasets, e.g., REDS, Vid4
                         img_name = osp.splitext(osp.basename(lq_path))[0]
 
@@ -78,11 +77,11 @@ class VideoBaseModel(SRModel):
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
                             folder,
-                            f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                            '%s_%s.png' % (img_name, self.opt["val"]["suffix"]))
                     else:
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
-                            folder, f'{img_name}_{self.opt["name"]}.png')
+                            folder, '%s_%s.png' % (img_name, self.opt["name"]))
                 imwrite(result_img, save_img_path)
 
             if with_metrics:
@@ -100,8 +99,8 @@ class VideoBaseModel(SRModel):
                 for _ in range(world_size):
                     pbar.update(1)
                     pbar.set_description(
-                        f'Test {folder}:'
-                        f'{int(frame_idx) + world_size}/{max_idx}')
+                        'Test %s:' % folder +
+                        '%d/%s' % (int(frame_idx) + world_size, max_idx))
         if rank == 0:
             pbar.close()
 
@@ -152,12 +151,12 @@ class VideoBaseModel(SRModel):
         for metric in total_avg_results.keys():
             total_avg_results[metric] /= len(metric_results_avg)
 
-        log_str = f'Validation {dataset_name}\n'
+        log_str = 'Validation %s\n' % dataset_name
         for metric_idx, (metric,
                          value) in enumerate(total_avg_results.items()):
-            log_str += f'\t # {metric}: {value:.4f}'
+            log_str += '\t # {}: {:.4f}'.format(metric, value)
             for folder, tensor in metric_results_avg.items():
-                log_str += f'\t # {folder}: {tensor[metric_idx].item():.4f}'
+                log_str += '\t # {}: {:.4f}'.format(folder, tensor[metric_idx].item())
             log_str += '\n'
 
         logger = get_root_logger()
@@ -165,8 +164,8 @@ class VideoBaseModel(SRModel):
         if tb_logger:
             for metric_idx, (metric,
                              value) in enumerate(total_avg_results.items()):
-                tb_logger.add_scalar(f'metrics/{metric}', value, current_iter)
+                tb_logger.add_scalar('metrics/%s' % metric, value, current_iter)
                 for folder, tensor in metric_results_avg.items():
-                    tb_logger.add_scalar(f'metrics/{metric}/{folder}',
+                    tb_logger.add_scalar('metrics/%s/%s' % (metric, folder),
                                          tensor[metric_idx].item(),
                                          current_iter)

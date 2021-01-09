@@ -69,7 +69,7 @@ class SRModel(BaseModel):
                 optim_params.append(v)
             else:
                 logger = get_root_logger()
-                logger.warning(f'Params {k} will not be optimized.')
+                logger.warning('Params %s will not be optimized.' % k)
 
         optim_type = train_opt['optim_g'].pop('type')
         if optim_type == 'Adam':
@@ -77,7 +77,7 @@ class SRModel(BaseModel):
                                                 **train_opt['optim_g'])
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_g)
 
     def feed_data(self, data):
@@ -153,16 +153,16 @@ class SRModel(BaseModel):
                 if self.opt['is_train']:
                     save_img_path = osp.join(self.opt['path']['visualization'],
                                              img_name,
-                                             f'{img_name}_{current_iter}.png')
+                                             '%s_%d.png' % (img_name, current_iter))
                 else:
                     if self.opt['val']['suffix']:
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
-                            f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                            '%s_%s.png' % (img_name, self.opt["val"]["suffix"]))
                     else:
                         save_img_path = osp.join(
                             self.opt['path']['visualization'], dataset_name,
-                            f'{img_name}_{self.opt["name"]}.png')
+                            '%s_%s.png' % (img_name, self.opt["name"]))
                 imwrite(sr_img, save_img_path)
 
             if with_metrics:
@@ -173,7 +173,7 @@ class SRModel(BaseModel):
                     self.metric_results[name] += getattr(
                         metric_module, metric_type)(sr_img, gt_img, **opt_)
             pbar.update(1)
-            pbar.set_description(f'Test {img_name}')
+            pbar.set_description('Test %s' % img_name)
         pbar.close()
 
         if with_metrics:
@@ -185,14 +185,14 @@ class SRModel(BaseModel):
 
     def _log_validation_metric_values(self, current_iter, dataset_name,
                                       tb_logger):
-        log_str = f'Validation {dataset_name}\n'
+        log_str = 'Validation %s\n' % dataset_name
         for metric, value in self.metric_results.items():
-            log_str += f'\t # {metric}: {value:.4f}\n'
+            log_str += '\t # {}: {:.4f}\n'.format(metric, value)
         logger = get_root_logger()
         logger.info(log_str)
         if tb_logger:
             for metric, value in self.metric_results.items():
-                tb_logger.add_scalar(f'metrics/{metric}', value, current_iter)
+                tb_logger.add_scalar('metrics/%s' % metric, value, current_iter)
 
     def get_current_visuals(self):
         out_dict = OrderedDict()

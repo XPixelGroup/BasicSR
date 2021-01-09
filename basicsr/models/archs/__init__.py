@@ -13,7 +13,7 @@ arch_filenames = [
 ]
 # import all the arch modules
 _arch_modules = [
-    importlib.import_module(f'basicsr.models.archs.{file_name}')
+    importlib.import_module('basicsr.models.archs.%s' % file_name)
     for file_name in arch_filenames
 ]
 
@@ -36,7 +36,7 @@ def dynamic_instantiation(modules, cls_type, opt):
         if cls_ is not None:
             break
     if cls_ is None:
-        raise ValueError(f'{cls_type} is not found.')
+        raise ValueError('%s is not found.' % cls_type)
     return cls_(**opt)
 
 

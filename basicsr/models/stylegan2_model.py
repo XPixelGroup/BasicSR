@@ -141,7 +141,7 @@ class StyleGAN2Model(BaseModel):
                 betas=(0**net_g_reg_ratio, 0.99**net_g_reg_ratio))
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_g)
 
         # optimizer d
@@ -181,7 +181,7 @@ class StyleGAN2Model(BaseModel):
                 betas=(0**net_d_reg_ratio, 0.99**net_d_reg_ratio))
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_d)
 
     def model_ema(self, decay=0.999):
@@ -309,10 +309,10 @@ class StyleGAN2Model(BaseModel):
         result = tensor2img(self.output, min_max=(-1, 1))
         if self.opt['is_train']:
             save_img_path = osp.join(self.opt['path']['visualization'],
-                                     'train', f'train_{current_iter}.png')
+                                     'train', 'train_%d.png' % current_iter)
         else:
             save_img_path = osp.join(self.opt['path']['visualization'], 'test',
-                                     f'test_{self.opt["name"]}.png')
+                                     'test_%s.png' % self.opt["name"])
         imwrite(result, save_img_path)
         # add sample images to tb_logger
         result = (result / 255.).astype(np.float32)

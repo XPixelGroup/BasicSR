@@ -67,7 +67,7 @@ class SRGANModel(SRModel):
                                                 **train_opt['optim_g'])
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_g)
         # optimizer d
         optim_type = train_opt['optim_d'].pop('type')
@@ -76,7 +76,7 @@ class SRGANModel(SRModel):
                                                 **train_opt['optim_d'])
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_d)
 
     def optimize_parameters(self, current_iter):

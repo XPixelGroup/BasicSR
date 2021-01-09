@@ -54,8 +54,8 @@ class VGGStyleDiscriminator128(nn.Module):
 
     def forward(self, x):
         assert x.size(2) == 128 and x.size(3) == 128, (
-            f'Input spatial size must be 128x128, '
-            f'but received {x.size()}.')
+            'Input spatial size must be 128x128, '
+            'but received %s.' % x.size())
 
         feat = self.lrelu(self.conv0_0(x))
         feat = self.lrelu(self.bn0_1(

@@ -113,7 +113,7 @@ class Upsample(nn.Sequential):
             m.append(nn.Conv2d(num_feat, 9 * num_feat, 3, 1, 1))
             m.append(nn.PixelShuffle(3))
         else:
-            raise ValueError(f'scale {scale} is not supported. '
+            raise ValueError('scale %d is not supported. ' % scale +
                              'Supported scales: 2^n and 3.')
         super(Upsample, self).__init__(*m)
 
@@ -194,7 +194,7 @@ def resize_flow(flow,
         output_h, output_w = sizes[0], sizes[1]
     else:
         raise ValueError(
-            f'Size type should be ratio or shape, but got type {size_type}.')
+            'Size type should be ratio or shape, but got type %s.' % size_type)
 
     input_flow = flow.clone()
     ratio_h = output_h / flow_h
@@ -250,7 +250,7 @@ class DCNv2Pack(ModulatedDeformConvPack):
         if offset_absmean > 50:
             logger = get_root_logger()
             logger.warning(
-                f'Offset abs mean is {offset_absmean}, larger than 50.')
+                'Offset abs mean is %d, larger than 50.' % offset_absmean)
 
         return modulated_deform_conv(x, offset, mask, self.weight, self.bias,
                                      self.stride, self.padding, self.dilation,

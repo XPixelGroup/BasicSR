@@ -21,7 +21,7 @@ class EDVRModel(VideoBaseModel):
     def setup_optimizers(self):
         train_opt = self.opt['train']
         dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
-        logger.info(f'Multiple the learning rate for dcn with {dcn_lr_mul}.')
+        logger.info('Multiple the learning rate for dcn with %d.' % dcn_lr_mul)
         if dcn_lr_mul == 1:
             optim_params = self.net_g.parameters()
         else:  # separate dcn params and normal params for differnet lr
@@ -49,14 +49,14 @@ class EDVRModel(VideoBaseModel):
                                                 **train_opt['optim_g'])
         else:
             raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+                'optimizer %s is not supperted yet.' % optim_type)
         self.optimizers.append(self.optimizer_g)
 
     def optimize_parameters(self, current_iter):
         if self.train_tsa_iter:
             if current_iter == 1:
                 logger.info(
-                    f'Only train TSA module for {self.train_tsa_iter} iters.')
+                    'Only train TSA module for %d iters.' % self.train_tsa_iter)
                 for name, param in self.net_g.named_parameters():
                     if 'fusion' not in name:
                         param.requires_grad = False

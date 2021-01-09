@@ -13,7 +13,7 @@ model_filenames = [
 ]
 # import all the model modules
 _model_modules = [
-    importlib.import_module(f'basicsr.models.{file_name}')
+    importlib.import_module('basicsr.models.%s' % file_name)
     for file_name in model_filenames
 ]
 
@@ -33,10 +33,10 @@ def create_model(opt):
         if model_cls is not None:
             break
     if model_cls is None:
-        raise ValueError(f'Model {model_type} is not found.')
+        raise ValueError('Model %s is not found.' % model_type)
 
     model = model_cls(opt)
 
     logger = get_root_logger()
-    logger.info(f'Model [{model.__class__.__name__}] is created.')
+    logger.info('Model [%s] is created.' % model.__class__.__name__)
     return model
