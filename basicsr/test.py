@@ -20,7 +20,7 @@ def main():
     # mkdir and initialize loggers
     make_exp_dirs(opt)
     log_file = osp.join(opt['path']['log'],
-                        f"test_{opt['name']}_{get_time_str()}.log")
+                        "test_%s_%s.log" % (opt['name'], get_time_str()))
     logger = get_root_logger(
         logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
@@ -38,7 +38,7 @@ def main():
             sampler=None,
             seed=opt['manual_seed'])
         logger.info(
-            f"Number of test images in {dataset_opt['name']}: {len(test_set)}")
+            "Number of test images in %s: %d" % (dataset_opt['name'], len(test_set)))
         test_loaders.append(test_loader)
 
     # create model
@@ -46,7 +46,7 @@ def main():
 
     for test_loader in test_loaders:
         test_set_name = test_loader.dataset.opt['name']
-        logger.info(f'Testing {test_set_name}...')
+        logger.info('Testing %s...' % test_set_name)
         model.validation(
             test_loader,
             current_iter=opt['name'],
