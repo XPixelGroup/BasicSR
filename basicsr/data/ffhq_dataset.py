@@ -34,13 +34,13 @@ class FFHQDataset(data.Dataset):
             self.io_backend_opt['db_paths'] = self.gt_folder
             if not self.gt_folder.endswith('.lmdb'):
                 raise ValueError("'dataroot_gt' should end with '.lmdb', "
-                                 f'but received {self.gt_folder}')
+                                 'but received %s' % self.gt_folder)
             with open(osp.join(self.gt_folder, 'meta_info.txt')) as fin:
                 self.paths = [line.split('.')[0] for line in fin]
         else:
             # FFHQ has 70000 images in total
             self.paths = [
-                osp.join(self.gt_folder, f'{v:08d}.png') for v in range(70000)
+                osp.join(self.gt_folder, '{:08d}.png'.format(v)) for v in range(70000)
             ]
 
     def __getitem__(self, index):

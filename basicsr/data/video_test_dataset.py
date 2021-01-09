@@ -60,7 +60,7 @@ class VideoTestDataset(data.Dataset):
             'type'] != 'lmdb', 'No need to use lmdb during validation/test.'
 
         logger = get_root_logger()
-        logger.info(f'Generate data info for VideoTestDataset - {opt["name"]}')
+        logger.info('Generate data info for VideoTestDataset - %s' % opt["name"])
         self.imgs_lq, self.imgs_gt = {}, {}
         if 'meta_info_file' in opt:
             with open(opt['meta_info_file'], 'r') as fin:
@@ -87,14 +87,14 @@ class VideoTestDataset(data.Dataset):
 
                 max_idx = len(img_paths_lq)
                 assert max_idx == len(img_paths_gt), (
-                    f'Different number of images in lq ({max_idx})'
-                    f' and gt folders ({len(img_paths_gt)})')
+                    'Different number of images in lq (%d)' % max_idx +
+                    ' and gt folders (%d)' % len(img_paths_gt))
 
                 self.data_info['lq_path'].extend(img_paths_lq)
                 self.data_info['gt_path'].extend(img_paths_gt)
                 self.data_info['folder'].extend([subfolder_name] * max_idx)
                 for i in range(max_idx):
-                    self.data_info['idx'].append(f'{i}/{max_idx}')
+                    self.data_info['idx'].append('%d/%d' % (i, max_idx))
                 border_l = [0] * max_idx
                 for i in range(self.opt['num_frame'] // 2):
                     border_l[i] = 1
@@ -104,7 +104,7 @@ class VideoTestDataset(data.Dataset):
                 # cache data or save the frame list
                 if self.cache_data:
                     logger.info(
-                        f'Cache {subfolder_name} for VideoTestDataset...')
+                        'Cache %s for VideoTestDataset...' % subfolder_name)
                     self.imgs_lq[subfolder_name] = read_img_seq(img_paths_lq)
                     self.imgs_gt[subfolder_name] = read_img_seq(img_paths_gt)
                 else:
@@ -112,7 +112,7 @@ class VideoTestDataset(data.Dataset):
                     self.imgs_gt[subfolder_name] = img_paths_gt
         else:
             raise ValueError(
-                f'Non-supported video test dataset: {type(opt["name"])}')
+                'Non-supported video test dataset: %s' % type(opt["name"]))
 
     def __getitem__(self, index):
         folder = self.data_info['folder'][index]
@@ -193,19 +193,19 @@ class VideoTestVimeo90KDataset(data.Dataset):
             'type'] != 'lmdb', 'No need to use lmdb during validation/test.'
 
         logger = get_root_logger()
-        logger.info(f'Generate data info for VideoTestDataset - {opt["name"]}')
+        logger.info('Generate data info for VideoTestDataset - %s' % opt["name"])
         with open(opt['meta_info_file'], 'r') as fin:
             subfolders = [line.split(' ')[0] for line in fin]
         for idx, subfolder in enumerate(subfolders):
             gt_path = osp.join(self.gt_root, subfolder, 'im4.png')
             self.data_info['gt_path'].append(gt_path)
             lq_paths = [
-                osp.join(self.lq_root, subfolder, f'im{i}.png')
+                osp.join(self.lq_root, subfolder, 'im%d.png' % i)
                 for i in neighbor_list
             ]
             self.data_info['lq_path'].append(lq_paths)
             self.data_info['folder'].append('vimeo90k')
-            self.data_info['idx'].append(f'{idx}/{len(subfolders)}')
+            self.data_info['idx'].append('%d/%d' % (idx, len(subfolders)))
             self.data_info['border'].append(0)
 
     def __getitem__(self, index):

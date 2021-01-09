@@ -57,7 +57,7 @@ def generate_frame_indices(crt_idx,
     """
     assert num_frames % 2 == 1, 'num_frames should be an odd number.'
     assert padding in ('replicate', 'reflection', 'reflection_circle',
-                       'circle'), f'Wrong padding mode: {padding}.'
+                       'circle'), 'Wrong padding mode: %s.' % padding
 
     max_frame_num = max_frame_num - 1  # start from 0
     num_pad = num_frames // 2
@@ -125,18 +125,18 @@ def paired_paths_from_lmdb(folders, keys):
     """
     assert len(folders) == 2, (
         'The len of folders should be 2 with [input_folder, gt_folder]. '
-        f'But got {len(folders)}')
+        'But got %d' % len(folders))
     assert len(keys) == 2, (
         'The len of keys should be 2 with [input_key, gt_key]. '
-        f'But got {len(keys)}')
+        'But got %d' % len(keys))
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
     if not (input_folder.endswith('.lmdb') and gt_folder.endswith('.lmdb')):
         raise ValueError(
-            f'{input_key} folder and {gt_key} folder should both in lmdb '
-            f'formats. But received {input_key}: {input_folder}; '
-            f'{gt_key}: {gt_folder}')
+            '%s folder and %s folder should both in lmdb ' % (input_key, gt_key) +
+            'formats. But received %s: %s; ' % (input_key, input_folder) +
+            '%s: %s' % (gt_key, gt_folder))
     # ensure that the two meta_info files are the same
     with open(osp.join(input_folder, 'meta_info.txt')) as fin:
         input_lmdb_keys = [line.split('.')[0] for line in fin]
@@ -144,13 +144,13 @@ def paired_paths_from_lmdb(folders, keys):
         gt_lmdb_keys = [line.split('.')[0] for line in fin]
     if set(input_lmdb_keys) != set(gt_lmdb_keys):
         raise ValueError(
-            f'Keys in {input_key}_folder and {gt_key}_folder are different.')
+            'Keys in %s_folder and %s_folder are different.' % (input_key, gt_key))
     else:
         paths = []
         for lmdb_key in sorted(input_lmdb_keys):
             paths.append(
-                dict([(f'{input_key}_path', lmdb_key),
-                      (f'{gt_key}_path', lmdb_key)]))
+                dict([('%s_path' % input_key, lmdb_key),
+                      ('%s_path' % gt_key, lmdb_key)]))
         return paths
 
 
@@ -182,10 +182,10 @@ def paired_paths_from_meta_info_file(folders, keys, meta_info_file,
     """
     assert len(folders) == 2, (
         'The len of folders should be 2 with [input_folder, gt_folder]. '
-        f'But got {len(folders)}')
+        'But got %d' % len(folders))
     assert len(keys) == 2, (
         'The len of keys should be 2 with [input_key, gt_key]. '
-        f'But got {len(keys)}')
+        'But got %d' % len(keys))
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
@@ -195,12 +195,12 @@ def paired_paths_from_meta_info_file(folders, keys, meta_info_file,
     paths = []
     for gt_name in gt_names:
         basename, ext = osp.splitext(osp.basename(gt_name))
-        input_name = f'{filename_tmpl.format(basename)}{ext}'
+        input_name = filename_tmpl.format(basename) + ext
         input_path = osp.join(input_folder, input_name)
         gt_path = osp.join(gt_folder, gt_name)
         paths.append(
-            dict([(f'{input_key}_path', input_path),
-                  (f'{gt_key}_path', gt_path)]))
+            dict([('%s_path' % input_key, input_path),
+                  ('%s_path' % gt_key, gt_path)]))
     return paths
 
 
@@ -221,29 +221,29 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     """
     assert len(folders) == 2, (
         'The len of folders should be 2 with [input_folder, gt_folder]. '
-        f'But got {len(folders)}')
+        'But got %d' % len(folders))
     assert len(keys) == 2, (
         'The len of keys should be 2 with [input_key, gt_key]. '
-        f'But got {len(keys)}')
+        'But got %d' % len(keys))
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
     input_paths = list(scandir(input_folder))
     gt_paths = list(scandir(gt_folder))
     assert len(input_paths) == len(gt_paths), (
-        f'{input_key} and {gt_key} datasets have different number of images: '
-        f'{len(input_paths)}, {len(gt_paths)}.')
+        '%s and %s datasets have different number of images: ' % (input_key, gt_key) +
+        '%d, %d.' % (len(input_paths), len(gt_paths)))
     paths = []
     for gt_path in gt_paths:
         basename, ext = osp.splitext(osp.basename(gt_path))
-        input_name = f'{filename_tmpl.format(basename)}{ext}'
+        input_name = filename_tmpl.format(basename) + ext
         input_path = osp.join(input_folder, input_name)
-        assert input_name in input_paths, (f'{input_name} is not in '
-                                           f'{input_key}_paths.')
+        assert input_name in input_paths, ('%s is not in ' % input_name +
+                                           '%s_paths.' % input_key)
         gt_path = osp.join(gt_folder, gt_path)
         paths.append(
-            dict([(f'{input_key}_path', input_path),
-                  (f'{gt_key}_path', gt_path)]))
+            dict([('%s_path' % input_key, input_path),
+                  ('%s_path' % gt_key, gt_path)]))
     return paths
 
 
@@ -272,7 +272,7 @@ def paths_from_lmdb(folder):
         list[str]: Returned path list.
     """
     if not folder.endswith('.lmdb'):
-        raise ValueError(f'Folder {folder}folder should in lmdb format.')
+        raise ValueError('Folder %s should in lmdb format.' % folder)
     with open(osp.join(folder, 'meta_info.txt')) as fin:
         paths = [line.split('.')[0] for line in fin]
     return paths
@@ -308,8 +308,8 @@ def duf_downsample(x, kernel_size=13, scale=4):
     Returns:
         Tensor: DUF downsampled frames.
     """
-    assert scale in (2, 3,
-                     4), f'Only support scale (2, 3, 4), but got {scale}.'
+    assert scale in (2, 3, 4), \
+        'Only support scale (2, 3, 4), but got %d.' % scale
 
     squeeze_flag = False
     if x.ndim == 4:

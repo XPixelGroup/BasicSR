@@ -56,7 +56,7 @@ class REDSDataset(data.Dataset):
         self.flow_root = Path(
             opt['dataroot_flow']) if opt['dataroot_flow'] is not None else None
         assert opt['num_frame'] % 2 == 1, (
-            f'num_frame should be odd number, but got {opt["num_frame"]}')
+            'num_frame should be odd number, but got %d' % opt["num_frame"])
         self.num_frame = opt['num_frame']
         self.num_half_frames = opt['num_frame'] // 2
 
@@ -65,17 +65,17 @@ class REDSDataset(data.Dataset):
             for line in fin:
                 folder, frame_num, _ = line.split(' ')
                 self.keys.extend(
-                    [f'{folder}/{i:08d}' for i in range(int(frame_num))])
+                    ['{}/{:08d}'.format(folder, i) for i in range(int(frame_num))])
 
         # remove the video clips used in validation
         if opt['val_partition'] == 'REDS4':
             val_partition = ['000', '011', '015', '020']
         elif opt['val_partition'] == 'official':
-            val_partition = [f'{v:03d}' for v in range(240, 270)]
+            val_partition = ['{:03d}'.format(v) for v in range(240, 270)]
         else:
             raise ValueError(
-                f'Wrong validation partition {opt["val_partition"]}.'
-                f"Supported ones are ['official', 'REDS4'].")
+                'Wrong validation partition %s. ' % (opt["val_partition"]) +
+                "Supported ones are ['official', 'REDS4'].")
         self.keys = [
             v for v in self.keys if v.split('/')[0] not in val_partition
         ]
@@ -100,8 +100,8 @@ class REDSDataset(data.Dataset):
         self.random_reverse = opt['random_reverse']
         interval_str = ','.join(str(x) for x in opt['interval_list'])
         logger = get_root_logger()
-        logger.info(f'Temporal augmentation interval list: [{interval_str}]; '
-                    f'random reverse is {self.random_reverse}.')
+        logger.info('Temporal augmentation interval list: [%s]; ' % interval_str +
+                    'random reverse is %s.' % self.random_reverse)
 
     def __getitem__(self, index):
         if self.file_client is None:
@@ -126,7 +126,7 @@ class REDSDataset(data.Dataset):
             start_frame_idx = (
                 center_frame_idx - self.num_half_frames * interval)
             end_frame_idx = center_frame_idx + self.num_half_frames * interval
-        frame_name = f'{center_frame_idx:08d}'
+        frame_name = '{:08d}'.format(center_frame_idx)
         neighbor_list = list(
             range(center_frame_idx - self.num_half_frames * interval,
                   center_frame_idx + self.num_half_frames * interval + 1,
@@ -136,13 +136,13 @@ class REDSDataset(data.Dataset):
             neighbor_list.reverse()
 
         assert len(neighbor_list) == self.num_frame, (
-            f'Wrong length of neighbor list: {len(neighbor_list)}')
+            'Wrong length of neighbor list: %d' % len(neighbor_list))
 
         # get the GT frame (as the center frame)
         if self.is_lmdb:
-            img_gt_path = f'{clip_name}/{frame_name}'
+            img_gt_path = '%s/%s' % (clip_name, frame_name)
         else:
-            img_gt_path = self.gt_root / clip_name / f'{frame_name}.png'
+            img_gt_path = self.gt_root / clip_name / '%s.png' % frame_name
         img_bytes = self.file_client.get(img_gt_path, 'gt')
         img_gt = imfrombytes(img_bytes, float32=True)
 
@@ -150,9 +150,9 @@ class REDSDataset(data.Dataset):
         img_lqs = []
         for neighbor in neighbor_list:
             if self.is_lmdb:
-                img_lq_path = f'{clip_name}/{neighbor:08d}'
+                img_lq_path = '{}/{:08d}'.format(clip_name, neighbor)
             else:
-                img_lq_path = self.lq_root / clip_name / f'{neighbor:08d}.png'
+                img_lq_path = self.lq_root / clip_name / '{:08d}.png'.format(neighbor)
             img_bytes = self.file_client.get(img_lq_path, 'lq')
             img_lq = imfrombytes(img_bytes, float32=True)
             img_lqs.append(img_lq)
@@ -163,10 +163,10 @@ class REDSDataset(data.Dataset):
             # read previous flows
             for i in range(self.num_half_frames, 0, -1):
                 if self.is_lmdb:
-                    flow_path = f'{clip_name}/{frame_name}_p{i}'
+                    flow_path = '%s/%s_p%d' % (clip_name, frame_name, i)
                 else:
                     flow_path = (
-                        self.flow_root / clip_name / f'{frame_name}_p{i}.png')
+                        self.flow_root / clip_name / '%s_p%d.png' % (frame_name, i))
                 img_bytes = self.file_client.get(flow_path, 'flow')
                 cat_flow = imfrombytes(
                     img_bytes, flag='grayscale',
@@ -179,10 +179,10 @@ class REDSDataset(data.Dataset):
             # read next flows
             for i in range(1, self.num_half_frames + 1):
                 if self.is_lmdb:
-                    flow_path = f'{clip_name}/{frame_name}_n{i}'
+                    flow_path = '%s/%s_n%d' % (clip_name, frame_name, i)
                 else:
                     flow_path = (
-                        self.flow_root / clip_name / f'{frame_name}_n{i}.png')
+                        self.flow_root / clip_name / '%s_n%d.png' % (frame_name, i))
                 img_bytes = self.file_client.get(flow_path, 'flow')
                 cat_flow = imfrombytes(
                     img_bytes, flag='grayscale',

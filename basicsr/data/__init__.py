@@ -21,7 +21,7 @@ dataset_filenames = [
 ]
 # import all the dataset modules
 _dataset_modules = [
-    importlib.import_module(f'basicsr.data.{file_name}')
+    importlib.import_module('basicsr.data.%s' % file_name)
     for file_name in dataset_filenames
 ]
 
@@ -42,14 +42,13 @@ def create_dataset(dataset_opt):
         if dataset_cls is not None:
             break
     if dataset_cls is None:
-        raise ValueError(f'Dataset {dataset_type} is not found.')
+        raise ValueError('Dataset %s is not found.' % dataset_type)
 
     dataset = dataset_cls(dataset_opt)
 
     logger = get_root_logger()
     logger.info(
-        f'Dataset {dataset.__class__.__name__} - {dataset_opt["name"]} '
-        'is created.')
+        'Dataset %s - %s is created.' % (dataset.__class__.__name__, dataset_opt["name"]))
     return dataset
 
 
@@ -100,7 +99,7 @@ def create_dataloader(dataset,
         dataloader_args = dict(
             dataset=dataset, batch_size=1, shuffle=False, num_workers=0)
     else:
-        raise ValueError(f'Wrong dataset phase: {phase}. '
+        raise ValueError('Wrong dataset phase: %s. ' % phase +
                          "Supported ones are 'train', 'val' and 'test'.")
 
     dataloader_args['pin_memory'] = dataset_opt.get('pin_memory', False)
@@ -109,8 +108,8 @@ def create_dataloader(dataset,
     if prefetch_mode == 'cpu':  # CPUPrefetcher
         num_prefetch_queue = dataset_opt.get('num_prefetch_queue', 1)
         logger = get_root_logger()
-        logger.info(f'Use {prefetch_mode} prefetch dataloader: '
-                    f'num_prefetch_queue = {num_prefetch_queue}')
+        logger.info('Use %s prefetch dataloader: ' % prefetch_mode +
+                    'num_prefetch_queue = %s' % num_prefetch_queue)
         return PrefetchDataLoader(
             num_prefetch_queue=num_prefetch_queue, **dataloader_args)
     else:

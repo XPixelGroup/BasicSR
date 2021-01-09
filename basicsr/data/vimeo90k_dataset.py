@@ -73,7 +73,7 @@ class Vimeo90KDataset(data.Dataset):
         # temporal augmentation configs
         self.random_reverse = opt['random_reverse']
         logger = get_root_logger()
-        logger.info(f'Random reverse is {self.random_reverse}.')
+        logger.info('Random reverse is %s.' % self.random_reverse)
 
     def __getitem__(self, index):
         if self.file_client is None:
@@ -91,7 +91,7 @@ class Vimeo90KDataset(data.Dataset):
 
         # get the GT frame (im4.png)
         if self.is_lmdb:
-            img_gt_path = f'{key}/im4'
+            img_gt_path = '%s/im4' % key
         else:
             img_gt_path = self.gt_root / clip / seq / 'im4.png'
         img_bytes = self.file_client.get(img_gt_path, 'gt')
@@ -101,9 +101,9 @@ class Vimeo90KDataset(data.Dataset):
         img_lqs = []
         for neighbor in self.neighbor_list:
             if self.is_lmdb:
-                img_lq_path = f'{clip}/{seq}/im{neighbor}'
+                img_lq_path = '%s/%s/im%s' % (clip, seq, neighbor)
             else:
-                img_lq_path = self.lq_root / clip / seq / f'im{neighbor}.png'
+                img_lq_path = self.lq_root / clip / seq / 'im%s.png' % neighbor
             img_bytes = self.file_client.get(img_lq_path, 'lq')
             img_lq = imfrombytes(img_bytes, float32=True)
             img_lqs.append(img_lq)

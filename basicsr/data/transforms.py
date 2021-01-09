@@ -18,7 +18,7 @@ def mod_crop(img, scale):
         h_remainder, w_remainder = h % scale, w % scale
         img = img[:h - h_remainder, :w - w_remainder, ...]
     else:
-        raise ValueError(f'Wrong img ndim: {img.ndim}.')
+        raise ValueError('Wrong img ndim: %d.' % img.ndim)
     return img
 
 
@@ -54,12 +54,12 @@ def paired_random_crop(img_gts, img_lqs, gt_patch_size, scale, gt_path):
 
     if h_gt != h_lq * scale or w_gt != w_lq * scale:
         raise ValueError(
-            f'Scale mismatches. GT ({h_gt}, {w_gt}) is not {scale}x ',
-            f'multiplication of LQ ({h_lq}, {w_lq}).')
+            'Scale mismatches. GT (%d, %d) is not %dx ' % (h_gt, w_gt, scale),
+            'multiplication of LQ (%d, %d).' % (h_lq, w_lq))
     if h_lq < lq_patch_size or w_lq < lq_patch_size:
-        raise ValueError(f'LQ ({h_lq}, {w_lq}) is smaller than patch size '
-                         f'({lq_patch_size}, {lq_patch_size}). '
-                         f'Please remove {gt_path}.')
+        raise ValueError('LQ (%d, %d) is smaller than patch size ' % (h_lq, w_lq) +
+                         '(%d, %d). ' % (lq_patch_size, lq_patch_size) +
+                         'Please remove %s.' % gt_path)
 
     # randomly choose top and left coordinates for lq patch
     top = random.randint(0, h_lq - lq_patch_size)
