@@ -91,7 +91,7 @@ def calculate_fid(mu1, sigma1, mu2, sigma2, eps=1e-6):
     if np.iscomplexobj(cov_sqrt):
         if not np.allclose(np.diagonal(cov_sqrt).imag, 0, atol=1e-3):
             m = np.max(np.abs(cov_sqrt.imag))
-            raise ValueError(f'Imaginary component {m}')
+            raise ValueError('Imaginary component %s' % m)
         cov_sqrt = cov_sqrt.real
 
     mean_diff = mu1 - mu2

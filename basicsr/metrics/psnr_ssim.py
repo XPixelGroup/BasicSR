@@ -27,10 +27,10 @@ def calculate_psnr(img1,
     """
 
     assert img1.shape == img2.shape, (
-        f'Image shapes are differnet: {img1.shape}, {img2.shape}.')
+        'Image shapes are differnet: %s, %s.' % (img1.shape, img2.shape))
     if input_order not in ['HWC', 'CHW']:
         raise ValueError(
-            f'Wrong input_order {input_order}. Supported input_orders are '
+            'Wrong input_order %s. Supported input_orders are ' % input_order +
             '"HWC" and "CHW"')
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
@@ -117,10 +117,10 @@ def calculate_ssim(img1,
     """
 
     assert img1.shape == img2.shape, (
-        f'Image shapes are differnet: {img1.shape}, {img2.shape}.')
+        'Image shapes are differnet: %s, %s.' % (img1.shape, img2.shape))
     if input_order not in ['HWC', 'CHW']:
         raise ValueError(
-            f'Wrong input_order {input_order}. Supported input_orders are '
+            'Wrong input_order %s. Supported input_orders are ' % input_order +
             '"HWC" and "CHW"')
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
