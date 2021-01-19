@@ -63,7 +63,7 @@ def init_loggers(opt):
     logger.info(get_env_info())
     logger.info(dict2str(opt))
 
-    # initialize wandb logger first and then tensorboard logger to solve wandb logging problems:
+    # initialize wandb logger before tensorboard logger to allow proper sync:
     if (opt['logger'].get('wandb')
             is not None) and (opt['logger']['wandb'].get('project')
                               is not None) and ('debug' not in opt['name']):
