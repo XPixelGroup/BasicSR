@@ -89,6 +89,9 @@ val:
       crop_border: 4
       test_y_channel: false
 
+    lpips:
+      type: calculate_lpips
+
 # logging settings
 logger:
   print_freq: 100
