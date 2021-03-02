@@ -34,7 +34,8 @@ class SRModel(BaseModel):
             self.init_training_settings()
 
         if 'lpips' in self.opt['val']['metrics']:
-            self.opt['val']['metrics']['lpips']['function'] = metric_module.lpips.LPIPS().to(self.device)
+            self.opt['val']['metrics']['lpips'][
+                'function'] = metric_module.lpips.LPIPS().to(self.device)
 
     def init_training_settings(self):
         self.net_g.train()
@@ -175,7 +176,8 @@ class SRModel(BaseModel):
                     metric_type = opt_.pop('type')
                     if 'lpips' in metric_type:
                         self.metric_results[name] += getattr(
-                            metric_module, metric_type)(self.output, self.gt, **opt_).item()
+                            metric_module, metric_type)(self.output, self.gt,
+                                                        **opt_).item()
                     else:
                         self.metric_results[name] += getattr(
                             metric_module, metric_type)(sr_img, gt_img, **opt_)
