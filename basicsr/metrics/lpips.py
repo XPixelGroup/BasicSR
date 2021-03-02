@@ -1,6 +1,6 @@
+import lpips  # pip install lpips
 import torch
 from torch import nn as nn
-import lpips  # pip install lpips
 
 
 class LPIPS(nn.Module):
