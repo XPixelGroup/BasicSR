@@ -34,7 +34,7 @@ if __name__ == '__main__':
         type=str,
         help=(
             "Options: 'ESRGAN', 'EDVR', 'StyleGAN', 'EDSR', 'DUF', 'DFDNet', "
-            "'dlib'. Set to 'all' if you want to download all the models."))
+            "'dlib', 'TOF'. Set to 'all' to download all the models."))
     args = parser.parse_args()
 
     file_ids = {
@@ -107,6 +107,10 @@ if __name__ == '__main__':
             '1M8w0AMBJW65MYYD-_8_be0cSH_SHhDQ4',
             'DUF_x4_52L_official-483d2c78.pth':
             '1GcmEWNr7mjTygi-QCOVgQWOo5OCNbh_T'
+        },
+        'TOF': {
+            'tof_x4_vimeo90k_official-32c9e01f.pth':
+            '1TgQiXXsvkTBFrQ1D0eKPgL10tQGu0gKb'
         },
         'DFDNet': {
             'DFDNet_dict_512-f79685f0.pth':
