@@ -33,6 +33,10 @@ class SRModel(BaseModel):
         if self.is_train:
             self.init_training_settings()
 
+        if 'lpips' in self.opt['val']['metrics']:
+            self.opt['val']['metrics']['lpips'][
+                'function'] = metric_module.lpips.LPIPS().to(self.device)
+
     def init_training_settings(self):
         self.net_g.train()
         train_opt = self.opt['train']
@@ -142,11 +146,11 @@ class SRModel(BaseModel):
             sr_img = tensor2img([visuals['result']])
             if 'gt' in visuals:
                 gt_img = tensor2img([visuals['gt']])
-                del self.gt
+                # del self.gt
 
             # tentative for out of GPU memory
             del self.lq
-            del self.output
+            # del self.output
             torch.cuda.empty_cache()
 
             if save_img:
@@ -170,8 +174,13 @@ class SRModel(BaseModel):
                 opt_metric = deepcopy(self.opt['val']['metrics'])
                 for name, opt_ in opt_metric.items():
                     metric_type = opt_.pop('type')
-                    self.metric_results[name] += getattr(
-                        metric_module, metric_type)(sr_img, gt_img, **opt_)
+                    if 'lpips' in metric_type:
+                        self.metric_results[name] += getattr(
+                            metric_module, metric_type)(self.output, self.gt,
+                                                        **opt_).item()
+                    else:
+                        self.metric_results[name] += getattr(
+                            metric_module, metric_type)(sr_img, gt_img, **opt_)
             pbar.update(1)
             pbar.set_description(f'Test {img_name}')
         pbar.close()
