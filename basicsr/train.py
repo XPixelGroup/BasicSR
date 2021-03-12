@@ -6,6 +6,7 @@ import random
 import time
 import torch
 from os import path as osp
+from shutil import copy as copy_file
 
 from basicsr.data import create_dataloader, create_dataset
 from basicsr.data.data_sampler import EnlargedSampler
@@ -147,6 +148,10 @@ def main():
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt[
                 'name'] and opt['rank'] == 0:
             mkdir_and_rename(osp.join('tb_logger', opt['name']))
+
+    # copy option YAML file to logger dir
+    if opt['rank'] == 0:
+        copy_file(opt['option_file_path'], opt['path']['log'])
 
     # initialize loggers
     logger, tb_logger = init_loggers(opt)
