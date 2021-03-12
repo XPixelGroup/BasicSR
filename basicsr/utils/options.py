@@ -42,7 +42,6 @@ def parse(opt_path, is_train=True):
         Loader, _ = ordered_yaml()
         opt = yaml.load(f, Loader=Loader)
 
-    opt['option_file_path'] = opt_path
     opt['is_train'] = is_train
 
     # datasets

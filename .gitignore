@@ -7,7 +7,6 @@ wandb/*
 tmp/*
 
 .vscode
-.idea
 
 # ignored files
 version.py
