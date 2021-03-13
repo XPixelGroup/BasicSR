@@ -6,9 +6,10 @@ GPUS=$1
 CONFIG=$2
 PORT=${PORT:-4321}
 
-if [ $# -le 3 ] ;then
+if [ $# -ne 2 ] ;then
     echo "usage:"
     echo "./scripts/dist_train.sh [number of gpu] [path to option file]"
+    exit
 fi
 
 PYTHONPATH="$(dirname $0)/..:${PYTHONPATH}" \
