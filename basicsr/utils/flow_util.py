@@ -72,7 +72,7 @@ def flowwrite(flow, filename, quantize=False, concat_axis=0, *args, **kwargs):
         dx, dy = quantize_flow(flow, *args, **kwargs)
         dxdy = np.concatenate((dx, dy), axis=concat_axis)
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        cv2.imwrite(dxdy, filename)
+        cv2.imwrite(filename, dxdy)
 
 
 def quantize_flow(flow, max_val=0.02, norm=True):
