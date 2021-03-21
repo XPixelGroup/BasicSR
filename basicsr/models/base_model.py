@@ -34,7 +34,7 @@ class BaseModel():
         """Save networks and training state."""
         pass
 
-    def validation(self, dataloader, current_iter, tb_logger, save_img=False):
+    def validation(self, dataloader, current_iter, tb_logger, save_img=False, is_gray=False):
         """Validation function.
 
         Args:
@@ -44,10 +44,10 @@ class BaseModel():
             save_img (bool): Whether to save images. Default: False.
         """
         if self.opt['dist']:
-            self.dist_validation(dataloader, current_iter, tb_logger, save_img)
+            self.dist_validation(dataloader, current_iter, tb_logger, save_img, is_gray)
         else:
             self.nondist_validation(dataloader, current_iter, tb_logger,
-                                    save_img)
+                                    save_img, is_gray)
 
     def get_current_log(self):
         return self.log_dict
@@ -242,17 +242,14 @@ class BaseModel():
             load_path (str): The path of networks to be loaded.
             net (nn.Module): Network.
             strict (bool): Whether strictly loaded.
-            param_key (str): The parameter key of loaded network. If set to
-                None, use the root 'path'.
+            param_key (str): The parameter key of loaded network.
                 Default: 'params'.
         """
         net = self.get_bare_model(net)
         logger.info(
             f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(
-            load_path, map_location=lambda storage, loc: storage)
-        if param_key is not None:
-            load_net = load_net[param_key]
+            load_path, map_location=lambda storage, loc: storage)[param_key]
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):

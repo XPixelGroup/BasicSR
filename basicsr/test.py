@@ -51,7 +51,8 @@ def main():
             test_loader,
             current_iter=opt['name'],
             tb_logger=None,
-            save_img=opt['val']['save_img'])
+            save_img=opt['val']['save_img'],
+            is_gray=opt['is_gray'])
 
 
 if __name__ == '__main__':

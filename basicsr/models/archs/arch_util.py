@@ -157,7 +157,7 @@ def flow_warp(x,
         vgrid_scaled,
         mode=interp_mode,
         padding_mode=padding_mode,
-        align_corners=align_corners)
+        align_corners=True)
 
     # TODO, what if align_corners=False
     return output

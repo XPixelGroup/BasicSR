@@ -107,9 +107,9 @@ train:
       'conv5_4': 1  # before relu
     vgg_type: vgg19
     use_input_norm: true
-    range_norm: false
     perceptual_weight: 1.0
     style_weight: 0
+    norm_img: false
     criterion: l1
   gan_opt:
     type: GANLoss

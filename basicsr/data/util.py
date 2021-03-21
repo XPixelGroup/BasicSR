@@ -262,22 +262,6 @@ def paths_from_folder(folder):
     return paths
 
 
-def paths_from_lmdb(folder):
-    """Generate paths from lmdb.
-
-    Args:
-        folder (str): Folder path.
-
-    Returns:
-        list[str]: Returned path list.
-    """
-    if not folder.endswith('.lmdb'):
-        raise ValueError(f'Folder {folder}folder should in lmdb format.')
-    with open(osp.join(folder, 'meta_info.txt')) as fin:
-        paths = [line.split('.')[0] for line in fin]
-    return paths
-
-
 def generate_gaussian_kernel(kernel_size=13, sigma=1.6):
     """Generate Gaussian kernel used in `duf_downsample`.
 

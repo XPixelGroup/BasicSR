@@ -63,16 +63,16 @@ def init_loggers(opt):
     logger.info(get_env_info())
     logger.info(dict2str(opt))
 
-    # initialize wandb logger before tensorboard logger to allow proper sync:
+    # initialize tensorboard logger and wandb logger
+    tb_logger = None
+    if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
+        tb_logger = init_tb_logger(log_dir=osp.join('tb_logger', opt['name']))
     if (opt['logger'].get('wandb')
             is not None) and (opt['logger']['wandb'].get('project')
                               is not None) and ('debug' not in opt['name']):
         assert opt['logger'].get('use_tb_logger') is True, (
             'should turn on tensorboard when using wandb')
         init_wandb_logger(opt)
-    tb_logger = None
-    if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
-        tb_logger = init_tb_logger(log_dir=osp.join('tb_logger', opt['name']))
     return logger, tb_logger
 
 
@@ -128,10 +128,11 @@ def create_train_val_dataloader(opt, logger):
 def main():
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(is_train=True)
+    # print(opt)
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
-
+    # print('cudaつかえてる？？？', torch.cuda.device_count())
     # load resume states if necessary
     if opt['path'].get('resume_state'):
         device_id = torch.cuda.current_device()
@@ -206,7 +207,7 @@ def main():
             model.update_learning_rate(
                 current_iter, warmup_iter=opt['train'].get('warmup_iter', -1))
             # training
-            model.feed_data(train_data)
+            model.feed_data(train_data, opt['is_gray'])
             model.optimize_parameters(current_iter)
             iter_time = time.time() - iter_time
             # log
@@ -226,7 +227,7 @@ def main():
             if opt.get('val') is not None and (current_iter %
                                                opt['val']['val_freq'] == 0):
                 model.validation(val_loader, current_iter, tb_logger,
-                                 opt['val']['save_img'])
+                                 opt['val']['save_img'], opt['is_gray'])
 
             data_time = time.time()
             iter_time = time.time()
@@ -242,7 +243,7 @@ def main():
     model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
     if opt.get('val') is not None:
         model.validation(val_loader, current_iter, tb_logger,
-                         opt['val']['save_img'])
+                         opt['val']['save_img'], opt['is_gray'])
     if tb_logger:
         tb_logger.close()
 
