@@ -1,10 +1,9 @@
 from torch.utils import data as data
-from torchvision.transforms.functional import normalize
 
-from basicsr.data.data_util import (paired_paths_from_folder,
-                                    paired_paths_from_lmdb,
-                                    paired_paths_from_meta_info_file)
 from basicsr.data.transforms import augment, paired_random_crop
+from basicsr.data.util import (paired_paths_from_folder,
+                               paired_paths_from_lmdb,
+                               paired_paths_from_meta_info_file)
 from basicsr.utils import FileClient, imfrombytes, img2tensor
 
 
@@ -45,8 +44,6 @@ class PairedImageDataset(data.Dataset):
         # file client (io backend)
         self.file_client = None
         self.io_backend_opt = opt['io_backend']
-        self.mean = opt['mean'] if 'mean' in opt else None
-        self.std = opt['std'] if 'std' in opt else None
 
         self.gt_folder, self.lq_folder = opt['dataroot_gt'], opt['dataroot_lq']
         if 'filename_tmpl' in opt:
@@ -100,10 +97,6 @@ class PairedImageDataset(data.Dataset):
         img_gt, img_lq = img2tensor([img_gt, img_lq],
                                     bgr2rgb=True,
                                     float32=True)
-        # normalize
-        if self.mean is not None or self.std is not None:
-            normalize(img_lq, self.mean, self.std, inplace=True)
-            normalize(img_gt, self.mean, self.std, inplace=True)
 
         return {
             'lq': img_lq,

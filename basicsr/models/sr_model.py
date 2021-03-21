@@ -80,10 +80,25 @@ class SRModel(BaseModel):
                 f'optimizer {optim_type} is not supperted yet.')
         self.optimizers.append(self.optimizer_g)
 
-    def feed_data(self, data):
-        self.lq = data['lq'].to(self.device)
-        if 'gt' in data:
-            self.gt = data['gt'].to(self.device)
+    def feed_data(self, data, is_gray = False):
+        if is_gray:
+            lq_img = data['lq'].to(self.device)
+            self.lq = lq_img[:,0,:,:].unsqueeze(1)
+            if 'gt' in data:
+                gt_img = data['gt'].to(self.device)
+                self.gt = gt_img[:,0,:,:].unsqueeze(1)
+        else:
+            self.lq = data['lq'].to(self.device)
+            if 'gt' in data:
+                self.gt = data['gt'].to(self.device)
+
+    def check(self):
+        # print(self.lq.shape)
+        # print(self.lq.numpy())
+        lq = self.lq
+        print(self.lq.shape)
+        print(lq[:,0,:,:].shape)
+        print(lq[:,0,:,:].unsqueeze(1).shape)
 
     def optimize_parameters(self, current_iter):
         self.optimizer_g.zero_grad()
@@ -117,13 +132,13 @@ class SRModel(BaseModel):
             self.output = self.net_g(self.lq)
         self.net_g.train()
 
-    def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
+    def dist_validation(self, dataloader, current_iter, tb_logger, save_img, is_gray):
         logger = get_root_logger()
         logger.info('Only support single GPU validation.')
-        self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
+        self.nondist_validation(dataloader, current_iter, tb_logger, save_img, is_gray)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger,
-                           save_img):
+                           save_img, is_gray):
         dataset_name = dataloader.dataset.opt['name']
         with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:
@@ -135,7 +150,7 @@ class SRModel(BaseModel):
 
         for idx, val_data in enumerate(dataloader):
             img_name = osp.splitext(osp.basename(val_data['lq_path'][0]))[0]
-            self.feed_data(val_data)
+            self.feed_data(val_data, is_gray)
             self.test()
 
             visuals = self.get_current_visuals()

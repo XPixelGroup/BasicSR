@@ -3,8 +3,8 @@ import torch
 from os import path as osp
 from torch.utils import data as data
 
-from basicsr.data.data_util import (duf_downsample, generate_frame_indices,
-                                    read_img_seq)
+from basicsr.data import util as util
+from basicsr.data.util import duf_downsample
 from basicsr.utils import get_root_logger, scandir
 
 
@@ -105,8 +105,10 @@ class VideoTestDataset(data.Dataset):
                 if self.cache_data:
                     logger.info(
                         f'Cache {subfolder_name} for VideoTestDataset...')
-                    self.imgs_lq[subfolder_name] = read_img_seq(img_paths_lq)
-                    self.imgs_gt[subfolder_name] = read_img_seq(img_paths_gt)
+                    self.imgs_lq[subfolder_name] = util.read_img_seq(
+                        img_paths_lq)
+                    self.imgs_gt[subfolder_name] = util.read_img_seq(
+                        img_paths_gt)
                 else:
                     self.imgs_lq[subfolder_name] = img_paths_lq
                     self.imgs_gt[subfolder_name] = img_paths_gt
@@ -121,7 +123,7 @@ class VideoTestDataset(data.Dataset):
         border = self.data_info['border'][index]
         lq_path = self.data_info['lq_path'][index]
 
-        select_idx = generate_frame_indices(
+        select_idx = util.generate_frame_indices(
             idx, max_idx, self.opt['num_frame'], padding=self.opt['padding'])
 
         if self.cache_data:
@@ -130,8 +132,8 @@ class VideoTestDataset(data.Dataset):
             img_gt = self.imgs_gt[folder][idx]
         else:
             img_paths_lq = [self.imgs_lq[folder][i] for i in select_idx]
-            imgs_lq = read_img_seq(img_paths_lq)
-            img_gt = read_img_seq([self.imgs_gt[folder][idx]])
+            imgs_lq = util.read_img_seq(img_paths_lq)
+            img_gt = util.read_img_seq([self.imgs_gt[folder][idx]])
             img_gt.squeeze_(0)
 
         return {
@@ -211,8 +213,8 @@ class VideoTestVimeo90KDataset(data.Dataset):
     def __getitem__(self, index):
         lq_path = self.data_info['lq_path'][index]
         gt_path = self.data_info['gt_path'][index]
-        imgs_lq = read_img_seq(lq_path)
-        img_gt = read_img_seq([gt_path])
+        imgs_lq = util.read_img_seq(lq_path)
+        img_gt = util.read_img_seq([gt_path])
         img_gt.squeeze_(0)
 
         return {
@@ -248,7 +250,7 @@ class VideoTestDUFDataset(VideoTestDataset):
         border = self.data_info['border'][index]
         lq_path = self.data_info['lq_path'][index]
 
-        select_idx = generate_frame_indices(
+        select_idx = util.generate_frame_indices(
             idx, max_idx, self.opt['num_frame'], padding=self.opt['padding'])
 
         if self.cache_data:
@@ -266,7 +268,7 @@ class VideoTestDUFDataset(VideoTestDataset):
             if self.opt['use_duf_downsampling']:
                 img_paths_lq = [self.imgs_gt[folder][i] for i in select_idx]
                 # read imgs_gt to generate low-resolution frames
-                imgs_lq = read_img_seq(
+                imgs_lq = util.read_img_seq(
                     img_paths_lq,
                     require_mod_crop=True,
                     scale=self.opt['scale'])
@@ -274,10 +276,10 @@ class VideoTestDUFDataset(VideoTestDataset):
                     imgs_lq, kernel_size=13, scale=self.opt['scale'])
             else:
                 img_paths_lq = [self.imgs_lq[folder][i] for i in select_idx]
-                imgs_lq = read_img_seq(img_paths_lq)
-            img_gt = read_img_seq([self.imgs_gt[folder][idx]],
-                                  require_mod_crop=True,
-                                  scale=self.opt['scale'])
+                imgs_lq = util.read_img_seq(img_paths_lq)
+            img_gt = util.read_img_seq([self.imgs_gt[folder][idx]],
+                                       require_mod_crop=True,
+                                       scale=self.opt['scale'])
             img_gt.squeeze_(0)
 
         return {

@@ -34,10 +34,10 @@ class VideoBaseModel(SRModel):
                     len(self.opt['val']['metrics']),
                     dtype=torch.float32,
                     device='cuda')
+
         rank, world_size = get_dist_info()
-        if with_metrics:
-            for _, tensor in self.metric_results.items():
-                tensor.zero_()
+        for _, tensor in self.metric_results.items():
+            tensor.zero_()
         # record all frames (border and center frames)
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='frame')

@@ -26,7 +26,7 @@ save_img: true
 
 # path
 path:
-  pretrain_network_g: experiments/pretrained_models/TOF/tof_x4_vimeo90k_official-32c9e01f.pth
+  pretrain_network_g: experiments/pretrained_models/TOF/tof_official-e81c455f.pth
   strict_load_g: true
 
 # validation settings

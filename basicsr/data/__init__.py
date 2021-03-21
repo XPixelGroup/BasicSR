@@ -98,7 +98,7 @@ def create_dataloader(dataset,
             seed=seed) if seed is not None else None
     elif phase in ['val', 'test']:  # validation
         dataloader_args = dict(
-            dataset=dataset, batch_size=1, shuffle=False, num_workers=0)
+            dataset=dataset, batch_size=1, shuffle=False, num_workers=1)
     else:
         raise ValueError(f'Wrong dataset phase: {phase}. '
                          "Supported ones are 'train', 'val' and 'test'.")
