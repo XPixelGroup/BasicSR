@@ -1,3 +1,32 @@
+# 引継ぎ
+## BasicSRレポジトリについて
+[BasicSR](https://github.com/xinntao/BasicSR)は、ESRGANのauthorによる様々なSR手法の実装がまとめられたレポジトリです。
+
+実際に実験を行うために動かすにあたって所々修正を加えています（細かい変更についてはこのフォークしたレポジトリのinitial commit の差分を参照）が、大幅な仕様変更などはないので、上の元の開発者によるREADMEを読むとおおよその使い方はわかるかと思います。
+
+このレポジトリでは、optionファイルを利用することで一つの実行用ファイル(`/basicsr/{train.py,test.py}`)で多くのモデルを動かせるようにしてあります。
+ライブラリ化が進んでいるため、階層構造などはわかりやすいものの、コードがかなり切り分けられているため細かいコードを追っていくのが少し大変です。
+
+`basicsr/train.py`を解読するためには、主に`basicsr/models`、`basicsr/data`にあるモジュールを理解していく必要があるため、初めに時間をかけてコードを読んで理解を深めるとその後の開発がスムーズに進められると思います（僕はあまり理解しきらないまま進めていたことで余計時間がかかった節がありました）。
+
+## reedbush上での実行
+reedbush上での環境構築にはかなり手間取ってしまいました。
+PyTorch、cudaあたりのバージョンの管理などがわかりにくく理解するのに時間がかかったのですが、ひとまずreedbushのジョブ実行の仕組みなどを初めに把握しておくとわかりやすくなるかと思います。
+
+必要なライブラリ等は元のレポジトリのREADMEにもあるように`requirements.txt`に記されているのですが、たしかreedbushで単純に`pip install`をしようとすると権限がない場合があるため、`--prefix`オプションなどを利用して権限がある場所にインストールし、`PYTHONUSERBASE`にその場所を指定しておくことで問題なく使えるようになります。
+
+ひとまず`reedbush_scripts/`に実際に用いたジョブスクリプトをいくつか置いているので、そちらのような形でreedbushのmoduleを利用するとうまく動くと思います。
+
+## dataset、optionについて
+datasetについては、`datasets/`に置いてoptionファイルで指定することで学習に利用することができます。
+詳しくはoptionsなどのREADMEなどを参照してください。
+
+`options/`には、参考に実験で用いたファイルの一部を置いています。
+実際に用いたdatasetについては別途ドライブなどでシェアします。
+
+
+---
+# ↓original README
 # :rocket: BasicSR
 
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
@@ -160,31 +189,3 @@ The following is a BibTeX reference. The BibTeX entry requires the `url` LaTeX p
 ## :e-mail: Contact
 
 If you have any question, please email `xintao.wang@outlook.com`.
-
-
----
-# 以下引継ぎ
-## BasicSRレポジトリについて
-[BasicSR](https://github.com/xinntao/BasicSR)は、ESRGANのauthorによる様々なSR手法の実装がまとめられたレポジトリです。
-
-実際に実験を行うために動かすにあたって所々修正を加えています（細かい変更についてはこのフォークしたレポジトリのinitial commit の差分を参照）が、大幅な仕様変更などはないので、上の元の開発者によるREADMEを読むとおおよその使い方はわかるかと思います。
-
-このレポジトリでは、optionファイルを利用することで一つの実行用ファイル(`/basicsr/{train.py,test.py}`)で多くのモデルを動かせるようにしてあります。
-ライブラリ化が進んでいるため、階層構造などはわかりやすいものの、コードがかなり切り分けられているため細かいコードを追っていくのが少し大変です。
-
-`basicsr/train.py`を解読するためには、主に`basicsr/models`、`basicsr/data`にあるモジュールを理解していく必要があるため、初めに時間をかけてコードを読んで理解を深めるとその後の開発がスムーズに進められると思います（僕はあまり理解しきらないまま進めていたことで余計時間がかかった節がありました）。
-
-## reedbush上での実行
-reedbush上での環境構築にはかなり手間取ってしまいました。
-PyTorch、cudaあたりのバージョンの管理などがわかりにくく理解するのに時間がかかったのですが、ひとまずreedbushのジョブ実行の仕組みなどを初めに把握しておくとわかりやすくなるかと思います。
-
-必要なライブラリ等は元のレポジトリのREADMEにもあるように`requirements.txt`に記されているのですが、たしかreedbushで単純に`pip install`をしようとすると権限がない場合があるため、`--prefix`オプションなどを利用して権限がある場所にインストールし、`PYTHONUSERBASE`にその場所を指定しておくことで問題なく使えるようになります。
-
-ひとまず`reedbush_scripts/`に実際に用いたジョブスクリプトをいくつか置いているので、そちらのような形でreedbushのmoduleを利用するとうまく動くと思います。
-
-## dataset、optionについて
-datasetについては、`datasets/`に置いてoptionファイルで指定することで学習に利用することができます。
-詳しくはoptionsなどのREADMEなどを参照してください。
-
-`options/`には、参考に実験で用いたファイルの一部を置いています。
-実際に用いたdatasetについては別途ドライブなどでシェアします。
