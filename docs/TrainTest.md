@@ -37,11 +37,23 @@ In general, both the training and testing include the following steps:
 > CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \\\
 > python -m torch.distributed.launch --nproc_per_node=8 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
 
+or
+
+> PYTHONPATH="./:${PYTHONPATH}" \\\
+> CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \\\
+> ./scripts/dist_train.sh 8 options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml
+
 **4 GPUs**
 
 > PYTHONPATH="./:${PYTHONPATH}" \\\
 > CUDA_VISIBLE_DEVICES=0,1,2,3 \\\
 > python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/train.py -opt options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml --launcher pytorch
+
+or
+
+> PYTHONPATH="./:${PYTHONPATH}" \\\
+> CUDA_VISIBLE_DEVICES=0,1,2,3 \\\
+> ./scripts/dist_train.sh 4 options/train/EDVR/train_EDVR_M_x4_SR_REDS_woTSA.yml
 
 ### Slurm Training
 
