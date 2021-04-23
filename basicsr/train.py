@@ -10,7 +10,7 @@ from os import path as osp
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
-from basicsr.models import create_model
+from basicsr.models import build_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
                            get_root_logger, get_time_str, init_tb_logger,
                            init_wandb_logger, make_exp_dirs, mkdir_and_rename,
@@ -158,14 +158,14 @@ def main():
     # create model
     if resume_state:  # resume training
         check_resume(opt, resume_state['iter'])
-        model = create_model(opt)
+        model = build_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
         logger.info(f"Resuming training from epoch: {resume_state['epoch']}, "
                     f"iter: {resume_state['iter']}.")
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:
-        model = create_model(opt)
+        model = build_model(opt)
         start_epoch = 0
         current_iter = 0
 

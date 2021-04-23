@@ -1,10 +1,11 @@
 import importlib
+from copy import deepcopy
 from os import path as osp
 
 from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.registry import MODEL_REGISTRY
 
-__all__ = ['create_model']
+__all__ = ['build_model']
 
 # automatically scan and import model modules for registry
 # scan all the files under the 'models' folder and collect files ending with
@@ -21,15 +22,15 @@ _model_modules = [
 ]
 
 
-def create_model(opt):
-    """Create model.
+def build_model(opt):
+    """Build model from options.
 
     Args:
-        opt (dict): Configuration. It constains:
+        opt (dict): Configuration. It must constain:
             model_type (str): Model type.
     """
-    model_type = opt['model_type']
-    model = MODEL_REGISTRY.get(model_type)(opt)
+    opt = deepcopy(opt)
+    model = MODEL_REGISTRY.get(opt['model_type'])(opt)
     logger = get_root_logger()
     logger.info(f'Model [{model.__class__.__name__}] is created.')
     return model

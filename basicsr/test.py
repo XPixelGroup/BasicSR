@@ -3,7 +3,7 @@ import torch
 from os import path as osp
 
 from basicsr.data import build_dataloader, build_dataset
-from basicsr.models import create_model
+from basicsr.models import build_model
 from basicsr.train import parse_options
 from basicsr.utils import (get_env_info, get_root_logger, get_time_str,
                            make_exp_dirs)
@@ -42,7 +42,7 @@ def main():
         test_loaders.append(test_loader)
 
     # create model
-    model = create_model(opt)
+    model = build_model(opt)
 
     for test_loader in test_loaders:
         test_set_name = test_loader.dataset.opt['name']
