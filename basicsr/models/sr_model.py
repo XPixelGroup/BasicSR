@@ -1,17 +1,14 @@
-import importlib
 import torch
 from collections import OrderedDict
-from copy import deepcopy
 from os import path as osp
 from tqdm import tqdm
 
+from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
 from .archs import build_network
 from .base_model import BaseModel
 from .losses import build_loss
-
-metric_module = importlib.import_module('basicsr.metrics')
 
 
 @MODEL_REGISTRY.register()
@@ -164,11 +161,10 @@ class SRModel(BaseModel):
 
             if with_metrics:
                 # calculate metrics
-                opt_metric = deepcopy(self.opt['val']['metrics'])
-                for name, opt_ in opt_metric.items():
-                    metric_type = opt_.pop('type')
-                    self.metric_results[name] += getattr(
-                        metric_module, metric_type)(sr_img, gt_img, **opt_)
+                for name, opt_ in self.opt['val']['metrics'].items():
+                    metric_data = dict(img1=sr_img, img2=gt_img)
+                    self.metric_results[name] += calculate_metric(
+                        metric_data, opt_)
             pbar.update(1)
             pbar.set_description(f'Test {img_name}')
         pbar.close()

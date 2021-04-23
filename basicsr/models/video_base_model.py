@@ -1,17 +1,14 @@
-import importlib
 import torch
 from collections import Counter
-from copy import deepcopy
 from os import path as osp
 from torch import distributed as dist
 from tqdm import tqdm
 
+from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
 from basicsr.utils.registry import MODEL_REGISTRY
 from .sr_model import SRModel
-
-metric_module = importlib.import_module('basicsr.metrics')
 
 
 @MODEL_REGISTRY.register()
@@ -89,11 +86,10 @@ class VideoBaseModel(SRModel):
 
             if with_metrics:
                 # calculate metrics
-                opt_metric = deepcopy(self.opt['val']['metrics'])
-                for metric_idx, opt_ in enumerate(opt_metric.values()):
-                    metric_type = opt_.pop('type')
-                    result = getattr(metric_module,
-                                     metric_type)(result_img, gt_img, **opt_)
+                for metric_idx, opt_ in enumerate(
+                        self.opt['val']['metrics'].values()):
+                    metric_data = dict(img1=result_img, img2=gt_img)
+                    result = calculate_metric(metric_data, opt_)
                     self.metric_results[folder][int(frame_idx),
                                                 metric_idx] += result
 
