@@ -127,7 +127,7 @@ if __name__ == '__main__':
         ext_modules = [
             make_cuda_ext(
                 name='deform_conv_ext',
-                module='basicsr.models.ops.dcn',
+                module='basicsr.ops.dcn',
                 sources=['src/deform_conv_ext.cpp'],
                 sources_cuda=[
                     'src/deform_conv_cuda.cpp',
@@ -135,12 +135,12 @@ if __name__ == '__main__':
                 ]),
             make_cuda_ext(
                 name='fused_act_ext',
-                module='basicsr.models.ops.fused_act',
+                module='basicsr.ops.fused_act',
                 sources=['src/fused_bias_act.cpp'],
                 sources_cuda=['src/fused_bias_act_kernel.cu']),
             make_cuda_ext(
                 name='upfirdn2d_ext',
-                module='basicsr.models.ops.upfirdn2d',
+                module='basicsr.ops.upfirdn2d',
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
