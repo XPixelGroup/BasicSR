@@ -1,12 +1,10 @@
-import importlib
 import torch
 from collections import OrderedDict
 
 from basicsr.utils.registry import MODEL_REGISTRY
 from .archs import build_network
+from .losses import build_loss
 from .sr_model import SRModel
-
-loss_module = importlib.import_module('basicsr.models.losses')
 
 
 @MODEL_REGISTRY.register()
@@ -32,25 +30,18 @@ class SRGANModel(SRModel):
 
         # define losses
         if train_opt.get('pixel_opt'):
-            pixel_type = train_opt['pixel_opt'].pop('type')
-            cri_pix_cls = getattr(loss_module, pixel_type)
-            self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
-                self.device)
+            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
         else:
             self.cri_pix = None
 
         if train_opt.get('perceptual_opt'):
-            percep_type = train_opt['perceptual_opt'].pop('type')
-            cri_perceptual_cls = getattr(loss_module, percep_type)
-            self.cri_perceptual = cri_perceptual_cls(
-                **train_opt['perceptual_opt']).to(self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(
+                self.device)
         else:
             self.cri_perceptual = None
 
         if train_opt.get('gan_opt'):
-            gan_type = train_opt['gan_opt'].pop('type')
-            cri_gan_cls = getattr(loss_module, gan_type)
-            self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
+            self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
 
         self.net_d_iters = train_opt.get('net_d_iters', 1)
         self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)

@@ -1,5 +1,4 @@
 import cv2
-import importlib
 import math
 import numpy as np
 import random
@@ -11,9 +10,8 @@ from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
 from .archs import build_network
 from .base_model import BaseModel
+from .losses import build_loss
 from .losses.losses import g_path_regularize, r1_penalty
-
-loss_module = importlib.import_module('basicsr.models.losses')
 
 
 @MODEL_REGISTRY.register()
@@ -77,8 +75,7 @@ class StyleGAN2Model(BaseModel):
 
         # define losses
         # gan loss (wgan)
-        cri_gan_cls = getattr(loss_module, train_opt['gan_opt'].pop('type'))
-        self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
+        self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
         # regularization weights
         self.r1_reg_weight = train_opt['r1_reg_weight']  # for discriminator
         self.path_reg_weight = train_opt['path_reg_weight']  # for generator
