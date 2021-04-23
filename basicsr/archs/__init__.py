@@ -17,7 +17,7 @@ arch_filenames = [
 ]
 # import all the arch modules
 _arch_modules = [
-    importlib.import_module(f'basicsr.models.archs.{file_name}')
+    importlib.import_module(f'basicsr.archs.{file_name}')
     for file_name in arch_filenames
 ]
 

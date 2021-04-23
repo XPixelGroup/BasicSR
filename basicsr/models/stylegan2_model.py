@@ -6,9 +6,9 @@ import torch
 from collections import OrderedDict
 from os import path as osp
 
+from basicsr.archs import build_network
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
-from .archs import build_network
 from .base_model import BaseModel
 from .losses import build_loss
 from .losses.losses import g_path_regularize, r1_penalty

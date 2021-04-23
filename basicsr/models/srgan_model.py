@@ -1,8 +1,8 @@
 import torch
 from collections import OrderedDict
 
+from basicsr.archs import build_network
 from basicsr.utils.registry import MODEL_REGISTRY
-from .archs import build_network
 from .losses import build_loss
 from .sr_model import SRModel
 
