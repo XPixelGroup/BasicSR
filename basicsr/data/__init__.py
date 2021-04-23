@@ -9,10 +9,11 @@ from os import path as osp
 from basicsr.data.prefetch_dataloader import PrefetchDataLoader
 from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.dist_util import get_dist_info
+from basicsr.utils.registry import DATASET_REGISTRY
 
 __all__ = ['create_dataset', 'create_dataloader']
 
-# automatically scan and import dataset modules
+# automatically scan and import dataset modules for registry
 # scan all the files under the data folder with '_dataset' in file names
 data_folder = osp.dirname(osp.abspath(__file__))
 dataset_filenames = [
@@ -35,17 +36,7 @@ def create_dataset(dataset_opt):
             type (str): Dataset type.
     """
     dataset_type = dataset_opt['type']
-
-    # dynamic instantiation
-    for module in _dataset_modules:
-        dataset_cls = getattr(module, dataset_type, None)
-        if dataset_cls is not None:
-            break
-    if dataset_cls is None:
-        raise ValueError(f'Dataset {dataset_type} is not found.')
-
-    dataset = dataset_cls(dataset_opt)
-
+    dataset = DATASET_REGISTRY.get(dataset_type)(dataset_opt)
     logger = get_root_logger()
     logger.info(
         f'Dataset {dataset.__class__.__name__} - {dataset_opt["name"]} '
