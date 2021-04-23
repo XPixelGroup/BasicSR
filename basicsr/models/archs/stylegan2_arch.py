@@ -4,6 +4,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from basicsr.utils.registry import ARCH_REGISTRY
+
 try:
     from basicsr.models.ops.fused_act import FusedLeakyReLU, fused_leaky_relu
     from basicsr.models.ops.upfirdn2d import upfirdn2d
@@ -441,6 +443,7 @@ class ConstantInput(nn.Module):
         return out
 
 
+@ARCH_REGISTRY.register()
 class StyleGAN2Generator(nn.Module):
     """StyleGAN2 Generator.
 
@@ -833,6 +836,7 @@ class ResBlock(nn.Module):
         return out
 
 
+@ARCH_REGISTRY.register()
 class StyleGAN2Discriminator(nn.Module):
     """StyleGAN2 Discriminator.
 
