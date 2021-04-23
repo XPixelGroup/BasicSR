@@ -1,10 +1,11 @@
 import importlib
+from copy import deepcopy
 from os import path as osp
 
 from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.registry import ARCH_REGISTRY
 
-__all__ = ['define_network']
+__all__ = ['build_network']
 
 # automatically scan and import arch modules for registry
 # scan all the files under the 'archs' folder and collect files ending with
@@ -21,7 +22,8 @@ _arch_modules = [
 ]
 
 
-def define_network(opt):
+def build_network(opt):
+    opt = deepcopy(opt)
     network_type = opt.pop('type')
     net = ARCH_REGISTRY.get(network_type)(**opt)
     logger = get_root_logger()

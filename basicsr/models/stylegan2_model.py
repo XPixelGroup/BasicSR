@@ -5,12 +5,11 @@ import numpy as np
 import random
 import torch
 from collections import OrderedDict
-from copy import deepcopy
 from os import path as osp
 
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
-from .archs import define_network
+from .archs import build_network
 from .base_model import BaseModel
 from .losses.losses import g_path_regularize, r1_penalty
 
@@ -25,7 +24,7 @@ class StyleGAN2Model(BaseModel):
         super(StyleGAN2Model, self).__init__(opt)
 
         # define network net_g
-        self.net_g = define_network(deepcopy(opt['network_g']))
+        self.net_g = build_network(opt['network_g'])
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
         # load pretrained model
@@ -49,7 +48,7 @@ class StyleGAN2Model(BaseModel):
         train_opt = self.opt['train']
 
         # define network net_d
-        self.net_d = define_network(deepcopy(self.opt['network_d']))
+        self.net_d = build_network(self.opt['network_d'])
         self.net_d = self.model_to_device(self.net_d)
         self.print_network(self.net_d)
 
@@ -62,8 +61,7 @@ class StyleGAN2Model(BaseModel):
         # define network net_g with Exponential Moving Average (EMA)
         # net_g_ema only used for testing on one GPU and saving, do not need to
         # wrap with DistributedDataParallel
-        self.net_g_ema = define_network(deepcopy(self.opt['network_g'])).to(
-            self.device)
+        self.net_g_ema = build_network(self.opt['network_g']).to(self.device)
         # load pretrained model
         load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:

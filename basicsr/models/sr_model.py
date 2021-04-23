@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
-from .archs import define_network
+from .archs import build_network
 from .base_model import BaseModel
 
 loss_module = importlib.import_module('basicsr.models.losses')
@@ -22,7 +22,7 @@ class SRModel(BaseModel):
         super(SRModel, self).__init__(opt)
 
         # define network
-        self.net_g = define_network(deepcopy(opt['network_g']))
+        self.net_g = build_network(opt['network_g'])
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
 
