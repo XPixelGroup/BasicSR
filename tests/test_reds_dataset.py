@@ -2,7 +2,7 @@ import math
 import os
 import torchvision.utils
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import build_dataloader, build_dataset
 
 
 def main(mode='folder'):
@@ -47,8 +47,8 @@ def main(mode='folder'):
 
     os.makedirs('tmp', exist_ok=True)
 
-    dataset = create_dataset(opt)
-    data_loader = create_dataloader(
+    dataset = build_dataset(opt)
+    data_loader = build_dataloader(
         dataset, opt, num_gpu=0, dist=opt['dist'], sampler=None)
 
     nrow = int(math.sqrt(opt['batch_size_per_gpu']))

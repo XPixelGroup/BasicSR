@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from basicsr.data import create_dataset
+from basicsr.data import build_dataset
 from basicsr.metrics.fid import (extract_inception_features,
                                  load_patched_inception_v3)
 
@@ -31,7 +31,7 @@ def calculate_stats_from_dataset():
     opt['use_hflip'] = False
     opt['mean'] = [0.5, 0.5, 0.5]
     opt['std'] = [0.5, 0.5, 0.5]
-    dataset = create_dataset(opt)
+    dataset = build_dataset(opt)
 
     # create dataloader
     data_loader = DataLoader(

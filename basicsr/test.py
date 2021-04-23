@@ -2,7 +2,7 @@ import logging
 import torch
 from os import path as osp
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import build_dataloader, build_dataset
 from basicsr.models import create_model
 from basicsr.train import parse_options
 from basicsr.utils import (get_env_info, get_root_logger, get_time_str,
@@ -29,8 +29,8 @@ def main():
     # create test dataset and dataloader
     test_loaders = []
     for phase, dataset_opt in sorted(opt['datasets'].items()):
-        test_set = create_dataset(dataset_opt)
-        test_loader = create_dataloader(
+        test_set = build_dataset(dataset_opt)
+        test_loader = build_dataloader(
             test_set,
             dataset_opt,
             num_gpu=opt['num_gpu'],

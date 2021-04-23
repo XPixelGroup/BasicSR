@@ -3,6 +3,7 @@ import numpy as np
 import random
 import torch
 import torch.utils.data
+from copy import deepcopy
 from functools import partial
 from os import path as osp
 
@@ -11,7 +12,7 @@ from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.dist_util import get_dist_info
 from basicsr.utils.registry import DATASET_REGISTRY
 
-__all__ = ['build_dataset', 'create_dataloader']
+__all__ = ['build_dataset', 'build_dataloader']
 
 # automatically scan and import dataset modules for registry
 # scan all the files under the data folder with '_dataset' in file names
@@ -35,22 +36,22 @@ def build_dataset(dataset_opt):
             name (str): Dataset name.
             type (str): Dataset type.
     """
-    dataset_type = dataset_opt['type']
-    dataset = DATASET_REGISTRY.get(dataset_type)(dataset_opt)
+    dataset_opt = deepcopy(dataset_opt)
+    dataset = DATASET_REGISTRY.get(dataset_opt['type'])(dataset_opt)
     logger = get_root_logger()
     logger.info(
         f'Dataset [{dataset.__class__.__name__}] - {dataset_opt["name"]} '
-        'is created.')
+        'is built.')
     return dataset
 
 
-def create_dataloader(dataset,
-                      dataset_opt,
-                      num_gpu=1,
-                      dist=False,
-                      sampler=None,
-                      seed=None):
-    """Create dataloader.
+def build_dataloader(dataset,
+                     dataset_opt,
+                     num_gpu=1,
+                     dist=False,
+                     sampler=None,
+                     seed=None):
+    """Build dataloader.
 
     Args:
         dataset (torch.utils.data.Dataset): Dataset.

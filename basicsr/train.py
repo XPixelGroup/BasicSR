@@ -7,7 +7,7 @@ import time
 import torch
 from os import path as osp
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import create_model
@@ -82,10 +82,10 @@ def create_train_val_dataloader(opt, logger):
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
-            train_set = create_dataset(dataset_opt)
+            train_set = build_dataset(dataset_opt)
             train_sampler = EnlargedSampler(train_set, opt['world_size'],
                                             opt['rank'], dataset_enlarge_ratio)
-            train_loader = create_dataloader(
+            train_loader = build_dataloader(
                 train_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
@@ -108,8 +108,8 @@ def create_train_val_dataloader(opt, logger):
                 f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
 
         elif phase == 'val':
-            val_set = create_dataset(dataset_opt)
-            val_loader = create_dataloader(
+            val_set = build_dataset(dataset_opt)
+            val_loader = build_dataloader(
                 val_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
