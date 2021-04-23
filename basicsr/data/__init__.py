@@ -11,7 +11,7 @@ from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.dist_util import get_dist_info
 from basicsr.utils.registry import DATASET_REGISTRY
 
-__all__ = ['create_dataset', 'create_dataloader']
+__all__ = ['build_dataset', 'create_dataloader']
 
 # automatically scan and import dataset modules for registry
 # scan all the files under the data folder with '_dataset' in file names
@@ -27,11 +27,11 @@ _dataset_modules = [
 ]
 
 
-def create_dataset(dataset_opt):
-    """Create dataset.
+def build_dataset(dataset_opt):
+    """Build dataset from options.
 
     Args:
-        dataset_opt (dict): Configuration for dataset. It constains:
+        dataset_opt (dict): Configuration for dataset. It must constain:
             name (str): Dataset name.
             type (str): Dataset type.
     """
@@ -39,7 +39,7 @@ def create_dataset(dataset_opt):
     dataset = DATASET_REGISTRY.get(dataset_type)(dataset_opt)
     logger = get_root_logger()
     logger.info(
-        f'Dataset {dataset.__class__.__name__} - {dataset_opt["name"]} '
+        f'Dataset [{dataset.__class__.__name__}] - {dataset_opt["name"]} '
         'is created.')
     return dataset
 

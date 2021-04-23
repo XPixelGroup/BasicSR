@@ -3,12 +3,14 @@ import torch
 from collections import OrderedDict
 from copy import deepcopy
 
-from basicsr.models.archs import define_network
-from basicsr.models.sr_model import SRModel
+from basicsr.utils.registry import MODEL_REGISTRY
+from .archs import define_network
+from .sr_model import SRModel
 
 loss_module = importlib.import_module('basicsr.models.losses')
 
 
+@MODEL_REGISTRY.register()
 class SRGANModel(SRModel):
     """SRGAN model for single image super-resolution."""
 

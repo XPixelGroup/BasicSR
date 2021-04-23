@@ -6,13 +6,15 @@ from os import path as osp
 from torch import distributed as dist
 from tqdm import tqdm
 
-from basicsr.models.sr_model import SRModel
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
+from basicsr.utils.registry import MODEL_REGISTRY
+from .sr_model import SRModel
 
 metric_module = importlib.import_module('basicsr.metrics')
 
 
+@MODEL_REGISTRY.register()
 class VideoBaseModel(SRModel):
     """Base video SR model."""
 

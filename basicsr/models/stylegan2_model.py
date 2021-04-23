@@ -8,14 +8,16 @@ from collections import OrderedDict
 from copy import deepcopy
 from os import path as osp
 
-from basicsr.models.archs import define_network
-from basicsr.models.base_model import BaseModel
-from basicsr.models.losses.losses import g_path_regularize, r1_penalty
 from basicsr.utils import imwrite, tensor2img
+from basicsr.utils.registry import MODEL_REGISTRY
+from .archs import define_network
+from .base_model import BaseModel
+from .losses.losses import g_path_regularize, r1_penalty
 
 loss_module = importlib.import_module('basicsr.models.losses')
 
 
+@MODEL_REGISTRY.register()
 class StyleGAN2Model(BaseModel):
     """StyleGAN2 model."""
 
