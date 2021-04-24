@@ -64,7 +64,7 @@ def write_version_py():
     content = """# GENERATED VERSION FILE
 # TIME: {}
 __version__ = '{}'
-short_version = '{}'
+__gitsha__ = '{}'
 version_info = ({})
 """
     sha = get_hash()
@@ -72,9 +72,8 @@ version_info = ({})
         SHORT_VERSION = f.read().strip()
     VERSION_INFO = ', '.join(
         [x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
-    VERSION = SHORT_VERSION + '+' + sha
 
-    version_file_str = content.format(time.asctime(), VERSION, SHORT_VERSION,
+    version_file_str = content.format(time.asctime(), SHORT_VERSION, sha,
                                       VERSION_INFO)
     with open(version_file, 'w') as f:
         f.write(version_file_str)
@@ -151,6 +150,7 @@ if __name__ == '__main__':
         version=get_version(),
         description='Open Source Image and Video Super-Resolution Toolbox',
         long_description=readme(),
+        long_description_content_type='text/markdown',
         author='Xintao Wang',
         author_email='xintao.wang@outlook.com',
         keywords='computer vision, restoration, super resolution',
