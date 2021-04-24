@@ -125,7 +125,7 @@ def create_train_val_dataloader(opt, logger):
     return train_loader, train_sampler, val_loader, total_epochs, total_iters
 
 
-def main():
+def train_pipeline():
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(is_train=True)
 
@@ -248,4 +248,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    train_pipeline()

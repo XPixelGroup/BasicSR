@@ -10,7 +10,7 @@ from basicsr.utils import (get_env_info, get_root_logger, get_time_str,
 from basicsr.utils.options import dict2str
 
 
-def main():
+def test_pipeline():
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(is_train=False)
 
@@ -55,4 +55,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    test_pipeline()
