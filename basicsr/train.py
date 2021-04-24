@@ -19,7 +19,7 @@ from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
 
-def parse_options(is_train=True):
+def parse_options(root_path, is_train=True):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-opt', type=str, required=True, help='Path to option YAML file.')
@@ -30,7 +30,7 @@ def parse_options(is_train=True):
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     args = parser.parse_args()
-    opt = parse(args.opt, is_train=is_train)
+    opt = parse(args.opt, root_path, is_train=is_train)
 
     # distributed settings
     if args.launcher == 'none':
@@ -125,9 +125,9 @@ def create_train_val_dataloader(opt, logger):
     return train_loader, train_sampler, val_loader, total_epochs, total_iters
 
 
-def train_pipeline():
+def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
-    opt = parse_options(is_train=True)
+    opt = parse_options(root_path, is_train=True)
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
@@ -248,4 +248,5 @@ def train_pipeline():
 
 
 if __name__ == '__main__':
-    train_pipeline()
+    root_path = osp.abspath(osp.join(__file__, osp.pardir, osp.pardir))
+    train_pipeline(root_path)
