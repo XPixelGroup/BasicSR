@@ -14,32 +14,35 @@ class BasicModule(nn.Module):
 
     def __init__(self):
         super(BasicModule, self).__init__()
-
         self.basic_module = nn.Sequential(
             nn.Conv2d(
                 in_channels=8,
                 out_channels=32,
                 kernel_size=7,
                 stride=1,
-                padding=3), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+                padding=3,
+                bias=False), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=32,
                 out_channels=64,
                 kernel_size=7,
                 stride=1,
-                padding=3), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
+                padding=3,
+                bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=64,
                 out_channels=32,
                 kernel_size=7,
                 stride=1,
-                padding=3), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+                padding=3,
+                bias=False), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=32,
                 out_channels=16,
                 kernel_size=7,
                 stride=1,
-                padding=3), nn.BatchNorm2d(16), nn.ReLU(inplace=True),
+                padding=3,
+                bias=False), nn.BatchNorm2d(16), nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=16,
                 out_channels=2,
