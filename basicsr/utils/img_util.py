@@ -98,7 +98,7 @@ def tensor2img(tensor, rgb2bgr=True, out_type=np.uint8, min_max=(0, 1)):
     return result
 
 
-def imfrombytes(content, flag='color', float32=False):
+def imfrombytes(content, flag='color', float32=False, bgr2rgb=False):
     """Read an image from bytes.
 
     Args:
@@ -107,6 +107,7 @@ def imfrombytes(content, flag='color', float32=False):
             candidates are `color`, `grayscale` and `unchanged`.
         float32 (bool): Whether to change to float32., If True, will also norm
             to [0, 1]. Default: False.
+        bgr2rgb (bool): Flag to flip channel order to rgb (for skimage, imageio, etc.)
 
     Returns:
         ndarray: Loaded image array.
@@ -120,6 +121,8 @@ def imfrombytes(content, flag='color', float32=False):
     img = cv2.imdecode(img_np, imread_flags[flag])
     if float32:
         img = img.astype(np.float32) / 255.
+    if bgr2rgb:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     return img
 
 

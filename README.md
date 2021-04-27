@@ -18,6 +18,7 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and vide
 
 ## :sparkles: New Features
 
+- Apr 27, 2021. Add **Dual-blind face restoration ** inference codes: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation).
 - Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab).
 - Sep 8, 2020. Add **blind face restoration** inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
 - Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
@@ -40,6 +41,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 | :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
 | StyleGAN2   | [Train](docs/HOWTOs.md#How-to-train-StyleGAN2) | [Inference](docs/HOWTOs.md#How-to-inference-StyleGAN2) | | | |
 | **Face Restoration** |  |  |  | | |
+| HiFaceGAN | - | [Inference](docs/HiFaceGAN.md) | | | |
 | DFDNet | - | [Inference](docs/HOWTOs.md#How-to-inference-DFDNet) | | | |
 | **Super Resolution** |  |  |  | | |
 | ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|

@@ -159,6 +159,24 @@ def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
 
     return img_path_list, keys
 
+'''
+    [Lotayou] 20210426
+'''
+def create_lmdb_for_HiFaceGAN():
+    """Create lmdb files for HiFaceGAN dataset.
+
+    Usage:
+        Remember to modify opt configurations according to your settings.
+    """
+    folder_path = 'datasets/FFHQ_train_rand_down'
+    lmdb_path = 'datasets/FFHQ_train_rand_down.lmdb'
+    img_path_list = sorted(
+        list(scandir(folder_path, suffix=('jpg','png','jpeg'), recursive=True))
+    )  # scandir return relative path by default
+    keys = [item.split('.')[0] for item in img_path_list]
+    make_lmdb_from_imgs(
+        folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
+        
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -167,7 +185,7 @@ if __name__ == '__main__':
         '--dataset',
         type=str,
         help=(
-            "Options: 'DIV2K', 'REDS', 'Vimeo90K' "
+            "Options: 'DIV2K', 'REDS', 'Vimeo90K', 'HiFaceGAN' "
             'You may need to modify the corresponding configurations in codes.'
         ))
     args = parser.parse_args()
@@ -178,5 +196,7 @@ if __name__ == '__main__':
         create_lmdb_for_reds()
     elif dataset == 'vimeo90k':
         create_lmdb_for_vimeo90k()
+    elif dataset == 'hifacegan':
+        create_lmdb_for_HiFaceGAN()
     else:
         raise ValueError('Wrong dataset.')

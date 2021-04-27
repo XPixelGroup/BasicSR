@@ -4,6 +4,10 @@ from .logger import (MessageLogger, get_env_info, get_root_logger,
                      init_tb_logger, init_wandb_logger)
 from .misc import (check_resume, get_time_str, make_exp_dirs, mkdir_and_rename,
                    scandir, set_random_seed, sizeof_fmt)
+'''
+ [Lotayou] 20210426: Add Options
+'''
+from .options import (Options, dict2object, object2dict)
 
 __all__ = [
     # file_client.py
@@ -28,4 +32,8 @@ __all__ = [
     'scandir',
     'check_resume',
     'sizeof_fmt'
+    # options.py
+    'Options',
+    'dict2object',
+    'object2dict',
 ]

@@ -17,7 +17,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 <sub>([HandyView](https://gitee.com/xinntao/HandyView), [HandyFigure](https://gitee.com/xinntao/HandyFigure), [HandyCrawler](https://gitee.com/xinntao/HandyCrawler), [HandyWriting](https://gitee.com/xinntao/HandyWriting))</sub>
 
 ## :sparkles: 新的特性
-
+- Apr 27, 2021. 添加 **双盲人脸复原**测试代码: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation).
 - Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
 - Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
 - Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
@@ -39,6 +39,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 | :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
 | StyleGAN2   | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) | | | |
 | **Face Restoration** |  |  |  | | |
+| HiFaceGAN | - | [测试](docs/HiFaceGAN_CN.md) | | | |
 | DFDNet | - | [测试](docs/HOWTOs_CN.md#如何测试-DFDNet) | | | |
 | **Super Resolution** |  |  |  | | |
 | ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
