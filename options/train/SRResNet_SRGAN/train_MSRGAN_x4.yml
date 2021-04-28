@@ -96,7 +96,7 @@ train:
       'conv5_4': 1  # before relu
     vgg_type: vgg19
     use_input_norm: true
-    scale: false
+    range_norm: false
     perceptual_weight: 1.0
     style_weight: 0
     criterion: l1
