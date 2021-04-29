@@ -1,6 +1,9 @@
 from torch import nn as nn
 
+from basicsr.utils.registry import ARCH_REGISTRY
 
+
+@ARCH_REGISTRY.register()
 class VGGStyleDiscriminator128(nn.Module):
     """VGG style discriminator with input size 128 x 128.
 

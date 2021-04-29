@@ -64,7 +64,7 @@ def write_version_py():
     content = """# GENERATED VERSION FILE
 # TIME: {}
 __version__ = '{}'
-short_version = '{}'
+__gitsha__ = '{}'
 version_info = ({})
 """
     sha = get_hash()
@@ -72,9 +72,8 @@ version_info = ({})
         SHORT_VERSION = f.read().strip()
     VERSION_INFO = ', '.join(
         [x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
-    VERSION = SHORT_VERSION + '+' + sha
 
-    version_file_str = content.format(time.asctime(), VERSION, SHORT_VERSION,
+    version_file_str = content.format(time.asctime(), SHORT_VERSION, sha,
                                       VERSION_INFO)
     with open(version_file, 'w') as f:
         f.write(version_file_str)
@@ -127,7 +126,7 @@ if __name__ == '__main__':
         ext_modules = [
             make_cuda_ext(
                 name='deform_conv_ext',
-                module='basicsr.models.ops.dcn',
+                module='basicsr.ops.dcn',
                 sources=['src/deform_conv_ext.cpp'],
                 sources_cuda=[
                     'src/deform_conv_cuda.cpp',
@@ -135,12 +134,12 @@ if __name__ == '__main__':
                 ]),
             make_cuda_ext(
                 name='fused_act_ext',
-                module='basicsr.models.ops.fused_act',
+                module='basicsr.ops.fused_act',
                 sources=['src/fused_bias_act.cpp'],
                 sources_cuda=['src/fused_bias_act_kernel.cu']),
             make_cuda_ext(
                 name='upfirdn2d_ext',
-                module='basicsr.models.ops.upfirdn2d',
+                module='basicsr.ops.upfirdn2d',
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
@@ -151,6 +150,7 @@ if __name__ == '__main__':
         version=get_version(),
         description='Open Source Image and Video Super-Resolution Toolbox',
         long_description=readme(),
+        long_description_content_type='text/markdown',
         author='Xintao Wang',
         author_email='xintao.wang@outlook.com',
         keywords='computer vision, restoration, super resolution',

@@ -1,9 +1,11 @@
 from torch import nn as nn
 from torch.nn import functional as F
 
-from basicsr.models.archs import arch_util as arch_util
+from basicsr.utils.registry import ARCH_REGISTRY
+from .arch_util import ResidualBlockNoBN, default_init_weights, make_layer
 
 
+@ARCH_REGISTRY.register()
 class MSRResNet(nn.Module):
     """Modified SRResNet.
 
@@ -33,8 +35,7 @@ class MSRResNet(nn.Module):
         self.upscale = upscale
 
         self.conv_first = nn.Conv2d(num_in_ch, num_feat, 3, 1, 1)
-        self.body = arch_util.make_layer(
-            arch_util.ResidualBlockNoBN, num_block, num_feat=num_feat)
+        self.body = make_layer(ResidualBlockNoBN, num_block, num_feat=num_feat)
 
         # upsampling
         if self.upscale in [2, 3]:
@@ -54,10 +55,10 @@ class MSRResNet(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.1, inplace=True)
 
         # initialization
-        arch_util.default_init_weights(
+        default_init_weights(
             [self.conv_first, self.upconv1, self.conv_hr, self.conv_last], 0.1)
         if self.upscale == 4:
-            arch_util.default_init_weights(self.upconv2, 0.1)
+            default_init_weights(self.upconv2, 0.1)
 
     def forward(self, x):
         feat = self.lrelu(self.conv_first(x))

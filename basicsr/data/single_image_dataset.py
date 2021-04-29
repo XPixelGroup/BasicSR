@@ -4,8 +4,10 @@ from torchvision.transforms.functional import normalize
 
 from basicsr.data.data_util import paths_from_lmdb
 from basicsr.utils import FileClient, imfrombytes, img2tensor, scandir
+from basicsr.utils.registry import DATASET_REGISTRY
 
 
+@DATASET_REGISTRY.register()
 class SingleImageDataset(data.Dataset):
     """Read only lq images in the test phase.
 
