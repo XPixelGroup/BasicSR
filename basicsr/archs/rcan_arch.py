@@ -1,7 +1,8 @@
 import torch
 from torch import nn as nn
 
-from basicsr.models.archs.arch_util import Upsample, make_layer
+from basicsr.utils.registry import ARCH_REGISTRY
+from .arch_util import Upsample, make_layer
 
 
 class ChannelAttention(nn.Module):
@@ -75,6 +76,7 @@ class ResidualGroup(nn.Module):
         return res + x
 
 
+@ARCH_REGISTRY.register()
 class RCAN(nn.Module):
     """Residual Channel Attention Networks.
 

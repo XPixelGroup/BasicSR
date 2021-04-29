@@ -2,11 +2,13 @@ import logging
 import torch
 from torch.nn.parallel import DistributedDataParallel
 
-from basicsr.models.video_base_model import VideoBaseModel
+from basicsr.utils.registry import MODEL_REGISTRY
+from .video_base_model import VideoBaseModel
 
 logger = logging.getLogger('basicsr')
 
 
+@MODEL_REGISTRY.register()
 class EDVRModel(VideoBaseModel):
     """EDVR Model.
 

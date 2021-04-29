@@ -8,8 +8,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 from basicsr.utils import get_root_logger
 
 try:
-    from basicsr.models.ops.dcn import (ModulatedDeformConvPack,
-                                        modulated_deform_conv)
+    from basicsr.ops.dcn import ModulatedDeformConvPack, modulated_deform_conv
 except ImportError:
     print('Cannot import dcn. Ignore this warning if dcn is not used. '
           'Otherwise install BasicSR with compiling dcn.')

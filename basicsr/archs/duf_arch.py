@@ -3,6 +3,8 @@ import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
+from basicsr.utils.registry import ARCH_REGISTRY
+
 
 class DenseBlocksTemporalReduce(nn.Module):
     """A concatenation of 3 dense blocks with reduction in temporal dimension.
@@ -231,6 +233,7 @@ class DynamicUpsamplingFilter(nn.Module):
         return out.permute(0, 3, 4, 1, 2).view(n, 3 * upsampling_square, h, w)
 
 
+@ARCH_REGISTRY.register()
 class DUF(nn.Module):
     """Network architecture for DUF
 

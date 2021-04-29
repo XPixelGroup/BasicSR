@@ -7,10 +7,10 @@ import time
 import torch
 from os import path as osp
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
-from basicsr.models import create_model
+from basicsr.models import build_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info,
                            get_root_logger, get_time_str, init_tb_logger,
                            init_wandb_logger, make_exp_dirs, mkdir_and_rename,
@@ -19,7 +19,7 @@ from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
 
-def parse_options(is_train=True):
+def parse_options(root_path, is_train=True):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-opt', type=str, required=True, help='Path to option YAML file.')
@@ -30,7 +30,7 @@ def parse_options(is_train=True):
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     args = parser.parse_args()
-    opt = parse(args.opt, is_train=is_train)
+    opt = parse(args.opt, root_path, is_train=is_train)
 
     # distributed settings
     if args.launcher == 'none':
@@ -82,10 +82,10 @@ def create_train_val_dataloader(opt, logger):
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
-            train_set = create_dataset(dataset_opt)
+            train_set = build_dataset(dataset_opt)
             train_sampler = EnlargedSampler(train_set, opt['world_size'],
                                             opt['rank'], dataset_enlarge_ratio)
-            train_loader = create_dataloader(
+            train_loader = build_dataloader(
                 train_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
@@ -108,8 +108,8 @@ def create_train_val_dataloader(opt, logger):
                 f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
 
         elif phase == 'val':
-            val_set = create_dataset(dataset_opt)
-            val_loader = create_dataloader(
+            val_set = build_dataset(dataset_opt)
+            val_loader = build_dataloader(
                 val_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
@@ -125,9 +125,9 @@ def create_train_val_dataloader(opt, logger):
     return train_loader, train_sampler, val_loader, total_epochs, total_iters
 
 
-def main():
+def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
-    opt = parse_options(is_train=True)
+    opt = parse_options(root_path, is_train=True)
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
@@ -158,14 +158,14 @@ def main():
     # create model
     if resume_state:  # resume training
         check_resume(opt, resume_state['iter'])
-        model = create_model(opt)
+        model = build_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
         logger.info(f"Resuming training from epoch: {resume_state['epoch']}, "
                     f"iter: {resume_state['iter']}.")
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:
-        model = create_model(opt)
+        model = build_model(opt)
         start_epoch = 0
         current_iter = 0
 
@@ -248,4 +248,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    root_path = osp.abspath(osp.join(__file__, osp.pardir, osp.pardir))
+    train_pipeline(root_path)
