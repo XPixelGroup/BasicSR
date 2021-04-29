@@ -128,9 +128,7 @@ class REDSDataset(data.Dataset):
             end_frame_idx = center_frame_idx + self.num_half_frames * interval
         frame_name = f'{center_frame_idx:08d}'
         neighbor_list = list(
-            range(center_frame_idx - self.num_half_frames * interval,
-                  center_frame_idx + self.num_half_frames * interval + 1,
-                  interval))
+            range(start_frame_idx, end_frame_idx + 1, interval))
         # random reverse
         if self.random_reverse and random.random() < 0.5:
             neighbor_list.reverse()
