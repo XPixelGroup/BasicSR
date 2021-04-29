@@ -26,4 +26,3 @@ class TorchTestCase(unittest.TestCase):
             'rdiff={}\n'
         ).format(adiff, rdiff)
         self.assertTrue(torch.allclose(x, y), message)
-

@@ -109,24 +109,26 @@ def dict2str(opt, indent_level=1):
             msg += ' ' * (indent_level * 2) + k + ': ' + str(v) + '\n'
     return msg
 
+
 '''
     [Lotayou] 20210426: Convert between yaml and object option types
 '''
+
 
 class Options(object):
     """
         A base option class with smart print options
     """
-    
+
     def __init__(self, **kwargs):
         self.__dict__.update(**kwargs)
-    
+
     def __repr__(self, indent_level=1):
-        ''' 
+        '''
             A replica of dict2str with [] -> {}
             Recursively append attributes from base class
         '''
-        
+
         msg = '\n'
         for k, v in self.__dict__.items():
             if isinstance(v, Options):
@@ -136,13 +138,14 @@ class Options(object):
             else:
                 msg += ' ' * (indent_level * 2) + k + ': ' + str(v) + '\n'
         return msg
-            
+
+
 def dict2object(dic):
-    """ 
+    """
        [Lotayou] 20210426: HiFaceGAN compatible helper function
        Convert a dict (read from yaml) to an object class
        to call an element with opt.xxx instead of opt['xxx']
-       
+
     """
     opt = Options()   # Use built-in Python object
     for k, v in dic.items():
@@ -154,10 +157,10 @@ def dict2object(dic):
 
 
 def object2dict(opt):
-    """ 
+    """
        [Lotayou] 20210426: HiFaceGAN compatible helper function
        Convert an object class to a dict to support opt['xxx'].
-       
+
        Note the recursive case, vars() ain't gonna work
     """
     dic = dict()
@@ -167,6 +170,7 @@ def object2dict(opt):
         else:
             dic[k] = v
     return dic
+
 
 if __name__ == '__main__':
 
@@ -181,7 +185,7 @@ if __name__ == '__main__':
             'recursive_dict_2': {
                 'name': 'test',
                 'num': 10.0,
-                'bool': True,                
+                'bool': True,
             }
         }
     }

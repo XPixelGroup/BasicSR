@@ -44,7 +44,8 @@ def _unsqueeze_ft(tensor):
     return tensor.unsqueeze(0).unsqueeze(-1)
 
 
-_ChildMessage = collections.namedtuple('_ChildMessage', ['sum', 'ssum', 'sum_size'])
+_ChildMessage = collections.namedtuple(
+    '_ChildMessage', ['sum', 'ssum', 'sum_size'])
 _MasterMessage = collections.namedtuple('_MasterMessage', ['sum', 'inv_std'])
 
 
@@ -52,7 +53,13 @@ class _SynchronizedBatchNorm(_BatchNorm):
     def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True):
         assert ReduceAddCoalesced is not None, 'Can not use Synchronized Batch Normalization without CUDA support.'
 
-        super(_SynchronizedBatchNorm, self).__init__(num_features, eps=eps, momentum=momentum, affine=affine)
+        super(
+            _SynchronizedBatchNorm,
+            self).__init__(
+            num_features,
+            eps=eps,
+            momentum=momentum,
+            affine=affine)
 
         self._sync_master = SyncMaster(self._data_parallel_master)
 
@@ -61,7 +68,8 @@ class _SynchronizedBatchNorm(_BatchNorm):
         self._slave_pipe = None
 
     def forward(self, input):
-        # If it is not parallel computation or is in evaluation mode, use PyTorch's implementation.
+        # If it is not parallel computation or is in evaluation mode, use
+        # PyTorch's implementation.
         if not (self._is_parallel and self.training):
             return F.batch_norm(
                 input, self.running_mean, self.running_var, self.weight, self.bias,
@@ -78,14 +86,17 @@ class _SynchronizedBatchNorm(_BatchNorm):
 
         # Reduce-and-broadcast the statistics.
         if self._parallel_id == 0:
-            mean, inv_std = self._sync_master.run_master(_ChildMessage(input_sum, input_ssum, sum_size))
+            mean, inv_std = self._sync_master.run_master(
+                _ChildMessage(input_sum, input_ssum, sum_size))
         else:
-            mean, inv_std = self._slave_pipe.run_slave(_ChildMessage(input_sum, input_ssum, sum_size))
+            mean, inv_std = self._slave_pipe.run_slave(
+                _ChildMessage(input_sum, input_ssum, sum_size))
 
         # Compute the output.
         if self.affine:
             # MJY:: Fuse the multiplication for speed.
-            output = (input - _unsqueeze_ft(mean)) * _unsqueeze_ft(inv_std * self.weight) + _unsqueeze_ft(self.bias)
+            output = (input - _unsqueeze_ft(mean)) * \
+                _unsqueeze_ft(inv_std * self.weight) + _unsqueeze_ft(self.bias)
         else:
             output = (input - _unsqueeze_ft(mean)) * _unsqueeze_ft(inv_std)
 
@@ -107,7 +118,9 @@ class _SynchronizedBatchNorm(_BatchNorm):
 
         # Always using same "device order" makes the ReduceAdd operation faster.
         # Thanks to:: Tete Xiao (http://tetexiao.com/)
-        intermediates = sorted(intermediates, key=lambda i: i[1].sum.get_device())
+        intermediates = sorted(
+            intermediates,
+            key=lambda i: i[1].sum.get_device())
 
         to_reduce = [i[1][:2] for i in intermediates]
         to_reduce = [j for i in to_reduce for j in i]  # flatten
@@ -121,7 +134,8 @@ class _SynchronizedBatchNorm(_BatchNorm):
 
         outputs = []
         for i, rec in enumerate(intermediates):
-            outputs.append((rec[0], _MasterMessage(*broadcasted[i*2:i*2+2])))
+            outputs.append((rec[0], _MasterMessage(
+                *broadcasted[i * 2:i * 2 + 2])))
 
         return outputs
 
@@ -136,11 +150,15 @@ class _SynchronizedBatchNorm(_BatchNorm):
 
         if hasattr(torch, 'no_grad'):
             with torch.no_grad():
-                self.running_mean = (1 - self.momentum) * self.running_mean + self.momentum * mean.data
-                self.running_var = (1 - self.momentum) * self.running_var + self.momentum * unbias_var.data
+                self.running_mean = (
+                    1 - self.momentum) * self.running_mean + self.momentum * mean.data
+                self.running_var = (
+                    1 - self.momentum) * self.running_var + self.momentum * unbias_var.data
         else:
-            self.running_mean = (1 - self.momentum) * self.running_mean + self.momentum * mean.data
-            self.running_var = (1 - self.momentum) * self.running_var + self.momentum * unbias_var.data
+            self.running_mean = (1 - self.momentum) * \
+                self.running_mean + self.momentum * mean.data
+            self.running_var = (1 - self.momentum) * \
+                self.running_var + self.momentum * unbias_var.data
 
         return mean, bias_var.clamp(self.eps) ** -0.5
 
@@ -381,7 +399,11 @@ def convert_model(module):
                                         SynchronizedBatchNorm2d,
                                         SynchronizedBatchNorm3d]):
         if isinstance(module, pth_module):
-            mod = sync_module(module.num_features, module.eps, module.momentum, module.affine)
+            mod = sync_module(
+                module.num_features,
+                module.eps,
+                module.momentum,
+                module.affine)
             mod.running_mean = module.running_mean
             mod.running_var = module.running_var
             if module.affine:

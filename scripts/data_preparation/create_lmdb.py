@@ -159,9 +159,12 @@ def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
 
     return img_path_list, keys
 
+
 '''
     [Lotayou] 20210426
 '''
+
+
 def create_lmdb_for_HiFaceGAN():
     """Create lmdb files for HiFaceGAN dataset.
 
@@ -171,12 +174,19 @@ def create_lmdb_for_HiFaceGAN():
     folder_path = 'datasets/FFHQ_train_rand_down'
     lmdb_path = 'datasets/FFHQ_train_rand_down.lmdb'
     img_path_list = sorted(
-        list(scandir(folder_path, suffix=('jpg','png','jpeg'), recursive=True))
+        list(
+            scandir(
+                folder_path,
+                suffix=(
+                    'jpg',
+                    'png',
+                    'jpeg'),
+                recursive=True))
     )  # scandir return relative path by default
     keys = [item.split('.')[0] for item in img_path_list]
     make_lmdb_from_imgs(
         folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
-        
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

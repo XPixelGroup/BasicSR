@@ -24,6 +24,7 @@ class BatchNorm2dReimpl(nn.Module):
     See also:
     https://github.com/vacancy/Synchronized-BatchNorm-PyTorch/issues/14
     """
+
     def __init__(self, num_features, eps=1e-5, momentum=0.1):
         super().__init__()
 
@@ -55,20 +56,20 @@ class BatchNorm2dReimpl(nn.Module):
         sumvar = sum_of_square - sum_ * mean
 
         self.running_mean = (
-                (1 - self.momentum) * self.running_mean
-                + self.momentum * mean.detach()
+            (1 - self.momentum) * self.running_mean
+            + self.momentum * mean.detach()
         )
         unbias_var = sumvar / (numel - 1)
         self.running_var = (
-                (1 - self.momentum) * self.running_var
-                + self.momentum * unbias_var.detach()
+            (1 - self.momentum) * self.running_var
+            + self.momentum * unbias_var.detach()
         )
 
         bias_var = sumvar / numel
         inv_std = 1 / (bias_var + self.eps).pow(0.5)
         output = (
-                (input_ - mean.unsqueeze(1)) * inv_std.unsqueeze(1) *
-                self.weight.unsqueeze(1) + self.bias.unsqueeze(1))
+            (input_ - mean.unsqueeze(1)) * inv_std.unsqueeze(1) *
+            self.weight.unsqueeze(1) + self.bias.unsqueeze(1))
 
-        return output.view(channels, batchsize, height, width).permute(1, 0, 2, 3).contiguous()
-
+        return output.view(channels, batchsize, height,
+                           width).permute(1, 0, 2, 3).contiguous()

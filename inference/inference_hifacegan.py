@@ -21,31 +21,31 @@ ckpt = torch.load(ckpt_path)
 model.load_state_dict(ckpt)
 model.to(device)
 
-###  [Lotayou]: Critical Bug from 20200218 
+# [Lotayou]: Critical Bug from 20200218
 #   When model is set to eval mode, the generated image
 # is not enhanced whatsoever, with almost 0 residual.
 # Using training mode seems to resolve this issue.
 #
-#   This is a bug in legacy Pytorch which seems to be fixed: 
+#   This is a bug in legacy Pytorch which seems to be fixed:
 #   https://github.com/pytorch/pytorch/pull/12671
 ###
 model.train()
 
 loader = torch.utils.data.DataLoader(
-    dataset = HiFaceGANDataset(opt),
-    batch_size = 1,
-    shuffle = False,
-    num_workers = 0,
+    dataset=HiFaceGANDataset(opt),
+    batch_size=1,
+    shuffle=False,
+    num_workers=0,
 )
 save_path = os.path.join(opt.results_dir, opt.name)
 os.makedirs(save_path, exist_ok=True)
 
-    
+
 for data in tqdm(loader):
     lr = data['label'].to(device)
     hr = data['image'].to(device)
     sr = model(lr)
-    
+
     pack = [lr, sr]
     if opt.with_gt:
         pack.extend(hr)
@@ -53,4 +53,3 @@ for data in tqdm(loader):
     image = tensor2img(pack)
     save_name = data['path'][0].split('/')[-1]
     cv2.imwrite(os.path.join(save_path, save_name), image)
-    
