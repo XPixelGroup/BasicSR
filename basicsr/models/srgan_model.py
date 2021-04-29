@@ -1,14 +1,13 @@
-import importlib
 import torch
 from collections import OrderedDict
-from copy import deepcopy
 
-from basicsr.models.archs import define_network
-from basicsr.models.sr_model import SRModel
+from basicsr.archs import build_network
+from basicsr.losses import build_loss
+from basicsr.utils.registry import MODEL_REGISTRY
+from .sr_model import SRModel
 
-loss_module = importlib.import_module('basicsr.models.losses')
 
-
+@MODEL_REGISTRY.register()
 class SRGANModel(SRModel):
     """SRGAN model for single image super-resolution."""
 
@@ -16,7 +15,7 @@ class SRGANModel(SRModel):
         train_opt = self.opt['train']
 
         # define network net_d
-        self.net_d = define_network(deepcopy(self.opt['network_d']))
+        self.net_d = build_network(self.opt['network_d'])
         self.net_d = self.model_to_device(self.net_d)
         self.print_network(self.net_d)
 
@@ -31,25 +30,18 @@ class SRGANModel(SRModel):
 
         # define losses
         if train_opt.get('pixel_opt'):
-            pixel_type = train_opt['pixel_opt'].pop('type')
-            cri_pix_cls = getattr(loss_module, pixel_type)
-            self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
-                self.device)
+            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
         else:
             self.cri_pix = None
 
         if train_opt.get('perceptual_opt'):
-            percep_type = train_opt['perceptual_opt'].pop('type')
-            cri_perceptual_cls = getattr(loss_module, percep_type)
-            self.cri_perceptual = cri_perceptual_cls(
-                **train_opt['perceptual_opt']).to(self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(
+                self.device)
         else:
             self.cri_perceptual = None
 
         if train_opt.get('gan_opt'):
-            gan_type = train_opt['gan_opt'].pop('type')
-            cri_gan_cls = getattr(loss_module, gan_type)
-            self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
+            self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
 
         self.net_d_iters = train_opt.get('net_d_iters', 1)
         self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)

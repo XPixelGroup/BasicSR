@@ -3,16 +3,18 @@ import numpy as np
 import random
 import torch
 import torch.utils.data
+from copy import deepcopy
 from functools import partial
 from os import path as osp
 
 from basicsr.data.prefetch_dataloader import PrefetchDataLoader
 from basicsr.utils import get_root_logger, scandir
 from basicsr.utils.dist_util import get_dist_info
+from basicsr.utils.registry import DATASET_REGISTRY
 
-__all__ = ['create_dataset', 'create_dataloader']
+__all__ = ['build_dataset', 'build_dataloader']
 
-# automatically scan and import dataset modules
+# automatically scan and import dataset modules for registry
 # scan all the files under the data folder with '_dataset' in file names
 data_folder = osp.dirname(osp.abspath(__file__))
 dataset_filenames = [
@@ -26,40 +28,30 @@ _dataset_modules = [
 ]
 
 
-def create_dataset(dataset_opt):
-    """Create dataset.
+def build_dataset(dataset_opt):
+    """Build dataset from options.
 
     Args:
-        dataset_opt (dict): Configuration for dataset. It constains:
+        dataset_opt (dict): Configuration for dataset. It must constain:
             name (str): Dataset name.
             type (str): Dataset type.
     """
-    dataset_type = dataset_opt['type']
-
-    # dynamic instantiation
-    for module in _dataset_modules:
-        dataset_cls = getattr(module, dataset_type, None)
-        if dataset_cls is not None:
-            break
-    if dataset_cls is None:
-        raise ValueError(f'Dataset {dataset_type} is not found.')
-
-    dataset = dataset_cls(dataset_opt)
-
+    dataset_opt = deepcopy(dataset_opt)
+    dataset = DATASET_REGISTRY.get(dataset_opt['type'])(dataset_opt)
     logger = get_root_logger()
     logger.info(
-        f'Dataset {dataset.__class__.__name__} - {dataset_opt["name"]} '
-        'is created.')
+        f'Dataset [{dataset.__class__.__name__}] - {dataset_opt["name"]} '
+        'is built.')
     return dataset
 
 
-def create_dataloader(dataset,
-                      dataset_opt,
-                      num_gpu=1,
-                      dist=False,
-                      sampler=None,
-                      seed=None):
-    """Create dataloader.
+def build_dataloader(dataset,
+                     dataset_opt,
+                     num_gpu=1,
+                     dist=False,
+                     sampler=None,
+                     seed=None):
+    """Build dataloader.
 
     Args:
         dataset (torch.utils.data.Dataset): Dataset.

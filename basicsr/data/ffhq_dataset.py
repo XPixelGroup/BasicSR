@@ -4,8 +4,10 @@ from torchvision.transforms.functional import normalize
 
 from basicsr.data.transforms import augment
 from basicsr.utils import FileClient, imfrombytes, img2tensor
+from basicsr.utils.registry import DATASET_REGISTRY
 
 
+@DATASET_REGISTRY.register()
 class FFHQDataset(data.Dataset):
     """FFHQ dataset for StyleGAN.
 

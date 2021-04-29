@@ -4,10 +4,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.utils.spectral_norm as SpectralNorm
 
-from basicsr.models.archs.dfdnet_util import (AttentionBlock, Blur,
-                                              MSDilationBlock, UpResBlock,
-                                              adaptive_instance_normalization)
-from basicsr.models.archs.vgg_arch import VGGFeatureExtractor
+from basicsr.utils.registry import ARCH_REGISTRY
+from .dfdnet_util import (AttentionBlock, Blur, MSDilationBlock, UpResBlock,
+                          adaptive_instance_normalization)
+from .vgg_arch import VGGFeatureExtractor
 
 
 class SFTUpBlock(nn.Module):
@@ -54,6 +54,7 @@ class SFTUpBlock(nn.Module):
         return out
 
 
+@ARCH_REGISTRY.register()
 class DFDNet(nn.Module):
     """DFDNet: Deep Face Dictionary Network.
 

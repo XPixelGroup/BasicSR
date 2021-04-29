@@ -1,18 +1,17 @@
-import importlib
 import torch
 from collections import OrderedDict
-from copy import deepcopy
 from os import path as osp
 from tqdm import tqdm
 
-from basicsr.models.archs import define_network
-from basicsr.models.base_model import BaseModel
+from basicsr.archs import build_network
+from basicsr.losses import build_loss
+from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
+from basicsr.utils.registry import MODEL_REGISTRY
+from .base_model import BaseModel
 
-loss_module = importlib.import_module('basicsr.models.losses')
-metric_module = importlib.import_module('basicsr.metrics')
 
-
+@MODEL_REGISTRY.register()
 class SRModel(BaseModel):
     """Base SR model for single image super-resolution."""
 
@@ -20,7 +19,7 @@ class SRModel(BaseModel):
         super(SRModel, self).__init__(opt)
 
         # define network
-        self.net_g = define_network(deepcopy(opt['network_g']))
+        self.net_g = build_network(opt['network_g'])
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
 
@@ -39,18 +38,13 @@ class SRModel(BaseModel):
 
         # define losses
         if train_opt.get('pixel_opt'):
-            pixel_type = train_opt['pixel_opt'].pop('type')
-            cri_pix_cls = getattr(loss_module, pixel_type)
-            self.cri_pix = cri_pix_cls(**train_opt['pixel_opt']).to(
-                self.device)
+            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
         else:
             self.cri_pix = None
 
         if train_opt.get('perceptual_opt'):
-            percep_type = train_opt['perceptual_opt'].pop('type')
-            cri_perceptual_cls = getattr(loss_module, percep_type)
-            self.cri_perceptual = cri_perceptual_cls(
-                **train_opt['perceptual_opt']).to(self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(
+                self.device)
         else:
             self.cri_perceptual = None
 
@@ -167,11 +161,10 @@ class SRModel(BaseModel):
 
             if with_metrics:
                 # calculate metrics
-                opt_metric = deepcopy(self.opt['val']['metrics'])
-                for name, opt_ in opt_metric.items():
-                    metric_type = opt_.pop('type')
-                    self.metric_results[name] += getattr(
-                        metric_module, metric_type)(sr_img, gt_img, **opt_)
+                for name, opt_ in self.opt['val']['metrics'].items():
+                    metric_data = dict(img1=sr_img, img2=gt_img)
+                    self.metric_results[name] += calculate_metric(
+                        metric_data, opt_)
             pbar.update(1)
             pbar.set_description(f'Test {img_name}')
         pbar.close()

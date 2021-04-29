@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 
 from basicsr.metrics.metric_util import reorder_image, to_y_channel
+from basicsr.utils.registry import METRIC_REGISTRY
 
 
+@METRIC_REGISTRY.register()
 def calculate_psnr(img1,
                    img2,
                    crop_border,
@@ -87,6 +89,7 @@ def _ssim(img1, img2):
     return ssim_map.mean()
 
 
+@METRIC_REGISTRY.register()
 def calculate_ssim(img1,
                    img2,
                    crop_border,

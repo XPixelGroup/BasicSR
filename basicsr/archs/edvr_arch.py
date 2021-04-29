@@ -2,8 +2,8 @@ import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
-from basicsr.models.archs.arch_util import (DCNv2Pack, ResidualBlockNoBN,
-                                            make_layer)
+from basicsr.utils.registry import ARCH_REGISTRY
+from .arch_util import DCNv2Pack, ResidualBlockNoBN, make_layer
 
 
 class PCDAlignment(nn.Module):
@@ -269,6 +269,7 @@ class PredeblurModule(nn.Module):
         return feat_l1
 
 
+@ARCH_REGISTRY.register()
 class EDVR(nn.Module):
     """EDVR network structure for video super-resolution.
 
