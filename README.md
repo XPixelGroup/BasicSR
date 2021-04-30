@@ -58,6 +58,18 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
+### Pip install
+
+```bash
+pip install basicsr
+```
+
+- pip installation does not compile cuda extensions.
+- If you want to use cuda extensions, set environment variable `BASICSR_JIT=True`. Note that every time you run the model, it will compile the extensions just time.
+  - Example: StyleGAN2 inference colab.
+
+### Git clone and compile
+
 1. Clone repo
 
     ```bash
@@ -75,16 +87,17 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 
     Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
     (Make sure that your GCC version: gcc >= 5) <br>
-    If you do not need the cuda extensions: <br>
-    &emsp;[*dcn* for EDVR](basicsr/models/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/models/ops)<br>
-    please add `--no_cuda_ext` when installing
+    If you do need the cuda extensions: <br>
+    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
+    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
+    please add `--cuda_ext` when installing.<br>
+    If you use the EDVR and StyleGAN2 model, the above cuda extensions are necessary.
 
     ```bash
-    python setup.py develop --no_cuda_ext
+    python setup.py develop --cuda_ext
     ```
 
-    If you use the EDVR and StyleGAN2 model, the above cuda extensions are necessary.
+    Otherwise, install without compiling cuda extensions
 
     ```bash
     python setup.py develop

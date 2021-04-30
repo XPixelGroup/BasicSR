@@ -57,7 +57,7 @@ We use the similar techniques for the following modules. Pay attention to the co
 | :------------- | :----------:    | :----------:   |
 | Data           | `_dataset.py`   | `data/paired_image_dataset.py` |
 | Model          | `_model.py`     | `basicsr/models/sr_model.py` |
-| Archs          | `_arch.py`      | `basicsr/models/archs/srresnet_arch.py`|
+| Archs          | `_arch.py`      | `basicsr/archs/srresnet_arch.py`|
 
 Note:
 
@@ -80,7 +80,7 @@ For these two modules, after adding new classes or functions, we need to add the
     | :------------- | :----------:    | :----------:   |
     | Data           | `_dataset.py`   | `data/paired_image_dataset.py` |
     | Model          | `_model.py`     | `basicsr/models/sr_model.py` |
-    | Archs          | `_arch.py`      | `basicsr/models/archs/srresnet_arch.py`|
+    | Archs          | `_arch.py`      | `basicsr/archs/srresnet_arch.py`|
 
 1. When logging, the loss items are recommended to start with `l_`, so that all these loss items will be grouped together in tensorboard. For example, in [basicsr/models/srgan_model.py](../basicsr/models/srgan_model.py), we use `l_g_pix`, `l_g_percep`, `l_g_gan`, etc for loss items. In [basicsr/utils/logger.py](../basicsr/utils/logger.py), these items will be grouped together:
 

@@ -60,7 +60,7 @@ for module in _dataset_modules:
 | :------------- | :----------:    | :----------:   |
 | Data           | `_dataset.py`   | `data/paired_image_dataset.py` |
 | Model          | `_model.py`     | `basicsr/models/sr_model.py` |
-| Archs          | `_arch.py`      | `basicsr/models/archs/srresnet_arch.py`|
+| Archs          | `_arch.py`      | `basicsr/archs/srresnet_arch.py`|
 
 注意:
 
@@ -82,7 +82,7 @@ for module in _dataset_modules:
     | :------------- | :----------:    | :----------:   |
     | Data           | `_dataset.py`   | `data/paired_image_dataset.py` |
     | Model          | `_model.py`     | `basicsr/models/sr_model.py` |
-    | Archs          | `_arch.py`      | `basicsr/models/archs/srresnet_arch.py`|
+    | Archs          | `_arch.py`      | `basicsr/archs/srresnet_arch.py`|
 
 1. 在Log的时候, loss项使用`l_`开头, 这样在 tensorboard 显示的时候, 所有loss会被组织到一起. 比如在 [basicsr/models/srgan_model.py](../basicsr/models/srgan_model.py)中, 使用了`l_g_pix`, `l_g_percep`, `l_g_gan`等. 在[basicsr/utils/logger.py](../basicsr/utils/logger.py), 他们会被组织到一起:
 
