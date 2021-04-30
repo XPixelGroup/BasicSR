@@ -155,6 +155,7 @@ if __name__ == '__main__':
         author_email='xintao.wang@outlook.com',
         keywords='computer vision, restoration, super resolution',
         url='https://github.com/xinntao/BasicSR',
+        include_package_data=True,
         packages=find_packages(
             exclude=('options', 'datasets', 'experiments', 'results',
                      'tb_logger', 'wandb')),
