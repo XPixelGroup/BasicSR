@@ -119,10 +119,7 @@ def get_requirements(filename='requirements.txt'):
 
 
 if __name__ == '__main__':
-    if '--no_cuda_ext' in sys.argv:
-        ext_modules = []
-        sys.argv.remove('--no_cuda_ext')
-    else:
+    if '--cuda_ext' in sys.argv:
         ext_modules = [
             make_cuda_ext(
                 name='deform_conv_ext',
@@ -143,6 +140,9 @@ if __name__ == '__main__':
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
+        sys.argv.remove('--cuda_ext')
+    else:
+        ext_modules = []
 
     write_version_py()
     setup(
