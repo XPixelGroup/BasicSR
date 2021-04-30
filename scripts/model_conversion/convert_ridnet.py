@@ -1,7 +1,7 @@
 import torch
 from collections import OrderedDict
 
-from basicsr.models.archs.ridnet_arch import RIDNet
+from basicsr.archs.ridnet_arch import RIDNet
 
 if __name__ == '__main__':
     ori_net_checkpoint = torch.load(

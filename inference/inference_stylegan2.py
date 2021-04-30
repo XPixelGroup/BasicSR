@@ -4,7 +4,7 @@ import os
 import torch
 from torchvision import utils
 
-from basicsr.models.archs.stylegan2_arch import StyleGAN2Generator
+from basicsr.archs.stylegan2_arch import StyleGAN2Generator
 from basicsr.utils import set_random_seed
 
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         '--ckpt',
         type=str,
         default=  # noqa: E251
-        'experiments/pretrained_models/StyleGAN/stylegan2_ffhq_config_f_1024_official-b09c3668.pth'  # noqa: E501
+        'experiments/pretrained_models/StyleGAN/stylegan2_ffhq_config_f_1024_official-3ab41b38.pth'  # noqa: E501
     )
     parser.add_argument('--channel_multiplier', type=int, default=2)
     parser.add_argument('--randomize_noise', type=bool, default=True)

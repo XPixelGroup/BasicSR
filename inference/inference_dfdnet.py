@@ -6,7 +6,7 @@ import torch
 import torchvision.transforms as transforms
 from skimage import io
 
-from basicsr.models.archs.dfdnet_arch import DFDNet
+from basicsr.archs.dfdnet_arch import DFDNet
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.face_util import FaceRestorationHelper
 

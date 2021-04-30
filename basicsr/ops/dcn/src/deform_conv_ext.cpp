@@ -7,6 +7,7 @@
 #include <cmath>
 #include <vector>
 
+#define WITH_CUDA  // always use cuda
 #ifdef WITH_CUDA
 int deform_conv_forward_cuda(at::Tensor input, at::Tensor weight,
                              at::Tensor offset, at::Tensor output,

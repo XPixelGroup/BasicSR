@@ -6,7 +6,22 @@ from torch.autograd.function import once_differentiable
 from torch.nn import functional as F
 from torch.nn.modules.utils import _pair, _single
 
-from . import deform_conv_ext
+try:
+    from . import deform_conv_ext
+except ImportError:
+    import os
+    BASICSR_JIT = os.getenv('BASICSR_JIT')
+    if BASICSR_JIT == 'True':
+        from torch.utils.cpp_extension import load
+        module_path = os.path.dirname(__file__)
+        deform_conv_ext = load(
+            'deform_conv',
+            sources=[
+                os.path.join(module_path, 'src', 'deform_conv_ext.cpp'),
+                os.path.join(module_path, 'src', 'deform_conv_cuda.cpp'),
+                os.path.join(module_path, 'src', 'deform_conv_cuda_kernel.cu'),
+            ],
+        )
 
 
 class DeformConvFunction(Function):

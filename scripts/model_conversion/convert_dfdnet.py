@@ -1,7 +1,7 @@
 import torch
 
-from basicsr.models.archs.dfdnet_arch import DFDNet
-from basicsr.models.archs.vgg_arch import NAMES
+from basicsr.archs.dfdnet_arch import DFDNet
+from basicsr.archs.vgg_arch import NAMES
 
 
 def convert_net(ori_net, crt_net):

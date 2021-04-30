@@ -4,7 +4,7 @@ import torch.nn as nn
 from scipy import linalg
 from tqdm import tqdm
 
-from basicsr.models.archs.inception import InceptionV3
+from basicsr.archs.inception import InceptionV3
 
 
 def load_patched_inception_v3(device='cuda',
