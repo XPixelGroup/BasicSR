@@ -1,7 +1,7 @@
 import torch
 
-from basicsr.models.archs.stylegan2_arch import (StyleGAN2Discriminator,
-                                                 StyleGAN2Generator)
+from basicsr.archs.stylegan2_arch import (StyleGAN2Discriminator,
+                                          StyleGAN2Generator)
 
 
 def convert_net_g(ori_net, crt_net):

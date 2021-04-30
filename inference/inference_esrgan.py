@@ -5,7 +5,7 @@ import numpy as np
 import os
 import torch
 
-from basicsr.models.archs.rrdbnet_arch import RRDBNet
+from basicsr.archs.rrdbnet_arch import RRDBNet
 
 
 def main():
