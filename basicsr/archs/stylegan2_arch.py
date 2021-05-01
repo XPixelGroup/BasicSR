@@ -4,15 +4,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from basicsr.ops.fused_act import FusedLeakyReLU, fused_leaky_relu
+from basicsr.ops.upfirdn2d import upfirdn2d
 from basicsr.utils.registry import ARCH_REGISTRY
-
-try:
-    from basicsr.ops.fused_act import FusedLeakyReLU, fused_leaky_relu
-    from basicsr.ops.upfirdn2d import upfirdn2d
-except ImportError:
-    print('Cannot import fused_act and upfirdn2d. Ignore this warning if '
-          'they are not used. Otherwise install BasicSR with compiling them.')
-    FusedLeakyReLU, fused_leaky_relu, upfirdn2d = None, None, None
 
 
 class NormStyleCode(nn.Module):

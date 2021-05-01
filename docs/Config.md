@@ -108,7 +108,7 @@ datasets:
 ##################################################
 # network g settings
 network_g:
-  # Architecture type. Usually the class name defined in the `models/archs` folder
+  # Architecture type. Usually the class name defined in the `basicsr/archs` folder
   type: MSRResNet
   #### The following arguments are flexible and can be obtained in the corresponding doc
   # Channel number of inputs
@@ -282,7 +282,7 @@ datasets:
 ##################################################
 # network g settings
 network_g:
-  # Architecture type. Usually the class name defined in the `models/archs` folder
+  # Architecture type. Usually the class name defined in the `basicsr/archs` folder
   type: MSRResNet
   #### The following arguments are flexible and can be obtained in the corresponding doc
   # Channel number of inputs

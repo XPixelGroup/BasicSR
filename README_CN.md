@@ -58,6 +58,18 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 - [PyTorch >= 1.3](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
+### 通过 pip 安装
+
+```bash
+pip install basicsr
+```
+
+- 通过 pip 安装不会编译 cuda 算子.
+- 如果你想使用 cuda 算子, 则需要设置环境变量 `BASICSR_JIT=True`. 注意: 通过这种方式, 在每一次运行模型时候, 它都需要编译, (比较耗时).
+  - 例子: StyleGAN2 inference colab.
+
+### 通过 git clone 然后 编译
+
 1. Clone repo
 
     ```bash
@@ -75,16 +87,17 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
     在BasicSR的**根目录**下运行以下命令:<br>
     (确保 GCC 版本: gcc >= 5) <br>
-    如果你不需要以下 cuda 扩展算子: <br>
-    &emsp;[*dcn* for EDVR](basicsr/models/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/models/ops)<br>
-    在安装命令后添加 `--no_cuda_ext`
+    如果你需要以下 cuda 扩展算子: <br>
+    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
+    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
+    在安装命令后添加 `--cuda_ext`.<br>
+    如果使用 EDVR 和 StyleGAN2 模型, 需要使用上面的 cuda 扩展算子.
 
     ```bash
-    python setup.py develop --no_cuda_ext
+    python setup.py develop --cuda_ext
     ```
 
-    如果使用 EDVR 和 StyleGAN2 模型, 则需要使用上面的 cuda 扩展算子.
+    否则, 安装的时候不会编译 cuda 算子.
 
     ```bash
     python setup.py develop

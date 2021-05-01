@@ -4,7 +4,21 @@ import torch
 from torch.autograd import Function
 from torch.nn import functional as F
 
-from . import upfirdn2d_ext
+try:
+    from . import upfirdn2d_ext
+except ImportError:
+    import os
+    BASICSR_JIT = os.getenv('BASICSR_JIT')
+    if BASICSR_JIT == 'True':
+        from torch.utils.cpp_extension import load
+        module_path = os.path.dirname(__file__)
+        upfirdn2d_ext = load(
+            'upfirdn2d',
+            sources=[
+                os.path.join(module_path, 'src', 'upfirdn2d.cpp'),
+                os.path.join(module_path, 'src', 'upfirdn2d_kernel.cu'),
+            ],
+        )
 
 
 class UpFirDn2dBackward(Function):

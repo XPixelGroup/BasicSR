@@ -4,7 +4,21 @@ import torch
 from torch import nn
 from torch.autograd import Function
 
-from . import fused_act_ext
+try:
+    from . import fused_act_ext
+except ImportError:
+    import os
+    BASICSR_JIT = os.getenv('BASICSR_JIT')
+    if BASICSR_JIT == 'True':
+        from torch.utils.cpp_extension import load
+        module_path = os.path.dirname(__file__)
+        fused_act_ext = load(
+            'fused',
+            sources=[
+                os.path.join(module_path, 'src', 'fused_bias_act.cpp'),
+                os.path.join(module_path, 'src', 'fused_bias_act_kernel.cu'),
+            ],
+        )
 
 
 class FusedLeakyReLUFunctionBackward(Function):

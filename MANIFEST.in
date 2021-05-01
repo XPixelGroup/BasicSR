@@ -1,0 +1,3 @@
+include basicsr/ops/dcn/src/*.cu basicsr/ops/dcn/src/*.cpp
+include basicsr/ops/fused_act/src/*.cu basicsr/ops/fused_act/src/*.cpp
+include basicsr/ops/upfirdn2d/src/*.cu basicsr/ops/upfirdn2d/src/*.cpp

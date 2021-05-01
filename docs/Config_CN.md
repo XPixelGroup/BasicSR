@@ -107,7 +107,7 @@ datasets:
 #####################
 # 网络g的设置
 network_g:
-  # 网络结构 (Architecture)的类型, 一般为在`models/archs`目录下定义的dataset的类名
+  # 网络结构 (Architecture)的类型, 一般为在`basicsr/archs`目录下定义的dataset的类名
   type: MSRResNet
   #### 以下属性是灵活的, 可以在相应类的说明文档中获得
   # 输入通道数目
@@ -280,7 +280,7 @@ datasets:
 #####################
 # 网络g的设置
 network_g:
-  # 网络结构 (Architecture)的类型, 一般为在`models/archs`目录下定义的dataset的类名
+  # 网络结构 (Architecture)的类型, 一般为在`basicsr/archs`目录下定义的dataset的类名
   type: MSRResNet
   #### 以下属性是灵活的, 可以在相应类的说明文档中获得
   # 输入通道数目

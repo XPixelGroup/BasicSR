@@ -6,7 +6,7 @@ import os
 import torch
 from tqdm import tqdm
 
-from basicsr.models.archs.ridnet_arch import RIDNet
+from basicsr.archs.ridnet_arch import RIDNet
 from basicsr.utils.img_util import img2tensor, tensor2img
 
 if __name__ == '__main__':

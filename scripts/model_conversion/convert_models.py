@@ -182,7 +182,7 @@ def convert_rcan_model():
 
 
 def convert_esrgan_model():
-    from basicsr.models.archs.rrdbnet_arch import RRDBNet
+    from basicsr.archs.rrdbnet_arch import RRDBNet
     rrdb = RRDBNet(3, 3, num_feat=64, num_block=23, num_grow_ch=32)
     crt_net = rrdb.state_dict()
     # for k, v in crt_net.items():
@@ -212,7 +212,7 @@ def convert_esrgan_model():
 
 
 def convert_duf_model():
-    from basicsr.models.archs.duf_arch import DUF
+    from basicsr.archs.duf_arch import DUF
     scale = 2
     duf = DUF(scale=scale, num_layer=16, adapt_official_weights=True)
     crt_net = duf.state_dict()
