@@ -61,26 +61,26 @@ if __name__ == '__main__':
             '1fEoSeLFnHSBbIs95Au2W197p8e4ws4DW'
         },
         'StyleGAN': {
-            'stylegan2_ffhq_config_f_1024_official-b09c3668.pth':
-            '163PfuVSYKh4vhkYkfEaufw84CiF4pvWG',
-            'stylegan2_ffhq_config_f_1024_discriminator_official-806ddc5e.pth':
-            '1wyOdcJnMtAT_fEwXYJObee7hcLzI8usT',
-            'stylegan2_cat_config_f_256_official-b82c74e3.pth':
-            '1dGUvw8FLch50FEDAgAa6st1AXGnjduc7',
-            'stylegan2_cat_config_f_256_discriminator_official-f6f5ed5c.pth':
-            '19wuj7Ztg56QtwEs01-p_LjQeoz6G11kF',
-            'stylegan2_church_config_f_256_official-12725a53.pth':
-            '1Rcpguh4t833wHlFrWz9UuqFcSYERyd2d',
-            'stylegan2_church_config_f_256_discriminator_official-feba65b0.pth':  # noqa: E501
-            '1ImOfFUOwKqDDKZCxxM4VUdPQCc-j85Z9',
-            'stylegan2_car_config_f_512_official-32c42d4e.pth':
-            '1FviBGvzORv4T3w0c3m7BaIfLNeEd0dC8',
-            'stylegan2_car_config_f_512_discriminator_official-31f302ab.pth':
-            '1hlZ7M2GrK6cDFd2FIYazPxOZXTUfudB3',
-            'stylegan2_horse_config_f_256_official-d3d97ebc.pth':
-            '1LV4OR22tJN19HHfGk0e7dVqMhjD0APRm',
-            'stylegan2_horse_config_f_256_discriminator_official-efc5e50e.pth':
-            '1T8xbI-Tz8EeSg3gCmQBNqGjLP5l3Mv84'
+            'stylegan2_ffhq_config_f_1024_official-3ab41b38.pth':
+            '1qtdsT1FrvKQsFiW3OqOcIb-VS55TVy1g',
+            'stylegan2_ffhq_config_f_1024_discriminator_official-a386354a.pth':
+            '1nPqCxm8TkDU3IvXdHCzPUxlBwR5Pd78G',
+            'stylegan2_cat_config_f_256_official-0a9173ad.pth':
+            '1gfJkX6XO5pJ2J8LyMdvUgGldz7xwWpBJ',
+            'stylegan2_cat_config_f_256_discriminator_official-2c97fd08.pth':
+            '1hy5FEQQl28XvfqpiWvSBd8YnIzsyDRb7',
+            'stylegan2_church_config_f_256_official-44ba63bf.pth':
+            '1FCQMZXeOKZyl-xYKbl1Y_x2--rFl-1N_',
+            'stylegan2_church_config_f_256_discriminator_official-20cd675b.pth':  # noqa: E501
+            '1BS9ODHkUkhfTGFVfR6alCMGtr9nGm9ox',
+            'stylegan2_car_config_f_512_official-e8fcab4f.pth':
+            '14jS-nWNTguDSd1kTIX-tBHp2WdvK7hva',
+            'stylegan2_car_config_f_512_discriminator_official-5008e3d1.pth':
+            '1UxkAzZ0zvw4KzBVOUpShCivsdXBS8Zi2',
+            'stylegan2_horse_config_f_256_official-26d57fee.pth':
+            '12QsZ-mrO8_4gC0UrO15Jb3ykcQ88HxFx',
+            'stylegan2_horse_config_f_256_discriminator_official-be6c4c33.pth':
+            '1me4ybSib72xA9ZxmzKsHDtP-eNCKw_X4'
         },
         'EDSR': {
             'EDSR_Mx2_f64b16_DIV2K_official-3ba7b086.pth':
