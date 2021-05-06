@@ -36,6 +36,26 @@ class SRModel(BaseModel):
         self.net_g.train()
         train_opt = self.opt['train']
 
+        self.ema_decay = train_opt.get('ema_decay', 0)
+        if self.ema_decay > 0:
+            logger = get_root_logger()
+            logger.info(
+                f'Use Exponential Moving Average with decay: {self.ema_decay}')
+            # define network net_g with Exponential Moving Average (EMA)
+            # net_g_ema is used only for testing on one GPU and saving
+            # There is no need to wrap with DistributedDataParallel
+            self.net_g_ema = build_network(self.opt['network_g']).to(
+                self.device)
+            # load pretrained model
+            load_path = self.opt['path'].get('pretrain_network_g', None)
+            if load_path is not None:
+                self.load_network(self.net_g_ema, load_path,
+                                  self.opt['path'].get('strict_load_g',
+                                                       True), 'params_ema')
+            else:
+                self.model_ema(0)  # copy net_g weight
+            self.net_g_ema.eval()
+
         # define losses
         if train_opt.get('pixel_opt'):
             self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
@@ -66,12 +86,8 @@ class SRModel(BaseModel):
                 logger.warning(f'Params {k} will not be optimized.')
 
         optim_type = train_opt['optim_g'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_g = torch.optim.Adam(optim_params,
-                                                **train_opt['optim_g'])
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params,
+                                              **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
 
     def feed_data(self, data):
@@ -105,11 +121,19 @@ class SRModel(BaseModel):
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
 
+        if self.ema_decay > 0:
+            self.model_ema(decay=self.ema_decay)
+
     def test(self):
-        self.net_g.eval()
-        with torch.no_grad():
-            self.output = self.net_g(self.lq)
-        self.net_g.train()
+        if self.ema_decay > 0:
+            self.net_g_ema.eval()
+            with torch.no_grad():
+                self.output = self.net_g_ema(self.lq)
+        else:
+            self.net_g.eval()
+            with torch.no_grad():
+                self.output = self.net_g(self.lq)
+            self.net_g.train()
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         logger = get_root_logger()
@@ -196,5 +220,11 @@ class SRModel(BaseModel):
         return out_dict
 
     def save(self, epoch, current_iter):
-        self.save_network(self.net_g, 'net_g', current_iter)
+        if self.ema_decay > 0:
+            self.save_network([self.net_g, self.net_g_ema],
+                              'net_g',
+                              current_iter,
+                              param_key=['params', 'params_ema'])
+        else:
+            self.save_network(self.net_g, 'net_g', current_iter)
         self.save_training_state(epoch, current_iter)

@@ -86,3 +86,6 @@ class ESRGANModel(SRGANModel):
         loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
+
+        if self.ema_decay > 0:
+            self.model_ema(decay=self.ema_decay)

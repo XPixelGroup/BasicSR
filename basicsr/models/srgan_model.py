@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
+from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
 from .sr_model import SRModel
 
@@ -13,6 +14,26 @@ class SRGANModel(SRModel):
 
     def init_training_settings(self):
         train_opt = self.opt['train']
+
+        self.ema_decay = train_opt.get('ema_decay', 0)
+        if self.ema_decay > 0:
+            logger = get_root_logger()
+            logger.info(
+                f'Use Exponential Moving Average with decay: {self.ema_decay}')
+            # define network net_g with Exponential Moving Average (EMA)
+            # net_g_ema is used only for testing on one GPU and saving
+            # There is no need to wrap with DistributedDataParallel
+            self.net_g_ema = build_network(self.opt['network_g']).to(
+                self.device)
+            # load pretrained model
+            load_path = self.opt['path'].get('pretrain_network_g', None)
+            if load_path is not None:
+                self.load_network(self.net_g_ema, load_path,
+                                  self.opt['path'].get('strict_load_g',
+                                                       True), 'params_ema')
+            else:
+                self.model_ema(0)  # copy net_g weight
+            self.net_g_ema.eval()
 
         # define network net_d
         self.net_d = build_network(self.opt['network_d'])
@@ -54,21 +75,15 @@ class SRGANModel(SRModel):
         train_opt = self.opt['train']
         # optimizer g
         optim_type = train_opt['optim_g'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_g = torch.optim.Adam(self.net_g.parameters(),
-                                                **train_opt['optim_g'])
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        self.optimizer_g = self.get_optimizer(optim_type,
+                                              self.net_g.parameters(),
+                                              **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
         # optimizer d
         optim_type = train_opt['optim_d'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_d = torch.optim.Adam(self.net_d.parameters(),
-                                                **train_opt['optim_d'])
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        self.optimizer_d = self.get_optimizer(optim_type,
+                                              self.net_d.parameters(),
+                                              **train_opt['optim_d'])
         self.optimizers.append(self.optimizer_d)
 
     def optimize_parameters(self, current_iter):
@@ -128,7 +143,16 @@ class SRGANModel(SRModel):
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
 
+        if self.ema_decay > 0:
+            self.model_ema(decay=self.ema_decay)
+
     def save(self, epoch, current_iter):
-        self.save_network(self.net_g, 'net_g', current_iter)
+        if self.ema_decay > 0:
+            self.save_network([self.net_g, self.net_g_ema],
+                              'net_g',
+                              current_iter,
+                              param_key=['params', 'params_ema'])
+        else:
+            self.save_network(self.net_g, 'net_g', current_iter)
         self.save_network(self.net_d, 'net_d', current_iter)
         self.save_training_state(epoch, current_iter)

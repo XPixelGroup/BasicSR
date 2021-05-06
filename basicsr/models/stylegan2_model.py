@@ -131,14 +131,10 @@ class StyleGAN2Model(BaseModel):
             }]
 
         optim_type = train_opt['optim_g'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_g = torch.optim.Adam(
-                optim_params_g,
-                lr=train_opt['optim_g']['lr'] * net_g_reg_ratio,
-                betas=(0**net_g_reg_ratio, 0.99**net_g_reg_ratio))
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        lr = train_opt['optim_g']['lr'] * net_g_reg_ratio
+        betas = (0**net_g_reg_ratio, 0.99**net_g_reg_ratio)
+        self.optimizer_g = self.get_optimizer(
+            optim_type, optim_params_g, lr, betas=betas)
         self.optimizers.append(self.optimizer_g)
 
         # optimizer d
@@ -171,14 +167,10 @@ class StyleGAN2Model(BaseModel):
             }]
 
         optim_type = train_opt['optim_d'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_d = torch.optim.Adam(
-                optim_params_d,
-                lr=train_opt['optim_d']['lr'] * net_d_reg_ratio,
-                betas=(0**net_d_reg_ratio, 0.99**net_d_reg_ratio))
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        lr = train_opt['optim_d']['lr'] * net_d_reg_ratio
+        betas = (0**net_d_reg_ratio, 0.99**net_d_reg_ratio)
+        self.optimizer_d = self.get_optimizer(
+            optim_type, optim_params_d, lr, betas=betas)
         self.optimizers.append(self.optimizer_d)
 
     def model_ema(self, decay=0.999):
