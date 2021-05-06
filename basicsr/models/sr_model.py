@@ -136,9 +136,9 @@ class SRModel(BaseModel):
             self.net_g.train()
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
-        logger = get_root_logger()
-        logger.info('Only support single GPU validation.')
-        self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
+        if self.opt['rank'] == 0:
+            self.nondist_validation(dataloader, current_iter, tb_logger,
+                                    save_img)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger,
                            save_img):
