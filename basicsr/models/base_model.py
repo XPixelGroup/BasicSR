@@ -49,6 +49,16 @@ class BaseModel():
             self.nondist_validation(dataloader, current_iter, tb_logger,
                                     save_img)
 
+    def model_ema(self, decay=0.999):
+        net_g = self.get_bare_model(self.net_g)
+
+        net_g_params = dict(net_g.named_parameters())
+        net_g_ema_params = dict(self.net_g_ema.named_parameters())
+
+        for k in net_g_ema_params.keys():
+            net_g_ema_params[k].data.mul_(decay).add_(
+                net_g_params[k].data, alpha=1 - decay)
+
     def get_current_log(self):
         return self.log_dict
 
@@ -70,6 +80,14 @@ class BaseModel():
         elif self.opt['num_gpu'] > 1:
             net = DataParallel(net)
         return net
+
+    def get_optimizer(self, optim_type, params, lr, **kwargs):
+        if optim_type == 'Adam':
+            optimizer = torch.optim.Adam(params, lr, **kwargs)
+        else:
+            raise NotImplementedError(
+                f'optimizer {optim_type} is not supperted yet.')
+        return optimizer
 
     def setup_schedulers(self):
         """Set up schedulers."""
@@ -252,6 +270,9 @@ class BaseModel():
         load_net = torch.load(
             load_path, map_location=lambda storage, loc: storage)
         if param_key is not None:
+            if param_key not in load_net and 'params' in load_net:
+                param_key = 'params'
+                logger.info('Loading: params_ema does not exist, use params.')
             load_net = load_net[param_key]
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():

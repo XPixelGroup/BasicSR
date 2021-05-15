@@ -1,5 +1,4 @@
 import logging
-import torch
 from torch.nn.parallel import DistributedDataParallel
 
 from basicsr.utils.registry import MODEL_REGISTRY
@@ -46,12 +45,8 @@ class EDVRModel(VideoBaseModel):
             ]
 
         optim_type = train_opt['optim_g'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_g = torch.optim.Adam(optim_params,
-                                                **train_opt['optim_g'])
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params,
+                                              **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
 
     def optimize_parameters(self, current_iter):
