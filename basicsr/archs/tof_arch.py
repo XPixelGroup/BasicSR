@@ -16,40 +16,15 @@ class BasicModule(nn.Module):
     def __init__(self):
         super(BasicModule, self).__init__()
         self.basic_module = nn.Sequential(
-            nn.Conv2d(
-                in_channels=8,
-                out_channels=32,
-                kernel_size=7,
-                stride=1,
-                padding=3,
-                bias=False), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
-            nn.Conv2d(
-                in_channels=32,
-                out_channels=64,
-                kernel_size=7,
-                stride=1,
-                padding=3,
-                bias=False), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
-            nn.Conv2d(
-                in_channels=64,
-                out_channels=32,
-                kernel_size=7,
-                stride=1,
-                padding=3,
-                bias=False), nn.BatchNorm2d(32), nn.ReLU(inplace=True),
-            nn.Conv2d(
-                in_channels=32,
-                out_channels=16,
-                kernel_size=7,
-                stride=1,
-                padding=3,
-                bias=False), nn.BatchNorm2d(16), nn.ReLU(inplace=True),
-            nn.Conv2d(
-                in_channels=16,
-                out_channels=2,
-                kernel_size=7,
-                stride=1,
-                padding=3))
+            nn.Conv2d(in_channels=8, out_channels=32, kernel_size=7, stride=1, padding=3, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, stride=1, padding=3, bias=False),
+            nn.BatchNorm2d(64), nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=64, out_channels=32, kernel_size=7, stride=1, padding=3, bias=False),
+            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=32, out_channels=16, kernel_size=7, stride=1, padding=3, bias=False),
+            nn.BatchNorm2d(16), nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=16, out_channels=2, kernel_size=7, stride=1, padding=3))
 
     def forward(self, tensor_input):
         """
@@ -86,10 +61,7 @@ class SPyNetTOF(nn.Module):
 
         self.basic_module = nn.ModuleList([BasicModule() for _ in range(4)])
         if load_path:
-            self.load_state_dict(
-                torch.load(
-                    load_path,
-                    map_location=lambda storage, loc: storage)['params'])
+            self.load_state_dict(torch.load(load_path, map_location=lambda storage, loc: storage)['params'])
 
     def forward(self, ref, supp):
         """
@@ -106,34 +78,15 @@ class SPyNetTOF(nn.Module):
 
         # generate downsampled frames
         for _ in range(3):
-            ref.insert(
-                0,
-                F.avg_pool2d(
-                    input=ref[0],
-                    kernel_size=2,
-                    stride=2,
-                    count_include_pad=False))
-            supp.insert(
-                0,
-                F.avg_pool2d(
-                    input=supp[0],
-                    kernel_size=2,
-                    stride=2,
-                    count_include_pad=False))
+            ref.insert(0, F.avg_pool2d(input=ref[0], kernel_size=2, stride=2, count_include_pad=False))
+            supp.insert(0, F.avg_pool2d(input=supp[0], kernel_size=2, stride=2, count_include_pad=False))
 
         # flow computation
         flow = ref[0].new_zeros(num_batches, 2, h // 16, w // 16)
         for i in range(4):
-            flow_up = F.interpolate(
-                input=flow,
-                scale_factor=2,
-                mode='bilinear',
-                align_corners=True) * 2.0
+            flow_up = F.interpolate(input=flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
             flow = flow_up + self.basic_module[i](
-                torch.cat([
-                    ref[i],
-                    flow_warp(supp[i], flow_up.permute(0, 2, 3, 1)), flow_up
-                ], 1))
+                torch.cat([ref[i], flow_warp(supp[i], flow_up.permute(0, 2, 3, 1)), flow_up], 1))
         return flow
 
 
@@ -160,12 +113,8 @@ class TOFlow(nn.Module):
         self.adapt_official_weights = adapt_official_weights
         self.ref_idx = 0 if adapt_official_weights else 3
 
-        self.register_buffer(
-            'mean',
-            torch.Tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
-        self.register_buffer(
-            'std',
-            torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
+        self.register_buffer('mean', torch.Tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
+        self.register_buffer('std', torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
 
         # flow estimation module
         self.spynet = SPyNetTOF()

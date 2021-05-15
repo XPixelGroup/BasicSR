@@ -105,16 +105,11 @@ class Upsample(nn.Sequential):
             m.append(nn.Conv2d(num_feat, 9 * num_feat, 3, 1, 1))
             m.append(nn.PixelShuffle(3))
         else:
-            raise ValueError(f'scale {scale} is not supported. '
-                             'Supported scales: 2^n and 3.')
+            raise ValueError(f'scale {scale} is not supported. ' 'Supported scales: 2^n and 3.')
         super(Upsample, self).__init__(*m)
 
 
-def flow_warp(x,
-              flow,
-              interp_mode='bilinear',
-              padding_mode='zeros',
-              align_corners=True):
+def flow_warp(x, flow, interp_mode='bilinear', padding_mode='zeros', align_corners=True):
     """Warp an image or feature map with optical flow.
 
     Args:
@@ -133,9 +128,7 @@ def flow_warp(x,
     assert x.size()[-2:] == flow.size()[1:3]
     _, _, h, w = x.size()
     # create mesh grid
-    grid_y, grid_x = torch.meshgrid(
-        torch.arange(0, h).type_as(x),
-        torch.arange(0, w).type_as(x))
+    grid_y, grid_x = torch.meshgrid(torch.arange(0, h).type_as(x), torch.arange(0, w).type_as(x))
     grid = torch.stack((grid_x, grid_y), 2).float()  # W(x), H(y), 2
     grid.requires_grad = False
 
@@ -144,22 +137,13 @@ def flow_warp(x,
     vgrid_x = 2.0 * vgrid[:, :, :, 0] / max(w - 1, 1) - 1.0
     vgrid_y = 2.0 * vgrid[:, :, :, 1] / max(h - 1, 1) - 1.0
     vgrid_scaled = torch.stack((vgrid_x, vgrid_y), dim=3)
-    output = F.grid_sample(
-        x,
-        vgrid_scaled,
-        mode=interp_mode,
-        padding_mode=padding_mode,
-        align_corners=align_corners)
+    output = F.grid_sample(x, vgrid_scaled, mode=interp_mode, padding_mode=padding_mode, align_corners=align_corners)
 
     # TODO, what if align_corners=False
     return output
 
 
-def resize_flow(flow,
-                size_type,
-                sizes,
-                interp_mode='bilinear',
-                align_corners=False):
+def resize_flow(flow, size_type, sizes, interp_mode='bilinear', align_corners=False):
     """Resize a flow according to ratio or shape.
 
     Args:
@@ -185,8 +169,7 @@ def resize_flow(flow,
     elif size_type == 'shape':
         output_h, output_w = sizes[0], sizes[1]
     else:
-        raise ValueError(
-            f'Size type should be ratio or shape, but got type {size_type}.')
+        raise ValueError(f'Size type should be ratio or shape, but got type {size_type}.')
 
     input_flow = flow.clone()
     ratio_h = output_h / flow_h
@@ -194,10 +177,7 @@ def resize_flow(flow,
     input_flow[:, 0, :, :] *= ratio_w
     input_flow[:, 1, :, :] *= ratio_h
     resized_flow = F.interpolate(
-        input=input_flow,
-        size=(output_h, output_w),
-        mode=interp_mode,
-        align_corners=align_corners)
+        input=input_flow, size=(output_h, output_w), mode=interp_mode, align_corners=align_corners)
     return resized_flow
 
 
@@ -241,9 +221,7 @@ class DCNv2Pack(ModulatedDeformConvPack):
         offset_absmean = torch.mean(torch.abs(offset))
         if offset_absmean > 50:
             logger = get_root_logger()
-            logger.warning(
-                f'Offset abs mean is {offset_absmean}, larger than 50.')
+            logger.warning(f'Offset abs mean is {offset_absmean}, larger than 50.')
 
-        return modulated_deform_conv(x, offset, mask, self.weight, self.bias,
-                                     self.stride, self.padding, self.dilation,
+        return modulated_deform_conv(x, offset, mask, self.weight, self.bias, self.stride, self.padding, self.dilation,
                                      self.groups, self.deformable_groups)

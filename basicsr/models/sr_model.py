@@ -26,8 +26,7 @@ class SRModel(BaseModel):
         # load pretrained models
         load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
-            self.load_network(self.net_g, load_path,
-                              self.opt['path'].get('strict_load_g', True))
+            self.load_network(self.net_g, load_path, self.opt['path'].get('strict_load_g', True))
 
         if self.is_train:
             self.init_training_settings()
@@ -39,19 +38,15 @@ class SRModel(BaseModel):
         self.ema_decay = train_opt.get('ema_decay', 0)
         if self.ema_decay > 0:
             logger = get_root_logger()
-            logger.info(
-                f'Use Exponential Moving Average with decay: {self.ema_decay}')
+            logger.info(f'Use Exponential Moving Average with decay: {self.ema_decay}')
             # define network net_g with Exponential Moving Average (EMA)
             # net_g_ema is used only for testing on one GPU and saving
             # There is no need to wrap with DistributedDataParallel
-            self.net_g_ema = build_network(self.opt['network_g']).to(
-                self.device)
+            self.net_g_ema = build_network(self.opt['network_g']).to(self.device)
             # load pretrained model
             load_path = self.opt['path'].get('pretrain_network_g', None)
             if load_path is not None:
-                self.load_network(self.net_g_ema, load_path,
-                                  self.opt['path'].get('strict_load_g',
-                                                       True), 'params_ema')
+                self.load_network(self.net_g_ema, load_path, self.opt['path'].get('strict_load_g', True), 'params_ema')
             else:
                 self.model_ema(0)  # copy net_g weight
             self.net_g_ema.eval()
@@ -63,8 +58,7 @@ class SRModel(BaseModel):
             self.cri_pix = None
 
         if train_opt.get('perceptual_opt'):
-            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(
-                self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device)
         else:
             self.cri_perceptual = None
 
@@ -86,8 +80,7 @@ class SRModel(BaseModel):
                 logger.warning(f'Params {k} will not be optimized.')
 
         optim_type = train_opt['optim_g'].pop('type')
-        self.optimizer_g = self.get_optimizer(optim_type, optim_params,
-                                              **train_opt['optim_g'])
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params, **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
 
     def feed_data(self, data):
@@ -137,18 +130,13 @@ class SRModel(BaseModel):
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         if self.opt['rank'] == 0:
-            self.nondist_validation(dataloader, current_iter, tb_logger,
-                                    save_img)
+            self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
-    def nondist_validation(self, dataloader, current_iter, tb_logger,
-                           save_img):
+    def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         dataset_name = dataloader.dataset.opt['name']
         with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:
-            self.metric_results = {
-                metric: 0
-                for metric in self.opt['val']['metrics'].keys()
-            }
+            self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
         pbar = tqdm(total=len(dataloader), unit='image')
 
         for idx, val_data in enumerate(dataloader):
@@ -169,26 +157,22 @@ class SRModel(BaseModel):
 
             if save_img:
                 if self.opt['is_train']:
-                    save_img_path = osp.join(self.opt['path']['visualization'],
-                                             img_name,
+                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
                                              f'{img_name}_{current_iter}.png')
                 else:
                     if self.opt['val']['suffix']:
-                        save_img_path = osp.join(
-                            self.opt['path']['visualization'], dataset_name,
-                            f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
+                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
                     else:
-                        save_img_path = osp.join(
-                            self.opt['path']['visualization'], dataset_name,
-                            f'{img_name}_{self.opt["name"]}.png')
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
+                                                 f'{img_name}_{self.opt["name"]}.png')
                 imwrite(sr_img, save_img_path)
 
             if with_metrics:
                 # calculate metrics
                 for name, opt_ in self.opt['val']['metrics'].items():
                     metric_data = dict(img1=sr_img, img2=gt_img)
-                    self.metric_results[name] += calculate_metric(
-                        metric_data, opt_)
+                    self.metric_results[name] += calculate_metric(metric_data, opt_)
             pbar.update(1)
             pbar.set_description(f'Test {img_name}')
         pbar.close()
@@ -197,11 +181,9 @@ class SRModel(BaseModel):
             for metric in self.metric_results.keys():
                 self.metric_results[metric] /= (idx + 1)
 
-            self._log_validation_metric_values(current_iter, dataset_name,
-                                               tb_logger)
+            self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
-    def _log_validation_metric_values(self, current_iter, dataset_name,
-                                      tb_logger):
+    def _log_validation_metric_values(self, current_iter, dataset_name, tb_logger):
         log_str = f'Validation {dataset_name}\n'
         for metric, value in self.metric_results.items():
             log_str += f'\t # {metric}: {value:.4f}\n'
@@ -221,10 +203,7 @@ class SRModel(BaseModel):
 
     def save(self, epoch, current_iter):
         if self.ema_decay > 0:
-            self.save_network([self.net_g, self.net_g_ema],
-                              'net_g',
-                              current_iter,
-                              param_key=['params', 'params_ema'])
+            self.save_network([self.net_g, self.net_g_ema], 'net_g', current_iter, param_key=['params', 'params_ema'])
         else:
             self.save_network(self.net_g, 'net_g', current_iter)
         self.save_training_state(epoch, current_iter)

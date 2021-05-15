@@ -9,8 +9,7 @@ def convert_net(ori_net, crt_net):
     for crt_k, crt_v in crt_net.items():
         # vgg feature extractor
         if 'vgg_extractor' in crt_k:
-            ori_k = crt_k.replace('vgg_extractor',
-                                  'VggExtract').replace('vgg_net', 'model')
+            ori_k = crt_k.replace('vgg_extractor', 'VggExtract').replace('vgg_net', 'model')
             if 'mean' in crt_k:
                 ori_k = ori_k.replace('mean', 'RGB_mean')
             elif 'std' in crt_k:
@@ -37,8 +36,7 @@ def convert_net(ori_net, crt_net):
                 a, b, c, d, e = crt_k.split('.')
                 ori_k = f'MSDilate.conv{int(c)+1}.{d}.{e}'
             else:
-                ori_k = crt_k.replace('multi_scale_dilation.conv_fusion',
-                                      'MSDilate.convi')
+                ori_k = crt_k.replace('multi_scale_dilation.conv_fusion', 'MSDilate.convi')
 
         elif crt_k.startswith('upsample'):
             ori_k = crt_k.replace('upsample', 'up')
@@ -65,11 +63,8 @@ def convert_net(ori_net, crt_net):
 
 
 if __name__ == '__main__':
-    ori_net = torch.load(
-        'experiments/pretrained_models/DFDNet/DFDNet_official_original.pth')
-    dfd_net = DFDNet(
-        64,
-        dict_path='experiments/pretrained_models/DFDNet/DFDNet_dict_512.pth')
+    ori_net = torch.load('experiments/pretrained_models/DFDNet/DFDNet_official_original.pth')
+    dfd_net = DFDNet(64, dict_path='experiments/pretrained_models/DFDNet/DFDNet_dict_512.pth')
     crt_net = dfd_net.state_dict()
     crt_net_params = convert_net(ori_net, crt_net)
 

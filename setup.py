@@ -7,8 +7,7 @@ import subprocess
 import sys
 import time
 import torch
-from torch.utils.cpp_extension import (BuildExtension, CppExtension,
-                                       CUDAExtension)
+from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
 
 version_file = 'basicsr/version.py'
 
@@ -32,8 +31,7 @@ def get_git_hash():
         env['LANGUAGE'] = 'C'
         env['LANG'] = 'C'
         env['LC_ALL'] = 'C'
-        out = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
+        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
         return out
 
     try:
@@ -70,11 +68,9 @@ version_info = ({})
     sha = get_hash()
     with open('VERSION', 'r') as f:
         SHORT_VERSION = f.read().strip()
-    VERSION_INFO = ', '.join(
-        [x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
+    VERSION_INFO = ', '.join([x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
 
-    version_file_str = content.format(time.asctime(), SHORT_VERSION, sha,
-                                      VERSION_INFO)
+    version_file_str = content.format(time.asctime(), SHORT_VERSION, sha, VERSION_INFO)
     with open(version_file, 'w') as f:
         f.write(version_file_str)
 
@@ -125,10 +121,7 @@ if __name__ == '__main__':
                 name='deform_conv_ext',
                 module='basicsr.ops.dcn',
                 sources=['src/deform_conv_ext.cpp'],
-                sources_cuda=[
-                    'src/deform_conv_cuda.cpp',
-                    'src/deform_conv_cuda_kernel.cu'
-                ]),
+                sources_cuda=['src/deform_conv_cuda.cpp', 'src/deform_conv_cuda_kernel.cu']),
             make_cuda_ext(
                 name='fused_act_ext',
                 module='basicsr.ops.fused_act',
@@ -156,9 +149,7 @@ if __name__ == '__main__':
         keywords='computer vision, restoration, super resolution',
         url='https://github.com/xinntao/BasicSR',
         include_package_data=True,
-        packages=find_packages(
-            exclude=('options', 'datasets', 'experiments', 'results',
-                     'tb_logger', 'wandb')),
+        packages=find_packages(exclude=('options', 'datasets', 'experiments', 'results', 'tb_logger', 'wandb')),
         classifiers=[
             'Development Status :: 4 - Beta',
             'License :: OSI Approved :: Apache Software License',

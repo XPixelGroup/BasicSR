@@ -24,29 +24,22 @@ class VGGStyleDiscriminator128(nn.Module):
 
         self.conv1_0 = nn.Conv2d(num_feat, num_feat * 2, 3, 1, 1, bias=False)
         self.bn1_0 = nn.BatchNorm2d(num_feat * 2, affine=True)
-        self.conv1_1 = nn.Conv2d(
-            num_feat * 2, num_feat * 2, 4, 2, 1, bias=False)
+        self.conv1_1 = nn.Conv2d(num_feat * 2, num_feat * 2, 4, 2, 1, bias=False)
         self.bn1_1 = nn.BatchNorm2d(num_feat * 2, affine=True)
 
-        self.conv2_0 = nn.Conv2d(
-            num_feat * 2, num_feat * 4, 3, 1, 1, bias=False)
+        self.conv2_0 = nn.Conv2d(num_feat * 2, num_feat * 4, 3, 1, 1, bias=False)
         self.bn2_0 = nn.BatchNorm2d(num_feat * 4, affine=True)
-        self.conv2_1 = nn.Conv2d(
-            num_feat * 4, num_feat * 4, 4, 2, 1, bias=False)
+        self.conv2_1 = nn.Conv2d(num_feat * 4, num_feat * 4, 4, 2, 1, bias=False)
         self.bn2_1 = nn.BatchNorm2d(num_feat * 4, affine=True)
 
-        self.conv3_0 = nn.Conv2d(
-            num_feat * 4, num_feat * 8, 3, 1, 1, bias=False)
+        self.conv3_0 = nn.Conv2d(num_feat * 4, num_feat * 8, 3, 1, 1, bias=False)
         self.bn3_0 = nn.BatchNorm2d(num_feat * 8, affine=True)
-        self.conv3_1 = nn.Conv2d(
-            num_feat * 8, num_feat * 8, 4, 2, 1, bias=False)
+        self.conv3_1 = nn.Conv2d(num_feat * 8, num_feat * 8, 4, 2, 1, bias=False)
         self.bn3_1 = nn.BatchNorm2d(num_feat * 8, affine=True)
 
-        self.conv4_0 = nn.Conv2d(
-            num_feat * 8, num_feat * 8, 3, 1, 1, bias=False)
+        self.conv4_0 = nn.Conv2d(num_feat * 8, num_feat * 8, 3, 1, 1, bias=False)
         self.bn4_0 = nn.BatchNorm2d(num_feat * 8, affine=True)
-        self.conv4_1 = nn.Conv2d(
-            num_feat * 8, num_feat * 8, 4, 2, 1, bias=False)
+        self.conv4_1 = nn.Conv2d(num_feat * 8, num_feat * 8, 4, 2, 1, bias=False)
         self.bn4_1 = nn.BatchNorm2d(num_feat * 8, affine=True)
 
         self.linear1 = nn.Linear(num_feat * 8 * 4 * 4, 100)
@@ -56,29 +49,23 @@ class VGGStyleDiscriminator128(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
 
     def forward(self, x):
-        assert x.size(2) == 128 and x.size(3) == 128, (
-            f'Input spatial size must be 128x128, '
-            f'but received {x.size()}.')
+        assert x.size(2) == 128 and x.size(3) == 128, (f'Input spatial size must be 128x128, '
+                                                       f'but received {x.size()}.')
 
         feat = self.lrelu(self.conv0_0(x))
-        feat = self.lrelu(self.bn0_1(
-            self.conv0_1(feat)))  # output spatial size: (64, 64)
+        feat = self.lrelu(self.bn0_1(self.conv0_1(feat)))  # output spatial size: (64, 64)
 
         feat = self.lrelu(self.bn1_0(self.conv1_0(feat)))
-        feat = self.lrelu(self.bn1_1(
-            self.conv1_1(feat)))  # output spatial size: (32, 32)
+        feat = self.lrelu(self.bn1_1(self.conv1_1(feat)))  # output spatial size: (32, 32)
 
         feat = self.lrelu(self.bn2_0(self.conv2_0(feat)))
-        feat = self.lrelu(self.bn2_1(
-            self.conv2_1(feat)))  # output spatial size: (16, 16)
+        feat = self.lrelu(self.bn2_1(self.conv2_1(feat)))  # output spatial size: (16, 16)
 
         feat = self.lrelu(self.bn3_0(self.conv3_0(feat)))
-        feat = self.lrelu(self.bn3_1(
-            self.conv3_1(feat)))  # output spatial size: (8, 8)
+        feat = self.lrelu(self.bn3_1(self.conv3_1(feat)))  # output spatial size: (8, 8)
 
         feat = self.lrelu(self.bn4_0(self.conv4_0(feat)))
-        feat = self.lrelu(self.bn4_1(
-            self.conv4_1(feat)))  # output spatial size: (4, 4)
+        feat = self.lrelu(self.bn4_1(self.conv4_1(feat)))  # output spatial size: (4, 4)
 
         feat = feat.view(feat.size(0), -1)
         feat = self.lrelu(self.linear1(feat))

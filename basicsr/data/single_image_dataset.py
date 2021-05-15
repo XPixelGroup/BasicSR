@@ -40,17 +40,13 @@ class SingleImageDataset(data.Dataset):
             self.paths = paths_from_lmdb(self.lq_folder)
         elif 'meta_info_file' in self.opt:
             with open(self.opt['meta_info_file'], 'r') as fin:
-                self.paths = [
-                    osp.join(self.lq_folder,
-                             line.split(' ')[0]) for line in fin
-                ]
+                self.paths = [osp.join(self.lq_folder, line.split(' ')[0]) for line in fin]
         else:
             self.paths = sorted(list(scandir(self.lq_folder, full_path=True)))
 
     def __getitem__(self, index):
         if self.file_client is None:
-            self.file_client = FileClient(
-                self.io_backend_opt.pop('type'), **self.io_backend_opt)
+            self.file_client = FileClient(self.io_backend_opt.pop('type'), **self.io_backend_opt)
 
         # load lq image
         lq_path = self.paths[index]

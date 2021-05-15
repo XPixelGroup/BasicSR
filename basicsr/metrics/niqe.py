@@ -20,15 +20,13 @@ def estimate_aggd_param(block):
     block = block.flatten()
     gam = np.arange(0.2, 10.001, 0.001)  # len = 9801
     gam_reciprocal = np.reciprocal(gam)
-    r_gam = np.square(gamma(gam_reciprocal * 2)) / (
-        gamma(gam_reciprocal) * gamma(gam_reciprocal * 3))
+    r_gam = np.square(gamma(gam_reciprocal * 2)) / (gamma(gam_reciprocal) * gamma(gam_reciprocal * 3))
 
     left_std = np.sqrt(np.mean(block[block < 0]**2))
     right_std = np.sqrt(np.mean(block[block > 0]**2))
     gammahat = left_std / right_std
     rhat = (np.mean(np.abs(block)))**2 / np.mean(block**2)
-    rhatnorm = (rhat * (gammahat**3 + 1) *
-                (gammahat + 1)) / ((gammahat**2 + 1)**2)
+    rhatnorm = (rhat * (gammahat**3 + 1) * (gammahat + 1)) / ((gammahat**2 + 1)**2)
     array_position = np.argmin((r_gam - rhatnorm)**2)
 
     alpha = gam[array_position]
@@ -64,12 +62,7 @@ def compute_feature(block):
     return feat
 
 
-def niqe(img,
-         mu_pris_param,
-         cov_pris_param,
-         gaussian_window,
-         block_size_h=96,
-         block_size_w=96):
+def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, block_size_w=96):
     """Calculate NIQE (Natural Image Quality Evaluator) metric.
 
     Ref: Making a "Completely Blind" Image Quality Analyzer.
@@ -98,8 +91,7 @@ def niqe(img,
         block_size_w (int): Width of the blocks in to which image is divided.
             Default: 96 (the official recommended value).
     """
-    assert img.ndim == 2, (
-        'Input image must be a gray or Y (of YCbCr) image with shape (h, w).')
+    assert img.ndim == 2, ('Input image must be a gray or Y (of YCbCr) image with shape (h, w).')
     # crop image
     h, w = img.shape
     num_block_h = math.floor(h / block_size_h)
@@ -109,10 +101,7 @@ def niqe(img,
     distparam = []  # dist param is actually the multiscale features
     for scale in (1, 2):  # perform on two scales (1, 2)
         mu = convolve(img, gaussian_window, mode='nearest')
-        sigma = np.sqrt(
-            np.abs(
-                convolve(np.square(img), gaussian_window, mode='nearest') -
-                np.square(mu)))
+        sigma = np.sqrt(np.abs(convolve(np.square(img), gaussian_window, mode='nearest') - np.square(mu)))
         # normalize, as in Eq. 1 in the paper
         img_nomalized = (img - mu) / (sigma + 1)
 
@@ -120,11 +109,8 @@ def niqe(img,
         for idx_w in range(num_block_w):
             for idx_h in range(num_block_h):
                 # process ecah block
-                block = img_nomalized[idx_h * block_size_h //
-                                      scale:(idx_h + 1) * block_size_h //
-                                      scale, idx_w * block_size_w //
-                                      scale:(idx_w + 1) * block_size_w //
-                                      scale]
+                block = img_nomalized[idx_h * block_size_h // scale:(idx_h + 1) * block_size_h // scale,
+                                      idx_w * block_size_w // scale:(idx_w + 1) * block_size_w // scale]
                 feat.append(compute_feature(block))
 
         distparam.append(np.array(feat))
@@ -133,8 +119,7 @@ def niqe(img,
         # a slight difference.
         if scale == 1:
             h, w = img.shape
-            img = cv2.resize(
-                img / 255., (w // 2, h // 2), interpolation=cv2.INTER_LINEAR)
+            img = cv2.resize(img / 255., (w // 2, h // 2), interpolation=cv2.INTER_LINEAR)
             img = img * 255.
 
     distparam = np.concatenate(distparam, axis=1)
@@ -148,8 +133,7 @@ def niqe(img,
     # compute niqe quality, Eq. 10 in the paper
     invcov_param = np.linalg.pinv((cov_pris_param + cov_distparam) / 2)
     quality = np.matmul(
-        np.matmul((mu_pris_param - mu_distparam), invcov_param),
-        np.transpose((mu_pris_param - mu_distparam)))
+        np.matmul((mu_pris_param - mu_distparam), invcov_param), np.transpose((mu_pris_param - mu_distparam)))
     quality = np.sqrt(quality)
 
     return quality

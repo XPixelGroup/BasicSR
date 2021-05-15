@@ -19,8 +19,7 @@ def regroup_reds_dataset(train_path, val_path):
     val_folders = glob.glob(os.path.join(val_path, '*'))
     for folder in val_folders:
         new_folder_idx = int(folder.split('/')[-1]) + 240
-        os.system(
-            f'cp -r {folder} {os.path.join(train_path, str(new_folder_idx))}')
+        os.system(f'cp -r {folder} {os.path.join(train_path, str(new_folder_idx))}')
 
 
 if __name__ == '__main__':

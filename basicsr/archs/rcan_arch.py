@@ -16,11 +16,8 @@ class ChannelAttention(nn.Module):
     def __init__(self, num_feat, squeeze_factor=16):
         super(ChannelAttention, self).__init__()
         self.attention = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(num_feat, num_feat // squeeze_factor, 1, padding=0),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(num_feat // squeeze_factor, num_feat, 1, padding=0),
-            nn.Sigmoid())
+            nn.AdaptiveAvgPool2d(1), nn.Conv2d(num_feat, num_feat // squeeze_factor, 1, padding=0),
+            nn.ReLU(inplace=True), nn.Conv2d(num_feat // squeeze_factor, num_feat, 1, padding=0), nn.Sigmoid())
 
     def forward(self, x):
         y = self.attention(x)
@@ -41,8 +38,7 @@ class RCAB(nn.Module):
         self.res_scale = res_scale
 
         self.rcab = nn.Sequential(
-            nn.Conv2d(num_feat, num_feat, 3, 1, 1), nn.ReLU(True),
-            nn.Conv2d(num_feat, num_feat, 3, 1, 1),
+            nn.Conv2d(num_feat, num_feat, 3, 1, 1), nn.ReLU(True), nn.Conv2d(num_feat, num_feat, 3, 1, 1),
             ChannelAttention(num_feat, squeeze_factor))
 
     def forward(self, x):
@@ -64,11 +60,7 @@ class ResidualGroup(nn.Module):
         super(ResidualGroup, self).__init__()
 
         self.residual_group = make_layer(
-            RCAB,
-            num_block,
-            num_feat=num_feat,
-            squeeze_factor=squeeze_factor,
-            res_scale=res_scale)
+            RCAB, num_block, num_feat=num_feat, squeeze_factor=squeeze_factor, res_scale=res_scale)
         self.conv = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
 
     def forward(self, x):

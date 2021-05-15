@@ -20,38 +20,30 @@ def get_part_location(landmarks):
 
     # left eye
     mean_left_eye = np.mean(landmarks[map_left_eye], 0)  # (x, y)
-    half_len_left_eye = np.max((np.max(
-        np.max(landmarks[map_left_eye], 0) -
-        np.min(landmarks[map_left_eye], 0)) / 2, 16))  # A number
-    loc_left_eye = np.hstack((mean_left_eye - half_len_left_eye + 1,
-                              mean_left_eye + half_len_left_eye)).astype(int)
+    half_len_left_eye = np.max(
+        (np.max(np.max(landmarks[map_left_eye], 0) - np.min(landmarks[map_left_eye], 0)) / 2, 16))  # A number
+    loc_left_eye = np.hstack((mean_left_eye - half_len_left_eye + 1, mean_left_eye + half_len_left_eye)).astype(int)
     loc_left_eye = torch.from_numpy(loc_left_eye).unsqueeze(0)
     # (1, 4), the four numbers forms two  coordinates in the diagonal
 
     # right eye
     mean_right_eye = np.mean(landmarks[map_right_eye], 0)
-    half_len_right_eye = np.max((np.max(
-        np.max(landmarks[map_right_eye], 0) -
-        np.min(landmarks[map_right_eye], 0)) / 2, 16))
+    half_len_right_eye = np.max(
+        (np.max(np.max(landmarks[map_right_eye], 0) - np.min(landmarks[map_right_eye], 0)) / 2, 16))
     loc_right_eye = np.hstack(
-        (mean_right_eye - half_len_right_eye + 1,
-         mean_right_eye + half_len_right_eye)).astype(int)
+        (mean_right_eye - half_len_right_eye + 1, mean_right_eye + half_len_right_eye)).astype(int)
     loc_right_eye = torch.from_numpy(loc_right_eye).unsqueeze(0)
     # nose
     mean_nose = np.mean(landmarks[map_nose], 0)
-    half_len_nose = np.max((np.max(
-        np.max(landmarks[map_nose], 0) - np.min(landmarks[map_nose], 0)) / 2,
-                            16))  # noqa: E126
-    loc_nose = np.hstack(
-        (mean_nose - half_len_nose + 1, mean_nose + half_len_nose)).astype(int)
+    half_len_nose = np.max(
+        (np.max(np.max(landmarks[map_nose], 0) - np.min(landmarks[map_nose], 0)) / 2, 16))  # noqa: E126
+    loc_nose = np.hstack((mean_nose - half_len_nose + 1, mean_nose + half_len_nose)).astype(int)
     loc_nose = torch.from_numpy(loc_nose).unsqueeze(0)
     # mouth
     mean_mouth = np.mean(landmarks[map_mouth], 0)
-    half_len_mouth = np.max((np.max(
-        np.max(landmarks[map_mouth], 0) - np.min(landmarks[map_mouth], 0)) / 2,
-                             16))  # noqa: E126
-    loc_mouth = np.hstack((mean_mouth - half_len_mouth + 1,
-                           mean_mouth + half_len_mouth)).astype(int)
+    half_len_mouth = np.max(
+        (np.max(np.max(landmarks[map_mouth], 0) - np.min(landmarks[map_mouth], 0)) / 2, 16))  # noqa: E126
+    loc_mouth = np.hstack((mean_mouth - half_len_mouth + 1, mean_mouth + half_len_mouth)).astype(int)
     loc_mouth = torch.from_numpy(loc_mouth).unsqueeze(0)
 
     return loc_left_eye, loc_right_eye, loc_nose, loc_mouth
@@ -114,8 +106,7 @@ if __name__ == '__main__':
 
     # set up the DFDNet
     net = DFDNet(64, dict_path=args.dict_path).to(device)
-    checkpoint = torch.load(
-        args.model_path, map_location=lambda storage, loc: storage)
+    checkpoint = torch.load(args.model_path, map_location=lambda storage, loc: storage)
     net.load_state_dict(checkpoint['params'])
     net.eval()
 
@@ -128,24 +119,19 @@ if __name__ == '__main__':
     face_helper = FaceRestorationHelper(args.upscale_factor, face_size=512)
 
     # scan all the jpg and png images
-    for img_path in sorted(
-            glob.glob(os.path.join(args.test_path, '*.[jp][pn]g'))):
+    for img_path in sorted(glob.glob(os.path.join(args.test_path, '*.[jp][pn]g'))):
         img_name = os.path.basename(img_path)
         print(f'Processing {img_name} image ...')
         save_crop_path = os.path.join(save_crop_root, img_name)
         if args.save_inverse_affine:
-            save_inverse_affine_path = os.path.join(save_inverse_affine_root,
-                                                    img_name)
+            save_inverse_affine_path = os.path.join(save_inverse_affine_root, img_name)
         else:
             save_inverse_affine_path = None
 
-        face_helper.init_dlib(args.detection_path, args.landmark5_path,
-                              args.landmark68_path)
+        face_helper.init_dlib(args.detection_path, args.landmark5_path, args.landmark68_path)
         # detect faces
         num_det_faces = face_helper.detect_faces(
-            img_path,
-            upsample_num_times=args.upsample_num_times,
-            only_keep_largest=args.only_keep_largest)
+            img_path, upsample_num_times=args.upsample_num_times, only_keep_largest=args.only_keep_largest)
         # get 5 face landmarks for each face
         num_landmarks = face_helper.get_face_landmarks_5()
         print(f'\tDetect {num_det_faces} faces, {num_landmarks} landmarks.')
@@ -168,8 +154,7 @@ if __name__ == '__main__':
         print('\tFace restoration ...')
         # face restoration for each cropped face
         assert len(cropped_faces) == len(face_helper.all_landmarks_68)
-        for idx, (cropped_face, landmarks) in enumerate(
-                zip(cropped_faces, face_helper.all_landmarks_68)):
+        for idx, (cropped_face, landmarks) in enumerate(zip(cropped_faces, face_helper.all_landmarks_68)):
             if landmarks is None:
                 print(f'Landmarks is None, skip cropped faces with idx {idx}.')
                 # just copy the cropped faces to the restored faces
@@ -178,9 +163,7 @@ if __name__ == '__main__':
                 # prepare data
                 part_locations = get_part_location(landmarks)
                 cropped_face = transforms.ToTensor()(cropped_face)
-                cropped_face = transforms.Normalize((0.5, 0.5, 0.5),
-                                                    (0.5, 0.5, 0.5))(
-                                                        cropped_face)
+                cropped_face = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))(cropped_face)
                 cropped_face = cropped_face.unsqueeze(0).to(device)
 
                 try:
@@ -193,16 +176,14 @@ if __name__ == '__main__':
                     print(f'DFDNet inference fail: {e}')
                     restored_face = tensor2img(cropped_face, min_max=(-1, 1))
 
-            path = os.path.splitext(os.path.join(save_restore_root,
-                                                 img_name))[0]
+            path = os.path.splitext(os.path.join(save_restore_root, img_name))[0]
             save_path = f'{path}_{idx:02d}.png'
             imwrite(restored_face, save_path)
             face_helper.add_restored_face(restored_face)
 
         print('\tGenerate the final result ...')
         # paste each restored face to the input image
-        face_helper.paste_faces_to_input_image(
-            os.path.join(save_final_root, img_name))
+        face_helper.paste_faces_to_input_image(os.path.join(save_final_root, img_name))
 
         # clean all the intermediate results to process the next image
         face_helper.clean_all()

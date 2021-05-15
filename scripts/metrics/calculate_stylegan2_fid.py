@@ -5,18 +5,15 @@ import torch
 from torch import nn
 
 from basicsr.archs.stylegan2_arch import StyleGAN2Generator
-from basicsr.metrics.fid import (calculate_fid, extract_inception_features,
-                                 load_patched_inception_v3)
+from basicsr.metrics.fid import calculate_fid, extract_inception_features, load_patched_inception_v3
 
 
 def calculate_stylegan2_fid():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'ckpt', type=str, help='Path to the stylegan2 checkpoint.')
-    parser.add_argument(
-        'fid_stats', type=str, help='Path to the dataset fid statistics.')
+    parser.add_argument('ckpt', type=str, help='Path to the stylegan2 checkpoint.')
+    parser.add_argument('fid_stats', type=str, help='Path to the dataset fid statistics.')
     parser.add_argument('--size', type=int, default=256)
     parser.add_argument('--channel_multiplier', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=64)
@@ -50,18 +47,14 @@ def calculate_stylegan2_fid():
         for i in range(total_batch):
             with torch.no_grad():
                 latent = torch.randn(args.batch_size, 512, device=device)
-                samples, _ = generator([latent],
-                                       truncation=args.truncation,
-                                       truncation_latent=truncation_latent)
+                samples, _ = generator([latent], truncation=args.truncation, truncation_latent=truncation_latent)
             yield samples
 
-    features = extract_inception_features(
-        sample_generator(total_batch), inception, total_batch, device)
+    features = extract_inception_features(sample_generator(total_batch), inception, total_batch, device)
     features = features.numpy()
     total_len = features.shape[0]
     features = features[:args.num_sample]
-    print(f'Extracted {total_len} features, '
-          f'use the first {features.shape[0]} features to calculate stats.')
+    print(f'Extracted {total_len} features, ' f'use the first {features.shape[0]} features to calculate stats.')
     sample_mean = np.mean(features, 0)
     sample_cov = np.cov(features, rowvar=False)
 

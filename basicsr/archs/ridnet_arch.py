@@ -18,12 +18,7 @@ class MeanShift(nn.Conv2d):
             Default: True.
     """
 
-    def __init__(self,
-                 rgb_range,
-                 rgb_mean,
-                 rgb_std,
-                 sign=-1,
-                 requires_grad=True):
+    def __init__(self, rgb_range, rgb_mean, rgb_std, sign=-1, requires_grad=True):
         super(MeanShift, self).__init__(3, 3, kernel_size=1)
         std = torch.Tensor(rgb_std)
         self.weight.data = torch.eye(3).view(3, 3, 1, 1)
@@ -71,28 +66,18 @@ class MergeRun(nn.Module):
     Ref git repo: https://github.com/saeed-anwar/RIDNet
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 kernel_size=3,
-                 stride=1,
-                 padding=1):
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1):
         super(MergeRun, self).__init__()
 
         self.dilation1 = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 2, 2),
-            nn.ReLU(inplace=True))
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding), nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 2, 2), nn.ReLU(inplace=True))
         self.dilation2 = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, stride, 3, 3),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 4, 4),
-            nn.ReLU(inplace=True))
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, 3, 3), nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 4, 4), nn.ReLU(inplace=True))
 
         self.aggregation = nn.Sequential(
-            nn.Conv2d(out_channels * 2, out_channels, kernel_size, stride,
-                      padding), nn.ReLU(inplace=True))
+            nn.Conv2d(out_channels * 2, out_channels, kernel_size, stride, padding), nn.ReLU(inplace=True))
 
     def forward(self, x):
         dilation1 = self.dilation1(x)
@@ -114,13 +99,8 @@ class ChannelAttention(nn.Module):
     def __init__(self, mid_channels, squeeze_factor=16):
         super(ChannelAttention, self).__init__()
         self.attention = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(
-                mid_channels, mid_channels // squeeze_factor, 1, padding=0),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(
-                mid_channels // squeeze_factor, mid_channels, 1, padding=0),
-            nn.Sigmoid())
+            nn.AdaptiveAvgPool2d(1), nn.Conv2d(mid_channels, mid_channels // squeeze_factor, 1, padding=0),
+            nn.ReLU(inplace=True), nn.Conv2d(mid_channels // squeeze_factor, mid_channels, 1, padding=0), nn.Sigmoid())
 
     def forward(self, x):
         y = self.attention(x)
@@ -190,11 +170,7 @@ class RIDNet(nn.Module):
 
         self.head = nn.Conv2d(in_channels, mid_channels, 3, 1, 1)
         self.body = make_layer(
-            EAM,
-            num_block,
-            in_channels=mid_channels,
-            mid_channels=mid_channels,
-            out_channels=mid_channels)
+            EAM, num_block, in_channels=mid_channels, mid_channels=mid_channels, out_channels=mid_channels)
         self.tail = nn.Conv2d(mid_channels, out_channels, 3, 1, 1)
 
         self.relu = nn.ReLU(inplace=True)

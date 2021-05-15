@@ -45,15 +45,13 @@ class EDVRModel(VideoBaseModel):
             ]
 
         optim_type = train_opt['optim_g'].pop('type')
-        self.optimizer_g = self.get_optimizer(optim_type, optim_params,
-                                              **train_opt['optim_g'])
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params, **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
 
     def optimize_parameters(self, current_iter):
         if self.train_tsa_iter:
             if current_iter == 1:
-                logger.info(
-                    f'Only train TSA module for {self.train_tsa_iter} iters.')
+                logger.info(f'Only train TSA module for {self.train_tsa_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'fusion' not in name:
                         param.requires_grad = False

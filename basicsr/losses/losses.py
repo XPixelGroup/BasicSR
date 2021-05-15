@@ -39,8 +39,7 @@ class L1Loss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(L1Loss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -53,8 +52,7 @@ class L1Loss(nn.Module):
             weight (Tensor, optional): of shape (N, C, H, W). Element-wise
                 weights. Default: None.
         """
-        return self.loss_weight * l1_loss(
-            pred, target, weight, reduction=self.reduction)
+        return self.loss_weight * l1_loss(pred, target, weight, reduction=self.reduction)
 
 
 @LOSS_REGISTRY.register()
@@ -70,8 +68,7 @@ class MSELoss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(MSELoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -84,8 +81,7 @@ class MSELoss(nn.Module):
             weight (Tensor, optional): of shape (N, C, H, W). Element-wise
                 weights. Default: None.
         """
-        return self.loss_weight * mse_loss(
-            pred, target, weight, reduction=self.reduction)
+        return self.loss_weight * mse_loss(pred, target, weight, reduction=self.reduction)
 
 
 @LOSS_REGISTRY.register()
@@ -107,8 +103,7 @@ class CharbonnierLoss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean', eps=1e-12):
         super(CharbonnierLoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. '
-                             f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -122,8 +117,7 @@ class CharbonnierLoss(nn.Module):
             weight (Tensor, optional): of shape (N, C, H, W). Element-wise
                 weights. Default: None.
         """
-        return self.loss_weight * charbonnier_loss(
-            pred, target, weight, eps=self.eps, reduction=self.reduction)
+        return self.loss_weight * charbonnier_loss(pred, target, weight, eps=self.eps, reduction=self.reduction)
 
 
 @LOSS_REGISTRY.register()
@@ -138,10 +132,8 @@ class WeightedTVLoss(L1Loss):
         super(WeightedTVLoss, self).__init__(loss_weight=loss_weight)
 
     def forward(self, pred, weight=None):
-        y_diff = super(WeightedTVLoss, self).forward(
-            pred[:, :, :-1, :], pred[:, :, 1:, :], weight=weight[:, :, :-1, :])
-        x_diff = super(WeightedTVLoss, self).forward(
-            pred[:, :, :, :-1], pred[:, :, :, 1:], weight=weight[:, :, :, :-1])
+        y_diff = super(WeightedTVLoss, self).forward(pred[:, :, :-1, :], pred[:, :, 1:, :], weight=weight[:, :, :-1, :])
+        x_diff = super(WeightedTVLoss, self).forward(pred[:, :, :, :-1], pred[:, :, :, 1:], weight=weight[:, :, :, :-1])
 
         loss = x_diff + y_diff
 
@@ -198,8 +190,7 @@ class PerceptualLoss(nn.Module):
         elif self.criterion_type == 'fro':
             self.criterion = None
         else:
-            raise NotImplementedError(
-                f'{criterion} criterion has not been supported.')
+            raise NotImplementedError(f'{criterion} criterion has not been supported.')
 
     def forward(self, x, gt):
         """Forward function.
@@ -220,12 +211,9 @@ class PerceptualLoss(nn.Module):
             percep_loss = 0
             for k in x_features.keys():
                 if self.criterion_type == 'fro':
-                    percep_loss += torch.norm(
-                        x_features[k] - gt_features[k],
-                        p='fro') * self.layer_weights[k]
+                    percep_loss += torch.norm(x_features[k] - gt_features[k], p='fro') * self.layer_weights[k]
                 else:
-                    percep_loss += self.criterion(
-                        x_features[k], gt_features[k]) * self.layer_weights[k]
+                    percep_loss += self.criterion(x_features[k], gt_features[k]) * self.layer_weights[k]
             percep_loss *= self.perceptual_weight
         else:
             percep_loss = None
@@ -236,13 +224,10 @@ class PerceptualLoss(nn.Module):
             for k in x_features.keys():
                 if self.criterion_type == 'fro':
                     style_loss += torch.norm(
-                        self._gram_mat(x_features[k]) -
-                        self._gram_mat(gt_features[k]),
-                        p='fro') * self.layer_weights[k]
+                        self._gram_mat(x_features[k]) - self._gram_mat(gt_features[k]), p='fro') * self.layer_weights[k]
                 else:
-                    style_loss += self.criterion(
-                        self._gram_mat(x_features[k]),
-                        self._gram_mat(gt_features[k])) * self.layer_weights[k]
+                    style_loss += self.criterion(self._gram_mat(x_features[k]), self._gram_mat(
+                        gt_features[k])) * self.layer_weights[k]
             style_loss *= self.style_weight
         else:
             style_loss = None
@@ -278,11 +263,7 @@ class GANLoss(nn.Module):
             for discriminators.
     """
 
-    def __init__(self,
-                 gan_type,
-                 real_label_val=1.0,
-                 fake_label_val=0.0,
-                 loss_weight=1.0):
+    def __init__(self, gan_type, real_label_val=1.0, fake_label_val=0.0, loss_weight=1.0):
         super(GANLoss, self).__init__()
         self.gan_type = gan_type
         self.loss_weight = loss_weight
@@ -300,8 +281,7 @@ class GANLoss(nn.Module):
         elif self.gan_type == 'hinge':
             self.loss = nn.ReLU()
         else:
-            raise NotImplementedError(
-                f'GAN type {self.gan_type} is not implemented.')
+            raise NotImplementedError(f'GAN type {self.gan_type} is not implemented.')
 
     def _wgan_loss(self, input, target):
         """wgan loss.
@@ -330,8 +310,7 @@ class GANLoss(nn.Module):
         Returns:
             Tensor: wgan loss.
         """
-        return F.softplus(-input).mean() if target else F.softplus(
-            input).mean()
+        return F.softplus(-input).mean() if target else F.softplus(input).mean()
 
     def get_target_label(self, input, target_is_real):
         """Get target label.
@@ -347,8 +326,7 @@ class GANLoss(nn.Module):
 
         if self.gan_type in ['wgan', 'wgan_softplus']:
             return target_is_real
-        target_val = (
-            self.real_label_val if target_is_real else self.fake_label_val)
+        target_val = (self.real_label_val if target_is_real else self.fake_label_val)
         return input.new_ones(input.size()) * target_val
 
     def forward(self, input, target_is_real, is_disc=False):
@@ -389,21 +367,17 @@ def r1_penalty(real_pred, real_img):
         Ref:
         Eq. 9 in Which training methods for GANs do actually converge.
         """
-    grad_real = autograd.grad(
-        outputs=real_pred.sum(), inputs=real_img, create_graph=True)[0]
+    grad_real = autograd.grad(outputs=real_pred.sum(), inputs=real_img, create_graph=True)[0]
     grad_penalty = grad_real.pow(2).view(grad_real.shape[0], -1).sum(1).mean()
     return grad_penalty
 
 
 def g_path_regularize(fake_img, latents, mean_path_length, decay=0.01):
-    noise = torch.randn_like(fake_img) / math.sqrt(
-        fake_img.shape[2] * fake_img.shape[3])
-    grad = autograd.grad(
-        outputs=(fake_img * noise).sum(), inputs=latents, create_graph=True)[0]
+    noise = torch.randn_like(fake_img) / math.sqrt(fake_img.shape[2] * fake_img.shape[3])
+    grad = autograd.grad(outputs=(fake_img * noise).sum(), inputs=latents, create_graph=True)[0]
     path_lengths = torch.sqrt(grad.pow(2).sum(2).mean(1))
 
-    path_mean = mean_path_length + decay * (
-        path_lengths.mean() - mean_path_length)
+    path_mean = mean_path_length + decay * (path_lengths.mean() - mean_path_length)
 
     path_penalty = (path_lengths - path_mean).pow(2).mean()
 

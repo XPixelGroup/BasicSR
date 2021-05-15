@@ -56,10 +56,7 @@ if __name__ == '__main__':
     set_random_seed(2020)
 
     g_ema = StyleGAN2Generator(
-        args.size,
-        args.latent,
-        args.n_mlp,
-        channel_multiplier=args.channel_multiplier).to(device)
+        args.size, args.latent, args.n_mlp, channel_multiplier=args.channel_multiplier).to(device)
     checkpoint = torch.load(args.ckpt)['params_ema']
 
     g_ema.load_state_dict(checkpoint)

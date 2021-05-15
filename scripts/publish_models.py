@@ -12,14 +12,12 @@ def update_sha(paths):
         net = torch.load(path, map_location=torch.device('cpu'))
         basename = osp.basename(path)
         if 'params' not in net and 'params_ema' not in net:
-            raise ValueError(f'Please check! Model {basename} does not '
-                             f"have 'params'/'params_ema' key.")
+            raise ValueError(f'Please check! Model {basename} does not ' f"have 'params'/'params_ema' key.")
         else:
             if '-' in basename:
                 # check whether the sha is the latest
                 old_sha = basename.split('-')[1].split('.')[0]
-                new_sha = subprocess.check_output(['sha256sum',
-                                                   path]).decode()[:8]
+                new_sha = subprocess.check_output(['sha256sum', path]).decode()[:8]
                 if old_sha != new_sha:
                     final_file = path.split('-')[0] + f'-{new_sha}.pth'
                     print(f'\tSave from {path} to {final_file}')
@@ -53,7 +51,6 @@ def convert_to_backward_compatible_models(paths):
 
 
 if __name__ == '__main__':
-    paths = glob.glob('experiments/pretrained_models/*.pth') + glob.glob(
-        'experiments/pretrained_models/**/*.pth')
+    paths = glob.glob('experiments/pretrained_models/*.pth') + glob.glob('experiments/pretrained_models/**/*.pth')
     convert_to_backward_compatible_models(paths)
     update_sha(paths)

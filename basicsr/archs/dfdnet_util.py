@@ -10,18 +10,13 @@ class BlurFunctionBackward(Function):
     @staticmethod
     def forward(ctx, grad_output, kernel, kernel_flip):
         ctx.save_for_backward(kernel, kernel_flip)
-        grad_input = F.conv2d(
-            grad_output, kernel_flip, padding=1, groups=grad_output.shape[1])
+        grad_input = F.conv2d(grad_output, kernel_flip, padding=1, groups=grad_output.shape[1])
         return grad_input
 
     @staticmethod
     def backward(ctx, gradgrad_output):
         kernel, kernel_flip = ctx.saved_tensors
-        grad_input = F.conv2d(
-            gradgrad_output,
-            kernel,
-            padding=1,
-            groups=gradgrad_output.shape[1])
+        grad_input = F.conv2d(gradgrad_output, kernel, padding=1, groups=gradgrad_output.shape[1])
         return grad_input, None, None
 
 
@@ -36,8 +31,7 @@ class BlurFunction(Function):
     @staticmethod
     def backward(ctx, grad_output):
         kernel, kernel_flip = ctx.saved_tensors
-        grad_input = BlurFunctionBackward.apply(grad_output, kernel,
-                                                kernel_flip)
+        grad_input = BlurFunctionBackward.apply(grad_output, kernel, kernel_flip)
         return grad_input, None, None
 
 
@@ -48,8 +42,7 @@ class Blur(nn.Module):
 
     def __init__(self, channel):
         super().__init__()
-        kernel = torch.tensor([[1, 2, 1], [2, 4, 2], [1, 2, 1]],
-                              dtype=torch.float32)
+        kernel = torch.tensor([[1, 2, 1], [2, 4, 2], [1, 2, 1]], dtype=torch.float32)
         kernel = kernel.view(1, 1, 3, 3)
         kernel = kernel / kernel.sum()
         kernel_flip = torch.flip(kernel, [2, 3])
@@ -91,24 +84,17 @@ def adaptive_instance_normalization(content_feat, style_feat):
     size = content_feat.size()
     style_mean, style_std = calc_mean_std(style_feat)
     content_mean, content_std = calc_mean_std(content_feat)
-    normalized_feat = (content_feat -
-                       content_mean.expand(size)) / content_std.expand(size)
+    normalized_feat = (content_feat - content_mean.expand(size)) / content_std.expand(size)
     return normalized_feat * style_std.expand(size) + style_mean.expand(size)
 
 
 def AttentionBlock(in_channel):
     return nn.Sequential(
-        SpectralNorm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)),
-        nn.LeakyReLU(0.2, True),
+        SpectralNorm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
         SpectralNorm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)))
 
 
-def conv_block(in_channels,
-               out_channels,
-               kernel_size=3,
-               stride=1,
-               dilation=1,
-               bias=True):
+def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, bias=True):
     """Conv block used in MSDilationBlock."""
 
     return nn.Sequential(
@@ -137,22 +123,12 @@ def conv_block(in_channels,
 class MSDilationBlock(nn.Module):
     """Multi-scale dilation block."""
 
-    def __init__(self,
-                 in_channels,
-                 kernel_size=3,
-                 dilation=[1, 1, 1, 1],
-                 bias=True):
+    def __init__(self, in_channels, kernel_size=3, dilation=(1, 1, 1, 1), bias=True):
         super(MSDilationBlock, self).__init__()
 
         self.conv_blocks = nn.ModuleList()
         for i in range(4):
-            self.conv_blocks.append(
-                conv_block(
-                    in_channels,
-                    in_channels,
-                    kernel_size,
-                    dilation=dilation[i],
-                    bias=bias))
+            self.conv_blocks.append(conv_block(in_channels, in_channels, kernel_size, dilation=dilation[i], bias=bias))
         self.conv_fusion = SpectralNorm(
             nn.Conv2d(
                 in_channels * 4,

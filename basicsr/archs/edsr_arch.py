@@ -42,12 +42,7 @@ class EDSR(nn.Module):
         self.mean = torch.Tensor(rgb_mean).view(1, 3, 1, 1)
 
         self.conv_first = nn.Conv2d(num_in_ch, num_feat, 3, 1, 1)
-        self.body = make_layer(
-            ResidualBlockNoBN,
-            num_block,
-            num_feat=num_feat,
-            res_scale=res_scale,
-            pytorch_init=True)
+        self.body = make_layer(ResidualBlockNoBN, num_block, num_feat=num_feat, res_scale=res_scale, pytorch_init=True)
         self.conv_after_body = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.upsample = Upsample(upscale, num_feat)
         self.conv_last = nn.Conv2d(num_feat, num_out_ch, 3, 1, 1)
