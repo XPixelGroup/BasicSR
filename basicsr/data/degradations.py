@@ -1,3 +1,4 @@
+import cv2
 import math
 import numpy as np
 import random
@@ -238,6 +239,109 @@ def random_mixed_kernels(kernel_list,
 # --------------------------- noise --------------------------- #
 # ------------------------------------------------------------- #
 
+# ----------------------- Gaussian Noise ----------------------- #
+
+
+def generate_gaussian_noise(img, sigma=10, gray_noise=False):
+    """Generate Gaussian noise.
+
+    Args:
+        img (Numpy array): Input image, shape (h, w, c), range [0, 1], float32.
+        sigma (float): Noise scale (measured in range 255). Default: 10.
+
+    Returns:
+        (Numpy array): Returned noisy image, shape (h, w, c), range[0, 1],
+            float32.
+    """
+    noise = np.float32(np.random.randn(*(img.shape))) * sigma / 255.
+    if gray_noise:
+        noise = np.float32(np.random.randn(*(img.shape[0:2]))) * sigma / 255.
+        noise = np.expand_dims(noise, axis=2).repeat(3, axis=2)
+    else:
+        noise = np.float32(np.random.randn(*(img.shape))) * sigma / 255.
+    return noise
+
+
+def add_gaussian_noise(img, sigma=10, clip=True, rounds=False, gray_noise=False):
+    """Add Gaussian noise.
+
+    Args:
+        img (Numpy array): Input image, shape (h, w, c), range [0, 1], float32.
+        sigma (float): Noise scale (measured in range 255). Default: 10.
+
+    Returns:
+        (Numpy array): Returned noisy image, shape (h, w, c), range[0, 1],
+            float32.
+    """
+    noise = generate_gaussian_noise(img, sigma, gray_noise)
+    out = img + noise
+    if clip and rounds:
+        out = np.clip((out * 255.0).round(), 0, 255) / 255.
+    elif clip:
+        out = np.clip(out, 0, 1)
+    elif rounds:
+        out = (out * 255.0).round() / 255.
+    return out
+
+
+# ----------------------- Random Gaussian Noise ----------------------- #
+def random_generate_gaussian_noise(img, sigma_range=(0, 10), gray_prob=0):
+    sigma = np.random.uniform(sigma_range[0], sigma_range[1])
+    if np.random.uniform() < gray_prob:
+        gray_noise = True
+    else:
+        gray_noise = False
+    return generate_gaussian_noise(img, sigma, gray_noise)
+
+
+def random_add_gaussian_noise(img, sigma_range=(0, 1.0), gray_prob=0, clip=True, rounds=False):
+    noise = random_generate_gaussian_noise(img, sigma_range, gray_prob)
+    out = img + noise
+    if clip and rounds:
+        out = np.clip((out * 255.0).round(), 0, 255) / 255.
+    elif clip:
+        out = np.clip(out, 0, 1)
+    elif rounds:
+        out = (out * 255.0).round() / 255.
+    return out
+
+
 # ------------------------------------------------------------------------ #
 # --------------------------- JPEG compression --------------------------- #
 # ------------------------------------------------------------------------ #
+
+
+def add_jpg_compression(img, quality=90):
+    """Add JPG compression artifacts.
+
+    Args:
+        img (Numpy array): Input image, shape (h, w, c), range [0, 1], float32.
+        quality (float): JPG compression quality. 0 for lowest quality, 100 for
+            best quality. Default: 90.
+
+    Returns:
+        (Numpy array): Returned image after JPG, shape (h, w, c), range[0, 1],
+            float32.
+    """
+    img = np.clip(img, 0, 1)
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), quality]
+    _, encimg = cv2.imencode('.jpg', img * 255., encode_param)
+    img = np.float32(cv2.imdecode(encimg, 1)) / 255.
+    return img
+
+
+def random_add_jpg_compression(img, quality_range=(90, 100)):
+    """Randomly add JPG compression artifacts.
+
+    Args:
+        img (Numpy array): Input image, shape (h, w, c), range [0, 1], float32.
+        quality_range (tuple[float] | list[float]): JPG compression quality
+            range. 0 for lowest quality, 100 for best quality.
+            Default: (90, 100).
+
+    Returns:
+        (Numpy array): Returned image after JPG, shape (h, w, c), range[0, 1],
+            float32.
+    """
+    quality = np.random.uniform(quality_range[0], quality_range[1])
+    return add_jpg_compression(img, quality)
