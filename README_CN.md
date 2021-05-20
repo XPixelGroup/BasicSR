@@ -54,7 +54,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 ## :wrench: 依赖和安装
 
 - Python >= 3.7 (推荐使用 [Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
-- [PyTorch >= 1.3](https://pytorch.org/)
+- [PyTorch >= 1.7](https://pytorch.org/)
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 ### 通过 pip 安装
