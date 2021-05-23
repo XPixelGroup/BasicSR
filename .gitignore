@@ -11,6 +11,7 @@ tmp/*
 
 # ignored files
 version.py
+Lotayou_unit_test*.py
 
 # ignored files with suffix
 *.html

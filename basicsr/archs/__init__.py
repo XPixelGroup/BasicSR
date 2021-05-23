@@ -19,7 +19,11 @@ _arch_modules = [importlib.import_module(f'basicsr.archs.{file_name}') for file_
 def build_network(opt):
     opt = deepcopy(opt)
     network_type = opt.pop('type')
-    net = ARCH_REGISTRY.get(network_type)(**opt)
+    try:
+        net = ARCH_REGISTRY.get(network_type)(**opt)
+    except TypeError:
+        net = ARCH_REGISTRY.get(network_type)(opt)
+
     logger = get_root_logger()
     logger.info(f'Network [{net.__class__.__name__}] is created.')
     return net

@@ -43,6 +43,11 @@ class BaseModel():
             tb_logger (tensorboard logger): Tensorboard logger.
             save_img (bool): Whether to save images. Default: False.
         """
+        # 20210523 [Lotayou]: Critical patch: HiFaceGAN requires train() mode even for validation
+        # For more info, see https://github.com/Lotayou/Face-Renovation/issues/31
+        if self.opt['network_g']['type'] in ('HiFaceGAN', 'SPADEGenerator'):
+            self.net_g.train()
+
         if self.opt['dist']:
             self.dist_validation(dataloader, current_iter, tb_logger, save_img)
         else:
@@ -251,7 +256,15 @@ class BaseModel():
             if param_key not in load_net and 'params' in load_net:
                 param_key = 'params'
                 logger.info('Loading: params_ema does not exist, use params.')
-            load_net = load_net[param_key]
+
+            try:
+                load_net = load_net[param_key]
+            except KeyError:
+                # 20210523 [Lotayou]: compatibility patch
+                # HiFaceGAN saves raw state_dict instead of a params:dict
+                logger.info('Loading: param_key does not exist, treat the file as a raw state_dict.')
+                # load_net = load_net
+
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):

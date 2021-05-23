@@ -1,0 +1,49 @@
+name: HiFaceGAN_SR4x_test
+model_type: SRModel
+scale: 1    # HiFaceGAN does not resize lq input
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_gt:  # the 2st test dataset
+    name: FFHQ_sr4x
+    type: PairedImageDataset
+    dataroot_gt: datasets/FFHQ_512_gt
+    dataroot_lq: datasets/FFHQ_512_lq_sr4x
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: SPADEGenerator
+  num_in_ch: 3
+  num_feat: 48
+  use_vae: false
+  z_dim: 256  # dummy var
+  num_upsampling_layers: normal
+  crop_size: 512
+  #norm_G: 'spectralspadesyncbatch3x3'
+  #norm_G: 'spectralspadeinstance3x3'
+  norm_G: 'spectralspadebatch3x3'  # 20210519: Use batchnorm for now.
+  is_train: false                  # HifaceGAN supports progressive training
+                                   # so network architecture depends on it
+
+# path
+path:
+  pretrain_network_g: /media/lingbo/projects/HiFaceGAN/checkpoints/4xsr/latest_net_G.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: false
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: false
