@@ -1,6 +1,5 @@
 import cv2
 import imgaug.augmenters as ia
-import numpy as np
 import os
 from imgaug.augmenters.meta import Augmenter  # baseclass
 from tqdm import tqdm

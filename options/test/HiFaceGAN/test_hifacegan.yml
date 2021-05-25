@@ -1,5 +1,5 @@
 name: HiFaceGAN_SR4x_test
-model_type: SRModel
+model_type: HiFaceGANModel
 scale: 1    # HiFaceGAN does not resize lq input
 num_gpu: 1  # set num_gpu: 0 for cpu mode
 manual_seed: 0
@@ -30,7 +30,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: /media/lingbo/projects/HiFaceGAN/checkpoints/4xsr/latest_net_G.pth
+  pretrain_network_g: experiments/pretrained_models/4xsr/latest_net_G.pth
   strict_load_g: true
 
 # validation settings
