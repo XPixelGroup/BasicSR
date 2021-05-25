@@ -129,6 +129,7 @@ class VideoTestDataset(data.Dataset):
         return len(self.data_info['gt_path'])
 
 
+@DATASET_REGISTRY.register()
 class VideoTestVimeo90KDataset(data.Dataset):
     """Video test dataset for Vimeo90k-Test dataset.
 
@@ -197,6 +198,7 @@ class VideoTestVimeo90KDataset(data.Dataset):
         return len(self.data_info['gt_path'])
 
 
+@DATASET_REGISTRY.register()
 class VideoTestDUFDataset(VideoTestDataset):
     """ Video test dataset for DUF dataset.
 
@@ -249,6 +251,7 @@ class VideoTestDUFDataset(VideoTestDataset):
         }
 
 
+@DATASET_REGISTRY.register()
 class VideoRecurrentTestDataset(VideoTestDataset):
     """Video test dataset for recurrent architectures, which takes LR video
     frames as input and output corresponding HR video frames.

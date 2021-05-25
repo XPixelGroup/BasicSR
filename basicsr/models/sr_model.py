@@ -118,7 +118,7 @@ class SRModel(BaseModel):
             self.model_ema(decay=self.ema_decay)
 
     def test(self):
-        if hasattr(self, 'ema_decay'):
+        if hasattr(self, 'net_g_ema'):
             self.net_g_ema.eval()
             with torch.no_grad():
                 self.output = self.net_g_ema(self.lq)
@@ -202,7 +202,7 @@ class SRModel(BaseModel):
         return out_dict
 
     def save(self, epoch, current_iter):
-        if hasattr(self, 'ema_decay'):
+        if hasattr(self, 'net_g_ema'):
             self.save_network([self.net_g, self.net_g_ema], 'net_g', current_iter, param_key=['params', 'params_ema'])
         else:
             self.save_network(self.net_g, 'net_g', current_iter)

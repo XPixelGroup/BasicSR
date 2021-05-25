@@ -165,15 +165,6 @@ class StyleGAN2Model(BaseModel):
         self.optimizer_d = self.get_optimizer(optim_type, optim_params_d, lr, betas=betas)
         self.optimizers.append(self.optimizer_d)
 
-    def model_ema(self, decay=0.999):
-        net_g = self.get_bare_model(self.net_g)
-
-        net_g_params = dict(net_g.named_parameters())
-        net_g_ema_params = dict(self.net_g_ema.named_parameters())
-
-        for k in net_g_ema_params.keys():
-            net_g_ema_params[k].data.mul_(decay).add_(net_g_params[k].data, alpha=1 - decay)
-
     def feed_data(self, data):
         self.real_img = data['gt'].to(self.device)
 

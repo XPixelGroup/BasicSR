@@ -135,7 +135,7 @@ class SRGANModel(SRModel):
             self.model_ema(decay=self.ema_decay)
 
     def save(self, epoch, current_iter):
-        if self.ema_decay > 0:
+        if hasattr(self, 'net_g_ema'):
             self.save_network([self.net_g, self.net_g_ema], 'net_g', current_iter, param_key=['params', 'params_ema'])
         else:
             self.save_network(self.net_g, 'net_g', current_iter)
