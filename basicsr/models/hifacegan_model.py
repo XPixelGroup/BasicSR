@@ -1,8 +1,12 @@
 import torch
 from collections import OrderedDict
+from os import path as osp
+from tqdm import tqdm
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
+from basicsr.metrics_Lotayou import calculate_metric
+from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
 from .sr_model import SRModel
 
@@ -206,6 +210,71 @@ class HiFaceGANModel(SRModel):
             self.dist_validation(dataloader, current_iter, tb_logger, save_img)
         else:
             self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
+
+    def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
+        '''
+            20210526 [Lotayou]: Validation using updated metric system
+            The metrics are now evaluated after all images have been tested
+            This allows batch processing, and also allows evaluation of
+            distributional metrics, such as:
+
+            @ Frechet Inception Distance: FID
+            @ Maximum Mean Discrepancy: MMD
+
+            Warning:
+                Need careful batch management for different inference settings.
+
+        '''
+        dataset_name = dataloader.dataset.opt['name']
+        with_metrics = self.opt['val'].get('metrics') is not None
+        if with_metrics:
+            self.metric_results = dict()  # {metric: 0 for metric in self.opt['val']['metrics'].keys()}
+            sr_tensors = []
+            gt_tensors = []
+
+        pbar = tqdm(total=len(dataloader), unit='image')
+        for idx, val_data in enumerate(dataloader):
+            img_name = osp.splitext(osp.basename(val_data['lq_path'][0]))[0]
+            self.feed_data(val_data)
+            self.test()
+
+            visuals = self.get_current_visuals()  # detached cpu tensor, non-squeeze
+            sr_tensors.append(visuals['result'])
+            if 'gt' in visuals:
+                gt_tensors.append(visuals['gt'])
+                del self.gt
+
+            # tentative for out of GPU memory
+            del self.lq
+            del self.output
+            torch.cuda.empty_cache()
+
+            if save_img:
+                if self.opt['is_train']:
+                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
+                                             f'{img_name}_{current_iter}.png')
+                else:
+                    if self.opt['val']['suffix']:
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
+                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                    else:
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
+                                                 f'{img_name}_{self.opt["name"]}.png')
+
+                imwrite(tensor2img(visuals['result']), save_img_path)
+
+            pbar.update(1)
+            pbar.set_description(f'Test {img_name}')
+        pbar.close()
+
+        if with_metrics:
+            sr_pack = torch.cat(sr_tensors, dim=0)
+            gt_pack = torch.cat(gt_tensors, dim=0)
+            # calculate metrics
+            for name, opt_ in self.opt['val']['metrics'].items():
+                # The new metric caller automatically returns mean value
+                self.metric_results[name] = calculate_metric(sr_pack, gt_pack, opt_)
+            self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
     def save(self, epoch, current_iter):
         if hasattr(self, 'net_g_ema'):

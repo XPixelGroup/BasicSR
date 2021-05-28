@@ -6,16 +6,16 @@ manual_seed: 0
 
 datasets:
   test_gt:  # the 2st test dataset
-    name: FFHQ_sr4x
+    name: FFHQ_sr4x_val
     type: PairedImageDataset
-    dataroot_gt: datasets/FFHQ_512_gt
-    dataroot_lq: datasets/FFHQ_512_lq_sr4x
+    dataroot_gt: datasets/FFHQ_512_gt_val
+    dataroot_lq: datasets/FFHQ_512_lq_val_sr4x
     io_backend:
       type: disk
 
 # network structures
 network_g:
-  type: SPADEGenerator
+  type: HiFaceGAN
   num_in_ch: 3
   num_feat: 48
   use_vae: false
@@ -30,7 +30,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: experiments/pretrained_models/4xsr/latest_net_G.pth
+  pretrain_network_g: experiments/HiFaceGAN_SR4x_train/models/net_g_latest.pth
   strict_load_g: true
 
 # validation settings
@@ -46,4 +46,29 @@ val:
     ssim:
       type: calculate_ssim
       crop_border: 4
+      test_y_channel: false
+    msssim:
+      type: calculate_msssim
+      crop_border: 4
+      test_y_channel: false
+    lpips:
+      type: calculate_lpips
+      crop_border: 4
+      test_y_channel: false
+    niqe:
+      type: calculate_niqe
+      crop_border: 4
+      num_thread: 8
+    fid:
+      type: calculate_fid
+      crop_border: 0
+      test_y_channel: false
+      use_bgr_order: true
+    face_embedding_distance:
+      type: calculate_fed
+      crop_border: 0
+      test_y_channel: false
+    face_landmark_distance:
+      type: calculate_lle
+      crop_border: 0
       test_y_channel: false
