@@ -107,20 +107,18 @@ def create_train_val_dataloader(opt, logger):
 
 
 def load_resume_state(opt):
+    resume_state_path = None
     if opt['auto_resume']:
         state_path = osp.join('experiments', opt['name'], 'training_states')
-        states = list(scandir(state_path, suffix='state', recursive=False, full_path=False))
-        if len(states) == 0:
-            resume_state_path = None
-        else:
-            states = [float(v.split('.state')[0]) for v in states]
-            resume_state_path = osp.join(state_path, f'{max(states):.0f}.state')
-            opt['path']['resume_state'] = resume_state_path
+        if osp.isdir(state_path):
+            states = list(scandir(state_path, suffix='state', recursive=False, full_path=False))
+            if len(states) != 0:
+                states = [float(v.split('.state')[0]) for v in states]
+                resume_state_path = osp.join(state_path, f'{max(states):.0f}.state')
+                opt['path']['resume_state'] = resume_state_path
     else:
         if opt['path'].get('resume_state'):
             resume_state_path = opt['path']['resume_state']
-        else:
-            resume_state_path = None
 
     if resume_state_path is None:
         resume_state = None
