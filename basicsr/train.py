@@ -12,7 +12,7 @@ from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str, init_tb_logger,
-                           init_wandb_logger, make_exp_dirs, mkdir_and_rename, set_random_seed)
+                           init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir, set_random_seed)
 from basicsr.utils.dist_util import get_dist_info, init_dist
 from basicsr.utils.options import dict2str, parse
 
@@ -21,9 +21,11 @@ def parse_options(root_path, is_train=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
     parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none', help='job launcher')
+    parser.add_argument('--auto_resume', action='store_true')
     parser.add_argument('--local_rank', type=int, default=0)
     args = parser.parse_args()
     opt = parse(args.opt, root_path, is_train=is_train)
+    opt['auto_resume'] = args.auto_resume
 
     # distributed settings
     if args.launcher == 'none':
@@ -104,6 +106,29 @@ def create_train_val_dataloader(opt, logger):
     return train_loader, train_sampler, val_loader, total_epochs, total_iters
 
 
+def load_resume_state(opt):
+    resume_state_path = None
+    if opt['auto_resume']:
+        state_path = osp.join('experiments', opt['name'], 'training_states')
+        if osp.isdir(state_path):
+            states = list(scandir(state_path, suffix='state', recursive=False, full_path=False))
+            if len(states) != 0:
+                states = [float(v.split('.state')[0]) for v in states]
+                resume_state_path = osp.join(state_path, f'{max(states):.0f}.state')
+                opt['path']['resume_state'] = resume_state_path
+    else:
+        if opt['path'].get('resume_state'):
+            resume_state_path = opt['path']['resume_state']
+
+    if resume_state_path is None:
+        resume_state = None
+    else:
+        device_id = torch.cuda.current_device()
+        resume_state = torch.load(resume_state_path, map_location=lambda storage, loc: storage.cuda(device_id))
+        check_resume(opt, resume_state['iter'])
+    return resume_state
+
+
 def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(root_path, is_train=True)
@@ -112,13 +137,7 @@ def train_pipeline(root_path):
     # torch.backends.cudnn.deterministic = True
 
     # load resume states if necessary
-    if opt['path'].get('resume_state'):
-        device_id = torch.cuda.current_device()
-        resume_state = torch.load(
-            opt['path']['resume_state'], map_location=lambda storage, loc: storage.cuda(device_id))
-    else:
-        resume_state = None
-
+    resume_state = load_resume_state(opt)
     # mkdir for experiments and logger
     if resume_state is None:
         make_exp_dirs(opt)
@@ -134,7 +153,6 @@ def train_pipeline(root_path):
 
     # create model
     if resume_state:  # resume training
-        check_resume(opt, resume_state['iter'])
         model = build_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
         logger.info(f"Resuming training from epoch: {resume_state['epoch']}, " f"iter: {resume_state['iter']}.")
