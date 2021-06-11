@@ -22,7 +22,8 @@ jobs:
       - name: Build and install
         run: rm -rf .eggs && pip install -e .
       - name: Build for distribution
-        run: python setup.py sdist bdist_wheel
+        # remove bdist_wheel for pip installation with compiling cuda extensions
+        run: python setup.py sdist
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
