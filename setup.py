@@ -4,7 +4,6 @@ from setuptools import find_packages, setup
 
 import os
 import subprocess
-import sys
 import time
 import torch
 from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
@@ -115,7 +114,8 @@ def get_requirements(filename='requirements.txt'):
 
 
 if __name__ == '__main__':
-    if '--cuda_ext' in sys.argv:
+    cuda_ext = os.getenv('BASICSR_EXT')  # whether compile cuda ext
+    if cuda_ext == 'True':
         ext_modules = [
             make_cuda_ext(
                 name='deform_conv_ext',
@@ -133,7 +133,6 @@ if __name__ == '__main__':
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
-        sys.argv.remove('--cuda_ext')
     else:
         ext_modules = []
 
