@@ -19,10 +19,9 @@ network_g:
   num_feat: 48
   use_vae: false
   z_dim: 256  # dummy var
-  num_upsampling_layers: normal
   crop_size: 512
-  #norm_G: 'spectralspadesyncbatch3x3'
-  norm_G: 'spectralspadebatch3x3'  # 20210519: Use instance norm for now.
+  #norm_g: 'spectralspadesyncbatch3x3'
+  norm_g: 'spectralspadebatch3x3'  # 20210519: Use instance norm for now.
   is_train: false                  # HifaceGAN supports progressive training
                                    # so network architecture depends on it
 

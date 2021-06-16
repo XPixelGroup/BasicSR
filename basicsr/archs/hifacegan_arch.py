@@ -1,6 +1,3 @@
-'''
-  HiFaceGAN_arch: Network definition of HiFaceGAN
-'''
 import numpy as np
 import torch
 import torch.nn as nn
@@ -21,9 +18,8 @@ class SPADEGenerator(BaseNetwork):
                  num_feat=64,
                  use_vae=False,
                  z_dim=256,
-                 num_upsampling_layers='normal',
                  crop_size=512,
-                 norm_G='spectralspadesyncbatch3x3',
+                 norm_g='spectralspadesyncbatch3x3',
                  is_train=True,
                  init_train_phase=3):  # progressive training disabled
         super().__init__()
@@ -32,18 +28,8 @@ class SPADEGenerator(BaseNetwork):
         self.is_train = is_train
         self.train_phase = init_train_phase
 
-        if num_upsampling_layers == 'normal':
-            num_up_layers = 5
-        elif num_upsampling_layers == 'more':
-            num_up_layers = 6
-        elif num_upsampling_layers == 'most':
-            num_up_layers = 7
-        else:
-            raise ValueError(f'opt.num_upsampling_layers [{num_upsampling_layers}] not recognized')
-
-        # 20200211 Yang Lingbo with respect to phase
-        self.scale_ratio = num_up_layers
-        self.sw = crop_size // (2**num_up_layers)
+        self.scale_ratio = 5  # hardcoded now
+        self.sw = crop_size // (2**self.scale_ratio)
         self.sh = self.sw  # 20210519: By default use square image, aspect_ratio = 1.0
 
         if use_vae:
@@ -54,16 +40,16 @@ class SPADEGenerator(BaseNetwork):
             # downsampled segmentation map instead of random z
             self.fc = nn.Conv2d(num_in_ch, 16 * self.nf, 3, padding=1)
 
-        self.head_0 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_G)
+        self.head_0 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_g)
 
-        self.G_middle_0 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_G)
-        self.G_middle_1 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_G)
+        self.g_middle_0 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_g)
+        self.g_middle_1 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_g)
 
         self.ups = nn.ModuleList([
-            SPADEResnetBlock(16 * self.nf, 8 * self.nf, norm_G),
-            SPADEResnetBlock(8 * self.nf, 4 * self.nf, norm_G),
-            SPADEResnetBlock(4 * self.nf, 2 * self.nf, norm_G),
-            SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_G)  # here
+            SPADEResnetBlock(16 * self.nf, 8 * self.nf, norm_g),
+            SPADEResnetBlock(8 * self.nf, 4 * self.nf, norm_g),
+            SPADEResnetBlock(4 * self.nf, 2 * self.nf, norm_g),
+            SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_g)  # here
         ])
 
         self.to_rgbs = nn.ModuleList([
@@ -75,28 +61,27 @@ class SPADEGenerator(BaseNetwork):
 
         self.up = nn.Upsample(scale_factor=2)
 
-    # 20200309 interface for flexible encoder design
-    # and mid-level loss control!
-    # For basic network, it's just a 16x downsampling
     def encode(self, input_tensor):
+        """
+        Encode input_tensor into feature maps, can be overriden in derived classes
+
+        Default: nearest downsampling of 2**5 = 32 times
+        """
         h, w = input_tensor.size()[-2:]
         sh, sw = h // 2**self.scale_ratio, w // 2**self.scale_ratio
         x = F.interpolate(input_tensor, size=(sh, sw))
-        return self.fc(x)  # 20200310: Merge fc into encoder
+        return self.fc(x)
 
     def forward(self, x):
         # In oroginal SPADE, seg means a segmentation map, but here we use x instead.
         seg = x
 
-        # For basic generator, 16x downsampling.
-        # 20200310: Merge fc into encoder
         x = self.encode(x)
-
         x = self.head_0(x, seg)
 
         x = self.up(x)
-        x = self.G_middle_0(x, seg)
-        x = self.G_middle_1(x, seg)
+        x = self.g_middle_0(x, seg)
+        x = self.g_middle_1(x, seg)
 
         if self.is_train:
             phase = self.train_phase + 1
@@ -149,8 +134,8 @@ class SPADEGenerator(BaseNetwork):
         x = self.head_0(x, guide_list[1])
 
         x = self.up(x)
-        x = self.G_middle_0(x, guide_list[2])
-        x = self.G_middle_1(x, guide_list[3])
+        x = self.g_middle_0(x, guide_list[2])
+        x = self.g_middle_1(x, guide_list[3])
 
         for i in range(phase):
             x = self.up(x)
@@ -172,14 +157,12 @@ class HiFaceGAN(SPADEGenerator):
                  num_feat=64,
                  use_vae=False,
                  z_dim=256,
-                 num_upsampling_layers='normal',
                  crop_size=512,
-                 norm_G='spectralspadesyncbatch3x3',
+                 norm_g='spectralspadesyncbatch3x3',
                  is_train=True,
                  init_train_phase=3):
 
-        super().__init__(num_in_ch, num_feat, use_vae, z_dim, num_upsampling_layers, crop_size, norm_G, is_train,
-                         init_train_phase)
+        super().__init__(num_in_ch, num_feat, use_vae, z_dim, crop_size, norm_g, is_train, init_train_phase)
         self.lip_encoder = LIPEncoder(num_in_ch, num_feat, self.sw, self.sh, self.scale_ratio)
 
     def encode(self, input_tensor):
@@ -206,17 +189,15 @@ class HiFaceGANDiscriminator(BaseNetwork):
             Default: True.
     """
 
-    def __init__(
-        self,
-        num_in_ch=3,
-        num_out_ch=3,
-        conditional_D=True,
-        num_D=2,
-        n_layers_D=4,
-        num_feat=64,
-        norm_D='spectralinstance',
-        keep_features=True,
-    ):
+    def __init__(self,
+                 num_in_ch=3,
+                 num_out_ch=3,
+                 conditional_D=True,
+                 num_D=2,
+                 n_layers_D=4,
+                 num_feat=64,
+                 norm_D='spectralinstance',
+                 keep_features=True):
         super().__init__()
         self.num_D = num_D
 

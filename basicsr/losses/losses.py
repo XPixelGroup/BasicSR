@@ -329,7 +329,7 @@ class GANLoss(nn.Module):
         target_val = (self.real_label_val if target_is_real else self.fake_label_val)
         return input.new_ones(input.size()) * target_val
 
-    def forward_single(self, input, target_is_real, is_disc=False):
+    def forward(self, input, target_is_real, is_disc=False):
         """
         Args:
             input (Tensor): The input for the loss module, i.e., the network
@@ -354,22 +354,33 @@ class GANLoss(nn.Module):
         # loss_weight is always 1.0 for discriminators
         return loss if is_disc else loss * self.loss_weight
 
+
+@LOSS_REGISTRY.register()
+class MultiScaleGANLoss(GANLoss):
+    """
+    MultiScaleGANLoss accepts a list of predictions
+    """
+
+    def __init__(self, gan_type, real_label_val=1.0, fake_label_val=0.0, loss_weight=1.0):
+        super(MultiScaleGANLoss, self).__init__(gan_type, real_label_val, fake_label_val, loss_weight)
+
     def forward(self, input, target_is_real, is_disc=False):
         """
-            20210525 [Lotayou]: Add support for multiscale discriminator loss
-            Note the input may not be just one tensor, but a list of tensors
+        The input is a list of tensors, or a list of (a list of tensors)
         """
         if isinstance(input, list):
             loss = 0
             for pred_i in input:
-                if isinstance(pred_i, list):  # in case of multiscale feature matching
+                if isinstance(pred_i, list):
+                    # Only compute GAN loss for the last layer
+                    # in case of multiscale feature matching
                     pred_i = pred_i[-1]
                 # Safe operaton: 0-dim tensor calling self.mean() does nothing
-                loss_tensor = self.forward_single(pred_i, target_is_real, is_disc).mean()
+                loss_tensor = super().forward(pred_i, target_is_real, is_disc).mean()
                 loss += loss_tensor
             return loss / len(input)
         else:
-            return self.forward_single(input, target_is_real, is_disc)
+            return super().forward(input, target_is_real, is_disc)
 
 
 def r1_penalty(real_pred, real_img):

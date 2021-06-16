@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
-from basicsr.metrics_Lotayou import calculate_metric
+from basicsr.metrics import calculate_metric
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
 from .sr_model import SRModel
@@ -209,7 +209,9 @@ class HiFaceGANModel(SRModel):
         if self.opt['dist']:
             self.dist_validation(dataloader, current_iter, tb_logger, save_img)
         else:
-            self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
+            print('In HiFaceGANModel: The new metrics package is under development.' +
+                  'Using super method now (Only PSNR & SSIM are supported)')
+            super().nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         '''

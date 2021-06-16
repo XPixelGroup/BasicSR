@@ -20,17 +20,16 @@ network_g:
   num_feat: 48
   use_vae: false
   z_dim: 256  # dummy var
-  num_upsampling_layers: normal
   crop_size: 512
-  #norm_G: 'spectralspadesyncbatch3x3'
-  #norm_G: 'spectralspadeinstance3x3'
-  norm_G: 'spectralspadebatch3x3'  # 20210519: Use batchnorm for now.
+  #norm_g: 'spectralspadesyncbatch3x3'
+  #norm_g: 'spectralspadeinstance3x3'
+  norm_g: 'spectralspadebatch3x3'  # 20210519: Use batchnorm for now.
   is_train: false                  # HifaceGAN supports progressive training
                                    # so network architecture depends on it
 
 # path
 path:
-  pretrain_network_g: experiments/HiFaceGAN_SR4x_train/models/net_g_latest.pth
+  pretrain_network_g: experiments/HiFaceGAN_SR4x_train_full/models/net_g_latest.pth
   strict_load_g: true
 
 # validation settings
@@ -47,28 +46,31 @@ val:
       type: calculate_ssim
       crop_border: 4
       test_y_channel: false
-    msssim:
-      type: calculate_msssim
-      crop_border: 4
-      test_y_channel: false
-    lpips:
-      type: calculate_lpips
-      crop_border: 4
-      test_y_channel: false
-    niqe:
-      type: calculate_niqe
-      crop_border: 4
-      num_thread: 8
-    fid:
-      type: calculate_fid
-      crop_border: 0
-      test_y_channel: false
-      use_bgr_order: true
-    face_embedding_distance:
-      type: calculate_fed
-      crop_border: 0
-      test_y_channel: false
-    face_landmark_distance:
-      type: calculate_lle
-      crop_border: 0
-      test_y_channel: false
+
+    # More metrics will be supported in the next update
+    #
+    # msssim:
+    #   type: calculate_msssim
+    #   crop_border: 4
+    #   test_y_channel: false
+    # lpips:
+    #   type: calculate_lpips
+    #   crop_border: 4
+    #   test_y_channel: false
+    # niqe:
+    #   type: calculate_niqe
+    #   crop_border: 4
+    #   num_thread: 8
+    # fid:
+    #   type: calculate_fid
+    #   crop_border: 0
+    #   test_y_channel: false
+    #   use_bgr_order: true
+    # face_embedding_distance:
+    #   type: calculate_fed
+    #   crop_border: 0
+    #   test_y_channel: false
+    # face_landmark_distance:
+    #   type: calculate_lle
+    #   crop_border: 0
+    #   test_y_channel: false

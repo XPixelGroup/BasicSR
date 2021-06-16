@@ -58,16 +58,16 @@ class SPADE(nn.Module):
 
 
 class SPADEResnetBlock(nn.Module):
-    '''
+    """
     ResNet block that uses SPADE. It differs from the ResNet block of pix2pixHD in that
     it takes in the segmentation map as input, learns the skip connection if necessary,
     and applies normalization first and then convolution.
     This architecture seemed like a standard architecture for unconditional or
     class-conditional GAN architecture using residual block.
     The code was inspired from https://github.com/LMescheder/GAN_stability.
-    '''
+    """
 
-    def __init__(self, fin, fout, norm_G='spectralspadesyncbatch3x3', semantic_nc=3):
+    def __init__(self, fin, fout, norm_g='spectralspadesyncbatch3x3', semantic_nc=3):
         super().__init__()
         # Attributes
         self.learned_shortcut = (fin != fout)
@@ -80,14 +80,14 @@ class SPADEResnetBlock(nn.Module):
             self.conv_s = nn.Conv2d(fin, fout, kernel_size=1, bias=False)
 
         # apply spectral norm if specified
-        if 'spectral' in norm_G:
+        if 'spectral' in norm_g:
             self.conv_0 = spectral_norm(self.conv_0)
             self.conv_1 = spectral_norm(self.conv_1)
             if self.learned_shortcut:
                 self.conv_s = spectral_norm(self.conv_s)
 
         # define normalization layers
-        spade_config_str = norm_G.replace('spectral', '')
+        spade_config_str = norm_g.replace('spectral', '')
         self.norm_0 = SPADE(spade_config_str, fin, semantic_nc)
         self.norm_1 = SPADE(spade_config_str, fmiddle, semantic_nc)
         if self.learned_shortcut:
@@ -98,8 +98,8 @@ class SPADEResnetBlock(nn.Module):
     def forward(self, x, seg):
         x_s = self.shortcut(x, seg)
 
-        dx = self.conv_0(self.actvn(self.norm_0(x, seg)))
-        dx = self.conv_1(self.actvn(self.norm_1(dx, seg)))
+        dx = self.conv_0(self.act(self.norm_0(x, seg)))
+        dx = self.conv_1(self.act(self.norm_1(dx, seg)))
 
         out = x_s + dx
 
@@ -112,7 +112,7 @@ class SPADEResnetBlock(nn.Module):
             x_s = x
         return x_s
 
-    def actvn(self, x):
+    def act(self, x):
         return F.leaky_relu(x, 2e-1)
 
 
