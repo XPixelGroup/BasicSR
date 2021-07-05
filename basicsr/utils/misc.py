@@ -111,7 +111,7 @@ def check_resume(opt, resume_iter):
         for network in networks:
             name = f'pretrain_{network}'
             basename = network.replace('network_', '')
-            if opt['path'].get('ignore_resume_networks') is None or (basename
+            if opt['path'].get('ignore_resume_networks') is None or (network
                                                                      not in opt['path']['ignore_resume_networks']):
                 opt['path'][name] = osp.join(opt['path']['models'], f'net_{basename}_{resume_iter}.pth')
                 logger.info(f"Set {name} to {opt['path'][name]}")
