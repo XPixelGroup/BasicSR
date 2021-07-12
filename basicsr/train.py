@@ -27,7 +27,7 @@ def init_loggers(opt):
         init_wandb_logger(opt)
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
-        tb_logger = init_tb_logger(log_dir=osp.join('tb_logger', opt['name']))
+        tb_logger = init_tb_logger(log_dir=osp.join(opt['root_path'], 'tb_logger', opt['name']))
     return logger, tb_logger
 
 
@@ -96,6 +96,7 @@ def load_resume_state(opt):
 def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(root_path, is_train=True)
+    opt['root_path'] = root_path
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
@@ -106,7 +107,7 @@ def train_pipeline(root_path):
     if resume_state is None:
         make_exp_dirs(opt)
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
-            mkdir_and_rename(osp.join('tb_logger', opt['name']))
+            mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
 
     # initialize loggers
     logger, tb_logger = init_loggers(opt)
