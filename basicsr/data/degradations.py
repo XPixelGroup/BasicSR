@@ -196,10 +196,10 @@ def random_bivariate_isotropic_Gaussian(kernel_size, sigma_range, noise_range=No
 def random_mixed_kernels(kernel_list,
                          kernel_prob,
                          kernel_size=21,
-                         sigma_x_range=[0.6, 5],
-                         sigma_y_range=[0.6, 5],
-                         rotation_range=[-math.pi, math.pi],
-                         beta_range=[0.5, 8],
+                         sigma_x_range=(0.6, 5),
+                         sigma_y_range=(0.6, 5),
+                         rotation_range=(-math.pi, math.pi),
+                         beta_range=(0.5, 8),
                          noise_range=None):
     """Randomly generate mixed kernels.
 
