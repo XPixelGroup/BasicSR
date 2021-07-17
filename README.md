@@ -54,71 +54,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 
 ## :wrench: Dependencies and Installation
 
-- Python >= 3.7 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
-- [PyTorch >= 1.7](https://pytorch.org/)
-- NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
-
-### Option 1: Pip install
-
-```bash
-pip install basicsr
-```
-
-- If you want to compile cuda extensions when installing, please set up the environment variable `BASICSR_EXT=True`.
-
-  ```bash
-  BASICSR_EXT=True pip install basicsr
-  ```
-
-- If you want to use cuda extensions during running, set environment variable `BASICSR_JIT=True`. Note that every time you run the model, it will compile the extensions just time.
-  - Example: StyleGAN2 inference colab.
-
-### Option 2: Git clone and compile
-
-1. Clone repo
-
-    ```bash
-    git clone https://github.com/xinntao/BasicSR.git
-    ```
-
-1. Install dependent packages
-
-    ```bash
-    cd BasicSR
-    pip install -r requirements.txt
-    ```
-
-1. Install BasicSR
-
-    Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
-    (Make sure that your GCC version: gcc >= 5) <br>
-    If you do need the cuda extensions: <br>
-    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
-    please set up the environment variable `BASICSR_EXT=True` when installing.<br>
-    If you use the EDVR and StyleGAN2 model, the above cuda extensions are necessary.
-
-    ```bash
-    BASICSR_EXT=True python setup.py develop
-    ```
-
-    Otherwise, install without compiling cuda extensions
-
-    ```bash
-    python setup.py develop
-    ```
-
-    You may also want to specify the CUDA paths:
-
-      ```bash
-      CUDA_HOME=/usr/local/cuda \
-      CUDNN_INCLUDE_DIR=/usr/local/cuda \
-      CUDNN_LIB_DIR=/usr/local/cuda \
-      python setup.py develop
-      ```
-
-Note that BasicSR is only tested in Ubuntu, and may be not suitable for Windows. You may try [Windows WSL with CUDA supports](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (It is now only available for insider build with Fast ring).
-
+For detailed instructions refer to [INSTALL.md](INSTALL.md).
 ## :hourglass_flowing_sand: TODO List
 
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
