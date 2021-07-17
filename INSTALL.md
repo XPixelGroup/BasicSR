@@ -3,7 +3,7 @@
 ## Contents
 
 - [Requirements](#requirements)
-    - [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)
+- [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)
 - [Installation Options](#installation-options)
   - [Install from PyPI](#install-from-pypi)
   - [Install from a local clone](#Install-from-a-local-clone)
@@ -16,43 +16,80 @@
 - NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
 - Linux (We have not tested on Windows)
 
-### BASICSR_EXT and BASICSR_JIT environment variables
+## BASICSR_EXT and BASICSR_JIT environment variables
 
-If you want to use deformable convolution or StyleGAN customized operators, you also need to 1) compile the PyTorch C++ extensions ahead OR 2) load the PyTorch C++ extensions just-in-time (JIT).<br>
+If you want to use PyTorch C++ extensions:<br>
+&emsp;deformable convolution: [*dcn* for EDVR](basicsr/ops)<br>
+&emsp;StyleGAN customized operators: [*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
+you also need to:
+
+- 1) compile the PyTorch C++ extensions ahead
+- OR 2) load the PyTorch C++ extensions just-in-time (JIT).
+
 You may choose one of the options according to your needs.
 
-| Option | Pros| Cons | Cases |
-| :--- | :---        |     :---      | :--- |
-| Compile the PyTorch C++ extensions ahead   | Quickly load the compiled extensions | May have more stringent requirements for the environment, and you may encounter annoying issues | If you need to train/inference those models for many times, it will save your time|
-| Load the PyTorch C++ extensions just-in-time (JIT) | Have less requirements for running | Each time you run the model, it will load extensions again, which may takes several minutes  | If you just want to do some inferences, it will reduce the issues you may encounter|
+| Option | Pros| Cons | Cases | Env variables|
+| :--- | :---        |     :---      | :--- |:--- |
+| Compile PyTorch C++ extensions ahead   | **Quickly load** the compiled extensions | May have more stringent requirements for the environment, and you may encounter annoying issues | If you need to train/inference those models for many times, it will save your time| Set `BASICSR_EXT=True` during **installation**|
+| Load PyTorch C++ extensions just-in-time (JIT) | Have less requirements, may have less issues | Each time you run the model, it will takes several minutes to load extensions again  | If you just want to do some inferences, it is more convenient| Set  `BASICSR_JIT=True` during **running** (not **installation**) |
 
 For those who need to compile the PyTorch C++ extensions ahead, remember:
 
-- Make sure that your GCC version: gcc >= 5
+- Make sure that your GCC version: gcc & g++ >= 5
 
-If you do not need these operators, just skip it and there is no need to set `BASICSR_EXT` or `BASICSR_JIT` environment variables.
+Note that:
 
+- The `BASICSR_JIT` has higher priority, that is, even you have compiled PyTorch C++ extensions ahead and sucessfully, it will load the extensions just-in-time if you still set `BASICSR_JIT=True` in your running commands.
+- :x: Do not set `BASICSR_JIT` during installation. More details are in [Installation Options](#installation-options).
+- :heavy_check_mark: If you want to load PyTorch C++ extensions just-in-time (JIT), just set `BASICSR_JIT=True` before your  **running** commands. For example, `BASICSR_JIT=True python inference/inference_stylegan2.py`.
+
+If you do not need these operators, just skip it. There is no need to set `BASICSR_EXT` or `BASICSR_JIT` environment variables.
 
 ## Installation Options
 
+There are options to install BASICSR, according to your needs.
+
+- If you just want to use BASICSR as a package (like [GFPGAN](https://github.com/TencentARC/GFPGAN) and []()), it is recommanded to install from PyPI.
+- If you want to investigate the details of BASICSR OR develop it OR modify to fulfill your needs, it is better to install from a local clone.
+
 ### Install from PyPI
 
-```bash
-pip install basicsr
-```
+- If you do not need C++ extensions (more details are in [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)), it is very simple:
 
-- If you want to compile cuda extensions when installing, please set up the environment variable `BASICSR_EXT=True`.
+  ```bash
+  pip install basicsr
+  ```
+
+- If you want to use C++ extensions in JIT mode (more details are in [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)):
+
+  ```bash
+  pip install basicsr
+  ```
+
+- If you want to compile C++ extensions when installing, please set the environment variable `BASICSR_EXT=True`:
 
   ```bash
   BASICSR_EXT=True pip install basicsr
   ```
 
-- If you want to use cuda extensions during running, set environment variable `BASICSR_JIT=True`. Note that every time you run the model, it will compile the extensions just time.
-  - Example: StyleGAN2 inference colab.
+  The compilation may fail without any error prints. If you encounter `ImportError: cannot import name 'deform_conv_ext' | 'fused_act_ext' | 'upfirdn2d_ext'` during running, you may check the compilation process. The following command will print detailed log:
+
+  ```bash
+  BASICSR_EXT=True pip install basicsr -vvv
+  ```
+
+  You may also want to specify the CUDA paths:
+
+  ```bash
+  CUDA_HOME=/usr/local/cuda \
+  CUDNN_INCLUDE_DIR=/usr/local/cuda \
+  CUDNN_LIB_DIR=/usr/local/cuda \
+  BASICSR_EXT=True python setup.py develop
+  ```
 
 ### Install from a local clone
 
-1. Clone repo
+1. Clone the repo
 
     ```bash
     git clone https://github.com/xinntao/BasicSR.git
@@ -66,30 +103,34 @@ pip install basicsr
     ```
 
 1. Install BasicSR
-
     Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
-    (Make sure that your GCC version: gcc >= 5) <br>
-    If you do need the cuda extensions: <br>
-    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
+
+    -  If you do not need C++ extensions (more details are in [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)):
+
+        ```bash
+        python setup.py develop
+        ```
+
+    - If you want to use C++ extensions in JIT mode (more details are in [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)):
+
+        ```bash
+        python setup.py develop
+        ```
+
+    - If you want to compile C++ extensions when installing, please set the environment variable `BASICSR_EXT=True`:
     please set up the environment variable `BASICSR_EXT=True` when installing.<br>
-    If you use the EDVR and StyleGAN2 model, the above cuda extensions are necessary.
 
-    ```bash
-    BASICSR_EXT=True python setup.py develop
-    ```
-
-    Otherwise, install without compiling cuda extensions
-
-    ```bash
-    python setup.py develop
-    ```
+        ```bash
+        BASICSR_EXT=True python setup.py develop
+        ```
 
     You may also want to specify the CUDA paths:
 
-      ```bash
-      CUDA_HOME=/usr/local/cuda \
-      CUDNN_INCLUDE_DIR=/usr/local/cuda \
-      CUDNN_LIB_DIR=/usr/local/cuda \
-      python setup.py develop
-      ```
+    ```bash
+    CUDA_HOME=/usr/local/cuda \
+    CUDNN_INCLUDE_DIR=/usr/local/cuda \
+    CUDNN_LIB_DIR=/usr/local/cuda \
+    BASICSR_EXT=True python setup.py develop
+    ```
+
+## FAQ
