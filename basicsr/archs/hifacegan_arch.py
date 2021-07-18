@@ -3,13 +3,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# 20210519 [Lotayou]: Currently Pytorch official SyncBatchNorm only works under DDP training.
-# from basicsr.models.archs.sync_batchnorm import SynchronizedBatchNorm2d
 from basicsr.utils.registry import ARCH_REGISTRY
 from .hifacegan_util import BaseNetwork, LIPEncoder, SPADEResnetBlock, get_nonspade_norm_layer
 
 
-@ARCH_REGISTRY.register()
 class SPADEGenerator(BaseNetwork):
     """Generator with SPADEResBlock"""
 
@@ -49,14 +46,14 @@ class SPADEGenerator(BaseNetwork):
             SPADEResnetBlock(16 * self.nf, 8 * self.nf, norm_g),
             SPADEResnetBlock(8 * self.nf, 4 * self.nf, norm_g),
             SPADEResnetBlock(4 * self.nf, 2 * self.nf, norm_g),
-            SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_g)  # here
+            SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_g)
         ])
 
         self.to_rgbs = nn.ModuleList([
             nn.Conv2d(8 * self.nf, 3, 3, padding=1),
             nn.Conv2d(4 * self.nf, 3, 3, padding=1),
             nn.Conv2d(2 * self.nf, 3, 3, padding=1),
-            nn.Conv2d(1 * self.nf, 3, 3, padding=1)  # here
+            nn.Conv2d(1 * self.nf, 3, 3, padding=1)
         ])
 
         self.up = nn.Upsample(scale_factor=2)
@@ -64,7 +61,6 @@ class SPADEGenerator(BaseNetwork):
     def encode(self, input_tensor):
         """
         Encode input_tensor into feature maps, can be overriden in derived classes
-
         Default: nearest downsampling of 2**5 = 32 times
         """
         h, w = input_tensor.size()[-2:]
@@ -99,14 +95,12 @@ class SPADEGenerator(BaseNetwork):
 
     def mixed_guidance_forward(self, input_x, seg=None, n=0, mode='progressive'):
         """
-            A helper class for subspace visualization.
-            Input and seg are different images
-            For the first n levels (including encoder)
-            we use input, for the rest we use seg.
+        A helper class for subspace visualization. Input and seg are different images.
+        For the first n levels (including encoder) we use input, for the rest we use seg.
 
-            If mode = 'progressive', the output's like: AAABBB
-            If mode = 'one_plug', the output's like:    AAABAA
-            If mode = 'one_ablate', the output's like:  BBBABB
+        If mode = 'progressive', the output's like: AAABBB
+        If mode = 'one_plug', the output's like:    AAABAA
+        If mode = 'one_ablate', the output's like:  BBBABB
         """
 
         if seg is None:
@@ -149,8 +143,10 @@ class SPADEGenerator(BaseNetwork):
 
 @ARCH_REGISTRY.register()
 class HiFaceGAN(SPADEGenerator):
-    """ HiFaceGAN: SPADEGenerator with a learnable feature encoder
-        Current encoder design: LIPEncoder"""
+    """
+    HiFaceGAN: SPADEGenerator with a learnable feature encoder
+    Current encoder design: LIPEncoder
+    """
 
     def __init__(self,
                  num_in_ch=3,
@@ -161,7 +157,6 @@ class HiFaceGAN(SPADEGenerator):
                  norm_g='spectralspadesyncbatch3x3',
                  is_train=True,
                  init_train_phase=3):
-
         super().__init__(num_in_ch, num_feat, use_vae, z_dim, crop_size, norm_g, is_train, init_train_phase)
         self.lip_encoder = LIPEncoder(num_in_ch, num_feat, self.sw, self.sh, self.scale_ratio)
 
@@ -171,18 +166,18 @@ class HiFaceGAN(SPADEGenerator):
 
 @ARCH_REGISTRY.register()
 class HiFaceGANDiscriminator(BaseNetwork):
-    """ Inspired by pix2pixHD multiscale discriminator.
-
+    """
+    Inspired by pix2pixHD multiscale discriminator.
     Args:
         num_in_ch (int): Channel number of inputs. Default: 3.
         num_out_ch (int): Channel number of outputs. Default: 3.
-        conditional_D (bool): Whether use conditional discriminator.
+        conditional_d (bool): Whether use conditional discriminator.
             Default: True.
-        num_D (int): Number of Multiscale discriminators. Default: 3.
-        n_layers_D (int): Number of downsample layers in each D. Default: 4.
+        num_d (int): Number of Multiscale discriminators. Default: 3.
+        n_layers_d (int): Number of downsample layers in each D. Default: 4.
         num_feat (int): Channel number of base intermediate features.
             Default: 64.
-        norm_D (str): String to determine normalization layers in D.
+        norm_d (str): String to determine normalization layers in D.
             Choices: [spectral][instance/batch/syncbatch]
             Default: 'spectralinstance'.
         keep_features (bool): Keep intermediate features for matching loss, etc.
@@ -192,22 +187,22 @@ class HiFaceGANDiscriminator(BaseNetwork):
     def __init__(self,
                  num_in_ch=3,
                  num_out_ch=3,
-                 conditional_D=True,
-                 num_D=2,
-                 n_layers_D=4,
+                 conditional_d=True,
+                 num_d=2,
+                 n_layers_d=4,
                  num_feat=64,
-                 norm_D='spectralinstance',
+                 norm_d='spectralinstance',
                  keep_features=True):
         super().__init__()
-        self.num_D = num_D
+        self.num_D = num_d
 
         input_nc = num_in_ch
-        if conditional_D:
+        if conditional_d:
             input_nc += num_out_ch
 
-        for i in range(num_D):
-            subnet_D = NLayerDiscriminator(input_nc, n_layers_D, num_feat, norm_D, keep_features)
-            self.add_module(f'discriminator_{i}', subnet_D)
+        for i in range(num_d):
+            subnet_d = NLayerDiscriminator(input_nc, n_layers_d, num_feat, norm_d, keep_features)
+            self.add_module(f'discriminator_{i}', subnet_d)
 
     def downsample(self, x):
         return F.avg_pool2d(x, kernel_size=3, stride=2, padding=[1, 1], count_include_pad=False)
@@ -224,24 +219,23 @@ class HiFaceGANDiscriminator(BaseNetwork):
         return result
 
 
-@ARCH_REGISTRY.register()
 class NLayerDiscriminator(BaseNetwork):
     """Defines the PatchGAN discriminator with the specified arguments."""
 
-    def __init__(self, input_nc, n_layers_D, num_feat, norm_D, keep_features):
+    def __init__(self, input_nc, n_layers_d, num_feat, norm_d, keep_features):
         super().__init__()
         kw = 4
         padw = int(np.ceil((kw - 1.0) / 2))
         nf = num_feat
         self.keep_features = keep_features
 
-        norm_layer = get_nonspade_norm_layer(norm_D)
+        norm_layer = get_nonspade_norm_layer(norm_d)
         sequence = [[nn.Conv2d(input_nc, nf, kernel_size=kw, stride=2, padding=padw), nn.LeakyReLU(0.2, False)]]
 
-        for n in range(1, n_layers_D):
+        for n in range(1, n_layers_d):
             nf_prev = nf
             nf = min(nf * 2, 512)
-            stride = 1 if n == n_layers_D - 1 else 2
+            stride = 1 if n == n_layers_d - 1 else 2
             sequence += [[
                 norm_layer(nn.Conv2d(nf_prev, nf, kernel_size=kw, stride=stride, padding=padw)),
                 nn.LeakyReLU(0.2, False)

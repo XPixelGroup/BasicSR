@@ -56,9 +56,9 @@ network_d:
   type: HiFaceGANDiscriminator
   num_in_ch: 3
   num_out_ch: 3
-  conditional_D: True
+  conditional_d: True
   num_feat: 64
-  norm_D: 'spectralinstance'
+  norm_d: 'spectralinstance'
 
 
 # training settings

@@ -73,11 +73,11 @@ class HiFaceGANModel(SRModel):
 
     def discriminate(self, input_lq, output, ground_truth):
         """
-            This is a conditional (on the input) discriminator
-            In Batch Normalization, the fake and real images are
-            recommended to be in the same batch to avoid disparate
-            statistics in fake and real images.
-            So both fake and real images are fed to D all at once.
+        This is a conditional (on the input) discriminator
+        In Batch Normalization, the fake and real images are
+        recommended to be in the same batch to avoid disparate
+        statistics in fake and real images.
+        So both fake and real images are fed to D all at once.
         """
         h, w = output.shape[-2:]
         if output.shape[-2:] != input_lq.shape[-2:]:
@@ -141,7 +141,7 @@ class HiFaceGANModel(SRModel):
                     l_g_total += l_g_style
                     loss_dict['l_g_style'] = l_g_style
 
-            # 20210525: [Lotayou] Requires real prediction for feature matching loss
+            # Requires real prediction for feature matching loss
             pred_fake, pred_real = self.discriminate(self.lq, self.output, self.gt)
             l_g_gan = self.cri_gan(pred_fake, True, is_disc=False)
             l_g_total += l_g_gan
@@ -161,7 +161,7 @@ class HiFaceGANModel(SRModel):
             p.requires_grad = True
 
         self.optimizer_d.zero_grad()
-        # 20210525: [Lotayou] Slight difference between HiFaceGAN and SRGAN:
+        # TODO: Benchmark test between HiFaceGAN and SRGAN implementation:
         # SRGAN use the same fake output for discriminator update
         # while HiFaceGAN regenerate a new output using updated net_g
         # This should not make too much difference though. Stick to SRGAN now.
@@ -193,7 +193,7 @@ class HiFaceGANModel(SRModel):
 
     def validation(self, dataloader, current_iter, tb_logger, save_img=False):
         """
-        20210523 [Lotayou]: HiFaceGAN requires train() mode even for validation
+        Warning: HiFaceGAN requires train() mode even for validation
         For more info, see https://github.com/Lotayou/Face-Renovation/issues/31
 
         Args:
@@ -214,19 +214,19 @@ class HiFaceGANModel(SRModel):
             super().nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
-        '''
-            20210526 [Lotayou]: Validation using updated metric system
-            The metrics are now evaluated after all images have been tested
-            This allows batch processing, and also allows evaluation of
-            distributional metrics, such as:
+        """
+        TODO: Validation using updated metric system
+        The metrics are now evaluated after all images have been tested
+        This allows batch processing, and also allows evaluation of
+        distributional metrics, such as:
 
-            @ Frechet Inception Distance: FID
-            @ Maximum Mean Discrepancy: MMD
+        @ Frechet Inception Distance: FID
+        @ Maximum Mean Discrepancy: MMD
 
-            Warning:
-                Need careful batch management for different inference settings.
+        Warning:
+            Need careful batch management for different inference settings.
 
-        '''
+        """
         dataset_name = dataloader.dataset.opt['name']
         with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:

@@ -6,11 +6,11 @@ from tqdm import tqdm
 
 
 class Mosaic_16x:
-    '''
-        Mosaic_16x: A customized image augmentor for 16-pixel mosaic
-        By default it replaces each pixel value with the mean value
-        of its 16x16 neighborhood
-    '''
+    """
+    Mosaic_16x: A customized image augmentor for 16-pixel mosaic
+    By default it replaces each pixel value with the mean value
+    of its 16x16 neighborhood
+    """
 
     def augment_image(self, x):
         h, w = x.shape[:2]
@@ -26,7 +26,7 @@ class Mosaic_16x:
 
 class Degradation_Simulator:
     """
-    [Lotayou] 20210424: Generating training/testing data pairs on the fly
+    Generating training/testing data pairs on the fly.
     The degradation script is aligned with HiFaceGAN paper settings.
 
     Args:
@@ -80,10 +80,10 @@ class Degradation_Simulator:
             ia.Sequential(rand_deg_list, random_order=True)
 
     def create_training_dataset(self, deg, gt_folder, lq_folder=None):
-        '''
-            Create a degradation simulator and apply it to GT images on the fly
-            Save the degraded result in the lq_folder (if None, name it as GT_deg)
-        '''
+        """
+        Create a degradation simulator and apply it to GT images on the fly
+        Save the degraded result in the lq_folder (if None, name it as GT_deg)
+        """
         if not lq_folder:
             suffix = deg if isinstance(deg, str) else 'custom'
             lq_folder = '_'.join([gt_folder.replace('gt', 'lq'), suffix])

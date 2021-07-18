@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import init
-# 20210424 [Lotayou] Warning: spectral norm could be buggy
+# Warning: spectral norm could be buggy
 # under eval mode and multi-GPU inference
 # A workaround is sticking to single-GPU inference and train mode
 from torch.nn.utils import spectral_norm
@@ -20,12 +20,9 @@ class SPADE(nn.Module):
         ks = int(parsed.group(2))
 
         if param_free_norm_type == 'instance':
-            # 20210524 [Lotayou]: Switch to torch official instnorm
             self.param_free_norm = nn.InstanceNorm2d(norm_nc)
         elif param_free_norm_type == 'syncbatch':
-            print(
-                '[Lotayou] SyncBatchNorm is currently not supported under single-GPU mode, switch to "instance" instead'
-            )
+            print('SyncBatchNorm is currently not supported under single-GPU mode, switch to "instance" instead')
             self.param_free_norm = nn.InstanceNorm2d(norm_nc)
         elif param_free_norm_type == 'batch':
             self.param_free_norm = nn.BatchNorm2d(norm_nc, affine=False)
@@ -97,12 +94,9 @@ class SPADEResnetBlock(nn.Module):
     # the semantic segmentation map as input
     def forward(self, x, seg):
         x_s = self.shortcut(x, seg)
-
         dx = self.conv_0(self.act(self.norm_0(x, seg)))
         dx = self.conv_1(self.act(self.norm_1(dx, seg)))
-
         out = x_s + dx
-
         return out
 
     def shortcut(self, x, seg):
@@ -247,9 +241,7 @@ def get_nonspade_norm_layer(norm_type='instance'):
         if subnorm_type == 'batch':
             norm_layer = nn.BatchNorm2d(get_out_channel(layer), affine=True)
         elif subnorm_type == 'sync_batch':
-            print(
-                '[Lotayou] SyncBatchNorm is currently not supported under single-GPU mode, switch to "instance" instead'
-            )
+            print('SyncBatchNorm is currently not supported under single-GPU mode, switch to "instance" instead')
             # norm_layer = SynchronizedBatchNorm2d(
             #    get_out_channel(layer), affine=True)
             norm_layer = nn.InstanceNorm2d(get_out_channel(layer), affine=False)
