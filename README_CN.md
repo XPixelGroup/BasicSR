@@ -53,70 +53,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 ## :wrench: 依赖和安装
 
-- Python >= 3.7 (推荐使用 [Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
-- [PyTorch >= 1.7](https://pytorch.org/)
-- NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
-
-### 选项1: 通过 pip 安装
-
-```bash
-pip install basicsr
-```
-
-- 如果要在安装的时候编译 cuda 算子, 请设置环境变量 `BASICSR_EXT=True`。
-
-  ```bash
-  BASICSR_EXT=True pip install basicsr
-  ```
-
-- 如果你想在运行的时候使用 cuda 算子（安装的时候没有编译）, 则需要设置环境变量 `BASICSR_JIT=True`. 注意: 通过这种方式, 在每一次运行模型时候, 它都需要编译, (比较耗时).
-  - 例子: StyleGAN2 inference colab.
-
-### 选项2: 通过 git clone 然后 编译
-
-1. Clone repo
-
-    ```bash
-    git clone https://github.com/xinntao/BasicSR.git
-    ```
-
-1. 安装依赖包
-
-    ```bash
-    cd BasicSR
-    pip install -r requirements.txt
-    ```
-
-1. 安装 BasicSR
-
-    在BasicSR的**根目录**下运行以下命令:<br>
-    (确保 GCC 版本: gcc >= 5) <br>
-    如果你需要以下 cuda 扩展算子: <br>
-    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
-    在安装命令时设置环境变量 后添加 `BASICSR_EXT=True`.<br>
-    如果使用 EDVR 和 StyleGAN2 模型, 需要使用上面的 cuda 扩展算子.
-
-    ```bash
-    BASICSR_EXT=True python setup.py develop
-    ```
-
-    否则, 安装的时候不会编译 cuda 算子.
-
-    ```bash
-    python setup.py develop
-    ```
-
-    你或许需要指定 CUDA 路径:
-
-      ```bash
-      CUDA_HOME=/usr/local/cuda \
-      CUDNN_INCLUDE_DIR=/usr/local/cuda \
-      CUDNN_LIB_DIR=/usr/local/cuda \
-      python setup.py develop
-      ```
-
-注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
+For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 ## :hourglass_flowing_sand: TODO 清单
 

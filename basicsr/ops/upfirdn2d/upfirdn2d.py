@@ -1,24 +1,28 @@
 # modify from https://github.com/rosinality/stylegan2-pytorch/blob/master/op/upfirdn2d.py  # noqa:E501
 
+import os
 import torch
 from torch.autograd import Function
 from torch.nn import functional as F
 
-try:
-    from . import upfirdn2d_ext
-except ImportError:
-    import os
-    BASICSR_JIT = os.getenv('BASICSR_JIT')
-    if BASICSR_JIT == 'True':
-        from torch.utils.cpp_extension import load
-        module_path = os.path.dirname(__file__)
-        upfirdn2d_ext = load(
-            'upfirdn2d',
-            sources=[
-                os.path.join(module_path, 'src', 'upfirdn2d.cpp'),
-                os.path.join(module_path, 'src', 'upfirdn2d_kernel.cu'),
-            ],
-        )
+BASICSR_JIT = os.getenv('BASICSR_JIT')
+if BASICSR_JIT == 'True':
+    from torch.utils.cpp_extension import load
+    module_path = os.path.dirname(__file__)
+    upfirdn2d_ext = load(
+        'upfirdn2d',
+        sources=[
+            os.path.join(module_path, 'src', 'upfirdn2d.cpp'),
+            os.path.join(module_path, 'src', 'upfirdn2d_kernel.cu'),
+        ],
+    )
+else:
+    try:
+        from . import upfirdn2d_ext
+    except ImportError as error:
+        print(f'Cannot import upfirdn2d_ext. Error: {error}. You may need to: \n '
+              '1. compile with BASICSR_EXT=True. or\n '
+              '2. set BASICSR_JIT=True during running')
 
 
 class UpFirDn2dBackward(Function):
