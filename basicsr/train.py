@@ -14,13 +14,8 @@ from basicsr.utils import (MessageLogger, check_resume, get_env_info, get_root_l
 from basicsr.utils.options import dict2str, parse_options
 
 
-def init_loggers(opt):
-    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
-    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
-    logger.info(get_env_info())
-    logger.info(dict2str(opt))
-
-    # initialize wandb logger before tensorboard logger to allow proper sync:
+def init_tb_loggers(opt):
+    # initialize wandb logger before tensorboard logger to allow proper sync
     if (opt['logger'].get('wandb') is not None) and (opt['logger']['wandb'].get('project')
                                                      is not None) and ('debug' not in opt['name']):
         assert opt['logger'].get('use_tb_logger') is True, ('should turn on tensorboard when using wandb')
@@ -28,7 +23,7 @@ def init_loggers(opt):
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
         tb_logger = init_tb_logger(log_dir=osp.join(opt['root_path'], 'tb_logger', opt['name']))
-    return logger, tb_logger
+    return tb_logger
 
 
 def create_train_val_dataloader(opt, logger):
@@ -98,6 +93,9 @@ def train_pipeline(root_path):
     opt = parse_options(root_path, is_train=True)
     opt['root_path'] = root_path
 
+    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
+    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
+
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
 
@@ -109,8 +107,10 @@ def train_pipeline(root_path):
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
             mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
 
-    # initialize loggers
-    logger, tb_logger = init_loggers(opt)
+    logger.info(get_env_info())
+    logger.info(dict2str(opt))
+    # initialize wandb and tb loggers
+    tb_logger = init_tb_loggers(opt)
 
     # create train and validation dataloaders
     result = create_train_val_dataloader(opt, logger)
