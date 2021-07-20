@@ -355,6 +355,34 @@ class GANLoss(nn.Module):
         return loss if is_disc else loss * self.loss_weight
 
 
+@LOSS_REGISTRY.register()
+class MultiScaleGANLoss(GANLoss):
+    """
+    MultiScaleGANLoss accepts a list of predictions
+    """
+
+    def __init__(self, gan_type, real_label_val=1.0, fake_label_val=0.0, loss_weight=1.0):
+        super(MultiScaleGANLoss, self).__init__(gan_type, real_label_val, fake_label_val, loss_weight)
+
+    def forward(self, input, target_is_real, is_disc=False):
+        """
+        The input is a list of tensors, or a list of (a list of tensors)
+        """
+        if isinstance(input, list):
+            loss = 0
+            for pred_i in input:
+                if isinstance(pred_i, list):
+                    # Only compute GAN loss for the last layer
+                    # in case of multiscale feature matching
+                    pred_i = pred_i[-1]
+                # Safe operaton: 0-dim tensor calling self.mean() does nothing
+                loss_tensor = super().forward(pred_i, target_is_real, is_disc).mean()
+                loss += loss_tensor
+            return loss / len(input)
+        else:
+            return super().forward(input, target_is_real, is_disc)
+
+
 def r1_penalty(real_pred, real_img):
     """R1 regularization for discriminator. The core idea is to
         penalize the gradient on real data alone: when the
@@ -421,3 +449,39 @@ def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
         gradients_penalty /= torch.mean(weight)
 
     return gradients_penalty
+
+
+@LOSS_REGISTRY.register()
+class GANFeatLoss(nn.Module):
+    """Define feature matching loss for gans
+
+    Args:
+        criterion (str): Support 'l1', 'l2', 'charbonnier'.
+        loss_weight (float): Loss weight. Default: 1.0.
+        reduction (str): Specifies the reduction to apply to the output.
+            Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
+    """
+
+    def __init__(self, criterion='l1', loss_weight=1.0, reduction='mean'):
+        super(GANFeatLoss, self).__init__()
+        if criterion == 'l1':
+            self.loss_op = L1Loss(loss_weight, reduction)
+        elif criterion == 'l2':
+            self.loss_op = MSELoss(loss_weight, reduction)
+        elif criterion == 'charbonnier':
+            self.loss_op = CharbonnierLoss(loss_weight, reduction)
+        else:
+            raise ValueError(f'Unsupported loss mode: {criterion}. ' f'Supported ones are: l1|l2|charbonnier')
+
+        self.loss_weight = loss_weight
+
+    def forward(self, pred_fake, pred_real):
+        num_D = len(pred_fake)
+        loss = 0
+        for i in range(num_D):  # for each discriminator
+            # last output is the final prediction, exclude it
+            num_intermediate_outputs = len(pred_fake[i]) - 1
+            for j in range(num_intermediate_outputs):  # for each layer output
+                unweighted_loss = self.loss_op(pred_fake[i][j], pred_real[i][j].detach())
+                loss += unweighted_loss / num_D
+        return loss * self.loss_weight
