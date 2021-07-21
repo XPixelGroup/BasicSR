@@ -3,6 +3,7 @@ import math
 import numpy as np
 import random
 import torch
+from scipy import special
 from torchvision.transforms.functional_tensor import rgb_to_grayscale
 
 # -------------------------------------------------------------------- #
@@ -234,6 +235,30 @@ def random_mixed_kernels(kernel_list,
         noise = np.random.uniform(noise_range[0], noise_range[1], size=kernel.shape)
         kernel = kernel * noise
     kernel = kernel / np.sum(kernel)
+    return kernel
+
+
+np.seterr(divide='ignore', invalid='ignore')
+
+
+def circular_lowpass_kernel(cutoff, kernel_size, pad_to=0):
+    """2D sinc filter, ref: https://dsp.stackexchange.com/questions/58301/2-d-circularly-symmetric-low-pass-filter
+
+    Args:
+        cutoff (float): cutoff frequency in radians (pi is max)
+        kernel_size (int): horizontal and vertical size, must be odd.
+        pad_to (int): pad kernel size to desired size, must be odd or zero.
+    """
+    assert kernel_size % 2 == 1, 'Kernel size must be an odd number.'
+    kernel = np.fromfunction(
+        lambda x, y: cutoff * special.j1(cutoff * np.sqrt(
+            (x - (kernel_size - 1) / 2)**2 + (y - (kernel_size - 1) / 2)**2)) / (2 * np.pi * np.sqrt(
+                (x - (kernel_size - 1) / 2)**2 + (y - (kernel_size - 1) / 2)**2)), [kernel_size, kernel_size])
+    kernel[(kernel_size - 1) // 2, (kernel_size - 1) // 2] = cutoff**2 / (4 * np.pi)
+    kernel = kernel / np.sum(kernel)
+    if pad_to > kernel_size:
+        pad_size = (pad_to - kernel_size) // 2
+        kernel = np.pad(kernel, ((pad_size, pad_size), (pad_size, pad_size)))
     return kernel
 
 
