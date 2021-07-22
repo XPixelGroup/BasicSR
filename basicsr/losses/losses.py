@@ -135,6 +135,10 @@ class WeightedTVLoss(L1Loss):
         if weight:
             y_weight = weight[:, :, :-1, :]
             x_weight = weight[:, :, :, :-1]
+        else:
+            y_weight = None
+            x_weight = None
+
         y_diff = super(WeightedTVLoss, self).forward(pred[:, :, :-1, :], pred[:, :, 1:, :], weight=y_weight)
         x_diff = super(WeightedTVLoss, self).forward(pred[:, :, :, :-1], pred[:, :, :, 1:], weight=x_weight)
 
