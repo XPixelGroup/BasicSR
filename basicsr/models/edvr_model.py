@@ -63,4 +63,4 @@ class EDVRModel(VideoBaseModel):
                     logger.warning('Set net_g.find_unused_parameters = False.')
                     self.net_g.find_unused_parameters = False
 
-        super(VideoBaseModel, self).optimize_parameters(current_iter)
+        super(EDVRModel, self).optimize_parameters(current_iter)

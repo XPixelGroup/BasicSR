@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.nn.utils.spectral_norm as SpectralNorm
 from torch.autograd import Function
+from torch.nn.utils.spectral_norm import spectral_norm
 
 
 class BlurFunctionBackward(Function):
@@ -90,15 +90,15 @@ def adaptive_instance_normalization(content_feat, style_feat):
 
 def AttentionBlock(in_channel):
     return nn.Sequential(
-        SpectralNorm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
-        SpectralNorm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)))
+        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
+        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)))
 
 
 def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, bias=True):
     """Conv block used in MSDilationBlock."""
 
     return nn.Sequential(
-        SpectralNorm(
+        spectral_norm(
             nn.Conv2d(
                 in_channels,
                 out_channels,
@@ -108,7 +108,7 @@ def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, b
                 padding=((kernel_size - 1) // 2) * dilation,
                 bias=bias)),
         nn.LeakyReLU(0.2),
-        SpectralNorm(
+        spectral_norm(
             nn.Conv2d(
                 out_channels,
                 out_channels,
@@ -129,7 +129,7 @@ class MSDilationBlock(nn.Module):
         self.conv_blocks = nn.ModuleList()
         for i in range(4):
             self.conv_blocks.append(conv_block(in_channels, in_channels, kernel_size, dilation=dilation[i], bias=bias))
-        self.conv_fusion = SpectralNorm(
+        self.conv_fusion = spectral_norm(
             nn.Conv2d(
                 in_channels * 4,
                 in_channels,
