@@ -88,9 +88,8 @@ class chroma_subsampling(nn.Module):
             cr(tensor): batch x height/2 x width/2
         """
         image_2 = image.permute(0, 3, 1, 2).clone()
-        avg_pool = nn.AvgPool2d(kernel_size=2, stride=(2, 2), count_include_pad=False)
-        cb = avg_pool(image_2[:, 1, :, :].unsqueeze(1))
-        cr = avg_pool(image_2[:, 2, :, :].unsqueeze(1))
+        cb = F.avg_pool2d(image_2[:, 1, :, :].unsqueeze(1), kernel_size=2, stride=(2, 2), count_include_pad=False)
+        cr = F.avg_pool2d(image_2[:, 2, :, :].unsqueeze(1), kernel_size=2, stride=(2, 2), count_include_pad=False)
         cb = cb.permute(0, 2, 3, 1)
         cr = cr.permute(0, 2, 3, 1)
         return image[:, :, :, 0], cb.squeeze(3), cr.squeeze(3)
