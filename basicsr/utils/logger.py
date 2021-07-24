@@ -88,7 +88,7 @@ def init_tb_logger(log_dir):
 def init_wandb_logger(opt):
     """We now only use wandb to sync tensorboard log."""
     import wandb
-    logger = logging.getLogger('basicsr')
+    logger = get_root_logger()
 
     project = opt['logger']['wandb']['project']
     resume_id = opt['logger']['wandb'].get('resume_id')
