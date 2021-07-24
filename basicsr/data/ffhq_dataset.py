@@ -1,9 +1,11 @@
+import random
+import time
 from os import path as osp
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
 from basicsr.data.transforms import augment
-from basicsr.utils import FileClient, imfrombytes, img2tensor
+from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -48,7 +50,22 @@ class FFHQDataset(data.Dataset):
 
         # load gt image
         gt_path = self.paths[index]
-        img_bytes = self.file_client.get(gt_path)
+        # avoid errors caused by high latency in reading files
+        retry = 3
+        while retry > 0:
+            try:
+                img_bytes = self.file_client.get(gt_path)
+            except Exception as e:
+                logger = get_root_logger()
+                logger.warn(f'File client error: {e}, remaining retry times: {retry - 1}')
+                # change another file to read
+                index = random.randint(0, self.__len__())
+                gt_path = self.paths[index]
+                time.sleep(1)  # sleep 1s for occasional server congestion
+            else:
+                break
+            finally:
+                retry -= 1
         img_gt = imfrombytes(img_bytes, float32=True)
 
         # random horizontal flip

@@ -1,5 +1,6 @@
 import argparse
 import random
+import torch
 import yaml
 from collections import OrderedDict
 from os import path as osp
@@ -50,6 +51,9 @@ def parse(opt_path, root_path, is_train=True, debug=False):
         opt['name'] = 'debug_' + opt['name']
 
     opt['is_train'] = is_train
+
+    if opt['num_gpu'] == 'auto':
+        opt['num_gpu'] = torch.cuda.device_count()
 
     # datasets
     for phase, dataset in opt['datasets'].items():

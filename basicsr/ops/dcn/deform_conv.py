@@ -22,10 +22,12 @@ if BASICSR_JIT == 'True':
 else:
     try:
         from . import deform_conv_ext
-    except ImportError as error:
-        print(f'Cannot import deform_conv_ext. Error: {error}. You may need to: \n '
-              '1. compile with BASICSR_EXT=True. or\n '
-              '2. set BASICSR_JIT=True during running')
+    except ImportError:
+        pass
+        # avoid annoying print output
+        # print(f'Cannot import deform_conv_ext. Error: {error}. You may need to: \n '
+        #       '1. compile with BASICSR_EXT=True. or\n '
+        #       '2. set BASICSR_JIT=True during running')
 
 
 class DeformConvFunction(Function):

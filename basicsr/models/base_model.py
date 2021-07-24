@@ -1,14 +1,13 @@
-import logging
 import os
+import time
 import torch
 from collections import OrderedDict
 from copy import deepcopy
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from basicsr.models import lr_scheduler as lr_scheduler
+from basicsr.utils import get_root_logger
 from basicsr.utils.dist_util import master_only
-
-logger = logging.getLogger('basicsr')
 
 
 class BaseModel():
@@ -120,6 +119,7 @@ class BaseModel():
         net_str = str(net)
         net_params = sum(map(lambda x: x.numel(), net.parameters()))
 
+        logger = get_root_logger()
         logger.info(f'Network: {net_cls_str}, with parameters: {net_params:,d}')
         logger.info(net_str)
 
@@ -197,7 +197,21 @@ class BaseModel():
                 state_dict[key] = param.cpu()
             save_dict[param_key_] = state_dict
 
-        torch.save(save_dict, save_path)
+        # avoid occasional writing errors
+        retry = 3
+        while retry > 0:
+            try:
+                torch.save(save_dict, save_path)
+            except Exception as e:
+                logger = get_root_logger()
+                logger.warn(f'Save model error: {e}, remaining retry times: {retry - 1}')
+                time.sleep(1)
+            else:
+                break
+            finally:
+                retry -= 1
+        if retry == 0:  # still cannot save
+            raise IOError(f'Cannot save {save_path}.')
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
         """Print keys with differnet name or different size when loading models.
@@ -216,6 +230,7 @@ class BaseModel():
         crt_net_keys = set(crt_net.keys())
         load_net_keys = set(load_net.keys())
 
+        logger = get_root_logger()
         if crt_net_keys != load_net_keys:
             logger.warning('Current net - loaded net:')
             for v in sorted(list(crt_net_keys - load_net_keys)):
@@ -244,6 +259,7 @@ class BaseModel():
                 None, use the root 'path'.
                 Default: 'params'.
         """
+        logger = get_root_logger()
         net = self.get_bare_model(net)
         logger.info(f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(load_path, map_location=lambda storage, loc: storage)
@@ -277,7 +293,22 @@ class BaseModel():
                 state['schedulers'].append(s.state_dict())
             save_filename = f'{current_iter}.state'
             save_path = os.path.join(self.opt['path']['training_states'], save_filename)
-            torch.save(state, save_path)
+
+            # avoid occasional writing errors
+            retry = 3
+            while retry > 0:
+                try:
+                    torch.save(state, save_path)
+                except Exception as e:
+                    logger = get_root_logger()
+                    logger.warn(f'Save training state error: {e}, remaining retry times: {retry - 1}')
+                    time.sleep(1)
+                else:
+                    break
+                finally:
+                    retry -= 1
+            if retry == 0:  # still cannot save
+                raise IOError(f'Cannot save {save_path}.')
 
     def resume_training(self, resume_state):
         """Reload the optimizers and schedulers for resumed training.
