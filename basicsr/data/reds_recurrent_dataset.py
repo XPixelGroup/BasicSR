@@ -79,7 +79,7 @@ class REDSRecurrentDataset(data.Dataset):
         self.is_lmdb = False
         if self.io_backend_opt['type'] == 'lmdb':
             self.is_lmdb = True
-            if self.flow_root is not None:
+            if hasattr(self, 'flow_root') and self.flow_root is not None:
                 self.io_backend_opt['db_paths'] = [self.lq_root, self.gt_root, self.flow_root]
                 self.io_backend_opt['client_keys'] = ['lq', 'gt', 'flow']
             else:
