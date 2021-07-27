@@ -2,7 +2,7 @@
 name: BasicVSR_REDS
 model_type: BasicVSRModel
 scale: 4
-num_gpu: 2  # set num_gpu: 0 for cpu mode
+num_gpu: 8  # set num_gpu: 0 for cpu mode
 manual_seed: 0
 
 # dataset and data loader settings
@@ -10,8 +10,8 @@ datasets:
   train:
     name: REDS
     type: REDSRecurrentDataset
-    dataroot_gt: data/REDS/train_sharp
-    dataroot_lq: data/REDS/train_sharp_bicubic/X4
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic/X4
     meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
     val_partition: REDS4  # set to 'official' when use the official validation partition
     test_mode: False
