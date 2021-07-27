@@ -35,8 +35,8 @@ datasets:
   val:
     name: REDS4
     type: VideoRecurrentTestDataset
-    dataroot_gt: data/REDS4/GT
-    dataroot_lq: data/REDS4/sharp_bicubic
+    dataroot_gt: datasets/REDS4/GT
+    dataroot_lq: datasets/REDS4/sharp_bicubic
 
     cache_data: True
     io_backend:
