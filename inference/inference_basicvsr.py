@@ -46,7 +46,7 @@ def main():
         default=  # noqa: E251
         'experiments/pretrained_models/BasicVSR_REDS4.pth'  # noqa: E501
     )
-    parser.add_argument('--input', type=str, default='datasets/REDS4/000', help='input test image folder')
+    parser.add_argument('--input', type=str, default='datasets/REDS4/sharp_bicubic/000', help='input test image folder')
     parser.add_argument('--output', type=str, default='results/BasicVSR', help='output folder')
     parser.add_argument('--max_size', type=int, default=80, help='max image size')
     args = parser.parse_args()
