@@ -56,6 +56,7 @@ class VideoRecurrentGANModel(BasicVSRModel):
 
         if train_opt.get('gan_opt'):
             self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
+
         self.net_d_iters = train_opt.get('net_d_iters', 1)
         self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)
 
@@ -68,11 +69,11 @@ class VideoRecurrentGANModel(BasicVSRModel):
         if train_opt['fix_flow']:
             normal_params = []
             flow_params = []
-            for k, v in self.net_g.named_parameters():
-                if 'flow' in k:
-                    flow_params.append(v)
+            for name, param in self.net_g.named_parameters():
+                if 'spynet' in name:
+                    flow_params.append(param)
                 else:
-                    normal_params.append(v)
+                    normal_params.append(param)
 
             optim_params = [
                 {  # add flow params first
@@ -85,12 +86,11 @@ class VideoRecurrentGANModel(BasicVSRModel):
                 },
             ]
         else:
-            optim_params = []
-            for k, v in self.net_g.named_parameters():
-                optim_params.append(v)
+            optim_params = self.net_g.parameters()
+
         # optimizer g
         optim_type = train_opt['optim_g'].pop('type')
-        self.optimizer_g = self.get_optimizer(optim_type, self.net_g.parameters(), **train_opt['optim_g'])
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params, **train_opt['optim_g'])
         self.optimizers.append(self.optimizer_g)
         # optimizer d
         optim_type = train_opt['optim_d'].pop('type')
@@ -114,14 +114,13 @@ class VideoRecurrentGANModel(BasicVSRModel):
 
         if self.fix_iter:
             if current_iter == 1:
-                logger.info(f'Fix flow for {self.fix_iter} iters.')
+                logger.info('Fix flow network and feature extractor for ' f'{self.fix_iter} iters.')
                 for name, param in self.net_g.named_parameters():
-                    if 'flow' in name:
-                        param.requires_grad = False
+                    if 'spynet' in name or 'edvr' in name:
+                        param.requires_grad_(False)
             elif current_iter == self.fix_iter:
                 logger.warning('Train all the parameters.')
-                for param in self.net_g.parameters():
-                    param.requires_grad = True
+                self.net_g.requires_grad_(True)
 
         self.optimizer_g.zero_grad()
         if self.opt['train'].get('res_scale'):
