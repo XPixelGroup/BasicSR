@@ -25,11 +25,8 @@ def main():
         imgname = os.path.splitext(os.path.basename(path))[0]
         print('processing ', idx, imgname)
         img = cv2.imread(path).astype(np.float32) / 255.
-        # img = img2tensor(img, bgr2rgb=True, float32=True)
         output = imresize(img, scale)
         output = np.clip((output * 255).round(), 0, 255)
-        # output = tensor2img(output)
-        # cv2.imwrite(os.path.join(args.output_lr, f'{imgname}_LRbicx{args.up_scale}.png'), output)
         cv2.imwrite(os.path.join(args.output, f'{imgname}_LRbicx_{args.mode}{args.scale}X.png'), output)
 
 
