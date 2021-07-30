@@ -1,0 +1,46 @@
+name: IconVSR_REDS
+model_type: VideoRecurrentModel
+scale: 4
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: REDS4
+    type: VideoRecurrentTestDataset
+    dataroot_gt: datasets/REDS4/GT
+    dataroot_lq: datasets/REDS4/sharp_bicubic
+    cache_data: True
+    io_backend:
+      type: disk
+    num_frame: -1  # not needed
+
+# network structures
+network_g:
+  type: IconVSR
+  num_feat: 64
+  num_block: 30
+  keyframe_stride: 5
+  temporal_padding: 2
+  spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
+  edvr_path: experiments/pretrained_models/BasicVSR/EDVR_REDS_pretrained_for_IconVSR-f62a2f1e.pth
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/BasicVSR/IconVSR_REDS-aaa5367f.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
+    ssim:
+      type: calculate_ssim
+      crop_border: 0
+      test_y_channel: false

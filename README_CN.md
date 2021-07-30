@@ -25,6 +25,8 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 ## :sparkles: 新的特性
 
+- July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
+- July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
 - Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
 - Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
 - Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
