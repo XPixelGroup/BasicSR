@@ -59,7 +59,7 @@ class BasicVSRModel(VideoBaseModel):
         if self.fix_iter:
             logger = get_root_logger()
             if current_iter == 1:
-                logger.info('Fix flow network and feature extractor for ' f'{self.fix_iter} iters.')
+                logger.info(f'Fix flow network and feature extractor for {self.fix_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'spynet' in name or 'edvr' in name:
                         param.requires_grad_(False)
