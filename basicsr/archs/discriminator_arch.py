@@ -76,7 +76,7 @@ class VGGStyleDiscriminator128(nn.Module):
 class VGGStyleDiscriminator256(nn.Module):
     """VGG style discriminator with input size 256 x 256.
 
-    It is used to train VideoGAN.
+    It is now used to train VideoGAN.
 
     Args:
         num_in_ch (int): Channel number of inputs. Default: 3.

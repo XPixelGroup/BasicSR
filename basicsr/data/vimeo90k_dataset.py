@@ -130,7 +130,6 @@ class Vimeo90KDataset(data.Dataset):
 class Vimeo90KRecurrentDataset(Vimeo90KDataset):
 
     def __init__(self, opt):
-
         super(Vimeo90KRecurrentDataset, self).__init__(opt)
 
         self.flip_sequence = opt['flip_sequence']

@@ -13,13 +13,9 @@ from .video_base_model import VideoBaseModel
 
 @MODEL_REGISTRY.register()
 class BasicVSRModel(VideoBaseModel):
-    """EDVR Model.
-
-    Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.  # noqa: E501
-    """
+    """A bi-directional recurrent video model: BasicVSR"""
 
     def __init__(self, opt):
-
         super(BasicVSRModel, self).__init__(opt)
 
         if self.is_train:
@@ -95,7 +91,7 @@ class BasicVSRModel(VideoBaseModel):
             pbar = tqdm(total=len(dataset), unit='frame')
 
         # Will evaluate (n_folders + n_pad) times, but only the first
-        # n_folders results will be recorded. (To aovid wait-dead)
+        # n_folders results will be recorded. (To avoid wait-dead)
         n_folders = len(dataset)
         n_pad = (world_size - (n_folders % world_size)) % world_size
         for i in range(rank, n_folders + n_pad, world_size):

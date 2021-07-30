@@ -11,9 +11,8 @@ from basicsr.utils.img_util import tensor2img
 
 
 def inference(imgs, imgnames, model, save_path):
-    # inference
-    outputs = model(imgs)
-
+    with torch.no_grad():
+        outputs = model(imgs)
     # save imgs
     outputs = outputs.squeeze()
     outputs = list(outputs)
@@ -43,9 +42,9 @@ def main():
 
     # extract images from video format files
     input_path = args.input_path
-    ffmpeg = False
+    use_ffmpeg = False
     if not os.path.isdir(input_path):
-        ffmpeg = True
+        use_ffmpeg = True
         video_name = os.path.splitext(os.path.split(args.input_path)[-1])[0]
         input_path = os.path.join('./BasicVSR_tmp', video_name)
         os.makedirs(os.path.join('./BasicVSR_tmp', video_name), exist_ok=True)
@@ -57,18 +56,16 @@ def main():
     if len(imgs_list) <= args.interval:  # too many images may cause CUDA out of memory
         imgs, imgnames = read_img_seq(imgs_list, return_imgname=True)
         imgs = imgs.unsqueeze(0).to(device)
-        with torch.no_grad():
-            inference(imgs, imgnames, model, args.save_path)
+        inference(imgs, imgnames, model, args.save_path)
     else:
         for idx in range(0, num_imgs, args.interval):
             interval = min(args.interval, num_imgs - idx)
             imgs, imgnames = read_img_seq(imgs_list[idx:idx + interval], return_imgname=True)
             imgs = imgs.unsqueeze(0).to(device)
-            with torch.no_grad():
-                inference(imgs, imgnames, model, args.save_path)
+            inference(imgs, imgnames, model, args.save_path)
 
     # delete ffmpeg output images
-    if ffmpeg:
+    if use_ffmpeg:
         shutil.rmtree(input_path)
 
 
