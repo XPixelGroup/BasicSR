@@ -49,8 +49,7 @@ class VGGStyleDiscriminator128(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
 
     def forward(self, x):
-        assert x.size(2) == 128 and x.size(3) == 128, (f'Input spatial size must be 128x128, '
-                                                       f'but received {x.size()}.')
+        assert x.size(2) == 128 and x.size(3) == 128, (f'Input spatial size must be 128x128, but received {x.size()}.')
 
         feat = self.lrelu(self.conv0_0(x))
         feat = self.lrelu(self.bn0_1(self.conv0_1(feat)))  # output spatial size: (64, 64)
@@ -77,7 +76,7 @@ class VGGStyleDiscriminator128(nn.Module):
 class VGGStyleDiscriminator256(nn.Module):
     """VGG style discriminator with input size 256 x 256.
 
-    It is used to train SRGAN and ESRGAN.
+    It is used to train VideoGAN.
 
     Args:
         num_in_ch (int): Channel number of inputs. Default: 3.
@@ -124,8 +123,7 @@ class VGGStyleDiscriminator256(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
 
     def forward(self, x):
-        assert x.size(2) == 256 and x.size(3) == 256, (f'Input spatial size must be 256x256, '
-                                                       f'but received {x.size()}.')
+        assert x.size(2) == 256 and x.size(3) == 256, (f'Input spatial size must be 256x256, but received {x.size()}.')
 
         feat = self.lrelu(self.conv0_0(x))
         feat = self.lrelu(self.bn0_1(self.conv0_1(feat)))  # output spatial size: (128, 128)

@@ -10,13 +10,13 @@ datasets:
   train:
     name: REDS
     type: REDSRecurrentDataset
-    dataroot_gt: datasets/REDS/train_sharp_with_val.lmdb
-    dataroot_lq: datasets/REDS/train_sharp_bicubic_with_val.lmdb
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
     meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
     val_partition: REDS4  # set to 'official' when use the official validation partition
     test_mode: False
     io_backend:
-      type: lmdb
+      type: disk
 
     num_frame: 15
     gt_size: 256
