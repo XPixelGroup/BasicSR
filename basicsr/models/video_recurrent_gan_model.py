@@ -70,7 +70,7 @@ class VideoRecurrentGANModel(BasicVSRModel):
             normal_params = []
             flow_params = []
             for name, param in self.net_g.named_parameters():
-                if 'spynet' in name:
+                if 'spynet' in name:  # The fix_flow now only works for spynet.
                     flow_params.append(param)
                 else:
                     normal_params.append(param)
@@ -98,15 +98,6 @@ class VideoRecurrentGANModel(BasicVSRModel):
         self.optimizers.append(self.optimizer_d)
 
     def optimize_parameters(self, current_iter):
-        if self.opt['train'].get('res_scale'):
-            res_scale_keep = self.opt['train'].get('res_scale')[0]
-            res_scale_zero = self.opt['train'].get('res_scale')[1]
-            if current_iter < res_scale_keep:
-                res_scale = 1
-            else:
-                res_scale = (res_scale_zero - current_iter) / (res_scale_zero - res_scale_keep)
-                res_scale = max(0, res_scale)
-
         logger = get_root_logger()
         # optimize net_g
         for p in self.net_d.parameters():
@@ -114,7 +105,7 @@ class VideoRecurrentGANModel(BasicVSRModel):
 
         if self.fix_iter:
             if current_iter == 1:
-                logger.info('Fix flow network and feature extractor for ' f'{self.fix_iter} iters.')
+                logger.info(f'Fix flow network and feature extractor for {self.fix_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'spynet' in name or 'edvr' in name:
                         param.requires_grad_(False)
@@ -123,10 +114,7 @@ class VideoRecurrentGANModel(BasicVSRModel):
                 self.net_g.requires_grad_(True)
 
         self.optimizer_g.zero_grad()
-        if self.opt['train'].get('res_scale'):
-            self.output = self.net_g(self.lq, res_scale)
-        else:
-            self.output = self.net_g(self.lq)
+        self.output = self.net_g(self.lq)
 
         b, n, c, h, w = self.output.size()
 
