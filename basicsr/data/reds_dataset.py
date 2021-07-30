@@ -313,7 +313,6 @@ class REDSRecurrentDataset(data.Dataset):
             start_frame_idx = random.randint(0, 100 - self.num_frame)
         end_frame_idx = start_frame_idx + self.num_frame
 
-        frame_name = f'{start_frame_idx:08d}'
         neighbor_list = list(range(start_frame_idx, end_frame_idx, interval))
 
         # random reverse

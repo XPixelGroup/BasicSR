@@ -61,7 +61,7 @@ class VideoRecurrentModel(VideoBaseModel):
                 logger.warning('Train all the parameters.')
                 self.net_g.requires_grad_(True)
 
-        super(VideoBaseModel, self).optimize_parameters(current_iter)
+        super(VideoRecurrentModel, self).optimize_parameters(current_iter)
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         dataset = dataloader.dataset
