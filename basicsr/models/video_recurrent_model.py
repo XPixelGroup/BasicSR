@@ -12,14 +12,12 @@ from .video_base_model import VideoBaseModel
 
 
 @MODEL_REGISTRY.register()
-class BasicVSRModel(VideoBaseModel):
-    """A bi-directional recurrent video model: BasicVSR"""
+class VideoRecurrentModel(VideoBaseModel):
 
     def __init__(self, opt):
-        super(BasicVSRModel, self).__init__(opt)
-
+        super(VideoRecurrentModel, self).__init__(opt)
         if self.is_train:
-            self.fix_iter = opt['train'].get('fix_iter')
+            self.fix_flow_iter = opt['train'].get('fix_flow')
 
     def setup_optimizers(self):
         train_opt = self.opt['train']
@@ -52,14 +50,14 @@ class BasicVSRModel(VideoBaseModel):
         self.optimizers.append(self.optimizer_g)
 
     def optimize_parameters(self, current_iter):
-        if self.fix_iter:
+        if self.fix_flow_iter:
             logger = get_root_logger()
             if current_iter == 1:
-                logger.info(f'Fix flow network and feature extractor for {self.fix_iter} iters.')
+                logger.info(f'Fix flow network and feature extractor for {self.fix_flow_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'spynet' in name or 'edvr' in name:
                         param.requires_grad_(False)
-            elif current_iter == self.fix_iter:
+            elif current_iter == self.fix_flow_iter:
                 logger.warning('Train all the parameters.')
                 self.net_g.requires_grad_(True)
 
@@ -86,16 +84,14 @@ class BasicVSRModel(VideoBaseModel):
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
 
-        # record all frames (border and center frames)
+        num_folders = len(dataset)
+        num_pad = (world_size - (num_folders % world_size)) % world_size
         if rank == 0:
-            pbar = tqdm(total=len(dataset), unit='frame')
-
-        # Will evaluate (n_folders + n_pad) times, but only the first
-        # n_folders results will be recorded. (To avoid wait-dead)
-        n_folders = len(dataset)
-        n_pad = (world_size - (n_folders % world_size)) % world_size
-        for i in range(rank, n_folders + n_pad, world_size):
-            idx = min(i, n_folders - 1)
+            pbar = tqdm(total=len(dataset), unit='folder')
+        # Will evaluate (num_folders + num_pad) times, but only the first
+        # num_folders results will be recorded. (To avoid wait-dead)
+        for i in range(rank, num_folders + num_pad, world_size):
+            idx = min(i, num_folders - 1)
             val_data = dataset[idx]
             folder = val_data['folder']
 
@@ -122,7 +118,7 @@ class BasicVSRModel(VideoBaseModel):
                     visuals['gt'] = visuals['gt'].unsqueeze(1)
 
             # evaluate
-            if i < n_folders:
+            if i < num_folders:
                 for idx in range(visuals['result'].size(1)):
                     result = visuals['result'][0, idx, :, :, :]
                     result_img = tensor2img([result])  # uint8, bgr

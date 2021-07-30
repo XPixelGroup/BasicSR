@@ -5,11 +5,11 @@ from basicsr.archs import build_network
 from basicsr.losses import build_loss
 from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
-from .basicvsr_model import BasicVSRModel
+from .basicvsr_model import VideoRecurrentModel
 
 
 @MODEL_REGISTRY.register()
-class VideoRecurrentGANModel(BasicVSRModel):
+class VideoRecurrentGANModel(VideoRecurrentModel):
 
     def init_training_settings(self):
         train_opt = self.opt['train']
@@ -103,13 +103,13 @@ class VideoRecurrentGANModel(BasicVSRModel):
         for p in self.net_d.parameters():
             p.requires_grad = False
 
-        if self.fix_iter:
+        if self.fix_flow_iter:
             if current_iter == 1:
-                logger.info(f'Fix flow network and feature extractor for {self.fix_iter} iters.')
+                logger.info(f'Fix flow network and feature extractor for {self.fix_flow_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'spynet' in name or 'edvr' in name:
                         param.requires_grad_(False)
-            elif current_iter == self.fix_iter:
+            elif current_iter == self.fix_flow_iter:
                 logger.warning('Train all the parameters.')
                 self.net_g.requires_grad_(True)
 

@@ -50,7 +50,7 @@ network_g:
   type: BasicVSR
   num_feat: 64
   num_block: 30
-  spynet_path: experiments/pretrained_models/spynet_pretrained.pth
+  spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
 
 network_d:
   type: VGGStyleDiscriminator256

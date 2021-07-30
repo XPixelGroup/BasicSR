@@ -1,6 +1,6 @@
 # general settings
 name: BasicVSR_REDS
-model_type: BasicVSRModel
+model_type: VideoRecurrentModel
 scale: 4
 num_gpu: 8  # set num_gpu: 0 for cpu mode
 manual_seed: 0
@@ -49,7 +49,7 @@ network_g:
   type: BasicVSR
   num_feat: 64
   num_block: 30
-  spynet_path: experiments/pretrained_models/spynet_pretrained.pth
+  spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
 
 # path
 path:
@@ -73,7 +73,7 @@ train:
 
   total_iter: 300000
   warmup_iter: -1  # no warm up
-  fix_iter: 5000
+  fix_flow: 5000
   flow_lr_mul: 0.125
 
   # losses
