@@ -10,12 +10,6 @@ from basicsr.data.data_util import read_img_seq
 from basicsr.utils.img_util import tensor2img
 
 
-def cache_imgs(paths, device='cpu'):
-    imgs, imgnames = read_img_seq(paths, return_imgname=True)
-    imgs = imgs.unsqueeze(0).to(device)
-    return imgs, imgnames
-
-
 def inference(imgs, imgnames, model, save_path):
     # inference
     outputs = model(imgs)
@@ -61,13 +55,15 @@ def main():
     imgs_list = sorted(glob.glob(os.path.join(input_path, '*')))
     num_imgs = len(imgs_list)
     if len(imgs_list) <= args.interval:  # too many images may cause CUDA out of memory
-        imgs, imgnames = cache_imgs(imgs_list, device=device)
+        imgs, imgnames = read_img_seq(imgs_list, return_imgname=True)
+        imgs = imgs.unsqueeze(0).to(device)
         with torch.no_grad():
             inference(imgs, imgnames, model, args.save_path)
     else:
         for idx in range(0, num_imgs, args.interval):
             interval = min(args.interval, num_imgs - idx)
-            imgs, imgnames = cache_imgs(imgs_list[idx:idx + interval], device=device)
+            imgs, imgnames = read_img_seq(imgs_list[idx:idx + interval], return_imgname=True)
+            imgs = imgs.unsqueeze(0).to(device)
             with torch.no_grad():
                 inference(imgs, imgnames, model, args.save_path)
 
