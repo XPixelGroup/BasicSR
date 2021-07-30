@@ -8,8 +8,8 @@ datasets:
   test_1:  # the 1st test dataset
     name: REDS4
     type: VideoRecurrentTestDataset
-    dataroot_gt: /mnt/lustre/share/kckchan/Datasets/REDS4/GT
-    dataroot_lq: /mnt/lustre/share/kckchan/Datasets/REDS4/sharp_bicubic
+    dataroot_gt: datasets/REDS4/GT
+    dataroot_lq: datasets/REDS4/sharp_bicubic
     cache_data: True
     io_backend:
       type: disk
@@ -23,7 +23,7 @@ network_g:
   keyframe_stride: 5
   temporal_padding: 2
   spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
-  edvr_path: experiments/pretrained_models/edvr_reds_pretrained.pth
+  edvr_path: experiments/pretrained_models/BasicVSR/EDVR_REDS_pretrained_for_IconVSR-f62a2f1e.pth
 
 # path
 path:

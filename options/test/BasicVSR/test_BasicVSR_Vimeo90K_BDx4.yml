@@ -8,8 +8,8 @@ datasets:
   test_1:  # the 1st test dataset
     name: Vimeo90K
     type: VideoTestVimeo90KDataset
-    dataroot_gt: data/vimeo90k/vimeo_septuplet/sequences
-    dataroot_lq: data/vimeo90k/BDx4
+    dataroot_gt: datasets/vimeo90k/vimeo_septuplet/sequences
+    dataroot_lq: datasets/vimeo90k/BDx4
     meta_info_file: basicsr/data/meta_info/meta_info_Vimeo90K_test_GT.txt
     cache_data: false
     io_backend:

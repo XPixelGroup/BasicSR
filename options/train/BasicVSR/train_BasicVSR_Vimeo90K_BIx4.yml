@@ -10,8 +10,8 @@ datasets:
   train:
     name: Vimeo90K
     type: Vimeo90KRecurrentDataset
-    dataroot_gt: data/vimeo90k/vimeo_septuplet/sequences
-    dataroot_lq: data/vimeo90k/BIx4
+    dataroot_gt: datasets/vimeo90k/vimeo_septuplet/sequences
+    dataroot_lq: datasets/vimeo90k/BIx4
     meta_info_file: basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt
     io_backend:
       type: disk
@@ -34,8 +34,8 @@ datasets:
   val:
     name: Vid4
     type: VideoRecurrentTestDataset
-    dataroot_gt: data/Vid4/GT
-    dataroot_lq: data/Vid4/BIx4
+    dataroot_gt: datasets/Vid4/GT
+    dataroot_lq: datasets/Vid4/BIx4
 
     cache_data: True
     io_backend:

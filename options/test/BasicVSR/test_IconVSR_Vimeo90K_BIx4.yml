@@ -8,8 +8,8 @@ datasets:
   test_1:  # the 1st test dataset
     name: Vimeo90K
     type: VideoTestVimeo90KDataset
-    dataroot_gt: data/vimeo90k/vimeo_septuplet/sequences
-    dataroot_lq: data/vimeo90k/BIx4
+    dataroot_gt: datasets/vimeo90k/vimeo_septuplet/sequences
+    dataroot_lq: datasets/vimeo90k/BIx4
     meta_info_file: basicsr/data/meta_info/meta_info_Vimeo90K_test_GT.txt
     cache_data: false
     io_backend:
@@ -25,7 +25,7 @@ network_g:
   keyframe_stride: 5
   temporal_padding: 3
   spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
-  edvr_path: experiments/pretrained_models/edvr_vimeo90k_pretrained.pth
+  edvr_path: experiments/pretrained_models/BasicVSR/EDVR_Vimeo90K_pretrained_for_IconVSR-ee48ee92.pth
 
 # path
 path:
