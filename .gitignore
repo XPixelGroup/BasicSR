@@ -6,7 +6,7 @@ tb_logger/*
 wandb/*
 tmp/*
 
-.DS_Store
+*.DS_Store
 .vscode
 .idea
 
