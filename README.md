@@ -25,8 +25,8 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and vide
 
 ## :sparkles: New Features
 
-- July 31, 2021. Add **bi-directional video super-resolution** codes: [BasicVSR and IconVSR](https://arxiv.org/abs/2012.02181).
-- July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
+- July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
+- July 20, 2021. Add **dual-blind face restoration** codes: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
 - Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab)
 - Sep 8, 2020. Add **blind face restoration** inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
 - Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
