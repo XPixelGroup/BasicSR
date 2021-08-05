@@ -51,12 +51,12 @@ def main(args):
         # calculate PSNR and SSIM
         psnr = calculate_psnr(img_gt * 255, img_restored * 255, crop_border=args.crop_border, input_order='HWC')
         ssim = calculate_ssim(img_gt * 255, img_restored * 255, crop_border=args.crop_border, input_order='HWC')
-        print(f'{i+1:3d}: {basename:25}. \tPSNR: {psnr:.6f} dB, ' f'\tSSIM: {ssim:.6f}')
+        print(f'{i+1:3d}: {basename:25}. \tPSNR: {psnr:.6f} dB, \tSSIM: {ssim:.6f}')
         psnr_all.append(psnr)
         ssim_all.append(ssim)
     print(args.gt)
     print(args.restored)
-    print(f'Average: PSNR: {sum(psnr_all) / len(psnr_all):.6f} dB, ' f'SSIM: {sum(ssim_all) / len(ssim_all):.6f}')
+    print(f'Average: PSNR: {sum(psnr_all) / len(psnr_all):.6f} dB, SSIM: {sum(ssim_all) / len(ssim_all):.6f}')
 
 
 if __name__ == '__main__':
