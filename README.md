@@ -25,6 +25,7 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open source **image and vide
 
 ## :sparkles: New Features
 
+- Aug 5, 2021. NIQE produces the same results as MATLAB (both are 5.7296 for tests/data/baboon.png).
 - July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
 - July 20, 2021. Add **dual-blind face restoration** codes: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
 - Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab)
