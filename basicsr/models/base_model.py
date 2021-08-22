@@ -210,8 +210,9 @@ class BaseModel():
                 break
             finally:
                 retry -= 1
-        if retry == 0:  # still cannot save
-            raise IOError(f'Cannot save {save_path}.')
+        if retry == 0:
+            logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+            # raise IOError(f'Cannot save {save_path}.')
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
         """Print keys with differnet name or different size when loading models.
@@ -261,13 +262,13 @@ class BaseModel():
         """
         logger = get_root_logger()
         net = self.get_bare_model(net)
-        logger.info(f'Loading {net.__class__.__name__} model from {load_path}.')
         load_net = torch.load(load_path, map_location=lambda storage, loc: storage)
         if param_key is not None:
             if param_key not in load_net and 'params' in load_net:
                 param_key = 'params'
                 logger.info('Loading: params_ema does not exist, use params.')
             load_net = load_net[param_key]
+        logger.info(f'Loading {net.__class__.__name__} model from {load_path}, with param key: [{param_key}].')
         # remove unnecessary 'module.'
         for k, v in deepcopy(load_net).items():
             if k.startswith('module.'):
@@ -307,8 +308,9 @@ class BaseModel():
                     break
                 finally:
                     retry -= 1
-            if retry == 0:  # still cannot save
-                raise IOError(f'Cannot save {save_path}.')
+            if retry == 0:
+                logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+                # raise IOError(f'Cannot save {save_path}.')
 
     def resume_training(self, resume_state):
         """Reload the optimizers and schedulers for resumed training.

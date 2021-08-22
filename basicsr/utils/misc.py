@@ -116,6 +116,13 @@ def check_resume(opt, resume_iter):
                 opt['path'][name] = osp.join(opt['path']['models'], f'net_{basename}_{resume_iter}.pth')
                 print(f"Set {name} to {opt['path'][name]}")
 
+        # change param_key to params in resume
+        param_keys = [key for key in opt['path'].keys() if key.startswith('param_key')]
+        for param_key in param_keys:
+            if opt['path'][param_key] == 'params_ema':
+                opt['path'][param_key] = 'params'
+                print(f'Set {param_key} to params')
+
 
 def sizeof_fmt(size, suffix='B'):
     """Get human readable file size.
