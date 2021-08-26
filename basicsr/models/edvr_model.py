@@ -1,5 +1,3 @@
-from torch.nn.parallel import DistributedDataParallel
-
 from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
 from .video_base_model import VideoBaseModel
@@ -60,8 +58,5 @@ class EDVRModel(VideoBaseModel):
                 logger.warning('Train all the parameters.')
                 for param in self.net_g.parameters():
                     param.requires_grad = True
-                if isinstance(self.net_g, DistributedDataParallel):
-                    logger.warning('Set net_g.find_unused_parameters = False.')
-                    self.net_g.find_unused_parameters = False
 
         super(EDVRModel, self).optimize_parameters(current_iter)
