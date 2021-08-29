@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.nn.utils.spectral_norm as SpectralNorm
+from torch.nn.utils.spectral_norm import spectral_norm
 
 from basicsr.utils.registry import ARCH_REGISTRY
 from .dfdnet_util import AttentionBlock, Blur, MSDilationBlock, UpResBlock, adaptive_instance_normalization
@@ -16,23 +16,23 @@ class SFTUpBlock(nn.Module):
         super(SFTUpBlock, self).__init__()
         self.conv1 = nn.Sequential(
             Blur(in_channel),
-            SpectralNorm(nn.Conv2d(in_channel, out_channel, kernel_size, padding=padding)),
+            spectral_norm(nn.Conv2d(in_channel, out_channel, kernel_size, padding=padding)),
             nn.LeakyReLU(0.04, True),
             # The official codes use two LeakyReLU here, so 0.04 for equivalent
         )
         self.convup = nn.Sequential(
             nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False),
-            SpectralNorm(nn.Conv2d(out_channel, out_channel, kernel_size, padding=padding)),
+            spectral_norm(nn.Conv2d(out_channel, out_channel, kernel_size, padding=padding)),
             nn.LeakyReLU(0.2, True),
         )
 
         # for SFT scale and shift
         self.scale_block = nn.Sequential(
-            SpectralNorm(nn.Conv2d(in_channel, out_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
-            SpectralNorm(nn.Conv2d(out_channel, out_channel, 3, 1, 1)))
+            spectral_norm(nn.Conv2d(in_channel, out_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
+            spectral_norm(nn.Conv2d(out_channel, out_channel, 3, 1, 1)))
         self.shift_block = nn.Sequential(
-            SpectralNorm(nn.Conv2d(in_channel, out_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
-            SpectralNorm(nn.Conv2d(out_channel, out_channel, 3, 1, 1)), nn.Sigmoid())
+            spectral_norm(nn.Conv2d(in_channel, out_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
+            spectral_norm(nn.Conv2d(out_channel, out_channel, 3, 1, 1)), nn.Sigmoid())
         # The official codes use sigmoid for shift block, do not know why
 
     def forward(self, x, updated_feat):
@@ -88,7 +88,7 @@ class DFDNet(nn.Module):
         self.upsample2 = SFTUpBlock(num_feat * 4, num_feat * 2)
         self.upsample3 = SFTUpBlock(num_feat * 2, num_feat)
         self.upsample4 = nn.Sequential(
-            SpectralNorm(nn.Conv2d(num_feat, num_feat, 3, 1, 1)), nn.LeakyReLU(0.2, True), UpResBlock(num_feat),
+            spectral_norm(nn.Conv2d(num_feat, num_feat, 3, 1, 1)), nn.LeakyReLU(0.2, True), UpResBlock(num_feat),
             UpResBlock(num_feat), nn.Conv2d(num_feat, 3, kernel_size=3, stride=1, padding=1), nn.Tanh())
 
     def swap_feat(self, vgg_feat, updated_feat, dict_feat, location, part_name, f_size):

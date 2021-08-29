@@ -101,11 +101,18 @@ def imresize(img, scale, antialiasing=True):
     Returns:
         Tensor: Output image with shape (c, h, w), [0, 1] range, w/o round.
     """
+    squeeze_flag = False
     if type(img).__module__ == np.__name__:  # numpy type
         numpy_type = True
+        if img.ndim == 2:
+            img = img[:, :, None]
+            squeeze_flag = True
         img = torch.from_numpy(img.transpose(2, 0, 1)).float()
     else:
         numpy_type = False
+        if img.ndim == 2:
+            img = img.unsqueeze(0)
+            squeeze_flag = True
 
     in_c, in_h, in_w = img.size()
     out_h, out_w = math.ceil(in_h * scale), math.ceil(in_w * scale)
@@ -161,8 +168,13 @@ def imresize(img, scale, antialiasing=True):
         for j in range(in_c):
             out_2[j, :, i] = out_1_aug[j, :, idx:idx + kernel_width].mv(weights_w[i])
 
+    if squeeze_flag:
+        out_2 = out_2.squeeze(0)
     if numpy_type:
-        out_2 = out_2.numpy().transpose(1, 2, 0)
+        out_2 = out_2.numpy()
+        if not squeeze_flag:
+            out_2 = out_2.transpose(1, 2, 0)
+
     return out_2
 
 

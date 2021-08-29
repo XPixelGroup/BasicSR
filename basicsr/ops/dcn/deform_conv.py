@@ -1,4 +1,5 @@
 import math
+import os
 import torch
 from torch import nn as nn
 from torch.autograd import Function
@@ -6,22 +7,27 @@ from torch.autograd.function import once_differentiable
 from torch.nn import functional as F
 from torch.nn.modules.utils import _pair, _single
 
-try:
-    from . import deform_conv_ext
-except ImportError:
-    import os
-    BASICSR_JIT = os.getenv('BASICSR_JIT')
-    if BASICSR_JIT == 'True':
-        from torch.utils.cpp_extension import load
-        module_path = os.path.dirname(__file__)
-        deform_conv_ext = load(
-            'deform_conv',
-            sources=[
-                os.path.join(module_path, 'src', 'deform_conv_ext.cpp'),
-                os.path.join(module_path, 'src', 'deform_conv_cuda.cpp'),
-                os.path.join(module_path, 'src', 'deform_conv_cuda_kernel.cu'),
-            ],
-        )
+BASICSR_JIT = os.getenv('BASICSR_JIT')
+if BASICSR_JIT == 'True':
+    from torch.utils.cpp_extension import load
+    module_path = os.path.dirname(__file__)
+    deform_conv_ext = load(
+        'deform_conv',
+        sources=[
+            os.path.join(module_path, 'src', 'deform_conv_ext.cpp'),
+            os.path.join(module_path, 'src', 'deform_conv_cuda.cpp'),
+            os.path.join(module_path, 'src', 'deform_conv_cuda_kernel.cu'),
+        ],
+    )
+else:
+    try:
+        from . import deform_conv_ext
+    except ImportError:
+        pass
+        # avoid annoying print output
+        # print(f'Cannot import deform_conv_ext. Error: {error}. You may need to: \n '
+        #       '1. compile with BASICSR_EXT=True. or\n '
+        #       '2. set BASICSR_JIT=True during running')
 
 
 class DeformConvFunction(Function):

@@ -7,6 +7,8 @@ This BasicSR project is released under the Apache 2.0 license.
   - The official repository is https://github.com/NVlabs/stylegan2, and here is the [NVIDIA license](./LICENSE-NVIDIA).
 - DFDNet
   - The codes are largely modified from the repository [DFDNet](https://github.com/csxmli2016/DFDNet). Their license is [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+- DiffJPEG
+  - Modified from https://github.com/mlomnitz/DiffJPEG.
 
 ## References
 

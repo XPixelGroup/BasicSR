@@ -1,8 +1,6 @@
-import argparse
 import datetime
 import logging
 import math
-import random
 import time
 import torch
 from os import path as osp
@@ -12,59 +10,20 @@ from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str, init_tb_logger,
-                           init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir, set_random_seed)
-from basicsr.utils.dist_util import get_dist_info, init_dist
-from basicsr.utils.options import dict2str, parse
+                           init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
+from basicsr.utils.options import dict2str, parse_options
 
 
-def parse_options(root_path, is_train=True):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
-    parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none', help='job launcher')
-    parser.add_argument('--auto_resume', action='store_true')
-    parser.add_argument('--local_rank', type=int, default=0)
-    args = parser.parse_args()
-    opt = parse(args.opt, root_path, is_train=is_train)
-    opt['auto_resume'] = args.auto_resume
-
-    # distributed settings
-    if args.launcher == 'none':
-        opt['dist'] = False
-        print('Disable distributed.', flush=True)
-    else:
-        opt['dist'] = True
-        if args.launcher == 'slurm' and 'dist_params' in opt:
-            init_dist(args.launcher, **opt['dist_params'])
-        else:
-            init_dist(args.launcher)
-
-    opt['rank'], opt['world_size'] = get_dist_info()
-
-    # random seed
-    seed = opt.get('manual_seed')
-    if seed is None:
-        seed = random.randint(1, 10000)
-        opt['manual_seed'] = seed
-    set_random_seed(seed + opt['rank'])
-
-    return opt
-
-
-def init_loggers(opt):
-    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
-    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
-    logger.info(get_env_info())
-    logger.info(dict2str(opt))
-
-    # initialize wandb logger before tensorboard logger to allow proper sync:
+def init_tb_loggers(opt):
+    # initialize wandb logger before tensorboard logger to allow proper sync
     if (opt['logger'].get('wandb') is not None) and (opt['logger']['wandb'].get('project')
                                                      is not None) and ('debug' not in opt['name']):
         assert opt['logger'].get('use_tb_logger') is True, ('should turn on tensorboard when using wandb')
         init_wandb_logger(opt)
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
-        tb_logger = init_tb_logger(log_dir=osp.join('tb_logger', opt['name']))
-    return logger, tb_logger
+        tb_logger = init_tb_logger(log_dir=osp.join(opt['root_path'], 'tb_logger', opt['name']))
+    return tb_logger
 
 
 def create_train_val_dataloader(opt, logger):
@@ -132,6 +91,7 @@ def load_resume_state(opt):
 def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
     opt = parse_options(root_path, is_train=True)
+    opt['root_path'] = root_path
 
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
@@ -142,10 +102,16 @@ def train_pipeline(root_path):
     if resume_state is None:
         make_exp_dirs(opt)
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
-            mkdir_and_rename(osp.join('tb_logger', opt['name']))
+            mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
 
-    # initialize loggers
-    logger, tb_logger = init_loggers(opt)
+    # WARNING: should not use get_root_logger in the above codes, including the called functions
+    # Otherwise the logger will not be properly initialized
+    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
+    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
+    logger.info(get_env_info())
+    logger.info(dict2str(opt))
+    # initialize wandb and tb loggers
+    tb_logger = init_tb_loggers(opt)
 
     # create train and validation dataloaders
     result = create_train_val_dataloader(opt, logger)

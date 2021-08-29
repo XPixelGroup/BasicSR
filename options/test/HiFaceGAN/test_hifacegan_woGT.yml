@@ -1,0 +1,37 @@
+name: HiFaceGAN_generic_test
+model_type: HiFaceGANModel
+scale: 1    # HiFaceGAN does not resize lq input
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_wild:  # the 1st test dataset
+    name: FFHQ_in_the_wild
+    type: SingleImageDataset
+    dataroot_lq: datasets/real-world-lq
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: HiFaceGAN # or SPADEGenerator
+  num_in_ch: 3
+  num_feat: 48
+  use_vae: false
+  z_dim: 256  # dummy var
+  crop_size: 512
+  #norm_g: 'spectralspadesyncbatch3x3'
+  norm_g: 'spectralspadebatch3x3'  # 20210519: Use instance norm for now.
+  is_train: false                  # HifaceGAN supports progressive training
+                                   # so network architecture depends on it
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/generic/latest_net_G.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: generic  # add suffix to saved images, if None, use exp name
+  # No metrics

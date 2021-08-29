@@ -1,4 +1,4 @@
-name: Mirror BasicSR to Gitee
+name: Gitee Mirror
 
 on: [ push, delete, create ]
 

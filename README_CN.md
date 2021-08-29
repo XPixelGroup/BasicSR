@@ -1,26 +1,36 @@
 # :rocket: BasicSR
 
+[![LICENSE](https://img.shields.io/github/license/xinntao/basicsr.svg)](https://github.com/xinntao/BasicSR/blob/master/LICENSE/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/basicsr)](https://pypi.org/project/basicsr/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/xinntao/BasicSR.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xinntao/BasicSR/context:python)
+[![python lint](https://github.com/xinntao/BasicSR/actions/workflows/pylint.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/pylint.yml)
+[![Publish-pip](https://github.com/xinntao/BasicSR/actions/workflows/publish-pip.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/publish-pip.yml)
+[![gitee mirror](https://github.com/xinntao/BasicSR/actions/workflows/gitee-mirror.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/gitee-mirror.yml)
+
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
+:rocket: 我们添加了 [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), 它提供了使用BasicSR的指南以及模板 (以python package的形式) :rocket:
+
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
-:m: [模型库](docs/ModelZoo_CN.md) :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
+:m: [模型库](docs/ModelZoo_CN.md): :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
-:file_folder: [数据](docs/DatasetPreparation_CN.md) :arrow_double_down: [百度网盘](https://pan.baidu.com/s/1AZDcEAFwwc1OC3KCd7EDnQ) (提取码:basr) :arrow_double_down: [Google Drive](https://drive.google.com/drive/folders/1gt5eT293esqY0yr1Anbm36EdnxWW_5oH?usp=sharing) <br>
+:file_folder: [数据](docs/DatasetPreparation_CN.md): :arrow_double_down: [百度网盘](https://pan.baidu.com/s/1AZDcEAFwwc1OC3KCd7EDnQ) (提取码:basr) :arrow_double_down: [Google Drive](https://drive.google.com/drive/folders/1gt5eT293esqY0yr1Anbm36EdnxWW_5oH?usp=sharing) <br>
 :chart_with_upwards_trend: [wandb的训练曲线](https://app.wandb.ai/xintao/basicsr) <br>
 :computer: [训练和测试的命令](docs/TrainTest_CN.md) <br>
 :zap: [HOWTOs](#zap-howtos)
 
 ---
 
-BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源图像视频复原工具箱, 比如 超分辨率, 去噪, 去模糊, 去 JPEG 压缩噪声等.<br>
-<sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
-<sub>([HandyView](https://gitee.com/xinntao/HandyView), [HandyFigure](https://gitee.com/xinntao/HandyFigure), [HandyCrawler](https://gitee.com/xinntao/HandyCrawler), [HandyWriting](https://gitee.com/xinntao/HandyWriting))</sub>
+BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源图像视频复原工具箱, 比如 超分辨率, 去噪, 去模糊, 去 JPEG 压缩噪声等.
 
-## :sparkles: 新的特性
+:triangular_flag_on_post: **新的特性/更新**
 
-- Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
-- Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
-- Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
+- :white_check_mark: Aug 5, 2021. 添加了NIQE， 它输出和MATLAB一样的结果 (both are 5.7296 for tests/data/baboon.png).
+- :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
+- :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
+- :white_check_mark: Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
+- :white_check_mark: Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
+- :white_check_mark: Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
 
 <details>
   <summary>更多</summary>
@@ -30,6 +40,25 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
   <li>Aug 19, 2020. <b>全新的</b> BasicSR v1.0.0 上线.</li>
 </ul>
 </details>
+
+:sparkles: **使用 BasicSR 的项目**
+- [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): 通用图像复原的实用算法
+- [**GFPGAN**](https://github.com/TencentARC/GFPGAN): 真实场景人脸复原的实用算法
+
+如果你的开源项目中使用了`BasicSR`, 欢迎联系我 ([邮件](#e-mail-%E8%81%94%E7%B3%BB)或者开一个issue/pull request)。我会将你的开源项目添加到上面的列表中 :blush:
+
+---
+
+如果 BasicSR 对你有所帮助，欢迎 :star: 这个仓库或推荐给你的朋友。Thanks:blush: <br>
+其他推荐的项目:<br>
+:arrow_forward: [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN): 通用图像复原的实用算法<br>
+:arrow_forward: [GFPGAN](https://github.com/TencentARC/GFPGAN): 真实场景人脸复原的实用算法<br>
+:arrow_forward: [facexlib](https://github.com/xinntao/facexlib): 提供实用的人脸相关功能的集合<br>
+:arrow_forward: [HandyView](https://github.com/xinntao/HandyView): 基于PyQt5的 方便的看图比图工具<br>
+<sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
+<sub>([HandyView](https://gitee.com/xinntao/HandyView), [HandyFigure](https://gitee.com/xinntao/HandyFigure), [HandyCrawler](https://gitee.com/xinntao/HandyCrawler), [HandyWriting](https://gitee.com/xinntao/HandyWriting))</sub>
+
+---
 
 ## :zap: HOWTOs
 
@@ -53,70 +82,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 ## :wrench: 依赖和安装
 
-- Python >= 3.7 (推荐使用 [Anaconda](https://www.anaconda.com/download/#linux) 或 [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
-- [PyTorch >= 1.7](https://pytorch.org/)
-- NVIDIA GPU + [CUDA](https://developer.nvidia.com/cuda-downloads)
-
-### 选项1: 通过 pip 安装
-
-```bash
-pip install basicsr
-```
-
-- 如果要在安装的时候编译 cuda 算子, 请设置环境变量 `BASICSR_EXT=True`。
-
-  ```bash
-  BASICSR_EXT=True pip install basicsr
-  ```
-
-- 如果你想在运行的时候使用 cuda 算子（安装的时候没有编译）, 则需要设置环境变量 `BASICSR_JIT=True`. 注意: 通过这种方式, 在每一次运行模型时候, 它都需要编译, (比较耗时).
-  - 例子: StyleGAN2 inference colab.
-
-### 选项2: 通过 git clone 然后 编译
-
-1. Clone repo
-
-    ```bash
-    git clone https://github.com/xinntao/BasicSR.git
-    ```
-
-1. 安装依赖包
-
-    ```bash
-    cd BasicSR
-    pip install -r requirements.txt
-    ```
-
-1. 安装 BasicSR
-
-    在BasicSR的**根目录**下运行以下命令:<br>
-    (确保 GCC 版本: gcc >= 5) <br>
-    如果你需要以下 cuda 扩展算子: <br>
-    &emsp;[*dcn* for EDVR](basicsr/ops)<br>
-    &emsp;[*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
-    在安装命令时设置环境变量 后添加 `BASICSR_EXT=True`.<br>
-    如果使用 EDVR 和 StyleGAN2 模型, 需要使用上面的 cuda 扩展算子.
-
-    ```bash
-    BASICSR_EXT=True python setup.py develop
-    ```
-
-    否则, 安装的时候不会编译 cuda 算子.
-
-    ```bash
-    python setup.py develop
-    ```
-
-    你或许需要指定 CUDA 路径:
-
-      ```bash
-      CUDA_HOME=/usr/local/cuda \
-      CUDNN_INCLUDE_DIR=/usr/local/cuda \
-      CUDNN_LIB_DIR=/usr/local/cuda \
-      python setup.py develop
-      ```
-
-注意: BasicSR 仅在 Ubuntu 下进行测试，或许不支持Windows. 可以在Windows下尝试[支持CUDA的Windows WSL](https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl) :-) (目前只有Fast ring的预览版系统可以安装).
+For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 ## :hourglass_flowing_sand: TODO 清单
 
@@ -166,13 +132,13 @@ pip install basicsr
 @misc{wang2020basicsr,
   author =       {Xintao Wang and Ke Yu and Kelvin C.K. Chan and
                   Chao Dong and Chen Change Loy},
-  title =        {BasicSR},
+  title =        {{BasicSR}: Open Source Image and Video Restoration Toolbox},
   howpublished = {\url{https://github.com/xinntao/BasicSR}},
   year =         {2020}
 }
 ```
 
-> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR. https://github.com/xinntao/BasicSR, 2020.
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2020.
 
 ## :e-mail: 联系
 
