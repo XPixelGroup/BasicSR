@@ -132,12 +132,12 @@ class WeightedTVLoss(L1Loss):
         super(WeightedTVLoss, self).__init__(loss_weight=loss_weight)
 
     def forward(self, pred, weight=None):
-        if weight:
-            y_weight = weight[:, :, :-1, :]
-            x_weight = weight[:, :, :, :-1]
-        else:
+        if weight is None:
             y_weight = None
             x_weight = None
+        else:
+            y_weight = weight[:, :, :-1, :]
+            x_weight = weight[:, :, :, :-1]
 
         y_diff = super(WeightedTVLoss, self).forward(pred[:, :, :-1, :], pred[:, :, 1:, :], weight=y_weight)
         x_diff = super(WeightedTVLoss, self).forward(pred[:, :, :, :-1], pred[:, :, :, 1:], weight=x_weight)
