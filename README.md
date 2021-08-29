@@ -9,7 +9,7 @@
 
 [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
 
-:rocket: [BasicSR Examples](https://github.com/xinntao/BasicSR-examples) provides guidance and templates of using BasicSR as a python package.
+:rocket: We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. :rocket:
 
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 :m: [Model Zoo](docs/ModelZoo.md): :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
@@ -25,7 +25,7 @@ BasicSR (**Basic** **S**uper **R**estoration) is an open-source **image and vide
 
 :triangular_flag_on_post: **New Features/Updates**
 
-- :white_check_mark: Aug 5, 2021. NIQE produces the same results as MATLAB (both are 5.7296 for tests/data/baboon.png).
+- :white_check_mark: Aug 5, 2021. Add NIQE, which produces the same results as MATLAB (both are 5.7296 for tests/data/baboon.png).
 - :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
 - :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
 - :white_check_mark: Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab)
