@@ -8,7 +8,7 @@ from basicsr.data.transforms import mod_crop
 from basicsr.utils import img2tensor, scandir
 
 
-def read_img_seq(path, require_mod_crop=False, scale=1):
+def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
     """Read a sequence of images from a given folder path.
 
     Args:
@@ -16,20 +16,28 @@ def read_img_seq(path, require_mod_crop=False, scale=1):
         require_mod_crop (bool): Require mod crop for each image.
             Default: False.
         scale (int): Scale factor for mod_crop. Default: 1.
+        return_imgname(bool): Whether return image names. Defalt False.
 
     Returns:
         Tensor: size (t, c, h, w), RGB, [0, 1].
+        list[str]: Returned image name list.
     """
     if isinstance(path, list):
         img_paths = path
     else:
         img_paths = sorted(list(scandir(path, full_path=True)))
     imgs = [cv2.imread(v).astype(np.float32) / 255. for v in img_paths]
+
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
     imgs = img2tensor(imgs, bgr2rgb=True, float32=True)
     imgs = torch.stack(imgs, dim=0)
-    return imgs
+
+    if return_imgname:
+        imgnames = [osp.splitext(osp.basename(path))[0] for path in img_paths]
+        return imgs, imgnames
+    else:
+        return imgs
 
 
 def generate_frame_indices(crt_idx, max_frame_num, num_frames, padding='reflection'):

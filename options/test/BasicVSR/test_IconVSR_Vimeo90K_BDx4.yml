@@ -1,0 +1,50 @@
+name: IconVSR_Vimeo90K_BDx4
+model_type: VideoRecurrentModel
+scale: 4
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: Vimeo90K
+    type: VideoTestVimeo90KDataset
+    dataroot_gt: datasets/vimeo90k/vimeo_septuplet/sequences
+    dataroot_lq: datasets/vimeo90k/BDx4
+    meta_info_file: basicsr/data/meta_info/meta_info_Vimeo90K_test_GT.txt
+    cache_data: false
+    io_backend:
+      type: disk
+    num_frame: 7
+
+
+# network structures
+network_g:
+  type: IconVSR
+  num_feat: 64
+  num_block: 30
+  keyframe_stride: 5
+  temporal_padding: 3
+  spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
+  edvr_path: experiments/pretrained_models/BasicVSR/EDVR_Vimeo90K_pretrained_for_IconVSR-ee48ee92.pth
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/BasicVSR/IconVSR_Vimeo90K_BDx4-cfcb7e00.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  flip_seq: true
+  center_frame_only: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 0
+      test_y_channel: true

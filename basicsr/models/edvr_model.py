@@ -1,10 +1,6 @@
-import logging
-from torch.nn.parallel import DistributedDataParallel
-
+from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
 from .video_base_model import VideoBaseModel
-
-logger = logging.getLogger('basicsr')
 
 
 @MODEL_REGISTRY.register()
@@ -22,6 +18,7 @@ class EDVRModel(VideoBaseModel):
     def setup_optimizers(self):
         train_opt = self.opt['train']
         dcn_lr_mul = train_opt.get('dcn_lr_mul', 1)
+        logger = get_root_logger()
         logger.info(f'Multiple the learning rate for dcn with {dcn_lr_mul}.')
         if dcn_lr_mul == 1:
             optim_params = self.net_g.parameters()
@@ -51,16 +48,15 @@ class EDVRModel(VideoBaseModel):
     def optimize_parameters(self, current_iter):
         if self.train_tsa_iter:
             if current_iter == 1:
+                logger = get_root_logger()
                 logger.info(f'Only train TSA module for {self.train_tsa_iter} iters.')
                 for name, param in self.net_g.named_parameters():
                     if 'fusion' not in name:
                         param.requires_grad = False
             elif current_iter == self.train_tsa_iter:
+                logger = get_root_logger()
                 logger.warning('Train all the parameters.')
                 for param in self.net_g.parameters():
                     param.requires_grad = True
-                if isinstance(self.net_g, DistributedDataParallel):
-                    logger.warning('Set net_g.find_unused_parameters = False.')
-                    self.net_g.find_unused_parameters = False
 
-        super(VideoBaseModel, self).optimize_parameters(current_iter)
+        super(EDVRModel, self).optimize_parameters(current_iter)

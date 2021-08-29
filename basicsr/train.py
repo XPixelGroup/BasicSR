@@ -93,9 +93,6 @@ def train_pipeline(root_path):
     opt = parse_options(root_path, is_train=True)
     opt['root_path'] = root_path
 
-    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
-    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
-
     torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
 
@@ -107,6 +104,10 @@ def train_pipeline(root_path):
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
             mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
 
+    # WARNING: should not use get_root_logger in the above codes, including the called functions
+    # Otherwise the logger will not be properly initialized
+    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
+    logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
     logger.info(dict2str(opt))
     # initialize wandb and tb loggers
