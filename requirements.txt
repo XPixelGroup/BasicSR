@@ -9,7 +9,7 @@ requests
 scikit-image
 scipy
 tb-nightly
-torch>=1.3
+torch>=1.7
 torchvision
 tqdm
 yapf

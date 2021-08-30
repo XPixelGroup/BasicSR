@@ -23,8 +23,7 @@ class EnlargedSampler(Sampler):
         self.num_replicas = num_replicas
         self.rank = rank
         self.epoch = 0
-        self.num_samples = math.ceil(
-            len(self.dataset) * ratio / self.num_replicas)
+        self.num_samples = math.ceil(len(self.dataset) * ratio / self.num_replicas)
         self.total_size = self.num_samples * self.num_replicas
 
     def __iter__(self):

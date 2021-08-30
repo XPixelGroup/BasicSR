@@ -2,7 +2,7 @@ import math
 import os
 import torchvision.utils
 
-from basicsr.data import create_dataloader, create_dataset
+from basicsr.data import build_dataloader, build_dataset
 
 
 def main(mode='folder'):
@@ -46,9 +46,8 @@ def main(mode='folder'):
 
     os.makedirs('tmp', exist_ok=True)
 
-    dataset = create_dataset(opt)
-    data_loader = create_dataloader(
-        dataset, opt, num_gpu=0, dist=opt['dist'], sampler=None)
+    dataset = build_dataset(opt)
+    data_loader = build_dataloader(dataset, opt, num_gpu=0, dist=opt['dist'], sampler=None)
 
     nrow = int(math.sqrt(opt['batch_size_per_gpu']))
     padding = 2 if opt['phase'] == 'train' else 0
@@ -64,18 +63,8 @@ def main(mode='folder'):
         lq_path = data['lq_path']
         gt_path = data['gt_path']
         print(lq_path, gt_path)
-        torchvision.utils.save_image(
-            lq,
-            f'tmp/lq_{i:03d}.png',
-            nrow=nrow,
-            padding=padding,
-            normalize=False)
-        torchvision.utils.save_image(
-            gt,
-            f'tmp/gt_{i:03d}.png',
-            nrow=nrow,
-            padding=padding,
-            normalize=False)
+        torchvision.utils.save_image(lq, f'tmp/lq_{i:03d}.png', nrow=nrow, padding=padding, normalize=False)
+        torchvision.utils.save_image(gt, f'tmp/gt_{i:03d}.png', nrow=nrow, padding=padding, normalize=False)
 
 
 if __name__ == '__main__':

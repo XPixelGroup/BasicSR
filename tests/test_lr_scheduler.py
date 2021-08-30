@@ -23,8 +23,7 @@ def main():
             'lr': 2e-4
         },
     ]
-    optimizer = torch.optim.Adam(
-        optim_params, lr=2e-4, weight_decay=0, betas=(0.9, 0.99))
+    optimizer = torch.optim.Adam(optim_params, lr=2e-4, weight_decay=0, betas=(0.9, 0.99))
 
     period = [50000, 100000, 150000, 150000, 150000]
     restart_weights = [1, 1, 0.5, 1, 0.5]
@@ -51,14 +50,9 @@ def main():
     plt.figure(1)
     plt.subplot(111)
     plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
-    plt.title(
-        'Cosine Annealing Restart Learning Rate Scheme',
-        fontsize=16,
-        color='k')
-    plt.plot(
-        list(range(total_iter)), lr_l, linewidth=1.5, label='learning rate 1')
-    plt.plot(
-        list(range(total_iter)), lr_l2, linewidth=1.5, label='learning rate 2')
+    plt.title('Cosine Annealing Restart Learning Rate Scheme', fontsize=16, color='k')
+    plt.plot(list(range(total_iter)), lr_l, linewidth=1.5, label='learning rate 1')
+    plt.plot(list(range(total_iter)), lr_l2, linewidth=1.5, label='learning rate 2')
     plt.legend(loc='upper right', shadow=False)
     ax = plt.gca()
     ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))

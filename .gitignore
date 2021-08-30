@@ -6,7 +6,9 @@ tb_logger/*
 wandb/*
 tmp/*
 
+*.DS_Store
 .vscode
+.idea
 
 # ignored files
 version.py

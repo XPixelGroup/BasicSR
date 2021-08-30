@@ -53,8 +53,7 @@ def prepare_keys_div2k(folder_path):
         list[str]: Key list.
     """
     print('Reading image path list ...')
-    img_path_list = sorted(
-        list(scandir(folder_path, suffix='png', recursive=False)))
+    img_path_list = sorted(list(scandir(folder_path, suffix='png', recursive=False)))
     keys = [img_path.split('.png')[0] for img_path in sorted(img_path_list)]
 
     return img_path_list, keys
@@ -74,15 +73,13 @@ def create_lmdb_for_reds():
     folder_path = 'datasets/REDS/train_sharp'
     lmdb_path = 'datasets/REDS/train_sharp_with_val.lmdb'
     img_path_list, keys = prepare_keys_reds(folder_path)
-    make_lmdb_from_imgs(
-        folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
+    make_lmdb_from_imgs(folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
 
     # train_sharp_bicubic
     folder_path = 'datasets/REDS/train_sharp_bicubic'
     lmdb_path = 'datasets/REDS/train_sharp_bicubic_with_val.lmdb'
     img_path_list, keys = prepare_keys_reds(folder_path)
-    make_lmdb_from_imgs(
-        folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
+    make_lmdb_from_imgs(folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
 
 
 def prepare_keys_reds(folder_path):
@@ -96,8 +93,7 @@ def prepare_keys_reds(folder_path):
         list[str]: Key list.
     """
     print('Reading image path list ...')
-    img_path_list = sorted(
-        list(scandir(folder_path, suffix='png', recursive=True)))
+    img_path_list = sorted(list(scandir(folder_path, suffix='png', recursive=True)))
     keys = [v.split('.png')[0] for v in img_path_list]  # example: 000/00000000
 
     return img_path_list, keys
@@ -113,19 +109,15 @@ def create_lmdb_for_vimeo90k():
     folder_path = 'datasets/vimeo90k/vimeo_septuplet/sequences'
     lmdb_path = 'datasets/vimeo90k/vimeo90k_train_GT_only4th.lmdb'
     train_list_path = 'datasets/vimeo90k/vimeo_septuplet/sep_trainlist.txt'
-    img_path_list, keys = prepare_keys_vimeo90k(folder_path, train_list_path,
-                                                'gt')
-    make_lmdb_from_imgs(
-        folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
+    img_path_list, keys = prepare_keys_vimeo90k(folder_path, train_list_path, 'gt')
+    make_lmdb_from_imgs(folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
 
     # LQ
     folder_path = 'datasets/vimeo90k/vimeo_septuplet_matlabLRx4/sequences'
     lmdb_path = 'datasets/vimeo90k/vimeo90k_train_LR7frames.lmdb'
     train_list_path = 'datasets/vimeo90k/vimeo_septuplet/sep_trainlist.txt'
-    img_path_list, keys = prepare_keys_vimeo90k(folder_path, train_list_path,
-                                                'lq')
-    make_lmdb_from_imgs(
-        folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
+    img_path_list, keys = prepare_keys_vimeo90k(folder_path, train_list_path, 'lq')
+    make_lmdb_from_imgs(folder_path, lmdb_path, img_path_list, keys, multiprocessing_read=True)
 
 
 def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
@@ -148,8 +140,7 @@ def prepare_keys_vimeo90k(folder_path, train_list_path, mode):
     keys = []
     for line in train_list:
         folder, sub_folder = line.split('/')
-        img_path_list.extend(
-            [osp.join(folder, sub_folder, f'im{j + 1}.png') for j in range(7)])
+        img_path_list.extend([osp.join(folder, sub_folder, f'im{j + 1}.png') for j in range(7)])
         keys.extend([f'{folder}/{sub_folder}/im{j + 1}' for j in range(7)])
 
     if mode == 'gt':
@@ -166,10 +157,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--dataset',
         type=str,
-        help=(
-            "Options: 'DIV2K', 'REDS', 'Vimeo90K' "
-            'You may need to modify the corresponding configurations in codes.'
-        ))
+        help=("Options: 'DIV2K', 'REDS', 'Vimeo90K' "
+              'You may need to modify the corresponding configurations in codes.'))
     args = parser.parse_args()
     dataset = args.dataset.lower()
     if dataset == 'div2k':

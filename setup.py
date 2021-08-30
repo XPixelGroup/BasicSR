@@ -4,11 +4,9 @@ from setuptools import find_packages, setup
 
 import os
 import subprocess
-import sys
 import time
 import torch
-from torch.utils.cpp_extension import (BuildExtension, CppExtension,
-                                       CUDAExtension)
+from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
 
 version_file = 'basicsr/version.py'
 
@@ -32,8 +30,7 @@ def get_git_hash():
         env['LANGUAGE'] = 'C'
         env['LANG'] = 'C'
         env['LC_ALL'] = 'C'
-        out = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
+        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
         return out
 
     try:
@@ -64,18 +61,15 @@ def write_version_py():
     content = """# GENERATED VERSION FILE
 # TIME: {}
 __version__ = '{}'
-short_version = '{}'
+__gitsha__ = '{}'
 version_info = ({})
 """
     sha = get_hash()
     with open('VERSION', 'r') as f:
         SHORT_VERSION = f.read().strip()
-    VERSION_INFO = ', '.join(
-        [x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
-    VERSION = SHORT_VERSION + '+' + sha
+    VERSION_INFO = ', '.join([x if x.isdigit() else f'"{x}"' for x in SHORT_VERSION.split('.')])
 
-    version_file_str = content.format(time.asctime(), VERSION, SHORT_VERSION,
-                                      VERSION_INFO)
+    version_file_str = content.format(time.asctime(), SHORT_VERSION, sha, VERSION_INFO)
     with open(version_file, 'w') as f:
         f.write(version_file_str)
 
@@ -120,30 +114,27 @@ def get_requirements(filename='requirements.txt'):
 
 
 if __name__ == '__main__':
-    if '--no_cuda_ext' in sys.argv:
-        ext_modules = []
-        sys.argv.remove('--no_cuda_ext')
-    else:
+    cuda_ext = os.getenv('BASICSR_EXT')  # whether compile cuda ext
+    if cuda_ext == 'True':
         ext_modules = [
             make_cuda_ext(
                 name='deform_conv_ext',
-                module='basicsr.models.ops.dcn',
+                module='basicsr.ops.dcn',
                 sources=['src/deform_conv_ext.cpp'],
-                sources_cuda=[
-                    'src/deform_conv_cuda.cpp',
-                    'src/deform_conv_cuda_kernel.cu'
-                ]),
+                sources_cuda=['src/deform_conv_cuda.cpp', 'src/deform_conv_cuda_kernel.cu']),
             make_cuda_ext(
                 name='fused_act_ext',
-                module='basicsr.models.ops.fused_act',
+                module='basicsr.ops.fused_act',
                 sources=['src/fused_bias_act.cpp'],
                 sources_cuda=['src/fused_bias_act_kernel.cu']),
             make_cuda_ext(
                 name='upfirdn2d_ext',
-                module='basicsr.models.ops.upfirdn2d',
+                module='basicsr.ops.upfirdn2d',
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
+    else:
+        ext_modules = []
 
     write_version_py()
     setup(
@@ -151,13 +142,13 @@ if __name__ == '__main__':
         version=get_version(),
         description='Open Source Image and Video Super-Resolution Toolbox',
         long_description=readme(),
+        long_description_content_type='text/markdown',
         author='Xintao Wang',
         author_email='xintao.wang@outlook.com',
         keywords='computer vision, restoration, super resolution',
         url='https://github.com/xinntao/BasicSR',
-        packages=find_packages(
-            exclude=('options', 'datasets', 'experiments', 'results',
-                     'tb_logger', 'wandb')),
+        include_package_data=True,
+        packages=find_packages(exclude=('options', 'datasets', 'experiments', 'results', 'tb_logger', 'wandb')),
         classifiers=[
             'Development Status :: 4 - Beta',
             'License :: OSI Approved :: Apache Software License',

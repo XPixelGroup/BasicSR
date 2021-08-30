@@ -1,18 +1,17 @@
-import importlib
 import torch
 from collections import Counter
-from copy import deepcopy
 from os import path as osp
 from torch import distributed as dist
 from tqdm import tqdm
 
-from basicsr.models.sr_model import SRModel
+from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
+from basicsr.utils.registry import MODEL_REGISTRY
+from .sr_model import SRModel
 
-metric_module = importlib.import_module('basicsr.metrics')
 
-
+@MODEL_REGISTRY.register()
 class VideoBaseModel(SRModel):
     """Base video SR model."""
 
@@ -30,10 +29,7 @@ class VideoBaseModel(SRModel):
             num_frame_each_folder = Counter(dataset.data_info['folder'])
             for folder, num_frame in num_frame_each_folder.items():
                 self.metric_results[folder] = torch.zeros(
-                    num_frame,
-                    len(self.opt['val']['metrics']),
-                    dtype=torch.float32,
-                    device='cuda')
+                    num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
         rank, world_size = get_dist_info()
         if with_metrics:
             for _, tensor in self.metric_results.items():
@@ -64,44 +60,34 @@ class VideoBaseModel(SRModel):
 
             if save_img:
                 if self.opt['is_train']:
-                    raise NotImplementedError(
-                        'saving image is not supported during training.')
+                    raise NotImplementedError('saving image is not supported during training.')
                 else:
                     if 'vimeo' in dataset_name.lower():  # vimeo90k dataset
                         split_result = lq_path.split('/')
-                        img_name = (f'{split_result[-3]}_{split_result[-2]}_'
-                                    f'{split_result[-1].split(".")[0]}')
+                        img_name = (f'{split_result[-3]}_{split_result[-2]}_' f'{split_result[-1].split(".")[0]}')
                     else:  # other datasets, e.g., REDS, Vid4
                         img_name = osp.splitext(osp.basename(lq_path))[0]
 
                     if self.opt['val']['suffix']:
-                        save_img_path = osp.join(
-                            self.opt['path']['visualization'], dataset_name,
-                            folder,
-                            f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
+                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
                     else:
-                        save_img_path = osp.join(
-                            self.opt['path']['visualization'], dataset_name,
-                            folder, f'{img_name}_{self.opt["name"]}.png')
+                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
+                                                 f'{img_name}_{self.opt["name"]}.png')
                 imwrite(result_img, save_img_path)
 
             if with_metrics:
                 # calculate metrics
-                opt_metric = deepcopy(self.opt['val']['metrics'])
-                for metric_idx, opt_ in enumerate(opt_metric.values()):
-                    metric_type = opt_.pop('type')
-                    result = getattr(metric_module,
-                                     metric_type)(result_img, gt_img, **opt_)
-                    self.metric_results[folder][int(frame_idx),
-                                                metric_idx] += result
+                for metric_idx, opt_ in enumerate(self.opt['val']['metrics'].values()):
+                    metric_data = dict(img1=result_img, img2=gt_img)
+                    result = calculate_metric(metric_data, opt_)
+                    self.metric_results[folder][int(frame_idx), metric_idx] += result
 
             # progress bar
             if rank == 0:
                 for _ in range(world_size):
                     pbar.update(1)
-                    pbar.set_description(
-                        f'Test {folder}:'
-                        f'{int(frame_idx) + world_size}/{max_idx}')
+                    pbar.set_description(f'Test {folder}:' f'{int(frame_idx) + world_size}/{max_idx}')
         if rank == 0:
             pbar.close()
 
@@ -115,18 +101,14 @@ class VideoBaseModel(SRModel):
                 pass  # assume use one gpu in non-dist testing
 
             if rank == 0:
-                self._log_validation_metric_values(current_iter, dataset_name,
-                                                   tb_logger)
+                self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
-    def nondist_validation(self, dataloader, current_iter, tb_logger,
-                           save_img):
+    def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         logger = get_root_logger()
-        logger.warning(
-            'nondist_validation is not implemented. Run dist_validation.')
+        logger.warning('nondist_validation is not implemented. Run dist_validation.')
         self.dist_validation(dataloader, current_iter, tb_logger, save_img)
 
-    def _log_validation_metric_values(self, current_iter, dataset_name,
-                                      tb_logger):
+    def _log_validation_metric_values(self, current_iter, dataset_name, tb_logger):
         # average all frames for each sub-folder
         # metric_results_avg is a dict:{
         #    'folder1': tensor (len(metrics)),
@@ -140,21 +122,16 @@ class VideoBaseModel(SRModel):
         #    'metric1': float,
         #    'metric2': float
         # }
-        total_avg_results = {
-            metric: 0
-            for metric in self.opt['val']['metrics'].keys()
-        }
+        total_avg_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
         for folder, tensor in metric_results_avg.items():
             for idx, metric in enumerate(total_avg_results.keys()):
-                total_avg_results[metric] += metric_results_avg[folder][
-                    idx].item()
+                total_avg_results[metric] += metric_results_avg[folder][idx].item()
         # average among folders
         for metric in total_avg_results.keys():
             total_avg_results[metric] /= len(metric_results_avg)
 
         log_str = f'Validation {dataset_name}\n'
-        for metric_idx, (metric,
-                         value) in enumerate(total_avg_results.items()):
+        for metric_idx, (metric, value) in enumerate(total_avg_results.items()):
             log_str += f'\t # {metric}: {value:.4f}'
             for folder, tensor in metric_results_avg.items():
                 log_str += f'\t # {folder}: {tensor[metric_idx].item():.4f}'
@@ -163,10 +140,7 @@ class VideoBaseModel(SRModel):
         logger = get_root_logger()
         logger.info(log_str)
         if tb_logger:
-            for metric_idx, (metric,
-                             value) in enumerate(total_avg_results.items()):
+            for metric_idx, (metric, value) in enumerate(total_avg_results.items()):
                 tb_logger.add_scalar(f'metrics/{metric}', value, current_iter)
                 for folder, tensor in metric_results_avg.items():
-                    tb_logger.add_scalar(f'metrics/{metric}/{folder}',
-                                         tensor[metric_idx].item(),
-                                         current_iter)
+                    tb_logger.add_scalar(f'metrics/{metric}/{folder}', tensor[metric_idx].item(), current_iter)

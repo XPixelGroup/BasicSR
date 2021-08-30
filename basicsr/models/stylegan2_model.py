@@ -1,21 +1,20 @@
 import cv2
-import importlib
 import math
 import numpy as np
 import random
 import torch
 from collections import OrderedDict
-from copy import deepcopy
 from os import path as osp
 
-from basicsr.models.archs import define_network
-from basicsr.models.base_model import BaseModel
-from basicsr.models.losses.losses import g_path_regularize, r1_penalty
+from basicsr.archs import build_network
+from basicsr.losses import build_loss
+from basicsr.losses.losses import g_path_regularize, r1_penalty
 from basicsr.utils import imwrite, tensor2img
+from basicsr.utils.registry import MODEL_REGISTRY
+from .base_model import BaseModel
 
-loss_module = importlib.import_module('basicsr.models.losses')
 
-
+@MODEL_REGISTRY.register()
 class StyleGAN2Model(BaseModel):
     """StyleGAN2 model."""
 
@@ -23,22 +22,19 @@ class StyleGAN2Model(BaseModel):
         super(StyleGAN2Model, self).__init__(opt)
 
         # define network net_g
-        self.net_g = define_network(deepcopy(opt['network_g']))
+        self.net_g = build_network(opt['network_g'])
         self.net_g = self.model_to_device(self.net_g)
         self.print_network(self.net_g)
         # load pretrained model
         load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
             param_key = self.opt['path'].get('param_key_g', 'params')
-            self.load_network(self.net_g, load_path,
-                              self.opt['path'].get('strict_load_g',
-                                                   True), param_key)
+            self.load_network(self.net_g, load_path, self.opt['path'].get('strict_load_g', True), param_key)
 
         # latent dimension: self.num_style_feat
         self.num_style_feat = opt['network_g']['num_style_feat']
         num_val_samples = self.opt['val'].get('num_val_samples', 16)
-        self.fixed_sample = torch.randn(
-            num_val_samples, self.num_style_feat, device=self.device)
+        self.fixed_sample = torch.randn(num_val_samples, self.num_style_feat, device=self.device)
 
         if self.is_train:
             self.init_training_settings()
@@ -47,27 +43,24 @@ class StyleGAN2Model(BaseModel):
         train_opt = self.opt['train']
 
         # define network net_d
-        self.net_d = define_network(deepcopy(self.opt['network_d']))
+        self.net_d = build_network(self.opt['network_d'])
         self.net_d = self.model_to_device(self.net_d)
         self.print_network(self.net_d)
 
         # load pretrained model
         load_path = self.opt['path'].get('pretrain_network_d', None)
         if load_path is not None:
-            self.load_network(self.net_d, load_path,
-                              self.opt['path'].get('strict_load_d', True))
+            param_key = self.opt['path'].get('param_key_d', 'params')
+            self.load_network(self.net_d, load_path, self.opt['path'].get('strict_load_d', True), param_key)
 
         # define network net_g with Exponential Moving Average (EMA)
         # net_g_ema only used for testing on one GPU and saving, do not need to
         # wrap with DistributedDataParallel
-        self.net_g_ema = define_network(deepcopy(self.opt['network_g'])).to(
-            self.device)
+        self.net_g_ema = build_network(self.opt['network_g']).to(self.device)
         # load pretrained model
         load_path = self.opt['path'].get('pretrain_network_g', None)
         if load_path is not None:
-            self.load_network(self.net_g_ema, load_path,
-                              self.opt['path'].get('strict_load_g',
-                                                   True), 'params_ema')
+            self.load_network(self.net_g_ema, load_path, self.opt['path'].get('strict_load_g', True), 'params_ema')
         else:
             self.model_ema(0)  # copy net_g weight
 
@@ -77,8 +70,7 @@ class StyleGAN2Model(BaseModel):
 
         # define losses
         # gan loss (wgan)
-        cri_gan_cls = getattr(loss_module, train_opt['gan_opt'].pop('type'))
-        self.cri_gan = cri_gan_cls(**train_opt['gan_opt']).to(self.device)
+        self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
         # regularization weights
         self.r1_reg_weight = train_opt['r1_reg_weight']  # for discriminator
         self.path_reg_weight = train_opt['path_reg_weight']  # for generator
@@ -134,14 +126,9 @@ class StyleGAN2Model(BaseModel):
             }]
 
         optim_type = train_opt['optim_g'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_g = torch.optim.Adam(
-                optim_params_g,
-                lr=train_opt['optim_g']['lr'] * net_g_reg_ratio,
-                betas=(0**net_g_reg_ratio, 0.99**net_g_reg_ratio))
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        lr = train_opt['optim_g']['lr'] * net_g_reg_ratio
+        betas = (0**net_g_reg_ratio, 0.99**net_g_reg_ratio)
+        self.optimizer_g = self.get_optimizer(optim_type, optim_params_g, lr, betas=betas)
         self.optimizers.append(self.optimizer_g)
 
         # optimizer d
@@ -174,37 +161,19 @@ class StyleGAN2Model(BaseModel):
             }]
 
         optim_type = train_opt['optim_d'].pop('type')
-        if optim_type == 'Adam':
-            self.optimizer_d = torch.optim.Adam(
-                optim_params_d,
-                lr=train_opt['optim_d']['lr'] * net_d_reg_ratio,
-                betas=(0**net_d_reg_ratio, 0.99**net_d_reg_ratio))
-        else:
-            raise NotImplementedError(
-                f'optimizer {optim_type} is not supperted yet.')
+        lr = train_opt['optim_d']['lr'] * net_d_reg_ratio
+        betas = (0**net_d_reg_ratio, 0.99**net_d_reg_ratio)
+        self.optimizer_d = self.get_optimizer(optim_type, optim_params_d, lr, betas=betas)
         self.optimizers.append(self.optimizer_d)
-
-    def model_ema(self, decay=0.999):
-        net_g = self.get_bare_model(self.net_g)
-
-        net_g_params = dict(net_g.named_parameters())
-        net_g_ema_params = dict(self.net_g_ema.named_parameters())
-
-        for k in net_g_ema_params.keys():
-            net_g_ema_params[k].data.mul_(decay).add_(
-                net_g_params[k].data, alpha=1 - decay)
 
     def feed_data(self, data):
         self.real_img = data['gt'].to(self.device)
 
     def make_noise(self, batch, num_noise):
         if num_noise == 1:
-            noises = torch.randn(
-                batch, self.num_style_feat, device=self.device)
+            noises = torch.randn(batch, self.num_style_feat, device=self.device)
         else:
-            noises = torch.randn(
-                num_noise, batch, self.num_style_feat,
-                device=self.device).unbind(0)
+            noises = torch.randn(num_noise, batch, self.num_style_feat, device=self.device).unbind(0)
         return noises
 
     def mixing_noise(self, batch, prob):
@@ -228,9 +197,7 @@ class StyleGAN2Model(BaseModel):
 
         real_pred = self.net_d(self.real_img)
         # wgan loss with softplus (logistic loss) for discriminator
-        l_d = self.cri_gan(
-            real_pred, True, is_disc=True) + self.cri_gan(
-                fake_pred, False, is_disc=True)
+        l_d = self.cri_gan(real_pred, True, is_disc=True) + self.cri_gan(fake_pred, False, is_disc=True)
         loss_dict['l_d'] = l_d
         # In wgan, real_score should be positive and fake_score should be
         # negative
@@ -242,9 +209,7 @@ class StyleGAN2Model(BaseModel):
             self.real_img.requires_grad = True
             real_pred = self.net_d(self.real_img)
             l_d_r1 = r1_penalty(real_pred, self.real_img)
-            l_d_r1 = (
-                self.r1_reg_weight / 2 * l_d_r1 * self.net_d_reg_every +
-                0 * real_pred[0])
+            l_d_r1 = (self.r1_reg_weight / 2 * l_d_r1 * self.net_d_reg_every + 0 * real_pred[0])
             # TODO: why do we need to add 0 * real_pred, otherwise, a runtime
             # error will arise: RuntimeError: Expected to have finished
             # reduction in the prior iteration before starting a new one.
@@ -270,16 +235,12 @@ class StyleGAN2Model(BaseModel):
         l_g.backward()
 
         if current_iter % self.net_g_reg_every == 0:
-            path_batch_size = max(
-                1, batch // self.opt['train']['path_batch_shrink'])
+            path_batch_size = max(1, batch // self.opt['train']['path_batch_shrink'])
             noise = self.mixing_noise(path_batch_size, self.mixing_prob)
             fake_img, latents = self.net_g(noise, return_latents=True)
-            l_g_path, path_lengths, self.mean_path_length = g_path_regularize(
-                fake_img, latents, self.mean_path_length)
+            l_g_path, path_lengths, self.mean_path_length = g_path_regularize(fake_img, latents, self.mean_path_length)
 
-            l_g_path = (
-                self.path_reg_weight * self.net_g_reg_every * l_g_path +
-                0 * fake_img[0, 0, 0, 0])
+            l_g_path = (self.path_reg_weight * self.net_g_reg_every * l_g_path + 0 * fake_img[0, 0, 0, 0])
             # TODO:  why do we need to add 0 * fake_img[0, 0, 0, 0]
             l_g_path.backward()
             loss_dict['l_g_path'] = l_g_path.detach().mean()
@@ -299,32 +260,24 @@ class StyleGAN2Model(BaseModel):
 
     def dist_validation(self, dataloader, current_iter, tb_logger, save_img):
         if self.opt['rank'] == 0:
-            self.nondist_validation(dataloader, current_iter, tb_logger,
-                                    save_img)
+            self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
-    def nondist_validation(self, dataloader, current_iter, tb_logger,
-                           save_img):
+    def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         assert dataloader is None, 'Validation dataloader should be None.'
         self.test()
         result = tensor2img(self.output, min_max=(-1, 1))
         if self.opt['is_train']:
-            save_img_path = osp.join(self.opt['path']['visualization'],
-                                     'train', f'train_{current_iter}.png')
+            save_img_path = osp.join(self.opt['path']['visualization'], 'train', f'train_{current_iter}.png')
         else:
-            save_img_path = osp.join(self.opt['path']['visualization'], 'test',
-                                     f'test_{self.opt["name"]}.png')
+            save_img_path = osp.join(self.opt['path']['visualization'], 'test', f'test_{self.opt["name"]}.png')
         imwrite(result, save_img_path)
         # add sample images to tb_logger
         result = (result / 255.).astype(np.float32)
         result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
         if tb_logger is not None:
-            tb_logger.add_image(
-                'samples', result, global_step=current_iter, dataformats='HWC')
+            tb_logger.add_image('samples', result, global_step=current_iter, dataformats='HWC')
 
     def save(self, epoch, current_iter):
-        self.save_network([self.net_g, self.net_g_ema],
-                          'net_g',
-                          current_iter,
-                          param_key=['params', 'params_ema'])
+        self.save_network([self.net_g, self.net_g_ema], 'net_g', current_iter, param_key=['params', 'params_ema'])
         self.save_network(self.net_d, 'net_d', current_iter)
         self.save_training_state(epoch, current_iter)

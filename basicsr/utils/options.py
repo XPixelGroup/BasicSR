@@ -1,6 +1,12 @@
+import argparse
+import random
+import torch
 import yaml
 from collections import OrderedDict
 from os import path as osp
+
+from basicsr.utils import set_random_seed
+from basicsr.utils.dist_util import get_dist_info, init_dist
 
 
 def ordered_yaml():
@@ -28,7 +34,7 @@ def ordered_yaml():
     return Loader, Dumper
 
 
-def parse(opt_path, is_train=True):
+def parse(opt_path, root_path, is_train=True, debug=False):
     """Parse option file.
 
     Args:
@@ -41,8 +47,13 @@ def parse(opt_path, is_train=True):
     with open(opt_path, mode='r') as f:
         Loader, _ = ordered_yaml()
         opt = yaml.load(f, Loader=Loader)
+    if debug and not opt['name'].startswith('debug'):
+        opt['name'] = 'debug_' + opt['name']
 
     opt['is_train'] = is_train
+
+    if opt['num_gpu'] == 'auto':
+        opt['num_gpu'] = torch.cuda.device_count()
 
     # datasets
     for phase, dataset in opt['datasets'].items():
@@ -58,21 +69,16 @@ def parse(opt_path, is_train=True):
 
     # paths
     for key, val in opt['path'].items():
-        if (val is not None) and ('resume_state' in key
-                                  or 'pretrain_network' in key):
+        if (val is not None) and ('resume_state' in key or 'pretrain_network' in key):
             opt['path'][key] = osp.expanduser(val)
-    opt['path']['root'] = osp.abspath(
-        osp.join(__file__, osp.pardir, osp.pardir, osp.pardir))
+
     if is_train:
-        experiments_root = osp.join(opt['path']['root'], 'experiments',
-                                    opt['name'])
+        experiments_root = osp.join(root_path, 'experiments', opt['name'])
         opt['path']['experiments_root'] = experiments_root
         opt['path']['models'] = osp.join(experiments_root, 'models')
-        opt['path']['training_states'] = osp.join(experiments_root,
-                                                  'training_states')
+        opt['path']['training_states'] = osp.join(experiments_root, 'training_states')
         opt['path']['log'] = experiments_root
-        opt['path']['visualization'] = osp.join(experiments_root,
-                                                'visualization')
+        opt['path']['visualization'] = osp.join(experiments_root, 'visualization')
 
         # change some options for debug mode
         if 'debug' in opt['name']:
@@ -81,7 +87,7 @@ def parse(opt_path, is_train=True):
             opt['logger']['print_freq'] = 1
             opt['logger']['save_checkpoint_freq'] = 8
     else:  # test
-        results_root = osp.join(opt['path']['root'], 'results', opt['name'])
+        results_root = osp.join(root_path, 'results', opt['name'])
         opt['path']['results_root'] = results_root
         opt['path']['log'] = results_root
         opt['path']['visualization'] = osp.join(results_root, 'visualization')
@@ -108,3 +114,37 @@ def dict2str(opt, indent_level=1):
         else:
             msg += ' ' * (indent_level * 2) + k + ': ' + str(v) + '\n'
     return msg
+
+
+def parse_options(root_path, is_train=True):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
+    parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none', help='job launcher')
+    parser.add_argument('--auto_resume', action='store_true')
+    parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--local_rank', type=int, default=0)
+    args = parser.parse_args()
+    opt = parse(args.opt, root_path, is_train=is_train, debug=args.debug)
+    opt['auto_resume'] = args.auto_resume
+
+    # distributed settings
+    if args.launcher == 'none':
+        opt['dist'] = False
+        print('Disable distributed.', flush=True)
+    else:
+        opt['dist'] = True
+        if args.launcher == 'slurm' and 'dist_params' in opt:
+            init_dist(args.launcher, **opt['dist_params'])
+        else:
+            init_dist(args.launcher)
+
+    opt['rank'], opt['world_size'] = get_dist_info()
+
+    # random seed
+    seed = opt.get('manual_seed')
+    if seed is None:
+        seed = random.randint(1, 10000)
+        opt['manual_seed'] = seed
+    set_random_seed(seed + opt['rank'])
+
+    return opt

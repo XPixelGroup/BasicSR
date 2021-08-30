@@ -1,7 +1,6 @@
 import torch
 
-from basicsr.models.archs.stylegan2_arch import (StyleGAN2Discriminator,
-                                                 StyleGAN2Generator)
+from basicsr.archs.stylegan2_arch import StyleGAN2Discriminator, StyleGAN2Generator
 
 
 def convert_net_g(ori_net, crt_net):
@@ -22,8 +21,7 @@ def convert_net_g(ori_net, crt_net):
                 ori_k = crt_k.replace('style_conv1', 'conv1')
         # style conv
         elif 'style_convs' in crt_k:
-            ori_k = crt_k.replace('style_convs',
-                                  'convs').replace('modulated_conv', 'conv')
+            ori_k = crt_k.replace('style_convs', 'convs').replace('modulated_conv', 'conv')
             if crt_v.shape == torch.Size([1]):
                 ori_k = ori_k.replace('.weight', '.noise.weight')
         # to_rgb1
@@ -78,21 +76,14 @@ if __name__ == '__main__':
     channel_multiplier = 1
 
     # convert generator
-    crt_net = StyleGAN2Generator(
-        out_size,
-        num_style_feat=512,
-        num_mlp=8,
-        channel_multiplier=channel_multiplier)
+    crt_net = StyleGAN2Generator(out_size, num_style_feat=512, num_mlp=8, channel_multiplier=channel_multiplier)
     crt_net = crt_net.state_dict()
 
     crt_net_params_ema = convert_net_g(ori_net['g_ema'], crt_net)
-    torch.save(
-        dict(params_ema=crt_net_params_ema, latent_avg=ori_net['latent_avg']),
-        save_path_g)
+    torch.save(dict(params_ema=crt_net_params_ema, latent_avg=ori_net['latent_avg']), save_path_g)
 
     # convert discriminator
-    crt_net = StyleGAN2Discriminator(
-        out_size, channel_multiplier=channel_multiplier)
+    crt_net = StyleGAN2Discriminator(out_size, channel_multiplier=channel_multiplier)
     crt_net = crt_net.state_dict()
 
     crt_net_params = convert_net_d(ori_net['d'], crt_net)

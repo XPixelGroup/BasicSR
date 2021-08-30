@@ -1,7 +1,9 @@
-from basicsr.models.srgan_model import SRGANModel
-from basicsr.models.video_base_model import VideoBaseModel
+from basicsr.utils.registry import MODEL_REGISTRY
+from .srgan_model import SRGANModel
+from .video_base_model import VideoBaseModel
 
 
+@MODEL_REGISTRY.register()
 class VideoGANModel(SRGANModel, VideoBaseModel):
     """Video GAN model.
 
