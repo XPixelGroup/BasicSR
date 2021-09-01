@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 
+from basicsr.utils.registry import ARCH_REGISTRY
 from .arch_util import to_2tuple, trunc_normal_
 
 
@@ -690,6 +691,7 @@ class UpsampleOneStep(nn.Sequential):
         return flops
 
 
+@ARCH_REGISTRY.register()
 class SwinIR(nn.Module):
     r""" SwinIR
         A PyTorch impl of : `SwinIR: Image Restoration Using Swin Transformer`, based on Swin Transformer.

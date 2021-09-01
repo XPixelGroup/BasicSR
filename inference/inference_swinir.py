@@ -6,7 +6,7 @@ import os
 import torch
 from torch.nn import functional as F
 
-from basicsr.archs.swinir import SwinIR
+from basicsr.archs.swinir_arch import SwinIR
 
 
 def main():
