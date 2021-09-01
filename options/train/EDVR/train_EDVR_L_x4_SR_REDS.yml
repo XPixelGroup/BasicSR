@@ -48,6 +48,7 @@ datasets:
 
 # network structures
 network_g:
+  ema_decay: 0.999
   type: EDVR
   num_in_ch: 3
   num_out_ch: 3
