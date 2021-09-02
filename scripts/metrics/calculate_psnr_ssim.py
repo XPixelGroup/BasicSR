@@ -67,7 +67,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gt', type=str, default='datasets/val_set14/Set14', help='Path to gt (Ground-Truth)')
     parser.add_argument('--restored', type=str, default='results/Set14', help='Path to restored images')
-    parser.add_argument('--crop_border', type=int, default=4, help='Crop border for each side')
+    parser.add_argument('--crop_border', type=int, default=0, help='Crop border for each side')
     parser.add_argument('--suffix', type=str, default='', help='Suffix for restored images')
     parser.add_argument(
         '--test_y_channel',
