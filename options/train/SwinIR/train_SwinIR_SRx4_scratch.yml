@@ -1,5 +1,5 @@
 # general settings
-name: train_SwinIR_x4_scratch_P48W8_DIV2K_500k_B4G8
+name: train_SwinIR_SRx4_scratch_P48W8_DIV2K_500k_B4G8
 model_type: SwinIRModel
 scale: 4
 num_gpu: auto
