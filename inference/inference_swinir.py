@@ -91,7 +91,6 @@ def define_model(args):
             mlp_ratio=2,
             upsampler='pixelshuffle',
             resi_connection='1conv')
-        model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
 
     # 002 lightweight image sr
     # use 'pixelshuffledirect' to save parameters
@@ -108,7 +107,6 @@ def define_model(args):
             mlp_ratio=2,
             upsampler='pixelshuffledirect',
             resi_connection='1conv')
-        model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
 
     # 003 real-world image sr
     elif args.task == 'real_sr':
@@ -140,7 +138,6 @@ def define_model(args):
                 mlp_ratio=2,
                 upsampler='nearest+conv',
                 resi_connection='3conv')
-        model.load_state_dict(torch.load(args.model_path)['params_ema'], strict=True)  #
 
     # 004 grayscale image denoising
     elif args.task == 'gray_dn':
@@ -156,7 +153,6 @@ def define_model(args):
             mlp_ratio=2,
             upsampler='',
             resi_connection='1conv')
-        model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
 
     # 005 color image denoising
     elif args.task == 'color_dn':
@@ -172,7 +168,6 @@ def define_model(args):
             mlp_ratio=2,
             upsampler='',
             resi_connection='1conv')
-        model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
 
     # 006 JPEG compression artifact reduction
     # use window_size=7 because JPEG encoding uses 8x8; use img_range=255 because it's slightly better than 1
@@ -189,7 +184,13 @@ def define_model(args):
             mlp_ratio=2,
             upsampler='',
             resi_connection='1conv')
-        model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
+
+    loadnet = torch.load(args.model_path)
+    if 'params_ema' in loadnet:
+        keyname = 'params_ema'
+    else:
+        keyname = 'params'
+    model.load_state_dict(loadnet[keyname], strict=True)
 
     return model
 
