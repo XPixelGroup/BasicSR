@@ -1,3 +1,4 @@
+# Modified from https://github.com/JingyunLiang/SwinIR
 import argparse
 import cv2
 import glob
@@ -26,7 +27,9 @@ def main():
     parser.add_argument('--jpeg', type=int, default=40, help='scale factor: 10, 20, 30, 40')
     parser.add_argument('--large_model', action='store_true', help='Use large model, only used for real image sr')
     parser.add_argument(
-        '--model_path', type=str, default='experiments/pretrained_models/001_classicalSR_DF2K_s64w8_SwinIR-M_x4.pth')
+        '--model_path',
+        type=str,
+        default='experiments/pretrained_models/SwinIR/001_classicalSR_DF2K_s64w8_SwinIR-M_x4.pth')
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
