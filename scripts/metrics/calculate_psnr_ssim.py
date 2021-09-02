@@ -13,18 +13,22 @@ def main(args):
     """
     psnr_all = []
     ssim_all = []
-    img_list = sorted(scandir(args.gt, recursive=True, full_path=True))
+    img_list_gt = sorted(list(scandir(args.gt, recursive=True, full_path=True)))
+    img_list_restored = sorted(list(scandir(args.restored, recursive=True, full_path=True)))
 
     if args.test_y_channel:
         print('Testing Y channel.')
     else:
         print('Testing RGB channels.')
 
-    for i, img_path in enumerate(img_list):
+    for i, img_path in enumerate(img_list_gt):
         basename, ext = osp.splitext(osp.basename(img_path))
         img_gt = cv2.imread(img_path, cv2.IMREAD_UNCHANGED).astype(np.float32) / 255.
-        img_restored = cv2.imread(osp.join(args.restored, basename + args.suffix + ext), cv2.IMREAD_UNCHANGED).astype(
-            np.float32) / 255.
+        if args.suffix == '':
+            img_path_restored = img_list_restored[i]
+        else:
+            img_path_restored = osp.join(args.restored, basename + args.suffix + ext)
+        img_restored = cv2.imread(img_path_restored, cv2.IMREAD_UNCHANGED).astype(np.float32) / 255.
 
         if args.correct_mean_var:
             mean_l = []
@@ -63,7 +67,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gt', type=str, default='datasets/val_set14/Set14', help='Path to gt (Ground-Truth)')
     parser.add_argument('--restored', type=str, default='results/Set14', help='Path to restored images')
-    parser.add_argument('--crop_border', type=int, default=4, help='Crop border for each side')
+    parser.add_argument('--crop_border', type=int, default=0, help='Crop border for each side')
     parser.add_argument('--suffix', type=str, default='', help='Suffix for restored images')
     parser.add_argument(
         '--test_y_channel',
