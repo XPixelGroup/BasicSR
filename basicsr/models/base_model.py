@@ -111,7 +111,7 @@ class BaseModel():
             net (nn.Module)
         """
         if isinstance(net, (DataParallel, DistributedDataParallel)):
-            net_cls_str = (f'{net.__class__.__name__} - ' f'{net.module.__class__.__name__}')
+            net_cls_str = f'{net.__class__.__name__} - {net.module.__class__.__name__}'
         else:
             net_cls_str = f'{net.__class__.__name__}'
 

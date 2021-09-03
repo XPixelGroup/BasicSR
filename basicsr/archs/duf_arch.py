@@ -150,9 +150,9 @@ class DynamicUpsamplingFilter(nn.Module):
     def __init__(self, filter_size=(5, 5)):
         super(DynamicUpsamplingFilter, self).__init__()
         if not isinstance(filter_size, tuple):
-            raise TypeError('The type of filter_size must be tuple, ' f'but got type{filter_size}')
+            raise TypeError(f'The type of filter_size must be tuple, but got type{filter_size}')
         if len(filter_size) != 2:
-            raise ValueError('The length of filter size must be 2, ' f'but got {len(filter_size)}.')
+            raise ValueError(f'The length of filter size must be 2, but got {len(filter_size)}.')
         # generate a local expansion filter, similar to im2col
         self.filter_size = filter_size
         filter_prod = np.prod(filter_size)

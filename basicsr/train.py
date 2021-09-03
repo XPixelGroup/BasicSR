@@ -58,7 +58,7 @@ def create_train_val_dataloader(opt, logger):
             val_set = build_dataset(dataset_opt)
             val_loader = build_dataloader(
                 val_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed'])
-            logger.info(f'Number of val images/folders in {dataset_opt["name"]}: ' f'{len(val_set)}')
+            logger.info(f'Number of val images/folders in {dataset_opt["name"]}: {len(val_set)}')
         else:
             raise ValueError(f'Dataset phase {phase} is not recognized.')
 

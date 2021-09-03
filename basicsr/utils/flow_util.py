@@ -21,7 +21,7 @@ def flowread(flow_path, quantize=False, concat_axis=0, *args, **kwargs):
         assert concat_axis in [0, 1]
         cat_flow = cv2.imread(flow_path, cv2.IMREAD_UNCHANGED)
         if cat_flow.ndim != 2:
-            raise IOError(f'{flow_path} is not a valid quantized flow file, ' f'its dimension is {cat_flow.ndim}.')
+            raise IOError(f'{flow_path} is not a valid quantized flow file, its dimension is {cat_flow.ndim}.')
         assert cat_flow.shape[concat_axis] % 2 == 0
         dx, dy = np.split(cat_flow, 2, axis=concat_axis)
         flow = dequantize_flow(dx, dy, *args, **kwargs)
