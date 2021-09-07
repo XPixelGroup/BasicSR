@@ -19,7 +19,7 @@
 ## BASICSR_EXT and BASICSR_JIT Environment Variables
 
 If you want to use PyTorch C++ extensions:<br>
-&emsp;deformable convolution: [*dcn* for EDVR](basicsr/ops)<br>
+&emsp;deformable convolution: [*dcn* for EDVR](basicsr/ops) (For torchvision>=0.9.0, we use the official `torchvision.ops.deform_conv2d` instead)<br>
 &emsp;StyleGAN customized operators: [*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
 you also need to:
 
