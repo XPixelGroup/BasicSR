@@ -25,6 +25,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 :triangular_flag_on_post: **新的特性/更新**
 
+- :white_check_mark: Sep 2, 2021. 添加 **SwinIR 训练和测试** 代码: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang):+1:. 更多内容参见 [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
 - :white_check_mark: Aug 5, 2021. 添加了NIQE， 它输出和MATLAB一样的结果 (both are 5.7296 for tests/data/baboon.png).
 - :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
 - :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
@@ -72,7 +73,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 | **Super Resolution** |  |  |  | | |
 | ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
 | EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
-| RCAN | *TODO* | *TODO* |  |  | |
+| RCAN | *TODO* | *TODO* | SwinIR  | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr)|
 | EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
 | BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
 | **Deblurring** |  |  |  | | |

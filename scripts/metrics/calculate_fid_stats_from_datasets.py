@@ -48,7 +48,7 @@ def calculate_stats_from_dataset():
     features = features.numpy()
     total_len = features.shape[0]
     features = features[:args.num_sample]
-    print(f'Extracted {total_len} features, ' f'use the first {features.shape[0]} features to calculate stats.')
+    print(f'Extracted {total_len} features, use the first {features.shape[0]} features to calculate stats.')
     mean = np.mean(features, 0)
     cov = np.cov(features, rowvar=False)
 

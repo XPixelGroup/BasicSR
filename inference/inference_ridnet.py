@@ -47,5 +47,5 @@ if __name__ == '__main__':
             output = net(img)
         # save image
         output = tensor2img(output, rgb2bgr=True, out_type=np.uint8, min_max=(0, 255))
-        save_img_path = os.path.join(result_root, f'{img_name}_x' f'{args.noise_g}_RIDNet.png')
+        save_img_path = os.path.join(result_root, f'{img_name}_x{args.noise_g}_RIDNet.png')
         cv2.imwrite(save_img_path, output)

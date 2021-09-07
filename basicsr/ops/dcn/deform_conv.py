@@ -114,7 +114,7 @@ class DeformConvFunction(Function):
             stride_ = stride[d]
             output_size += ((in_size + (2 * pad) - kernel) // stride_ + 1, )
         if not all(map(lambda s: s > 0, output_size)):
-            raise ValueError('convolution input is too small (output would be ' f'{"x".join(map(str, output_size))})')
+            raise ValueError(f'convolution input is too small (output would be {"x".join(map(str, output_size))})')
         return output_size
 
 
