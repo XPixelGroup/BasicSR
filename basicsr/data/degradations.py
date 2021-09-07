@@ -26,7 +26,7 @@ def sigma_matrix2(sig_x, sig_y, theta):
     """
     d_matrix = np.array([[sig_x**2, 0], [0, sig_y**2]])
     u_matrix = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
-    return np.dot(d_matrix, np.dot(d_matrix, u_matrix.T))
+    return np.dot(u_matrix, np.dot(d_matrix, u_matrix.T))
 
 
 def mesh_grid(kernel_size):
