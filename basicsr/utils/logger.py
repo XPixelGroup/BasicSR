@@ -7,6 +7,37 @@ from .dist_util import get_dist_info, master_only
 initialized_logger = {}
 
 
+class AvgTimer():
+
+    def __init__(self, window=200):
+        self.window = window  # average window
+        self.current_time = 0
+        self.total_time = 0
+        self.count = 0
+        self.avg_time = 0
+        self.start()
+
+    def start(self):
+        self.start_time = time.time()
+
+    def record(self):
+        self.count += 1
+        self.current_time = time.time() - self.start_time
+        self.total_time += self.current_time
+        # calculate average time
+        self.avg_time = self.total_time / self.count
+        # reset
+        if self.count > self.window:
+            self.count = 0
+            self.total_time = 0
+
+    def get_current_time(self):
+        return self.current_time
+
+    def get_avg_time(self):
+        return self.avg_time
+
+
 class MessageLogger():
     """Message logger for printing.
 
@@ -29,6 +60,9 @@ class MessageLogger():
         self.tb_logger = tb_logger
         self.start_time = time.time()
         self.logger = get_root_logger()
+
+    def reset_start_time(self):
+        self.start_time = time.time()
 
     @master_only
     def __call__(self, log_vars):
