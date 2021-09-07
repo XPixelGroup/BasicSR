@@ -24,7 +24,7 @@ def test_pipeline(root_path):
 
     # create test dataset and dataloader
     test_loaders = []
-    for phase, dataset_opt in sorted(opt['datasets'].items()):
+    for _, dataset_opt in sorted(opt['datasets'].items()):
         test_set = build_dataset(dataset_opt)
         test_loader = build_dataloader(
             test_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed'])

@@ -142,8 +142,7 @@ class ModulatedDeformConvFunction(Function):
             bias = input.new_empty(1)  # fake tensor
         if not input.is_cuda:
             raise NotImplementedError
-        if weight.requires_grad or mask.requires_grad or offset.requires_grad \
-                or input.requires_grad:
+        if weight.requires_grad or mask.requires_grad or offset.requires_grad or input.requires_grad:
             ctx.save_for_backward(input, offset, mask, weight, bias)
         output = input.new_empty(ModulatedDeformConvFunction._infer_shape(ctx, input, weight))
         ctx._bufs = [input.new_empty(0), input.new_empty(0)]
@@ -204,11 +203,8 @@ class DeformConv(nn.Module):
         super(DeformConv, self).__init__()
 
         assert not bias
-        assert in_channels % groups == 0, \
-            f'in_channels {in_channels} is not divisible by groups {groups}'
-        assert out_channels % groups == 0, \
-            f'out_channels {out_channels} is not divisible ' \
-            f'by groups {groups}'
+        assert in_channels % groups == 0, f'in_channels {in_channels} is not divisible by groups {groups}'
+        assert out_channels % groups == 0, f'out_channels {out_channels} is not divisible by groups {groups}'
 
         self.in_channels = in_channels
         self.out_channels = out_channels

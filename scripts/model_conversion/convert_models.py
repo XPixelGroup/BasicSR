@@ -13,7 +13,7 @@ def convert_edvr():
     # for k, v in crt_net.items():
     #     print(k)
 
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         # deblur hr in
         if 'predeblur.stride_conv_hr1' in crt_k:
             ori_k = crt_k.replace('predeblur.stride_conv_hr1', 'pre_deblur.conv_first_2')
@@ -53,7 +53,7 @@ def convert_edvr():
                 weight_bias = crt_k.split('.l')[1].split('.')[2]
                 ori_k = f'pcd_align.L{idx}_dcnpack.{name}.{weight_bias}'
         elif 'pcd_align.offset_conv' in crt_k:
-            a, b, c, d = crt_k.split('.')
+            _, b, c, d = crt_k.split('.')
             idx = b.split('conv')[1]
             level = c.split('l')[1]
             ori_k = f'pcd_align.L{level}_offset_conv{idx}.{d}'
@@ -113,7 +113,7 @@ def convert_edsr(ori_net_path, crt_net_path, save_path, num_block=32):
     ori_net = torch.load(ori_net_path)
     crt_net = torch.load(crt_net_path)
 
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         if 'conv_first' in crt_k:
             ori_k = crt_k.replace('conv_first', 'head.0')
             crt_net[crt_k] = ori_net[ori_k]
@@ -141,7 +141,7 @@ def convert_rcan_model():
 
     # for ori_k, ori_v in ori_net.items():
     #     print(ori_k)
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         # print(crt_k)
         if 'conv_first' in crt_k:
             ori_k = crt_k.replace('conv_first', 'head.0')
@@ -156,7 +156,7 @@ def convert_rcan_model():
             ori_k = crt_k.replace('conv_last', 'tail.1')
 
         elif 'attention' in crt_k:
-            a, ai, b, bi, c, ci, d, di, e = crt_k.split('.')
+            _, ai, _, bi, _, ci, d, di, e = crt_k.split('.')
             ori_k = f'body.{ai}.body.{bi}.body.{ci}.conv_du.{int(di)-1}.{e}'
         elif 'rcab' in crt_k:
             a, ai, b, bi, c, ci, d = crt_k.split('.')
@@ -183,7 +183,7 @@ def convert_esrgan_model():
     # for k, v in ori_net.items():
     #     print(k)
 
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         if 'rdb' in crt_k:
             ori_k = crt_k.replace('rdb', 'RDB').replace('body', 'RRDB_trunk')
         elif 'conv_body' in crt_k:
@@ -271,7 +271,7 @@ def convert_duf_model():
         crt_net[crt_k] = ori_net[ori_k]
     '''
     # for 16 layers
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         if 'conv3d1' in crt_k:
             ori_k = crt_k.replace('conv3d1', 'conv3d_1')
         elif 'conv3d2' in crt_k:

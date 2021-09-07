@@ -483,12 +483,12 @@ class GANFeatLoss(nn.Module):
         self.loss_weight = loss_weight
 
     def forward(self, pred_fake, pred_real):
-        num_D = len(pred_fake)
+        num_d = len(pred_fake)
         loss = 0
-        for i in range(num_D):  # for each discriminator
+        for i in range(num_d):  # for each discriminator
             # last output is the final prediction, exclude it
             num_intermediate_outputs = len(pred_fake[i]) - 1
             for j in range(num_intermediate_outputs):  # for each layer output
                 unweighted_loss = self.loss_op(pred_fake[i][j], pred_real[i][j].detach())
-                loss += unweighted_loss / num_D
+                loss += unweighted_loss / num_d
         return loss * self.loss_weight

@@ -6,7 +6,7 @@ from basicsr.archs.vgg_arch import NAMES
 
 def convert_net(ori_net, crt_net):
 
-    for crt_k, crt_v in crt_net.items():
+    for crt_k, _ in crt_net.items():
         # vgg feature extractor
         if 'vgg_extractor' in crt_k:
             ori_k = crt_k.replace('vgg_extractor', 'VggExtract').replace('vgg_net', 'model')
@@ -33,7 +33,7 @@ def convert_net(ori_net, crt_net):
                 raise ValueError('Wrong!')
         elif 'multi_scale_dilation' in crt_k:
             if 'conv_blocks' in crt_k:
-                a, b, c, d, e = crt_k.split('.')
+                _, _, c, d, e = crt_k.split('.')
                 ori_k = f'MSDilate.conv{int(c)+1}.{d}.{e}'
             else:
                 ori_k = crt_k.replace('multi_scale_dilation.conv_fusion', 'MSDilate.convi')

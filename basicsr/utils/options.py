@@ -45,8 +45,8 @@ def parse(opt_path, root_path, is_train=True, debug=False):
         (dict): Options.
     """
     with open(opt_path, mode='r') as f:
-        Loader, _ = ordered_yaml()
-        opt = yaml.load(f, Loader=Loader)
+        loader, _ = ordered_yaml()
+        opt = yaml.load(f, Loader=loader)
     if debug and not opt['name'].startswith('debug'):
         opt['name'] = 'debug_' + opt['name']
 

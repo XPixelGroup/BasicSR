@@ -59,8 +59,8 @@ def _ssim(img1, img2):
         float: ssim result.
     """
 
-    C1 = (0.01 * 255)**2
-    C2 = (0.03 * 255)**2
+    c1 = (0.01 * 255)**2
+    c2 = (0.03 * 255)**2
 
     img1 = img1.astype(np.float64)
     img2 = img2.astype(np.float64)
@@ -76,7 +76,7 @@ def _ssim(img1, img2):
     sigma2_sq = cv2.filter2D(img2**2, -1, window)[5:-5, 5:-5] - mu2_sq
     sigma12 = cv2.filter2D(img1 * img2, -1, window)[5:-5, 5:-5] - mu1_mu2
 
-    ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2))
+    ssim_map = ((2 * mu1_mu2 + c1) * (2 * sigma12 + c2)) / ((mu1_sq + mu2_sq + c1) * (sigma1_sq + sigma2_sq + c2))
     return ssim_map.mean()
 
 

@@ -15,7 +15,7 @@ class BlurFunctionBackward(Function):
 
     @staticmethod
     def backward(ctx, gradgrad_output):
-        kernel, kernel_flip = ctx.saved_tensors
+        kernel, _ = ctx.saved_tensors
         grad_input = F.conv2d(gradgrad_output, kernel, padding=1, groups=gradgrad_output.shape[1])
         return grad_input, None, None
 
