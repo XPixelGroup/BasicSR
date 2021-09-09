@@ -6,7 +6,7 @@ from collections import OrderedDict
 from os import path as osp
 
 from basicsr.utils import set_random_seed
-from basicsr.utils.dist_util import get_dist_info, init_dist
+from basicsr.utils.dist_util import get_dist_info, init_dist, master_only
 
 
 def ordered_yaml():
@@ -116,6 +116,30 @@ def dict2str(opt, indent_level=1):
     return msg
 
 
+def _postprocess_yml_value(value):
+    # None
+    if value == '~' or value.lower() == 'none':
+        return None
+    # bool
+    if value.lower() == 'true':
+        return True
+    elif value.lower() == 'false':
+        return False
+    # !!float number
+    if value.startswith('!!float'):
+        return float(value.replace('!!float', ''))
+    # number
+    if value.isdigit():
+        return int(value)
+    elif value.replace('.', '', 1).isdigit() and value.count('.') < 2:
+        return float(value)
+    # list
+    if value.startswith('['):
+        return eval(value)
+    # str
+    return value
+
+
 def parse_options(root_path, is_train=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
@@ -123,6 +147,8 @@ def parse_options(root_path, is_train=True):
     parser.add_argument('--auto_resume', action='store_true')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument(
+        '--force_yml', nargs='+', default=None, help='Force to update yml files. Examples: train:ema_decay=0.999')
     args = parser.parse_args()
     opt = parse(args.opt, root_path, is_train=is_train, debug=args.debug)
     opt['auto_resume'] = args.auto_resume
@@ -147,4 +173,34 @@ def parse_options(root_path, is_train=True):
         opt['manual_seed'] = seed
     set_random_seed(seed + opt['rank'])
 
-    return opt
+    # force to update yml options
+    if args.force_yml is not None:
+        for entry in args.force_yml:
+            # now do not support creating new keys
+            keys, value = entry.split('=')
+            keys, value = keys.strip(), value.strip()
+            value = _postprocess_yml_value(value)
+            eval_str = 'opt'
+            for key in keys.split(':'):
+                eval_str += f'["{key}"]'
+            eval_str += '=value'
+            # using exec function
+            exec(eval_str)
+    return opt, args
+
+
+@master_only
+def copy_opt_file(opt_file, experiments_root):
+    # copy the yml file to the experiment root
+    import sys
+    import time
+    from shutil import copyfile
+    cmd = ' '.join(sys.argv)
+    filename = osp.join(experiments_root, osp.basename(opt_file))
+    copyfile(opt_file, filename)
+
+    with open(filename, 'r+') as f:
+        lines = f.readlines()
+        lines.insert(0, f'# GENERATE TIME: {time.asctime()}\n# CMD:\n# {cmd}\n\n')
+        f.seek(0)
+        f.writelines(lines)
