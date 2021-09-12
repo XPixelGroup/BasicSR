@@ -7,7 +7,6 @@ wandb/*
 tmp/*
 
 *.DS_Store
-.vscode
 .idea
 
 # ignored files
