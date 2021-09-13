@@ -57,7 +57,7 @@ class FFHQDataset(data.Dataset):
                 img_bytes = self.file_client.get(gt_path)
             except Exception as e:
                 logger = get_root_logger()
-                logger.warn(f'File client error: {e}, remaining retry times: {retry - 1}')
+                logger.warning(f'File client error: {e}, remaining retry times: {retry - 1}')
                 # change another file to read
                 index = random.randint(0, self.__len__())
                 gt_path = self.paths[index]
