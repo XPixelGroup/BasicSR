@@ -1,6 +1,7 @@
 import cv2
 import math
 import numpy as np
+import os
 from scipy.ndimage.filters import convolve
 from scipy.special import gamma
 
@@ -169,9 +170,9 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y', **kwargs
     Returns:
         float: NIQE result.
     """
-
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     # we use the official params estimated from the pristine dataset.
-    niqe_pris_params = np.load('basicsr/metrics/niqe_pris_params.npz')
+    niqe_pris_params = np.load(os.path.join(ROOT_DIR, 'niqe_pris_params.npz'))
     mu_pris_param = niqe_pris_params['mu_pris_param']
     cov_pris_param = niqe_pris_params['cov_pris_param']
     gaussian_window = niqe_pris_params['gaussian_window']
