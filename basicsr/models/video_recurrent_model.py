@@ -83,7 +83,7 @@ class VideoRecurrentModel(VideoBaseModel):
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
-
+            metric_data = dict()
         num_folders = len(dataset)
         num_pad = (world_size - (num_folders % world_size)) % world_size
         if rank == 0:
@@ -122,9 +122,11 @@ class VideoRecurrentModel(VideoBaseModel):
                 for idx in range(visuals['result'].size(1)):
                     result = visuals['result'][0, idx, :, :, :]
                     result_img = tensor2img([result])  # uint8, bgr
+                    metric_data['img'] = result_img
                     if 'gt' in visuals:
                         gt = visuals['gt'][0, idx, :, :, :]
                         gt_img = tensor2img([gt])  # uint8, bgr
+                        metric_data['img2'] = gt_img
 
                     if save_img:
                         if self.opt['is_train']:
@@ -145,7 +147,6 @@ class VideoRecurrentModel(VideoBaseModel):
                     # calculate metrics
                     if with_metrics:
                         for metric_idx, opt_ in enumerate(self.opt['val']['metrics'].values()):
-                            metric_data = dict(img1=result_img, img2=gt_img)
                             result = calculate_metric(metric_data, opt_)
                             self.metric_results[folder][idx, metric_idx] += result
 
