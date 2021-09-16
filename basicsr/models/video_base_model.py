@@ -34,6 +34,7 @@ class VideoBaseModel(SRModel):
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
+            metric_data = dict()
         # record all frames (border and center frames)
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='frame')
@@ -49,8 +50,10 @@ class VideoBaseModel(SRModel):
             self.test()
             visuals = self.get_current_visuals()
             result_img = tensor2img([visuals['result']])
+            metric_data['img'] = result_img
             if 'gt' in visuals:
                 gt_img = tensor2img([visuals['gt']])
+                metric_data['img2'] = gt_img
                 del self.gt
 
             # tentative for out of GPU memory
@@ -79,7 +82,6 @@ class VideoBaseModel(SRModel):
             if with_metrics:
                 # calculate metrics
                 for metric_idx, opt_ in enumerate(self.opt['val']['metrics'].values()):
-                    metric_data = dict(img1=result_img, img2=gt_img)
                     result = calculate_metric(metric_data, opt_)
                     self.metric_results[folder][int(frame_idx), metric_idx] += result
 
