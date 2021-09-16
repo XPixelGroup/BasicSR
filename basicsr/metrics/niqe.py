@@ -135,7 +135,7 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
         np.matmul((mu_pris_param - mu_distparam), invcov_param), np.transpose((mu_pris_param - mu_distparam)))
 
     quality = np.sqrt(quality)
-    quality = np.squeeze(quality)
+    quality = float(np.squeeze(quality))
     return quality
 
 
