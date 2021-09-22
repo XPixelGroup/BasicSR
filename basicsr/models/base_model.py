@@ -204,14 +204,14 @@ class BaseModel():
                 torch.save(save_dict, save_path)
             except Exception as e:
                 logger = get_root_logger()
-                logger.warn(f'Save model error: {e}, remaining retry times: {retry - 1}')
+                logger.warning(f'Save model error: {e}, remaining retry times: {retry - 1}')
                 time.sleep(1)
             else:
                 break
             finally:
                 retry -= 1
         if retry == 0:
-            logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+            logger.warning(f'Still cannot save {save_path}. Just ignore it.')
             # raise IOError(f'Cannot save {save_path}.')
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
@@ -302,14 +302,14 @@ class BaseModel():
                     torch.save(state, save_path)
                 except Exception as e:
                     logger = get_root_logger()
-                    logger.warn(f'Save training state error: {e}, remaining retry times: {retry - 1}')
+                    logger.warning(f'Save training state error: {e}, remaining retry times: {retry - 1}')
                     time.sleep(1)
                 else:
                     break
                 finally:
                     retry -= 1
             if retry == 0:
-                logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+                logger.warning(f'Still cannot save {save_path}. Just ignore it.')
                 # raise IOError(f'Cannot save {save_path}.')
 
     def resume_training(self, resume_state):

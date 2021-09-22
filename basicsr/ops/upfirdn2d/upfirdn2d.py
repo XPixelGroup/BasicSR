@@ -103,7 +103,7 @@ class UpFirDn2d(Function):
         pad_x0, pad_x1, pad_y0, pad_y1 = pad
 
         kernel_h, kernel_w = kernel.shape
-        batch, channel, in_h, in_w = input.shape
+        _, channel, in_h, in_w = input.shape
         ctx.in_size = input.shape
 
         input = input.reshape(-1, in_h, in_w, 1)

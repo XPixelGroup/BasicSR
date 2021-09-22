@@ -11,7 +11,7 @@ from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
                            init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
-from basicsr.utils.options import dict2str, parse_options
+from basicsr.utils.options import copy_opt_file, dict2str, parse_options
 
 
 def init_tb_loggers(opt):
@@ -90,7 +90,7 @@ def load_resume_state(opt):
 
 def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
-    opt = parse_options(root_path, is_train=True)
+    opt, args = parse_options(root_path, is_train=True)
     opt['root_path'] = root_path
 
     torch.backends.cudnn.benchmark = True
@@ -103,6 +103,9 @@ def train_pipeline(root_path):
         make_exp_dirs(opt)
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
             mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
+
+    # copy the yml file to the experiment root
+    copy_opt_file(args.opt, opt['path']['experiments_root'])
 
     # WARNING: should not use get_root_logger in the above codes, including the called functions
     # Otherwise the logger will not be properly initialized
@@ -118,14 +121,13 @@ def train_pipeline(root_path):
     train_loader, train_sampler, val_loader, total_epochs, total_iters = result
 
     # create model
+    model = build_model(opt)
     if resume_state:  # resume training
-        model = build_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
         logger.info(f"Resuming training from epoch: {resume_state['epoch']}, " f"iter: {resume_state['iter']}.")
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:
-        model = build_model(opt)
         start_epoch = 0
         current_iter = 0
 

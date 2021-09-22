@@ -3,9 +3,9 @@ import os
 from tqdm import tqdm
 
 
-class Mosaic_16x:
+class Mosaic16x:
     """
-    Mosaic_16x: A customized image augmentor for 16-pixel mosaic
+    Mosaic16x: A customized image augmentor for 16-pixel mosaic
     By default it replaces each pixel value with the mean value
     of its 16x16 neighborhood
     """
@@ -22,7 +22,7 @@ class Mosaic_16x:
         return x.astype('uint8')
 
 
-class Degradation_Simulator:
+class DegradationSimulator:
     """
     Generating training/testing data pairs on the fly.
     The degradation script is aligned with HiFaceGAN paper settings.
@@ -34,7 +34,7 @@ class Degradation_Simulator:
 
     def __init__(self, ):
         import imgaug.augmenters as ia
-        self.DEFAULT_DEG_TEMPLATES = {
+        self.default_deg_templates = {
             'sr4x':
             ia.Sequential([
                 # It's almost like a 4x bicubic downsampling
@@ -66,17 +66,16 @@ class Degradation_Simulator:
             'jpeg':
             ia.JpegCompression(compression=(50, 85)),
             '16x':
-            Mosaic_16x(),
+            Mosaic16x(),
         }
 
         rand_deg_list = [
-            self.DEFAULT_DEG_TEMPLATES['deblur'],
-            self.DEFAULT_DEG_TEMPLATES['denoise'],
-            self.DEFAULT_DEG_TEMPLATES['jpeg'],
-            self.DEFAULT_DEG_TEMPLATES['sr4x8x'],
+            self.default_deg_templates['deblur'],
+            self.default_deg_templates['denoise'],
+            self.default_deg_templates['jpeg'],
+            self.default_deg_templates['sr4x8x'],
         ]
-        self.DEFAULT_DEG_TEMPLATES['face_renov'] = \
-            ia.Sequential(rand_deg_list, random_order=True)
+        self.default_deg_templates['face_renov'] = ia.Sequential(rand_deg_list, random_order=True)
 
     def create_training_dataset(self, deg, gt_folder, lq_folder=None):
         from imgaug.augmenters.meta import Augmenter  # baseclass
@@ -91,13 +90,11 @@ class Degradation_Simulator:
         os.makedirs(lq_folder, exist_ok=True)
 
         if isinstance(deg, str):
-            assert deg in self.DEFAULT_DEG_TEMPLATES, \
-                'Degration type %s not recognized: (%s)' % \
-                (deg, '|'.join(list(self.DEFAULT_DEG_TEMPLATES.keys())))
-            deg = self.DEFAULT_DEG_TEMPLATES[deg]
+            assert deg in self.default_deg_templates, (
+                f'Degration type {deg} not recognized: {"|".join(list(self.default_deg_templates.keys()))}')
+            deg = self.default_deg_templates[deg]
         else:
-            assert isinstance(deg, Augmenter), \
-                'Deg must be either str|Augmenter, got %s' % type(deg)
+            assert isinstance(deg, Augmenter), f'Deg must be either str|Augmenter, got {deg}'
 
         names = os.listdir(gt_folder)
         for name in tqdm(names):
@@ -110,7 +107,7 @@ class Degradation_Simulator:
 
 
 if __name__ == '__main__':
-    simuator = Degradation_Simulator()
+    simuator = DegradationSimulator()
     gt_folder = 'datasets/FFHQ_512_gt'
     deg = 'sr4x'
     simuator.create_training_dataset(deg, gt_folder)

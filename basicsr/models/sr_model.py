@@ -138,6 +138,7 @@ class SRModel(BaseModel):
         with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:
             self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
+            metric_data = dict()
         pbar = tqdm(total=len(dataloader), unit='image')
 
         for idx, val_data in enumerate(dataloader):
@@ -147,8 +148,10 @@ class SRModel(BaseModel):
 
             visuals = self.get_current_visuals()
             sr_img = tensor2img([visuals['result']])
+            metric_data['img'] = sr_img
             if 'gt' in visuals:
                 gt_img = tensor2img([visuals['gt']])
+                metric_data['img2'] = gt_img
                 del self.gt
 
             # tentative for out of GPU memory
@@ -172,7 +175,6 @@ class SRModel(BaseModel):
             if with_metrics:
                 # calculate metrics
                 for name, opt_ in self.opt['val']['metrics'].items():
-                    metric_data = dict(img1=sr_img, img2=gt_img)
                     self.metric_results[name] += calculate_metric(metric_data, opt_)
             pbar.update(1)
             pbar.set_description(f'Test {img_name}')

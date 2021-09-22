@@ -63,32 +63,32 @@ class Mlp(nn.Module):
 def window_partition(x, window_size):
     """
     Args:
-        x: (B, H, W, C)
+        x: (b, h, w, c)
         window_size (int): window size
 
     Returns:
-        windows: (num_windows*B, window_size, window_size, C)
+        windows: (num_windows*b, window_size, window_size, c)
     """
-    B, H, W, C = x.shape
-    x = x.view(B, H // window_size, window_size, W // window_size, window_size, C)
-    windows = x.permute(0, 1, 3, 2, 4, 5).contiguous().view(-1, window_size, window_size, C)
+    b, h, w, c = x.shape
+    x = x.view(b, h // window_size, window_size, w // window_size, window_size, c)
+    windows = x.permute(0, 1, 3, 2, 4, 5).contiguous().view(-1, window_size, window_size, c)
     return windows
 
 
-def window_reverse(windows, window_size, H, W):
+def window_reverse(windows, window_size, h, w):
     """
     Args:
-        windows: (num_windows*B, window_size, window_size, C)
+        windows: (num_windows*b, window_size, window_size, c)
         window_size (int): Window size
-        H (int): Height of image
-        W (int): Width of image
+        h (int): Height of image
+        w (int): Width of image
 
     Returns:
-        x: (B, H, W, C)
+        x: (b, h, w, c)
     """
-    B = int(windows.shape[0] / (H * W / window_size / window_size))
-    x = windows.view(B, H // window_size, W // window_size, window_size, window_size, -1)
-    x = x.permute(0, 1, 3, 2, 4, 5).contiguous().view(B, H, W, -1)
+    b = int(windows.shape[0] / (h * w / window_size / window_size))
+    x = windows.view(b, h // window_size, w // window_size, window_size, window_size, -1)
+    x = x.permute(0, 1, 3, 2, 4, 5).contiguous().view(b, h, w, -1)
     return x
 
 
@@ -144,11 +144,11 @@ class WindowAttention(nn.Module):
     def forward(self, x, mask=None):
         """
         Args:
-            x: input features with shape of (num_windows*B, N, C)
+            x: input features with shape of (num_windows*b, n, c)
             mask: (0/-inf) mask with shape of (num_windows, Wh*Ww, Wh*Ww) or None
         """
-        B_, N, C = x.shape
-        qkv = self.qkv(x).reshape(B_, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        b_, n, c = x.shape
+        qkv = self.qkv(x).reshape(b_, n, 3, self.num_heads, c // self.num_heads).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # make torchscript happy (cannot use tensor as tuple)
 
         q = q * self.scale
@@ -160,16 +160,16 @@ class WindowAttention(nn.Module):
         attn = attn + relative_position_bias.unsqueeze(0)
 
         if mask is not None:
-            nW = mask.shape[0]
-            attn = attn.view(B_ // nW, nW, self.num_heads, N, N) + mask.unsqueeze(1).unsqueeze(0)
-            attn = attn.view(-1, self.num_heads, N, N)
+            nw = mask.shape[0]
+            attn = attn.view(b_ // nw, nw, self.num_heads, n, n) + mask.unsqueeze(1).unsqueeze(0)
+            attn = attn.view(-1, self.num_heads, n, n)
             attn = self.softmax(attn)
         else:
             attn = self.softmax(attn)
 
         attn = self.attn_drop(attn)
 
-        x = (attn @ v).transpose(1, 2).reshape(B_, N, C)
+        x = (attn @ v).transpose(1, 2).reshape(b_, n, c)
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
@@ -177,17 +177,17 @@ class WindowAttention(nn.Module):
     def extra_repr(self) -> str:
         return f'dim={self.dim}, window_size={self.window_size}, num_heads={self.num_heads}'
 
-    def flops(self, N):
-        # calculate flops for 1 window with token length of N
+    def flops(self, n):
+        # calculate flops for 1 window with token length of n
         flops = 0
         # qkv = self.qkv(x)
-        flops += N * self.dim * 3 * self.dim
+        flops += n * self.dim * 3 * self.dim
         # attn = (q @ k.transpose(-2, -1))
-        flops += self.num_heads * N * (self.dim // self.num_heads) * N
+        flops += self.num_heads * n * (self.dim // self.num_heads) * n
         #  x = (attn @ v)
-        flops += self.num_heads * N * N * (self.dim // self.num_heads)
+        flops += self.num_heads * n * n * (self.dim // self.num_heads)
         # x = self.proj(x)
-        flops += N * self.dim * self.dim
+        flops += n * self.dim * self.dim
         return flops
 
 
@@ -261,8 +261,8 @@ class SwinTransformerBlock(nn.Module):
 
     def calculate_mask(self, x_size):
         # calculate attention mask for SW-MSA
-        H, W = x_size
-        img_mask = torch.zeros((1, H, W, 1))  # 1 H W 1
+        h, w = x_size
+        img_mask = torch.zeros((1, h, w, 1))  # 1 h w 1
         h_slices = (slice(0, -self.window_size), slice(-self.window_size,
                                                        -self.shift_size), slice(-self.shift_size, None))
         w_slices = (slice(0, -self.window_size), slice(-self.window_size,
@@ -273,7 +273,7 @@ class SwinTransformerBlock(nn.Module):
                 img_mask[:, h, w, :] = cnt
                 cnt += 1
 
-        mask_windows = window_partition(img_mask, self.window_size)  # nW, window_size, window_size, 1
+        mask_windows = window_partition(img_mask, self.window_size)  # nw, window_size, window_size, 1
         mask_windows = mask_windows.view(-1, self.window_size * self.window_size)
         attn_mask = mask_windows.unsqueeze(1) - mask_windows.unsqueeze(2)
         attn_mask = attn_mask.masked_fill(attn_mask != 0, float(-100.0)).masked_fill(attn_mask == 0, float(0.0))
@@ -281,13 +281,13 @@ class SwinTransformerBlock(nn.Module):
         return attn_mask
 
     def forward(self, x, x_size):
-        H, W = x_size
-        B, L, C = x.shape
-        # assert L == H * W, "input feature has wrong size"
+        h, w = x_size
+        b, _, c = x.shape
+        # assert seq_len == h * w, "input feature has wrong size"
 
         shortcut = x
         x = self.norm1(x)
-        x = x.view(B, H, W, C)
+        x = x.view(b, h, w, c)
 
         # cyclic shift
         if self.shift_size > 0:
@@ -296,25 +296,25 @@ class SwinTransformerBlock(nn.Module):
             shifted_x = x
 
         # partition windows
-        x_windows = window_partition(shifted_x, self.window_size)  # nW*B, window_size, window_size, C
-        x_windows = x_windows.view(-1, self.window_size * self.window_size, C)  # nW*B, window_size*window_size, C
+        x_windows = window_partition(shifted_x, self.window_size)  # nw*b, window_size, window_size, c
+        x_windows = x_windows.view(-1, self.window_size * self.window_size, c)  # nw*b, window_size*window_size, c
 
         # W-MSA/SW-MSA (to be compatible for testing on images whose shapes are the multiple of window size
         if self.input_resolution == x_size:
-            attn_windows = self.attn(x_windows, mask=self.attn_mask)  # nW*B, window_size*window_size, C
+            attn_windows = self.attn(x_windows, mask=self.attn_mask)  # nw*b, window_size*window_size, c
         else:
             attn_windows = self.attn(x_windows, mask=self.calculate_mask(x_size).to(x.device))
 
         # merge windows
-        attn_windows = attn_windows.view(-1, self.window_size, self.window_size, C)
-        shifted_x = window_reverse(attn_windows, self.window_size, H, W)  # B H' W' C
+        attn_windows = attn_windows.view(-1, self.window_size, self.window_size, c)
+        shifted_x = window_reverse(attn_windows, self.window_size, h, w)  # b h' w' c
 
         # reverse cyclic shift
         if self.shift_size > 0:
             x = torch.roll(shifted_x, shifts=(self.shift_size, self.shift_size), dims=(1, 2))
         else:
             x = shifted_x
-        x = x.view(B, H * W, C)
+        x = x.view(b, h * w, c)
 
         # FFN
         x = shortcut + self.drop_path(x)
@@ -323,21 +323,21 @@ class SwinTransformerBlock(nn.Module):
         return x
 
     def extra_repr(self) -> str:
-        return f'dim={self.dim}, input_resolution={self.input_resolution}, num_heads={self.num_heads}, ' \
-               f'window_size={self.window_size}, shift_size={self.shift_size}, mlp_ratio={self.mlp_ratio}'
+        return (f'dim={self.dim}, input_resolution={self.input_resolution}, num_heads={self.num_heads}, '
+                f'window_size={self.window_size}, shift_size={self.shift_size}, mlp_ratio={self.mlp_ratio}')
 
     def flops(self):
         flops = 0
-        H, W = self.input_resolution
+        h, w = self.input_resolution
         # norm1
-        flops += self.dim * H * W
+        flops += self.dim * h * w
         # W-MSA/SW-MSA
-        nW = H * W / self.window_size / self.window_size
-        flops += nW * self.attn.flops(self.window_size * self.window_size)
+        nw = h * w / self.window_size / self.window_size
+        flops += nw * self.attn.flops(self.window_size * self.window_size)
         # mlp
-        flops += 2 * H * W * self.dim * self.dim * self.mlp_ratio
+        flops += 2 * h * w * self.dim * self.dim * self.mlp_ratio
         # norm2
-        flops += self.dim * H * W
+        flops += self.dim * h * w
         return flops
 
 
@@ -359,21 +359,21 @@ class PatchMerging(nn.Module):
 
     def forward(self, x):
         """
-        x: B, H*W, C
+        x: b, h*w, c
         """
-        H, W = self.input_resolution
-        B, L, C = x.shape
-        assert L == H * W, 'input feature has wrong size'
-        assert H % 2 == 0 and W % 2 == 0, f'x size ({H}*{W}) are not even.'
+        h, w = self.input_resolution
+        b, seq_len, c = x.shape
+        assert seq_len == h * w, 'input feature has wrong size'
+        assert h % 2 == 0 and w % 2 == 0, f'x size ({h}*{w}) are not even.'
 
-        x = x.view(B, H, W, C)
+        x = x.view(b, h, w, c)
 
-        x0 = x[:, 0::2, 0::2, :]  # B H/2 W/2 C
-        x1 = x[:, 1::2, 0::2, :]  # B H/2 W/2 C
-        x2 = x[:, 0::2, 1::2, :]  # B H/2 W/2 C
-        x3 = x[:, 1::2, 1::2, :]  # B H/2 W/2 C
-        x = torch.cat([x0, x1, x2, x3], -1)  # B H/2 W/2 4*C
-        x = x.view(B, -1, 4 * C)  # B H/2*W/2 4*C
+        x0 = x[:, 0::2, 0::2, :]  # b h/2 w/2 c
+        x1 = x[:, 1::2, 0::2, :]  # b h/2 w/2 c
+        x2 = x[:, 0::2, 1::2, :]  # b h/2 w/2 c
+        x3 = x[:, 1::2, 1::2, :]  # b h/2 w/2 c
+        x = torch.cat([x0, x1, x2, x3], -1)  # b h/2 w/2 4*c
+        x = x.view(b, -1, 4 * c)  # b h/2*w/2 4*c
 
         x = self.norm(x)
         x = self.reduction(x)
@@ -384,9 +384,9 @@ class PatchMerging(nn.Module):
         return f'input_resolution={self.input_resolution}, dim={self.dim}'
 
     def flops(self):
-        H, W = self.input_resolution
-        flops = H * W * self.dim
-        flops += (H // 2) * (W // 2) * 4 * self.dim * 2 * self.dim
+        h, w = self.input_resolution
+        flops = h * w * self.dim
+        flops += (h // 2) * (w // 2) * 4 * self.dim * 2 * self.dim
         return flops
 
 
@@ -560,8 +560,8 @@ class RSTB(nn.Module):
     def flops(self):
         flops = 0
         flops += self.residual_group.flops()
-        H, W = self.input_resolution
-        flops += H * W * self.dim * self.dim * 9
+        h, w = self.input_resolution
+        flops += h * w * self.dim * self.dim * 9
         flops += self.patch_embed.flops()
         flops += self.patch_unembed.flops()
 
@@ -598,16 +598,16 @@ class PatchEmbed(nn.Module):
             self.norm = None
 
     def forward(self, x):
-        x = x.flatten(2).transpose(1, 2)  # B Ph*Pw C
+        x = x.flatten(2).transpose(1, 2)  # b Ph*Pw c
         if self.norm is not None:
             x = self.norm(x)
         return x
 
     def flops(self):
         flops = 0
-        H, W = self.img_size
+        h, w = self.img_size
         if self.norm is not None:
-            flops += H * W * self.embed_dim
+            flops += h * w * self.embed_dim
         return flops
 
 
@@ -636,8 +636,7 @@ class PatchUnEmbed(nn.Module):
         self.embed_dim = embed_dim
 
     def forward(self, x, x_size):
-        B, HW, C = x.shape
-        x = x.transpose(1, 2).view(B, self.embed_dim, x_size[0], x_size[1])  # B Ph*Pw C
+        x = x.transpose(1, 2).view(x.shape[0], self.embed_dim, x_size[0], x_size[1])  # b Ph*Pw c
         return x
 
     def flops(self):
@@ -686,8 +685,8 @@ class UpsampleOneStep(nn.Sequential):
         super(UpsampleOneStep, self).__init__(*m)
 
     def flops(self):
-        H, W = self.input_resolution
-        flops = H * W * self.num_feat * 3 * 9
+        h, w = self.input_resolution
+        flops = h * w * self.num_feat * 3 * 9
         return flops
 
 
@@ -725,8 +724,8 @@ class SwinIR(nn.Module):
                  patch_size=1,
                  in_chans=3,
                  embed_dim=96,
-                 depths=[6, 6, 6, 6],
-                 num_heads=[6, 6, 6, 6],
+                 depths=(6, 6, 6, 6),
+                 num_heads=(6, 6, 6, 6),
                  window_size=7,
                  mlp_ratio=4.,
                  qkv_bias=True,
@@ -884,7 +883,7 @@ class SwinIR(nn.Module):
         for layer in self.layers:
             x = layer(x, x_size)
 
-        x = self.norm(x)  # B L C
+        x = self.norm(x)  # b seq_len c
         x = self.patch_unembed(x, x_size)
 
         return x
@@ -924,12 +923,12 @@ class SwinIR(nn.Module):
 
     def flops(self):
         flops = 0
-        H, W = self.patches_resolution
-        flops += H * W * 3 * self.embed_dim * 9
+        h, w = self.patches_resolution
+        flops += h * w * 3 * self.embed_dim * 9
         flops += self.patch_embed.flops()
-        for i, layer in enumerate(self.layers):
+        for layer in self.layers:
             flops += layer.flops()
-        flops += H * W * 3 * self.embed_dim * self.embed_dim
+        flops += h * w * 3 * self.embed_dim * self.embed_dim
         flops += self.upsample.flops()
         return flops
 

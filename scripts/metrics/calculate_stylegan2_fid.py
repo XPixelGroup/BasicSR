@@ -44,7 +44,7 @@ def calculate_stylegan2_fid():
     total_batch = math.ceil(args.num_sample / args.batch_size)
 
     def sample_generator(total_batch):
-        for i in range(total_batch):
+        for _ in range(total_batch):
             with torch.no_grad():
                 latent = torch.randn(args.batch_size, 512, device=device)
                 samples, _ = generator([latent], truncation=args.truncation, truncation_latent=truncation_latent)

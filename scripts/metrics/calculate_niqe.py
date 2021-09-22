@@ -13,7 +13,7 @@ def main(args):
     img_list = sorted(scandir(args.input, recursive=True, full_path=True))
 
     for i, img_path in enumerate(img_list):
-        basename, ext = os.path.splitext(os.path.basename(img_path))
+        basename, _ = os.path.splitext(os.path.basename(img_path))
         img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
 
         with warnings.catch_warnings():

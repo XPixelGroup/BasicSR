@@ -194,7 +194,7 @@ class HiFaceGANDiscriminator(BaseNetwork):
                  norm_d='spectralinstance',
                  keep_features=True):
         super().__init__()
-        self.num_D = num_d
+        self.num_d = num_d
 
         input_nc = num_in_ch
         if conditional_d:
@@ -208,11 +208,11 @@ class HiFaceGANDiscriminator(BaseNetwork):
         return F.avg_pool2d(x, kernel_size=3, stride=2, padding=[1, 1], count_include_pad=False)
 
     # Returns list of lists of discriminator outputs.
-    # The final result is of size opt.num_D x opt.n_layers_D
+    # The final result is of size opt.num_d x opt.n_layers_D
     def forward(self, x):
         result = []
-        for _, D in self.named_children():
-            out = D(x)
+        for _, _net_d in self.named_children():
+            out = _net_d(x)
             result.append(out)
             x = self.downsample(x)
 
