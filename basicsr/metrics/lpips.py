@@ -40,7 +40,7 @@ def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=Fa
         img2 = to_y_channel(img2)
 
     # start calculating LPIPS metrics
-    loss_fn_vgg = lpips.LPIPS(net='vgg', verbose=False)  # RGB, normalized to [-1,1]
+    loss_fn_vgg = lpips.LPIPS(net='vgg', verbose=False).cuda()  # RGB, normalized to [-1,1]
 
     mean = [0.5, 0.5, 0.5]
     std = [0.5, 0.5, 0.5]
@@ -54,6 +54,9 @@ def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=Fa
     normalize(img_restored, mean, std, inplace=True)
 
     # calculate lpips
+    img_gt = img_gt.cuda()
+    img_restored = img_restored.cuda()
+    loss_fn_vgg.eval()
     lpips_val = loss_fn_vgg(img_restored.unsqueeze(0), img_gt.unsqueeze(0))
 
-    return lpips_val.detach().numpy().mean()
+    return lpips_val.detach().cpu().numpy().mean()
