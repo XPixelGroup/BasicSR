@@ -5,6 +5,7 @@ import numpy as np
 
 from basicsr.metrics.metric_util import reorder_image, to_y_channel
 from basicsr.utils.registry import METRIC_REGISTRY
+import torch
 
 @METRIC_REGISTRY.register()
 def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=False):
@@ -40,7 +41,8 @@ def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=Fa
         img2 = to_y_channel(img2)
 
     # start calculating LPIPS metrics
-    loss_fn_vgg = lpips.LPIPS(net='vgg', verbose=False).cuda()  # RGB, normalized to [-1,1]
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    loss_fn_vgg = lpips.LPIPS(net='vgg', verbose=False).to(DEVICE)  # RGB, normalized to [-1,1]
 
     mean = [0.5, 0.5, 0.5]
     std = [0.5, 0.5, 0.5]
@@ -54,8 +56,8 @@ def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=Fa
     normalize(img_restored, mean, std, inplace=True)
 
     # calculate lpips
-    img_gt = img_gt.cuda()
-    img_restored = img_restored.cuda()
+    img_gt = img_gt.to(DEVICE)
+    img_restored = img_restored.to(DEVICE)
     loss_fn_vgg.eval()
     lpips_val = loss_fn_vgg(img_restored.unsqueeze(0), img_gt.unsqueeze(0))
 
