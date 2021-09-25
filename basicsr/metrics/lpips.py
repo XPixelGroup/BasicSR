@@ -62,3 +62,4 @@ def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=Fa
     lpips_val = loss_fn_vgg(img_restored.unsqueeze(0), img_gt.unsqueeze(0))
 
     return lpips_val.detach().cpu().numpy().mean()
+
