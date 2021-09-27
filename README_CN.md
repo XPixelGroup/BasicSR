@@ -11,6 +11,12 @@
 
 :rocket: 我们添加了 [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), 它提供了使用BasicSR的指南以及模板 (以python package的形式) :rocket:
 
+:loudspeaker: **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步**
+
+:compass: [入群二维码](#e-mail-%E8%81%94%E7%B3%BB) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+
+---
+
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 :m: [模型库](docs/ModelZoo_CN.md): :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
 :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing) <br>
@@ -152,3 +158,8 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
 ## :e-mail: 联系
 
 若有任何问题, 请电邮 `xintao.wang@outlook.com`.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
+  <img src="https://user-images.githubusercontent.com/17445847/134880057-f08e3d3b-2ab1-4ae8-966d-5753fe1f402a.png"  height="300">
+</p>
