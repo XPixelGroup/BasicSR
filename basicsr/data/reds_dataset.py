@@ -309,9 +309,9 @@ class REDSRecurrentDataset(data.Dataset):
 
         # ensure not exceeding the borders
         start_frame_idx = int(frame_name)
-        if start_frame_idx > 100 - self.num_frame:
-            start_frame_idx = random.randint(0, 100 - self.num_frame)
-        end_frame_idx = start_frame_idx + self.num_frame
+        if start_frame_idx > 100 - self.num_frame * interval:
+            start_frame_idx = random.randint(0, 100 - self.num_frame * interval)
+        end_frame_idx = start_frame_idx + self.num_frame * interval
 
         neighbor_list = list(range(start_frame_idx, end_frame_idx, interval))
 
