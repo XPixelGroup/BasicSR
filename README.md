@@ -27,12 +27,9 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源 
 
 ---
 
-技术交流QQ群：**320960100** 答案：**互帮互助共同进步** &emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+:loudspeaker: 技术交流QQ群：**320960100** &emsp; 入群答案：**互帮互助共同进步** &emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">
-  <img src="https://user-images.githubusercontent.com/17445847/134880057-f08e3d3b-2ab1-4ae8-966d-5753fe1f402a.png"  height="300">
-</p>
+:compass: [入群二维码](#e-mail-contact)
 
 ---
 
@@ -157,3 +154,8 @@ The following is a BibTeX reference. The BibTeX entry requires the `url` LaTeX p
 ## :e-mail: Contact
 
 If you have any questions, please email `xintao.wang@outlook.com`.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
+  <img src="https://user-images.githubusercontent.com/17445847/134880057-f08e3d3b-2ab1-4ae8-966d-5753fe1f402a.png"  height="300">
+</p>
