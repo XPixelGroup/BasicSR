@@ -23,6 +23,16 @@
 
 BasicSR (**Basic** **S**uper **R**estoration) is an open-source **image and video restoration** toolbox based on PyTorch, such as super-resolution, denoise, deblurring, JPEG artifacts removal, *etc*.
 
+BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源 图像视频复原工具箱, 比如 超分辨率, 去噪, 去模糊, 去 JPEG 压缩噪声等.
+
+---
+
+技术交流QQ群：320960100 答案：互帮互助共同进步
+
+[入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+
+---
+
 :triangular_flag_on_post: **New Features/Updates**
 
 - :white_check_mark: Sep 2, 2021. Add **SwinIR training and testing** codes: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang):+1:. More details are in [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
