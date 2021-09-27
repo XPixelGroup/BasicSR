@@ -11,8 +11,6 @@
 
 :rocket: We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. :rocket:
 
----
-
 :loudspeaker: 技术交流QQ群：**320960100** &emsp; 入群答案：**互帮互助共同进步**
 
 :compass: [入群二维码](#e-mail-contact) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
