@@ -509,10 +509,10 @@ void modulated_deform_conv_cuda_forward(
   const int kernel_w_ = weight.size(3);
 
   if (kernel_h_ != kernel_h || kernel_w_ != kernel_w)
-    AT_ERROR("Input shape and kernel shape wont match: (%d x %d vs %d x %d).",
+    AT_ERROR("Input shape and kernel shape won't match: (%d x %d vs %d x %d).",
              kernel_h_, kernel_w, kernel_h_, kernel_w_);
   if (channels != channels_kernel * group)
-    AT_ERROR("Input shape and kernel channels wont match: (%d vs %d).",
+    AT_ERROR("Input shape and kernel channels won't match: (%d vs %d).",
              channels, channels_kernel * group);
 
   const int height_out =
@@ -589,10 +589,10 @@ void modulated_deform_conv_cuda_backward(
   const int kernel_h_ = weight.size(2);
   const int kernel_w_ = weight.size(3);
   if (kernel_h_ != kernel_h || kernel_w_ != kernel_w)
-    AT_ERROR("Input shape and kernel shape wont match: (%d x %d vs %d x %d).",
+    AT_ERROR("Input shape and kernel shape won't match: (%d x %d vs %d x %d).",
              kernel_h_, kernel_w, kernel_h_, kernel_w_);
   if (channels != channels_kernel * group)
-    AT_ERROR("Input shape and kernel channels wont match: (%d vs %d).",
+    AT_ERROR("Input shape and kernel channels won't match: (%d vs %d).",
              channels, channels_kernel * group);
 
   const int height_out =

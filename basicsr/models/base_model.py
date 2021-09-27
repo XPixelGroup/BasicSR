@@ -215,9 +215,9 @@ class BaseModel():
             # raise IOError(f'Cannot save {save_path}.')
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
-        """Print keys with differnet name or different size when loading models.
+        """Print keys with different name or different size when loading models.
 
-        1. Print keys with differnet names.
+        1. Print keys with different names.
         2. If strict=False, print the same key but with different tensor size.
             It also ignore these keys with different sizes (not load).
 

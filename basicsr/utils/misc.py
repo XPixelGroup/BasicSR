@@ -62,7 +62,7 @@ def scandir(dir_path, suffix=None, recursive=False, full_path=False):
             Default: False.
 
     Returns:
-        A generator for all the interested files with relative pathes.
+        A generator for all the interested files with relative paths.
     """
 
     if (suffix is not None) and not isinstance(suffix, (str, tuple)):
@@ -132,7 +132,7 @@ def sizeof_fmt(size, suffix='B'):
         suffix (str): Suffix. Default: 'B'.
 
     Return:
-        str: Formated file siz.
+        str: Formatted file siz.
     """
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(size) < 1024.0:

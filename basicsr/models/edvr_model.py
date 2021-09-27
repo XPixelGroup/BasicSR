@@ -22,7 +22,7 @@ class EDVRModel(VideoBaseModel):
         logger.info(f'Multiple the learning rate for dcn with {dcn_lr_mul}.')
         if dcn_lr_mul == 1:
             optim_params = self.net_g.parameters()
-        else:  # separate dcn params and normal params for differnet lr
+        else:  # separate dcn params and normal params for different lr
             normal_params = []
             dcn_params = []
             for name, param in self.net_g.named_parameters():

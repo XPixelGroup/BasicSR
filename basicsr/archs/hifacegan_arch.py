@@ -60,7 +60,7 @@ class SPADEGenerator(BaseNetwork):
 
     def encode(self, input_tensor):
         """
-        Encode input_tensor into feature maps, can be overriden in derived classes
+        Encode input_tensor into feature maps, can be overridden in derived classes
         Default: nearest downsampling of 2**5 = 32 times
         """
         h, w = input_tensor.size()[-2:]

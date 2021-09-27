@@ -5,7 +5,7 @@ num_gpu: 1  # set num_gpu: 0 for cpu mode
 manual_seed: 0
 
 datasets:
-  test_gt:  # the 2st test dataset
+  test_gt:  # the 2nd test dataset
     name: FFHQ_sr4x_val
     type: PairedImageDataset
     dataroot_gt: datasets/FFHQ_512_gt_val

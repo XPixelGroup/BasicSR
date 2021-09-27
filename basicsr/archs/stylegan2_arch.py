@@ -102,7 +102,7 @@ class UpFirDnSmooth(nn.Module):
             magnitude.
         upsample_factor (int): Upsampling scale factor. Default: 1.
         downsample_factor (int): Downsampling scale factor. Default: 1.
-        kernel_size (int): Kernel size: Deafult: 1.
+        kernel_size (int): Kernel size: Default: 1.
     """
 
     def __init__(self, resample_kernel, upsample_factor=1, downsample_factor=1, kernel_size=1):
@@ -403,7 +403,7 @@ class StyleGAN2Generator(nn.Module):
             StyleGAN2. Default: 2.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
             magnitude. A cross production will be applied to extent 1D resample
-            kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
+            kernel to 2D resample kernel. Default: (1, 3, 3, 1).
         lr_mlp (float): Learning rate multiplier for mlp layers. Default: 0.01.
         narrow (float): Narrow ratio for channels. Default: 1.0.
     """
@@ -662,7 +662,7 @@ class ConvLayer(nn.Sequential):
             Default: False.
         resample_kernel (list[int]): A list indicating the 1D resample
             kernel magnitude. A cross production will be applied to
-            extent 1D resample kenrel to 2D resample kernel.
+            extent 1D resample kernel to 2D resample kernel.
             Default: (1, 3, 3, 1).
         bias (bool): Whether with bias. Default: True.
         activate (bool): Whether use activateion. Default: True.
@@ -709,7 +709,7 @@ class ResBlock(nn.Module):
         out_channels (int): Channel number of the output.
         resample_kernel (list[int]): A list indicating the 1D resample
             kernel magnitude. A cross production will be applied to
-            extent 1D resample kenrel to 2D resample kernel.
+            extent 1D resample kernel to 2D resample kernel.
             Default: (1, 3, 3, 1).
     """
 
@@ -740,7 +740,7 @@ class StyleGAN2Discriminator(nn.Module):
             StyleGAN2. Default: 2.
         resample_kernel (list[int]): A list indicating the 1D resample kernel
             magnitude. A cross production will be applied to extent 1D resample
-            kenrel to 2D resample kernel. Default: (1, 3, 3, 1).
+            kernel to 2D resample kernel. Default: (1, 3, 3, 1).
         stddev_group (int): For group stddev statistics. Default: 4.
         narrow (float): Narrow ratio for channels. Default: 1.0.
     """

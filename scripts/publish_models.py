@@ -19,7 +19,7 @@ def update_sha(paths):
             elif user_response.lower() == 'n':
                 raise ValueError('Please modify..')
             else:
-                raise ValueError('Wrong input. Only accpets Y/N.')
+                raise ValueError('Wrong input. Only accepts Y/N.')
 
         if '-' in basename:
             # check whether the sha is the latest

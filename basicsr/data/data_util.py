@@ -16,7 +16,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
         require_mod_crop (bool): Require mod crop for each image.
             Default: False.
         scale (int): Scale factor for mod_crop. Default: 1.
-        return_imgname(bool): Whether return image names. Defalt False.
+        return_imgname(bool): Whether return image names. Default False.
 
     Returns:
         Tensor: size (t, c, h, w), RGB, [0, 1].

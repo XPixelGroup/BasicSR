@@ -447,7 +447,7 @@ class DeCompressJpeg(nn.Module):
 
 
 class DiffJPEG(nn.Module):
-    """This JPEG algorithm result is slightly differnet from cv2.
+    """This JPEG algorithm result is slightly different from cv2.
     DiffJPEG supports batch processing.
 
     Args:

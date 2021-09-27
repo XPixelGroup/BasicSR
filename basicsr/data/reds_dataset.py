@@ -18,7 +18,7 @@ class REDSDataset(data.Dataset):
     basicsr/data/meta_info/meta_info_REDS_GT.txt
 
     Each line contains:
-    1. subfolder (clip) name; 2. frame number; 3. image shape, seperated by
+    1. subfolder (clip) name; 2. frame number; 3. image shape, separated by
     a white space.
     Examples:
     000 100 (720,1280,3)
@@ -217,7 +217,7 @@ class REDSRecurrentDataset(data.Dataset):
     basicsr/data/meta_info/meta_info_REDS_GT.txt
 
     Each line contains:
-    1. subfolder (clip) name; 2. frame number; 3. image shape, seperated by
+    1. subfolder (clip) name; 2. frame number; 3. image shape, separated by
     a white space.
     Examples:
     000 100 (720,1280,3)

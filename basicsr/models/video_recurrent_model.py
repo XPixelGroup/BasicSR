@@ -26,7 +26,7 @@ class VideoRecurrentModel(VideoBaseModel):
         logger.info(f'Multiple the learning rate for flow network with {flow_lr_mul}.')
         if flow_lr_mul == 1:
             optim_params = self.net_g.parameters()
-        else:  # separate flow params and normal params for differnet lr
+        else:  # separate flow params and normal params for different lr
             normal_params = []
             flow_params = []
             for name, param in self.net_g.named_parameters():

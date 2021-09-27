@@ -336,7 +336,7 @@ def random_mixed_kernels(kernel_list,
     """Randomly generate mixed kernels.
 
     Args:
-        kernel_list (tuple): a list name of kenrel types,
+        kernel_list (tuple): a list name of kernel types,
             support ['iso', 'aniso', 'skew', 'generalized', 'plateau_iso',
             'plateau_aniso']
         kernel_prob (tuple): corresponding kernel probability for each
@@ -482,7 +482,7 @@ def generate_gaussian_noise_pt(img, sigma=10, gray_noise=0):
         noise_gray = torch.randn(*img.size()[2:4], dtype=img.dtype, device=img.device) * sigma / 255.
         noise_gray = noise_gray.view(b, 1, h, w)
 
-    # alway calculate color noise
+    # always calculate color noise
     noise = torch.randn(*img.size(), dtype=img.dtype, device=img.device) * sigma / 255.
 
     if cal_gray_noise:
@@ -639,7 +639,7 @@ def generate_poisson_noise_pt(img, scale=1.0, gray_noise=0):
         noise_gray = out - img_gray
         noise_gray = noise_gray.expand(b, 3, h, w)
 
-    # alway calculate color noise
+    # always calculate color noise
     # round and clip image for counting vals correctly
     img = torch.clamp((img * 255.0).round(), 0, 255) / 255.
     # use for-loop to get the unique values for each sample

@@ -16,7 +16,7 @@ class Vimeo90KDataset(data.Dataset):
     basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt
 
     Each line contains:
-    1. clip name; 2. frame number; 3. image shape, seperated by a white space.
+    1. clip name; 2. frame number; 3. image shape, separated by a white space.
     Examples:
         00001/0001 7 (256,448,3)
         00001/0002 7 (256,448,3)

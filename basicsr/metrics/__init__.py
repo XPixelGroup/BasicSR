@@ -11,7 +11,7 @@ def calculate_metric(data, opt):
     """Calculate metric from data and options.
 
     Args:
-        opt (dict): Configuration. It must constain:
+        opt (dict): Configuration. It must contain:
             type (str): Model type.
     """
     opt = deepcopy(opt)

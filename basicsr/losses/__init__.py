@@ -15,7 +15,7 @@ def build_loss(opt):
     """Build loss from options.
 
     Args:
-        opt (dict): Configuration. It must constain:
+        opt (dict): Configuration. It must contain:
             type (str): Model type.
     """
     opt = deepcopy(opt)
