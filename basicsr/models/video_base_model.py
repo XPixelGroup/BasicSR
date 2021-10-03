@@ -34,7 +34,7 @@ class VideoBaseModel(SRModel):
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
-            metric_data = dict()
+        metric_data = dict()
         # record all frames (border and center frames)
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='frame')

@@ -83,7 +83,7 @@ class VideoRecurrentModel(VideoBaseModel):
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
-            metric_data = dict()
+        metric_data = dict()
         num_folders = len(dataset)
         num_pad = (world_size - (num_folders % world_size)) % world_size
         if rank == 0:

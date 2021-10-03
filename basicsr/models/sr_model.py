@@ -138,7 +138,7 @@ class SRModel(BaseModel):
         with_metrics = self.opt['val'].get('metrics') is not None
         if with_metrics:
             self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
-            metric_data = dict()
+        metric_data = dict()
         pbar = tqdm(total=len(dataloader), unit='image')
 
         for idx, val_data in enumerate(dataloader):
