@@ -72,24 +72,27 @@ class VideoRecurrentModel(VideoBaseModel):
         #    'folder1': tensor (num_frame x len(metrics)),
         #    'folder2': tensor (num_frame x len(metrics))
         # }
-        if with_metrics and not hasattr(self, 'metric_results'):
+        if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
             self.metric_results = {}
             num_frame_each_folder = Counter(dataset.data_info['folder'])
             for folder, num_frame in num_frame_each_folder.items():
                 self.metric_results[folder] = torch.zeros(
                     num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
-
+            # initialize the best metric results
+            self._initialize_best_metric_results()
+        # zero self.metric_results
         rank, world_size = get_dist_info()
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
+
         metric_data = dict()
         num_folders = len(dataset)
         num_pad = (world_size - (num_folders % world_size)) % world_size
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='folder')
-        # Will evaluate (num_folders + num_pad) times, but only the first
-        # num_folders results will be recorded. (To avoid wait-dead)
+        # Will evaluate (num_folders + num_pad) times, but only the first num_folders results will be recorded.
+        # (To avoid wait-dead)
         for i in range(rank, num_folders + num_pad, world_size):
             idx = min(i, num_folders - 1)
             val_data = dataset[idx]

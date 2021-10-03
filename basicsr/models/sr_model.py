@@ -136,8 +136,15 @@ class SRModel(BaseModel):
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         dataset_name = dataloader.dataset.opt['name']
         with_metrics = self.opt['val'].get('metrics') is not None
-        if with_metrics:
+
+        if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
             self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
+            # initialize the best metric results
+            self._initialize_best_metric_results()
+        # zero self.metric_results
+        if with_metrics:
+            self.metric_results = {metric: 0 for metric in self.metric_results}
+
         metric_data = dict()
         pbar = tqdm(total=len(dataloader), unit='image')
 
@@ -183,13 +190,20 @@ class SRModel(BaseModel):
         if with_metrics:
             for metric in self.metric_results.keys():
                 self.metric_results[metric] /= (idx + 1)
+                # update the best metric result
+                self._update_best_metric_result(metric, self.metric_results[metric], current_iter)
 
             self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
     def _log_validation_metric_values(self, current_iter, dataset_name, tb_logger):
         log_str = f'Validation {dataset_name}\n'
         for metric, value in self.metric_results.items():
-            log_str += f'\t # {metric}: {value:.4f}\n'
+            log_str += f'\t # {metric}: {value:.4f}'
+            if hasattr(self, 'best_metric_results'):
+                log_str += (f'\tBest: {self.best_metric_results[metric]["val"]:.4f} @ '
+                            f'{self.best_metric_results[metric]["iter"]} iter')
+            log_str += '\n'
+
         logger = get_root_logger()
         logger.info(log_str)
         if tb_logger:

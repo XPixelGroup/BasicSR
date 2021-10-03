@@ -13,8 +13,9 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
-    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    dataroot_gt: datasets/DF2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DF2K/DIV2K_train_LR_bicubic_X4_sub
+    meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
     # (for lmdb)
     # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
     # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
@@ -92,6 +93,11 @@ val:
       type: calculate_psnr
       crop_border: 4
       test_y_channel: false
+      better: higher  # the higher, the better. Default: higher
+    niqe:
+      type: calculate_niqe
+      crop_border: 4
+      better: lower  # the lower, the better
 
 # logging settings
 logger:

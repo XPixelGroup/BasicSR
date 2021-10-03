@@ -47,6 +47,25 @@ class BaseModel():
         else:
             self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
+    def _initialize_best_metric_results(self):
+        """Initialize the best metric results dict for recording the best metric value and iteration."""
+        if not hasattr(self, 'best_metric_results'):
+            self.best_metric_results = dict()
+            for metric, content in self.opt['val']['metrics'].items():
+                better = content.get('better', 'higher')
+                init_val = float('-inf') if better == 'higher' else float('inf')
+                self.best_metric_results[metric] = dict(better=better, val=init_val, iter=-1)
+
+    def _update_best_metric_result(self, metric, val, current_iter):
+        if self.best_metric_results[metric]['better'] == 'higher':
+            if val >= self.best_metric_results[metric]['val']:
+                self.best_metric_results[metric]['val'] = val
+                self.best_metric_results[metric]['iter'] = current_iter
+        else:
+            if val <= self.best_metric_results[metric]['val']:
+                self.best_metric_results[metric]['val'] = val
+                self.best_metric_results[metric]['iter'] = current_iter
+
     def model_ema(self, decay=0.999):
         net_g = self.get_bare_model(self.net_g)
 
