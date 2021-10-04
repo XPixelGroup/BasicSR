@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from basicsr.utils.registry import ARCH_REGISTRY
+
 
 class SeqConv3x3(nn.Module):
 
@@ -215,6 +217,7 @@ class ECB(nn.Module):
         return RK, RB
 
 
+@ARCH_REGISTRY.register()
 class ECBSR(nn.Module):
 
     def __init__(self, module_nums, channel_nums, with_idt, act_type, scale, colors):

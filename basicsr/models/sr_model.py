@@ -208,7 +208,7 @@ class SRModel(BaseModel):
         logger.info(log_str)
         if tb_logger:
             for metric, value in self.metric_results.items():
-                tb_logger.add_scalar(f'metrics/{metric}', value, current_iter)
+                tb_logger.add_scalar(f'metrics/{dataset_name}/{metric}', value, current_iter)
 
     def get_current_visuals(self):
         out_dict = OrderedDict()
