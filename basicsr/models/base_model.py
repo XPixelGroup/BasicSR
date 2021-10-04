@@ -47,24 +47,30 @@ class BaseModel():
         else:
             self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
-    def _initialize_best_metric_results(self):
+    def _initialize_best_metric_results(self, dataset_name):
         """Initialize the best metric results dict for recording the best metric value and iteration."""
-        if not hasattr(self, 'best_metric_results'):
+        if hasattr(self, 'best_metric_results') and dataset_name in self.best_metric_results:
+            return
+        elif not hasattr(self, 'best_metric_results'):
             self.best_metric_results = dict()
-            for metric, content in self.opt['val']['metrics'].items():
-                better = content.get('better', 'higher')
-                init_val = float('-inf') if better == 'higher' else float('inf')
-                self.best_metric_results[metric] = dict(better=better, val=init_val, iter=-1)
 
-    def _update_best_metric_result(self, metric, val, current_iter):
-        if self.best_metric_results[metric]['better'] == 'higher':
-            if val >= self.best_metric_results[metric]['val']:
-                self.best_metric_results[metric]['val'] = val
-                self.best_metric_results[metric]['iter'] = current_iter
+        # add a dataset record
+        record = dict()
+        for metric, content in self.opt['val']['metrics'].items():
+            better = content.get('better', 'higher')
+            init_val = float('-inf') if better == 'higher' else float('inf')
+            record[metric] = dict(better=better, val=init_val, iter=-1)
+        self.best_metric_results[dataset_name] = record
+
+    def _update_best_metric_result(self, dataset_name, metric, val, current_iter):
+        if self.best_metric_results[dataset_name][metric]['better'] == 'higher':
+            if val >= self.best_metric_results[dataset_name][metric]['val']:
+                self.best_metric_results[dataset_name][metric]['val'] = val
+                self.best_metric_results[dataset_name][metric]['iter'] = current_iter
         else:
-            if val <= self.best_metric_results[metric]['val']:
-                self.best_metric_results[metric]['val'] = val
-                self.best_metric_results[metric]['iter'] = current_iter
+            if val <= self.best_metric_results[dataset_name][metric]['val']:
+                self.best_metric_results[dataset_name][metric]['val'] = val
+                self.best_metric_results[dataset_name][metric]['iter'] = current_iter
 
     def model_ema(self, decay=0.999):
         net_g = self.get_bare_model(self.net_g)

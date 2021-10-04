@@ -44,6 +44,14 @@ datasets:
     io_backend:
       type: disk
 
+  val_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: datasets/Set14/GTmod12
+    dataroot_lq: datasets/Set14/LRbicx4
+    io_backend:
+      type: disk
+
 # network structures
 network_g:
   type: MSRResNet

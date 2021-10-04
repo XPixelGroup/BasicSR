@@ -28,7 +28,7 @@ def init_tb_loggers(opt):
 
 def create_train_val_dataloader(opt, logger):
     # create train and val dataloaders
-    train_loader, val_loader = None, None
+    train_loader, val_loaders = None, []
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
@@ -53,16 +53,16 @@ def create_train_val_dataloader(opt, logger):
                         f'\n\tWorld size (gpu number): {opt["world_size"]}'
                         f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
                         f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
-
-        elif phase == 'val':
+        elif phase.split('_')[0] == 'val':
             val_set = build_dataset(dataset_opt)
             val_loader = build_dataloader(
                 val_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed'])
             logger.info(f'Number of val images/folders in {dataset_opt["name"]}: {len(val_set)}')
+            val_loaders.append(val_loader)
         else:
             raise ValueError(f'Dataset phase {phase} is not recognized.')
 
-    return train_loader, train_sampler, val_loader, total_epochs, total_iters
+    return train_loader, train_sampler, val_loaders, total_epochs, total_iters
 
 
 def load_resume_state(opt):
@@ -118,7 +118,7 @@ def train_pipeline(root_path):
 
     # create train and validation dataloaders
     result = create_train_val_dataloader(opt, logger)
-    train_loader, train_sampler, val_loader, total_epochs, total_iters = result
+    train_loader, train_sampler, val_loaders, total_epochs, total_iters = result
 
     # create model
     model = build_model(opt)
@@ -187,7 +187,10 @@ def train_pipeline(root_path):
 
             # validation
             if opt.get('val') is not None and (current_iter % opt['val']['val_freq'] == 0):
-                model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
+                if len(val_loaders) > 1:
+                    logger.warning('Multiple validation datasets are *only* supported by SRModel.')
+                for val_loader in val_loaders:
+                    model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
 
             data_timer.start()
             iter_timer.start()
@@ -201,7 +204,8 @@ def train_pipeline(root_path):
     logger.info('Save the latest model.')
     model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
     if opt.get('val') is not None:
-        model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
+        for val_loader in val_loaders:
+            model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
     if tb_logger:
         tb_logger.close()
 

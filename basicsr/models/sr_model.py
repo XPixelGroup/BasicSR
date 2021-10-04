@@ -139,8 +139,8 @@ class SRModel(BaseModel):
 
         if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
             self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
-            # initialize the best metric results
-            self._initialize_best_metric_results()
+        # initialize the best metric results for each dataset_name (supporting multiple validation datasets)
+        self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
         if with_metrics:
             self.metric_results = {metric: 0 for metric in self.metric_results}
@@ -191,7 +191,7 @@ class SRModel(BaseModel):
             for metric in self.metric_results.keys():
                 self.metric_results[metric] /= (idx + 1)
                 # update the best metric result
-                self._update_best_metric_result(metric, self.metric_results[metric], current_iter)
+                self._update_best_metric_result(dataset_name, metric, self.metric_results[metric], current_iter)
 
             self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
@@ -200,8 +200,8 @@ class SRModel(BaseModel):
         for metric, value in self.metric_results.items():
             log_str += f'\t # {metric}: {value:.4f}'
             if hasattr(self, 'best_metric_results'):
-                log_str += (f'\tBest: {self.best_metric_results[metric]["val"]:.4f} @ '
-                            f'{self.best_metric_results[metric]["iter"]} iter')
+                log_str += (f'\tBest: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
+                            f'{self.best_metric_results[dataset_name][metric]["iter"]} iter')
             log_str += '\n'
 
         logger = get_root_logger()

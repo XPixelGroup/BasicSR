@@ -30,8 +30,8 @@ class VideoBaseModel(SRModel):
             for folder, num_frame in num_frame_each_folder.items():
                 self.metric_results[folder] = torch.zeros(
                     num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
-            # initialize the best metric results
-            self._initialize_best_metric_results()
+        # initialize the best metric results
+        self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
         rank, world_size = get_dist_info()
         if with_metrics:
@@ -137,7 +137,7 @@ class VideoBaseModel(SRModel):
         for metric in total_avg_results.keys():
             total_avg_results[metric] /= len(metric_results_avg)
             # update the best metric result
-            self._update_best_metric_result(metric, total_avg_results[metric], current_iter)
+            self._update_best_metric_result(dataset_name, metric, total_avg_results[metric], current_iter)
 
         # ------------------------------------------ log the metric ------------------------------------------ #
         log_str = f'Validation {dataset_name}\n'
@@ -146,8 +146,8 @@ class VideoBaseModel(SRModel):
             for folder, tensor in metric_results_avg.items():
                 log_str += f'\t # {folder}: {tensor[metric_idx].item():.4f}'
             if hasattr(self, 'best_metric_results'):
-                log_str += (f'\n\t    Best: {self.best_metric_results[metric]["val"]:.4f} @ '
-                            f'{self.best_metric_results[metric]["iter"]} iter')
+                log_str += (f'\n\t    Best: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
+                            f'{self.best_metric_results[dataset_name][metric]["iter"]} iter')
             log_str += '\n'
 
         logger = get_root_logger()
