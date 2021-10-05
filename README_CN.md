@@ -13,7 +13,7 @@
 
 :loudspeaker: **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步**
 
-:compass: [入群二维码](#e-mail-%E8%81%94%E7%B3%BB) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+:compass: [入群二维码](#e-mail-%E8%81%94%E7%B3%BB) (QQ、微信)  &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
 
 ---
 
