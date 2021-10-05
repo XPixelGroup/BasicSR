@@ -255,6 +255,8 @@ class ECBSR(nn.Module):
         self.upsampler = nn.PixelShuffle(self.scale)
 
     def forward(self, x):
+        x = x * 255.
         y = self.backbone(x) + x
         y = self.upsampler(y)
+        y = y / 255.
         return y
