@@ -92,8 +92,10 @@ class PairedImageDataset(data.Dataset):
             img_gt = rgb2ycbcr(img_gt, y_only=True)[..., None]
             img_lq = rgb2ycbcr(img_lq, y_only=True)[..., None]
 
-        # TODO: fix me during release
-        img_gt = img_gt[0:img_lq.shape[0] * scale, 0:img_lq.shape[1] * scale, :]
+        # crop the unmatched GT images during validation or testing, especially for SR benchmark datasets
+        # TODO: It is better to update the datasets, rather than force to crop
+        if self.opt['phase'] != 'train':
+            img_gt = img_gt[0:img_lq.shape[0] * scale, 0:img_lq.shape[1] * scale, :]
 
         # BGR to RGB, HWC to CHW, numpy to tensor
         img_gt, img_lq = img2tensor([img_gt, img_lq], bgr2rgb=True, float32=True)
