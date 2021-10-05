@@ -1,5 +1,5 @@
 # general settings
-name: 101_train_ECBSR_x2_m4c16_prelu255
+name: 101_train_ECBSR_x2_m4c16_prelu
 model_type: SRModel
 scale: 2
 num_gpu: 1  # set num_gpu: 0 for cpu mode
@@ -10,17 +10,13 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
+    # It is strongly recommended to use lmdb for faster IO speed, especially for small networks
     dataroot_gt: datasets/DF2K/DIV2K_train_HR_sub
     dataroot_lq: datasets/DF2K/DIV2K_train_LR_bicubic_X2_sub
     meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
-    # (for lmdb)
-    # dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
-    # dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
     filename_tmpl: '{}'
     io_backend:
       type: disk
-      # (for lmdb)
-      # type: lmdb
 
     gt_size: 128
     use_flip: true
@@ -34,6 +30,7 @@ datasets:
     dataset_enlarge_ratio: 10
     prefetch_mode: ~
 
+  # we use multiple validation datasets. The SR benchmark datasets can be download from: https://cv.snu.ac.kr/research/EDSR/benchmark.tar
   val:
     name: Set5
     type: PairedImageDataset
@@ -116,12 +113,12 @@ train:
 
 # validation settings
 val:
-  val_freq: !!float 1600
+  val_freq: !!float 1600  # the same as the original setting. # TODO: Can be larger
   save_img: false
   pbar: False
 
   metrics:
-    psnr: # metric name, can be arbitrary
+    psnr:
       type: calculate_psnr
       crop_border: 2
       test_y_channel: true
