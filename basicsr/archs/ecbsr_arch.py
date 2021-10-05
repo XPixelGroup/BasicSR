@@ -7,14 +7,13 @@ from basicsr.utils.registry import ARCH_REGISTRY
 
 class SeqConv3x3(nn.Module):
 
-    def __init__(self, seq_type, inp_planes, out_planes, depth_multiplier):
+    def __init__(self, seq_type, inp_planes, out_planes, depth_multiplier=1):
         super(SeqConv3x3, self).__init__()
-
-        self.type = seq_type
+        self.seq_type = seq_type
         self.inp_planes = inp_planes
         self.out_planes = out_planes
 
-        if self.type == 'conv1x1-conv3x3':
+        if self.seq_type == 'conv1x1-conv3x3':
             self.mid_planes = int(out_planes * depth_multiplier)
             conv0 = torch.nn.Conv2d(self.inp_planes, self.mid_planes, kernel_size=1, padding=0)
             self.k0 = conv0.weight
@@ -24,17 +23,14 @@ class SeqConv3x3(nn.Module):
             self.k1 = conv1.weight
             self.b1 = conv1.bias
 
-        elif self.type == 'conv1x1-sobelx':
+        elif self.seq_type == 'conv1x1-sobelx':
             conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
-            # init scale & bias
+            # init scale and bias
             scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(scale)
-            # bias = 0.0
-            # bias = [bias for c in range(self.out_planes)]
-            # bias = torch.FloatTensor(bias)
             bias = torch.randn(self.out_planes) * 1e-3
             bias = torch.reshape(bias, (self.out_planes, ))
             self.bias = nn.Parameter(bias)
@@ -49,17 +45,14 @@ class SeqConv3x3(nn.Module):
                 self.mask[i, 0, 2, 2] = -1.0
             self.mask = nn.Parameter(data=self.mask, requires_grad=False)
 
-        elif self.type == 'conv1x1-sobely':
+        elif self.seq_type == 'conv1x1-sobely':
             conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
-            # init scale & bias
+            # init scale and bias
             scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
-            # bias = 0.0
-            # bias = [bias for c in range(self.out_planes)]
-            # bias = torch.FloatTensor(bias)
             bias = torch.randn(self.out_planes) * 1e-3
             bias = torch.reshape(bias, (self.out_planes, ))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
@@ -74,17 +67,14 @@ class SeqConv3x3(nn.Module):
                 self.mask[i, 0, 2, 2] = -1.0
             self.mask = nn.Parameter(data=self.mask, requires_grad=False)
 
-        elif self.type == 'conv1x1-laplacian':
+        elif self.seq_type == 'conv1x1-laplacian':
             conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
-            # init scale & bias
+            # init scale and bias
             scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
-            # bias = 0.0
-            # bias = [bias for c in range(self.out_planes)]
-            # bias = torch.FloatTensor(bias)
             bias = torch.randn(self.out_planes) * 1e-3
             bias = torch.reshape(bias, (self.out_planes, ))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
@@ -98,10 +88,10 @@ class SeqConv3x3(nn.Module):
                 self.mask[i, 0, 1, 1] = -4.0
             self.mask = nn.Parameter(data=self.mask, requires_grad=False)
         else:
-            raise ValueError('the type of seqconv is not supported!')
+            raise ValueError('The type of seqconv is not supported!')
 
     def forward(self, x):
-        if self.type == 'conv1x1-conv3x3':
+        if self.seq_type == 'conv1x1-conv3x3':
             # conv-1x1
             y0 = F.conv2d(input=x, weight=self.k0, bias=self.b0, stride=1)
             # explicitly padding with bias
@@ -131,12 +121,12 @@ class SeqConv3x3(nn.Module):
         if device < 0:
             device = None
 
-        if self.type == 'conv1x1-conv3x3':
+        if self.seq_type == 'conv1x1-conv3x3':
             # re-param conv kernel
-            RK = F.conv2d(input=self.k1, weight=self.k0.permute(1, 0, 2, 3))
+            rep_weight = F.conv2d(input=self.k1, weight=self.k0.permute(1, 0, 2, 3))
             # re-param conv bias
-            RB = torch.ones(1, self.mid_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
-            RB = F.conv2d(input=RB, weight=self.k1).view(-1, ) + self.b1
+            rep_bias = torch.ones(1, self.mid_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
+            rep_bias = F.conv2d(input=rep_bias, weight=self.k1).view(-1, ) + self.b1
         else:
             tmp = self.scale * self.mask
             k1 = torch.zeros((self.out_planes, self.out_planes, 3, 3), device=device)
@@ -144,11 +134,11 @@ class SeqConv3x3(nn.Module):
                 k1[i, i, :, :] = tmp[i, 0, :, :]
             b1 = self.bias
             # re-param conv kernel
-            RK = F.conv2d(input=k1, weight=self.k0.permute(1, 0, 2, 3))
+            rep_weight = F.conv2d(input=k1, weight=self.k0.permute(1, 0, 2, 3))
             # re-param conv bias
-            RB = torch.ones(1, self.out_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
-            RB = F.conv2d(input=RB, weight=k1).view(-1, ) + b1
-        return RK, RB
+            rep_bias = torch.ones(1, self.out_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
+            rep_bias = F.conv2d(input=rep_bias, weight=k1).view(-1, ) + b1
+        return rep_weight, rep_bias
 
 
 class ECB(nn.Module):
@@ -168,9 +158,9 @@ class ECB(nn.Module):
 
         self.conv3x3 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=3, padding=1)
         self.conv1x1_3x3 = SeqConv3x3('conv1x1-conv3x3', self.inp_planes, self.out_planes, self.depth_multiplier)
-        self.conv1x1_sbx = SeqConv3x3('conv1x1-sobelx', self.inp_planes, self.out_planes, -1)
-        self.conv1x1_sby = SeqConv3x3('conv1x1-sobely', self.inp_planes, self.out_planes, -1)
-        self.conv1x1_lpl = SeqConv3x3('conv1x1-laplacian', self.inp_planes, self.out_planes, -1)
+        self.conv1x1_sbx = SeqConv3x3('conv1x1-sobelx', self.inp_planes, self.out_planes)
+        self.conv1x1_sby = SeqConv3x3('conv1x1-sobely', self.inp_planes, self.out_planes)
+        self.conv1x1_lpl = SeqConv3x3('conv1x1-laplacian', self.inp_planes, self.out_planes)
 
         if self.act_type == 'prelu':
             self.act = nn.PReLU(num_parameters=self.out_planes)
@@ -191,72 +181,65 @@ class ECB(nn.Module):
             if self.with_idt:
                 y += x
         else:
-            RK, RB = self.rep_params()
-            y = F.conv2d(input=x, weight=RK, bias=RB, stride=1, padding=1)
+            rep_weight, rep_bias = self.rep_params()
+            y = F.conv2d(input=x, weight=rep_weight, bias=rep_bias, stride=1, padding=1)
         if self.act_type != 'linear':
             y = self.act(y)
         return y
 
     def rep_params(self):
-        K0, B0 = self.conv3x3.weight, self.conv3x3.bias
-        K1, B1 = self.conv1x1_3x3.rep_params()
-        K2, B2 = self.conv1x1_sbx.rep_params()
-        K3, B3 = self.conv1x1_sby.rep_params()
-        K4, B4 = self.conv1x1_lpl.rep_params()
-        RK, RB = (K0 + K1 + K2 + K3 + K4), (B0 + B1 + B2 + B3 + B4)
+        weight0, bias0 = self.conv3x3.weight, self.conv3x3.bias
+        weight1, bias1 = self.conv1x1_3x3.rep_params()
+        weight2, bias2 = self.conv1x1_sbx.rep_params()
+        weight3, bias3 = self.conv1x1_sby.rep_params()
+        weight4, bias4 = self.conv1x1_lpl.rep_params()
+        rep_weight, rep_bias = (weight0 + weight1 + weight2 + weight3 + weight4), (
+            bias0 + bias1 + bias2 + bias3 + bias4)
 
         if self.with_idt:
-            device = RK.get_device()
+            device = rep_weight.get_device()
             if device < 0:
                 device = None
-            K_idt = torch.zeros(self.out_planes, self.out_planes, 3, 3, device=device)
+            weight_idt = torch.zeros(self.out_planes, self.out_planes, 3, 3, device=device)
             for i in range(self.out_planes):
-                K_idt[i, i, 1, 1] = 1.0
-            B_idt = 0.0
-            RK, RB = RK + K_idt, RB + B_idt
-        return RK, RB
+                weight_idt[i, i, 1, 1] = 1.0
+            bias_idt = 0.0
+            rep_weight, rep_bias = rep_weight + weight_idt, rep_bias + bias_idt
+        return rep_weight, rep_bias
 
 
 @ARCH_REGISTRY.register()
 class ECBSR(nn.Module):
+    """ECBSR architecture.
 
-    def __init__(self, module_nums, channel_nums, with_idt, act_type, scale, colors):
+    Paper: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
+    Ref git repo: https://github.com/xindongzhang/ECBSR
+
+    Args:
+        num_in_ch (int): Channel number of inputs.
+        num_out_ch (int): Channel number of outputs.
+        num_block (int): Block number in the trunk network.
+        num_channel (int): Channel number.
+        with_idt (bool): Whether use identity in convolution layers.
+        act_type (str): Activation type.
+        scale (int): Upsampling factor.
+    """
+
+    def __init__(self, num_in_ch, num_out_ch, num_block, num_channel, with_idt, act_type, scale):
         super(ECBSR, self).__init__()
-        self.module_nums = module_nums
-        self.channel_nums = channel_nums
-        self.scale = scale
-        self.colors = colors
-        self.with_idt = with_idt
-        self.act_type = act_type
-        self.backbone = None
-        self.upsampler = None
 
         backbone = []
+        backbone += [ECB(num_in_ch, num_channel, depth_multiplier=2.0, act_type=act_type, with_idt=with_idt)]
+        for _ in range(num_block):
+            backbone += [ECB(num_channel, num_channel, depth_multiplier=2.0, act_type=act_type, with_idt=with_idt)]
         backbone += [
-            ECB(self.colors, self.channel_nums, depth_multiplier=2.0, act_type=self.act_type, with_idt=self.with_idt)
-        ]
-        for i in range(self.module_nums):
-            backbone += [
-                ECB(self.channel_nums,
-                    self.channel_nums,
-                    depth_multiplier=2.0,
-                    act_type=self.act_type,
-                    with_idt=self.with_idt)
-            ]
-        backbone += [
-            ECB(self.channel_nums,
-                self.colors * self.scale * self.scale,
-                depth_multiplier=2.0,
-                act_type='linear',
-                with_idt=self.with_idt)
+            ECB(num_channel, num_out_ch * scale * scale, depth_multiplier=2.0, act_type='linear', with_idt=with_idt)
         ]
 
         self.backbone = nn.Sequential(*backbone)
-        self.upsampler = nn.PixelShuffle(self.scale)
+        self.upsampler = nn.PixelShuffle(scale)
 
     def forward(self, x):
-        x = x * 255.
-        y = self.backbone(x) + x
+        y = self.backbone(x) + x  # will repeat the input in the channel dimension (repeat  scale * scale times)
         y = self.upsampler(y)
-        y = y / 255.
         return y

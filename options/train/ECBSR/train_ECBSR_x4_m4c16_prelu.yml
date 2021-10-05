@@ -77,12 +77,13 @@ datasets:
 # network structures
 network_g:
   type: ECBSR
-  module_nums: 4
-  channel_nums: 16
+  num_in_ch: 1
+  num_out_ch: 1
+  num_block: 4
+  num_channel: 16
   with_idt: False
   act_type: prelu
   scale: 4
-  colors: 1
 
 # path
 path:
