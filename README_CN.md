@@ -31,22 +31,13 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 :triangular_flag_on_post: **新的特性/更新**
 
+- :white_check_mark: Oct 5, 2021. 添加 **ECBSR 训练和测试** 代码: [ECBSR](https://github.com/xindongzhang/ECBSR).
+  > ACMMM21: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices <br>
+  > Xindong Zhang, Hui Zeng, Lei Zhang
 - :white_check_mark: Sep 2, 2021. 添加 **SwinIR 训练和测试** 代码: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang):+1:. 更多内容参见 [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
 - :white_check_mark: Aug 5, 2021. 添加了NIQE， 它输出和MATLAB一样的结果 (both are 5.7296 for tests/data/baboon.png).
 - :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
-- :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
-- :white_check_mark: Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
-- :white_check_mark: Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
-- :white_check_mark: Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-
-<details>
-  <summary>更多</summary>
-<ul>
-  <li> Sep 8, 2020. 添加 <b>盲人脸复原</b> 测试代码: <b>DFDNet</b>. <br> <i><font color="#DCDCDC">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#DCDCDC">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
-  <li> Aug 27, 2020. 添加 <b>StyleGAN2</b> 训练和测试代码. <br> <i><font color="#DCDCDC">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#DCDCDC">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
-  <li>Aug 19, 2020. <b>全新的</b> BasicSR v1.0.0 上线.</li>
-</ul>
-</details>
+- **[更多](docs/history_updates.md)**
 
 :sparkles: **使用 BasicSR 的项目**
 - [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): 通用图像复原的实用算法
