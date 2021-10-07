@@ -3,6 +3,7 @@ import math
 import torch
 import torchvision
 import warnings
+from distutils.version import LooseVersion
 from itertools import repeat
 from torch import nn as nn
 from torch.nn import functional as F
@@ -227,7 +228,7 @@ class DCNv2Pack(ModulatedDeformConvPack):
             logger = get_root_logger()
             logger.warning(f'Offset abs mean is {offset_absmean}, larger than 50.')
 
-        if torchvision.__version__ >= '0.9.0':
+        if LooseVersion(torchvision.__version__) >= LooseVersion('0.9.0'):
             return torchvision.ops.deform_conv2d(x, offset, self.weight, self.bias, self.stride, self.padding,
                                                  self.dilation, mask)
         else:
