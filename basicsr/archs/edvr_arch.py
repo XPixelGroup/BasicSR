@@ -297,7 +297,7 @@ class EDVR(nn.Module):
         else:
             self.conv_first = nn.Conv2d(num_in_ch, num_feat, 3, 1, 1)
 
-        # extrat pyramid features
+        # extract pyramid features
         self.feature_extraction = make_layer(ResidualBlockNoBN, num_extract_block, num_feat=num_feat)
         self.conv_l2_1 = nn.Conv2d(num_feat, num_feat, 3, 2, 1)
         self.conv_l2_2 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)

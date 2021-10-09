@@ -155,7 +155,7 @@ class PerceptualLoss(nn.Module):
         layer_weights (dict): The weight for each layer of vgg feature.
             Here is an example: {'conv5_4': 1.}, which means the conv5_4
             feature layer (before relu5_4) will be extracted with weight
-            1.0 in calculting losses.
+            1.0 in calculating losses.
         vgg_type (str): The type of vgg network used as feature extractor.
             Default: 'vgg19'.
         use_input_norm (bool):  If True, normalize the input image in vgg.
@@ -382,7 +382,7 @@ class MultiScaleGANLoss(GANLoss):
                     # Only compute GAN loss for the last layer
                     # in case of multiscale feature matching
                     pred_i = pred_i[-1]
-                # Safe operaton: 0-dim tensor calling self.mean() does nothing
+                # Safe operation: 0-dim tensor calling self.mean() does nothing
                 loss_tensor = super().forward(pred_i, target_is_real, is_disc).mean()
                 loss += loss_tensor
             return loss / len(input)

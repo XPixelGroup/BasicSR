@@ -12,7 +12,7 @@ class MeanShift(nn.Conv2d):
         rgb_range (int): Maximum value of RGB.
         rgb_mean (list[float]): Mean for RGB channels.
         rgb_std (list[float]): Std for RGB channels.
-        sign (int): For substraction, sign is -1, for addition, sign is 1.
+        sign (int): For subtraction, sign is -1, for addition, sign is 1.
             Default: -1.
         requires_grad (bool): Whether to update the self.weight and self.bias.
             Default: True.

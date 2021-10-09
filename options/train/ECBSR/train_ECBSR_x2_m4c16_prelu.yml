@@ -1,0 +1,144 @@
+# general settings
+name: 101_train_ECBSR_x2_m4c16_prelu
+model_type: SRModel
+scale: 2
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DIV2K
+    type: PairedImageDataset
+    # It is strongly recommended to use lmdb for faster IO speed, especially for small networks
+    dataroot_gt: datasets/DF2K/DIV2K_train_HR_sub
+    dataroot_lq: datasets/DF2K/DIV2K_train_LR_bicubic_X2_sub
+    meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+    gt_size: 128
+    use_flip: true
+    use_rot: true
+    color: y
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 12
+    batch_size_per_gpu: 32
+    dataset_enlarge_ratio: 10
+    prefetch_mode: ~
+
+  # we use multiple validation datasets. The SR benchmark datasets can be download from: https://cv.snu.ac.kr/research/EDSR/benchmark.tar
+  val:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Set5/HR
+    dataroot_lq: datasets/benchmark/Set5/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    color: y
+    io_backend:
+      type: disk
+
+  val_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Set14/HR
+    dataroot_lq: datasets/benchmark/Set14/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    color: y
+    io_backend:
+      type: disk
+
+  val_3:
+    name: B100
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/B100/HR
+    dataroot_lq: datasets/benchmark/B100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    color: y
+    io_backend:
+      type: disk
+
+  val_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Urban100/HR
+    dataroot_lq: datasets/benchmark/Urban100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    color: y
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: ECBSR
+  num_in_ch: 1
+  num_out_ch: 1
+  num_block: 4
+  num_channel: 16
+  with_idt: False
+  act_type: prelu
+  scale: 2
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0
+  optim_g:
+    type: Adam
+    lr: !!float 5e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [1600000]
+    gamma: 1
+
+  total_iter: 1600000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 1600  # the same as the original setting. # TODO: Can be larger
+  save_img: false
+  pbar: False
+
+  metrics:
+    psnr:
+      type: calculate_psnr
+      crop_border: 2
+      test_y_channel: true
+      better: higher  # the higher, the better. Default: higher
+    ssim:
+      type: calculate_ssim
+      crop_border: 2
+      test_y_channel: true
+      better: higher  # the higher, the better. Default: higher
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 1600
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500

@@ -21,7 +21,7 @@ def filter2D(img, kernel):
     ph, pw = img.size()[-2:]
 
     if kernel.size(0) == 1:
-        # apply the same kenrel to all batch images
+        # apply the same kernel to all batch images
         img = img.view(b * c, 1, ph, pw)
         kernel = kernel.view(1, 1, k, k)
         return F.conv2d(img, kernel, padding=0).view(b, c, h, w)

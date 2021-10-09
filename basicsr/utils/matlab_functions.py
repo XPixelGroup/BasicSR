@@ -307,7 +307,7 @@ def _convert_input_type_range(img):
 
     It converts the input image to np.float32 type and range of [0, 1].
     It is mainly used for pre-processing the input image in colorspace
-    convertion functions such as rgb2ycbcr and ycbcr2rgb.
+    conversion functions such as rgb2ycbcr and ycbcr2rgb.
 
     Args:
         img (ndarray): The input image. It accepts:
@@ -336,7 +336,7 @@ def _convert_output_type_range(img, dst_type):
     images will be converted to np.uint8 type with range [0, 255]. If
     `dst_type` is np.float32, it converts the image to np.float32 type with
     range [0, 1].
-    It is mainly used for post-processing images in colorspace convertion
+    It is mainly used for post-processing images in colorspace conversion
     functions such as rgb2ycbcr and ycbcr2rgb.
 
     Args:

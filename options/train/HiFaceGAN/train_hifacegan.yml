@@ -6,7 +6,7 @@ num_gpu: 1  # set num_gpu: 0 for cpu mode
 manual_seed: 0
 
 datasets:
-  train:  # the 2st test dataset
+  train:
     name: FFHQ_sr4x
     type: PairedImageDataset
     dataroot_gt: datasets/FFHQ_512_gt
@@ -30,7 +30,7 @@ datasets:
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
 
-  val:  # the 2st test dataset
+  val:
     name: FFHQ_sr4x_val   # For now, use training dataset for validation
     type: PairedImageDataset
     dataroot_gt: datasets/FFHQ_512_gt
@@ -147,4 +147,3 @@ logger:
   wandb:
     project: ~
     resume_id: ~
-

@@ -166,7 +166,7 @@ class DynamicUpsamplingFilter(nn.Module):
             x (Tensor): Input image with 3 channels. The shape is (n, 3, h, w).
             filters (Tensor): Generated dynamic filters.
                 The shape is (n, filter_prod, upsampling_square, h, w).
-                filter_prod: prod of filter kenrel size, e.g., 1*5*5=25.
+                filter_prod: prod of filter kernel size, e.g., 1*5*5=25.
                 upsampling_square: similar to pixel shuffle,
                     upsampling_square = upsampling * upsampling
                     e.g., for x 4 upsampling, upsampling_square= 4*4 = 16

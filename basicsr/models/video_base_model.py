@@ -24,17 +24,21 @@ class VideoBaseModel(SRModel):
         #    'folder1': tensor (num_frame x len(metrics)),
         #    'folder2': tensor (num_frame x len(metrics))
         # }
-        if with_metrics and not hasattr(self, 'metric_results'):
+        if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
             self.metric_results = {}
             num_frame_each_folder = Counter(dataset.data_info['folder'])
             for folder, num_frame in num_frame_each_folder.items():
                 self.metric_results[folder] = torch.zeros(
                     num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+        # initialize the best metric results
+        self._initialize_best_metric_results(dataset_name)
+        # zero self.metric_results
         rank, world_size = get_dist_info()
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
-            metric_data = dict()
+
+        metric_data = dict()
         # record all frames (border and center frames)
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='frame')
@@ -111,6 +115,7 @@ class VideoBaseModel(SRModel):
         self.dist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def _log_validation_metric_values(self, current_iter, dataset_name, tb_logger):
+        # ----------------- calculate the average values for each folder, and for each metric  ----------------- #
         # average all frames for each sub-folder
         # metric_results_avg is a dict:{
         #    'folder1': tensor (len(metrics)),
@@ -131,12 +136,18 @@ class VideoBaseModel(SRModel):
         # average among folders
         for metric in total_avg_results.keys():
             total_avg_results[metric] /= len(metric_results_avg)
+            # update the best metric result
+            self._update_best_metric_result(dataset_name, metric, total_avg_results[metric], current_iter)
 
+        # ------------------------------------------ log the metric ------------------------------------------ #
         log_str = f'Validation {dataset_name}\n'
         for metric_idx, (metric, value) in enumerate(total_avg_results.items()):
             log_str += f'\t # {metric}: {value:.4f}'
             for folder, tensor in metric_results_avg.items():
                 log_str += f'\t # {folder}: {tensor[metric_idx].item():.4f}'
+            if hasattr(self, 'best_metric_results'):
+                log_str += (f'\n\t    Best: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
+                            f'{self.best_metric_results[dataset_name][metric]["iter"]} iter')
             log_str += '\n'
 
         logger = get_root_logger()

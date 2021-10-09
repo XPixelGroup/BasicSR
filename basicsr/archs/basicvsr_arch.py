@@ -256,7 +256,7 @@ class EDVRFeatureExtractor(nn.Module):
 
         self.center_frame_idx = num_input_frame // 2
 
-        # extrat pyramid features
+        # extract pyramid features
         self.conv_first = nn.Conv2d(3, num_feat, 3, 1, 1)
         self.feature_extraction = make_layer(ResidualBlockNoBN, 5, num_feat=64)
         self.conv_l2_1 = nn.Conv2d(num_feat, num_feat, 3, 2, 1)

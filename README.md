@@ -11,6 +11,12 @@
 
 :rocket: We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. :rocket:
 
+:loudspeaker: **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步**
+
+:compass: [入群二维码](#e-mail-contact) (QQ、微信) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+
+---
+
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 :m: [Model Zoo](docs/ModelZoo.md): :arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
 :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ) <br>
@@ -23,24 +29,17 @@
 
 BasicSR (**Basic** **S**uper **R**estoration) is an open-source **image and video restoration** toolbox based on PyTorch, such as super-resolution, denoise, deblurring, JPEG artifacts removal, *etc*.
 
+BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源 图像视频复原工具箱, 比如 超分辨率, 去噪, 去模糊, 去 JPEG 压缩噪声等.
+
 :triangular_flag_on_post: **New Features/Updates**
 
-- :white_check_mark: Sep 2, 2021. Add **SwinIR training and testing** codes: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang):+1:. More details are in [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
+- :white_check_mark: Oct 5, 2021. Add **ECBSR training and testing** codes: [ECBSR](https://github.com/xindongzhang/ECBSR).
+  > ACMMM21: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
+- :white_check_mark: Sep 2, 2021. Add **SwinIR training and testing** codes: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang). More details are in [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
 - :white_check_mark: Aug 5, 2021. Add NIQE, which produces the same results as MATLAB (both are 5.7296 for tests/data/baboon.png).
 - :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
-- :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [HiFaceGAN](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
-- :white_check_mark: Nov 29, 2020. Add **ESRGAN** and **DFDNet** [colab demo](colab)
-- :white_check_mark: Sep 8, 2020. Add **blind face restoration** inference codes: [DFDNet](https://github.com/csxmli2016/DFDNet).
-- :white_check_mark: Aug 27, 2020. Add **StyleGAN2 training and testing** codes: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-
-<details>
-  <summary>More</summary>
-<ul>
-  <li> Sep 8, 2020. Add <b>blind face restoration</b> inference codes: <b>DFDNet</b>. <br> <i><font color="#DCDCDC">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#DCDCDC">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
-  <li> Aug 27, 2020. Add <b>StyleGAN2</b> training and testing codes. <br> <i><font color="#DCDCDC">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#DCDCDC">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
-  <li>Aug 19, 2020. A <b>brand-new</b> BasicSR v1.0.0 online.</li>
-</ul>
-</details>
+  > CVPR21: BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond
+- **[More](docs/history_updates.md)**
 
 :sparkles: **Projects that use BasicSR**
 - [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): A practical algorithm for general image restoration
@@ -144,3 +143,8 @@ The following is a BibTeX reference. The BibTeX entry requires the `url` LaTeX p
 ## :e-mail: Contact
 
 If you have any questions, please email `xintao.wang@outlook.com`.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
+  <img src="https://user-images.githubusercontent.com/17445847/135756881-51b73150-40ff-4eaa-8a16-2e98ecbfa457.png"  height="300">
+</p>

@@ -2,7 +2,7 @@
 name: BasicVSR_REDS
 model_type: VideoRecurrentModel
 scale: 4
-num_gpu: 8  # set num_gpu: 0 for cpu mode
+num_gpu: auto  # official: 8 GPUs
 manual_seed: 0
 
 # dataset and data loader settings

@@ -20,7 +20,7 @@ def build_model(opt):
     """Build model from options.
 
     Args:
-        opt (dict): Configuration. It must constain:
+        opt (dict): Configuration. It must contain:
             model_type (str): Model type.
     """
     opt = deepcopy(opt)

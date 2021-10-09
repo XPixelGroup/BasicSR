@@ -26,7 +26,7 @@ def build_dataset(dataset_opt):
     """Build dataset from options.
 
     Args:
-        dataset_opt (dict): Configuration for dataset. It must constain:
+        dataset_opt (dict): Configuration for dataset. It must contain:
             name (str): Dataset name.
             type (str): Dataset type.
     """

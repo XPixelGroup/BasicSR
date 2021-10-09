@@ -11,7 +11,7 @@ from basicsr.utils.registry import METRIC_REGISTRY
 
 
 def estimate_aggd_param(block):
-    """Estimate AGGD (Asymmetric Generalized Gaussian Distribution) paramters.
+    """Estimate AGGD (Asymmetric Generalized Gaussian Distribution) parameters.
 
     Args:
         block (ndarray): 2D Image block.
@@ -75,7 +75,7 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
     Note that we do not include block overlap height and width, since they are
     always 0 in the official implementation.
 
-    For good performance, it is advisable by the official implemtation to
+    For good performance, it is advisable by the official implementation to
     divide the distorted image in to the same size patched as used for the
     construction of multivariate Gaussian model.
 
@@ -164,7 +164,7 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y', **kwargs
             pixels are not involved in the metric calculation.
         input_order (str): Whether the input order is 'HW', 'HWC' or 'CHW'.
             Default: 'HWC'.
-        convert_to (str): Whether coverted to 'y' (of MATLAB YCbCr) or 'gray'.
+        convert_to (str): Whether converted to 'y' (of MATLAB YCbCr) or 'gray'.
             Default: 'y'.
 
     Returns:

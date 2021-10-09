@@ -11,7 +11,7 @@ datasets:
     dataroot_lq: datasets/Set5/LRbicx4
     io_backend:
       type: disk
-  test_2:  # the 2st test dataset
+  test_2:  # the 2nd test dataset
     name: Set14
     type: SingleImageDataset
     dataroot_lq: datasets/Set14/LRbicx4
