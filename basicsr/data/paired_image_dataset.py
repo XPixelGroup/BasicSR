@@ -88,7 +88,7 @@ class PairedImageDataset(data.Dataset):
             # flip, rotation
             img_gt, img_lq = augment([img_gt, img_lq], self.opt['use_flip'], self.opt['use_rot'])
 
-        if self.opt['color'] == 'y':
+        if 'color' in self.opt and self.opt['color'] == 'y':
             img_gt = rgb2ycbcr(img_gt, y_only=True)[..., None]
             img_lq = rgb2ycbcr(img_lq, y_only=True)[..., None]
 
