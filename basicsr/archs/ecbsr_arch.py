@@ -227,6 +227,8 @@ class ECBSR(nn.Module):
 
     def __init__(self, num_in_ch, num_out_ch, num_block, num_channel, with_idt, act_type, scale):
         super(ECBSR, self).__init__()
+        self.num_in_ch = num_in_ch
+        self.scale = scale
 
         backbone = []
         backbone += [ECB(num_in_ch, num_channel, depth_multiplier=2.0, act_type=act_type, with_idt=with_idt)]
@@ -240,6 +242,10 @@ class ECBSR(nn.Module):
         self.upsampler = nn.PixelShuffle(scale)
 
     def forward(self, x):
-        y = self.backbone(x) + x  # will repeat the input in the channel dimension (repeat  scale * scale times)
+        if self.num_in_ch > 1:
+            shortcut = torch.repeat_interleave(x, self.scale * self.scale, dim=1)
+        else:
+            shortcut = x  # will repeat the input in the channel dimension (repeat  scale * scale times)
+        y = self.backbone(x) + shortcut
         y = self.upsampler(y)
         return y
