@@ -144,5 +144,5 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
-  <img src="https://user-images.githubusercontent.com/17445847/137718325-f00d2e58-417a-43ed-b9dd-90cbc5ff4600.png"  height="300">
+  <img src="https://user-images.githubusercontent.com/17445847/138652714-173f344e-05fa-41ef-a79e-826f573a48db.png"  height="300">
 </p>
