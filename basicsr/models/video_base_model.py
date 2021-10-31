@@ -24,14 +24,15 @@ class VideoBaseModel(SRModel):
         #    'folder1': tensor (num_frame x len(metrics)),
         #    'folder2': tensor (num_frame x len(metrics))
         # }
-        if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
-            self.metric_results = {}
-            num_frame_each_folder = Counter(dataset.data_info['folder'])
-            for folder, num_frame in num_frame_each_folder.items():
-                self.metric_results[folder] = torch.zeros(
-                    num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
-        # initialize the best metric results
-        self._initialize_best_metric_results(dataset_name)
+        if with_metrics:
+            if not hasattr(self, 'metric_results'):  # only execute in the first run
+                self.metric_results = {}
+                num_frame_each_folder = Counter(dataset.data_info['folder'])
+                for folder, num_frame in num_frame_each_folder.items():
+                    self.metric_results[folder] = torch.zeros(
+                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+            # initialize the best metric results
+            self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
         rank, world_size = get_dist_info()
         if with_metrics:

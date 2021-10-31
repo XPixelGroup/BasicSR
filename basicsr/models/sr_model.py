@@ -138,10 +138,11 @@ class SRModel(BaseModel):
         with_metrics = self.opt['val'].get('metrics') is not None
         use_pbar = self.opt['val'].get('pbar', False)
 
-        if with_metrics and not hasattr(self, 'metric_results'):  # only execute in the first run
-            self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
-        # initialize the best metric results for each dataset_name (supporting multiple validation datasets)
-        self._initialize_best_metric_results(dataset_name)
+        if with_metrics:
+            if not hasattr(self, 'metric_results'):  # only execute in the first run
+                self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
+            # initialize the best metric results for each dataset_name (supporting multiple validation datasets)
+            self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
         if with_metrics:
             self.metric_results = {metric: 0 for metric in self.metric_results}
