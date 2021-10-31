@@ -112,6 +112,7 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 参见 [DesignConvention_CN.md](docs/DesignConvention_CN.md).<br>
 下图概括了整体的框架. 每个模块更多的描述参见: <br>
+**[Datasets_CN.md](docs/Datasets_CN.md)**&emsp;|&emsp;**[Models_CN.md](docs/Models_CN.md)**&emsp;|&emsp;**[Config_CN.md](docs/Config_CN.md)**&emsp;|&emsp;**[Logging_CN.md](docs/Logging_CN.md)**
 
 ![overall_structure](./assets/overall_structure.png)
 
