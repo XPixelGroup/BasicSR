@@ -65,21 +65,21 @@ Other recommended projects:<br>
 We provide simple pipelines to train/test/inference models for a quick start.
 These pipelines/commands cannot cover all the cases and more details are in the following sections.
 
-| GAN |  |  |  | | |
-| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
-| StyleGAN2   | [Train](docs/HOWTOs.md#How-to-train-StyleGAN2) | [Inference](docs/HOWTOs.md#How-to-inference-StyleGAN2) | | | |
-| **Face Restoration** |  |  |  | | |
-| DFDNet | - | [Inference](docs/HOWTOs.md#How-to-inference-DFDNet) | | | |
-| **Super Resolution** |  |  |  | | |
-| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
-| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
-| RCAN | *TODO* | *TODO* | SwinIR  | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr)|
-| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
-| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
-| **Deblurring** |  |  |  | | |
-| DeblurGANv2 | - | *TODO* |  | | |
-| **Denoise** |  |  |  | | |
-| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
+| GAN                  |                                                |                                                        |          |                                                |                                                        |
+| :------------------- | :--------------------------------------------: | :----------------------------------------------------: | :------- | :--------------------------------------------: | :----------------------------------------------------: |
+| StyleGAN2            | [Train](docs/HOWTOs.md#How-to-train-StyleGAN2) | [Inference](docs/HOWTOs.md#How-to-inference-StyleGAN2) |          |                                                |                                                        |
+| **Face Restoration** |                                                |                                                        |          |                                                |                                                        |
+| DFDNet               |                       -                        |  [Inference](docs/HOWTOs.md#How-to-inference-DFDNet)   |          |                                                |                                                        |
+| **Super Resolution** |                                                |                                                        |          |                                                |                                                        |
+| ESRGAN               |                     *TODO*                     |                         *TODO*                         | SRGAN    |                     *TODO*                     |                         *TODO*                         |
+| EDSR                 |                     *TODO*                     |                         *TODO*                         | SRResNet |                     *TODO*                     |                         *TODO*                         |
+| RCAN                 |                     *TODO*                     |                         *TODO*                         | SwinIR   | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr) |
+| EDVR                 |                     *TODO*                     |                         *TODO*                         | DUF      |                       -                        |                         *TODO*                         |
+| BasicVSR             |                     *TODO*                     |                         *TODO*                         | TOF      |                       -                        |                         *TODO*                         |
+| **Deblurring**       |                                                |                                                        |          |                                                |                                                        |
+| DeblurGANv2          |                       -                        |                         *TODO*                         |          |                                                |                                                        |
+| **Denoise**          |                                                |                                                        |          |                                                |                                                        |
+| RIDNet               |                       -                        |                         *TODO*                         | CBDNet   |                       -                        |                         *TODO*                         |
 
 ## :wrench: Dependencies and Installation
 
@@ -114,7 +114,7 @@ Please see [project boards](https://github.com/xinntao/BasicSR/projects).
 
 Please see [DesignConvention.md](docs/DesignConvention.md) for the designs and conventions of the BasicSR codebase.<br>
 The figure below shows the overall framework. More descriptions for each component: <br>
-**[Datasets.md](docs/Datasets.md)**&emsp;|&emsp;**[Models.md](docs/Models.md)**&emsp;|&emsp;**[Config.md](Config.md)**&emsp;|&emsp;**[Logging.md](docs/Logging.md)**
+**[Datasets.md](docs/Datasets.md)**&emsp;|&emsp;**[Models.md](docs/Models.md)**&emsp;|&emsp;**[Config.md](docs/Config.md)**&emsp;|&emsp;**[Logging.md](docs/Logging.md)**
 
 ![overall_structure](./assets/overall_structure.png)
 

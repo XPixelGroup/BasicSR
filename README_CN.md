@@ -62,21 +62,21 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-| GAN |  |  |  | | |
-| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
-| StyleGAN2   | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) | | | |
-| **Face Restoration** |  |  |  | | |
-| DFDNet | - | [测试](docs/HOWTOs_CN.md#如何测试-DFDNet) | | | |
-| **Super Resolution** |  |  |  | | |
-| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
-| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
-| RCAN | *TODO* | *TODO* | SwinIR  | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr)|
-| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
-| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
-| **Deblurring** |  |  |  | | |
-| DeblurGANv2 | - | *TODO* |  | | |
-| **Denoise** |  |  |  | | |
-| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
+| GAN                  |                                              |                                              |          |                                                |                                                        |
+| :------------------- | :------------------------------------------: | :------------------------------------------: | :------- | :--------------------------------------------: | :----------------------------------------------------: |
+| StyleGAN2            | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) |          |                                                |                                                        |
+| **Face Restoration** |                                              |                                              |          |                                                |                                                        |
+| DFDNet               |                      -                       |  [测试](docs/HOWTOs_CN.md#如何测试-DFDNet)   |          |                                                |                                                        |
+| **Super Resolution** |                                              |                                              |          |                                                |                                                        |
+| ESRGAN               |                    *TODO*                    |                    *TODO*                    | SRGAN    |                     *TODO*                     |                         *TODO*                         |
+| EDSR                 |                    *TODO*                    |                    *TODO*                    | SRResNet |                     *TODO*                     |                         *TODO*                         |
+| RCAN                 |                    *TODO*                    |                    *TODO*                    | SwinIR   | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr) |
+| EDVR                 |                    *TODO*                    |                    *TODO*                    | DUF      |                       -                        |                         *TODO*                         |
+| BasicVSR             |                    *TODO*                    |                    *TODO*                    | TOF      |                       -                        |                         *TODO*                         |
+| **Deblurring**       |                                              |                                              |          |                                                |                                                        |
+| DeblurGANv2          |                      -                       |                    *TODO*                    |          |                                                |                                                        |
+| **Denoise**          |                                              |                                              |          |                                                |                                                        |
+| RIDNet               |                      -                       |                    *TODO*                    | CBDNet   |                       -                        |                         *TODO*                         |
 
 ## :wrench: 依赖和安装
 
@@ -112,7 +112,6 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 参见 [DesignConvention_CN.md](docs/DesignConvention_CN.md).<br>
 下图概括了整体的框架. 每个模块更多的描述参见: <br>
-**[Datasets_CN.md](docs/Datasets_CN.md)**&emsp;|&emsp;**[Models_CN.md](docs/Models_CN.md)**&emsp;|&emsp;**[Config_CN.md](Config_CN.md)**&emsp;|&emsp;**[Logging_CN.md](docs/Logging_CN.md)**
 
 ![overall_structure](./assets/overall_structure.png)
 
