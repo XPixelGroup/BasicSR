@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        'dataset',
+        '--dataset',
         type=str,
         help=("Options: 'Set5', 'Set14'. "
               "Set to 'all' if you want to download all the dataset."))
