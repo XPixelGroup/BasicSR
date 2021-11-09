@@ -1,3 +1,8 @@
+######
+# FocalIR
+# This code is referenced by Focal Transformer and SwinIR
+# This model is supported by BasicSR
+######
 # --------------------------------------------------------
 # Focal Transformer
 # Copyright (c) 2021 Microsoft
@@ -5,6 +10,11 @@
 # Written by Jianwei Yang (jianwyan@microsoft.com)
 # Based on Swin Transformer written by Zhe Liu
 # --------------------------------------------------------
+# -----------------------------------------------------------------------------------
+# SwinIR: Image Restoration Using Swin Transformer, https://arxiv.org/abs/2108.10257
+# Originally Written by Ze Liu, Modified by Jingyun Liang.
+# -----------------------------------------------------------------------------------
+
 
 import math
 import torch
