@@ -1,8 +1,8 @@
 # general settings
-name: train_SwinIR_SRx4_scratch_P48W8_DIV2K_500k_B4G8
+name: train_SwinIR_SRx4_s48g96_DIV2K
 model_type: SwinIRModel
 scale: 4
-num_gpu: auto
+num_gpu: 1
 manual_seed: 0
 
 # dataset and data loader settings
@@ -10,31 +10,36 @@ datasets:
   train:
     name: DIV2K
     type: PairedImageDataset
-    dataroot_gt: datasets/DF2K/DIV2K_train_HR_sub
-    dataroot_lq: datasets/DF2K/DIV2K_train_LR_bicubic_X4_sub
-    meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
+    #dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    #dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    #meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
     filename_tmpl: '{}'
     io_backend:
-      type: disk
+      type: lmdb
 
-    gt_size: 192
+    gt_size: 96
     use_flip: true
     use_rot: true
+    color: n
 
     # data loader
     use_shuffle: true
     num_worker_per_gpu: 6
-    batch_size_per_gpu: 4
+    batch_size_per_gpu: 16
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
 
   val:
     name: Set5
     type: PairedImageDataset
-    dataroot_gt: datasets/Set5/GTmod12
-    dataroot_lq: datasets/Set5/LRbicx4
+    dataroot_gt: datasets/benchmark/Set5/HR
+    dataroot_lq: datasets/benchmark/Set5/LR_bicubic/X4
+    filename_tmpl: '{}x4'
     io_backend:
       type: disk
+    color: n
 
 # network structures
 network_g:
@@ -89,7 +94,16 @@ val:
     psnr: # metric name, can be arbitrary
       type: calculate_psnr
       crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+    lpips:
+      type: calculate_lpips
+      crop_border: 4
       test_y_channel: false
+      better: lower
 
 # logging settings
 logger:
@@ -101,6 +115,6 @@ logger:
     resume_id: ~
 
 # dist training settings
-dist_params:
-  backend: nccl
-  port: 29500
+#dist_params:
+#  backend: nccl
+#  port: 29500
