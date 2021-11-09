@@ -1,0 +1,129 @@
+# general settings
+name: train_FocalIR_SRx4_s48g96_DIV2K
+model_type: FocalIRModel
+scale: 4
+num_gpu: 1
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DIV2K
+    type: PairedImageDataset
+    #dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
+    #dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub.lmdb
+    dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic_X4_sub.lmdb
+    #meta_info_file: basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt
+    filename_tmpl: '{}'
+    io_backend:
+      type: lmdb
+
+    gt_size: 96
+    use_flip: true
+    use_rot: true
+    color: n
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 6
+    batch_size_per_gpu: 16
+    dataset_enlarge_ratio: 1
+    prefetch_mode: ~
+    #prefetch_mode: cuda
+    #pin_memory: true
+
+  val:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Set5/HR
+    dataroot_lq: datasets/benchmark/Set5/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+
+# network structures
+network_g:
+  type: FocalIR
+  upscale: 4
+  in_chans: 3
+  img_size: 48
+  window_size: 4
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  drop_path_rate: 0.2
+  focal_levels: [2, 2, 2, 2, 2, 2]
+  expand_sizes: [3, 3, 3, 3, 3, 3]
+  expand_layer: "all"
+  focal_windows: [11, 9, 7, 5, 3, 1]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+  use_shift: False
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 2e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [250000, 400000, 450000, 475000]
+    gamma: 0.5
+
+  total_iter: 500000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+# validation settings
+val:
+  #val_freq: !!float 5e3
+  val_freq: 1
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+    lpips:
+      type: calculate_lpips
+      crop_border: 4
+      test_y_channel: false
+      better: lower
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+#dist_params:
+#  backend: nccl
+#  port: 29500
