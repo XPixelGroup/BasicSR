@@ -8,7 +8,7 @@ from basicsr.utils.registry import METRIC_REGISTRY
 import torch
 
 @METRIC_REGISTRY.register()
-def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=False):
+def calculate_lpips(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
 
     """Calculate LPIPS.
     Ref: https://github.com/xinntao/BasicSR/pull/367
