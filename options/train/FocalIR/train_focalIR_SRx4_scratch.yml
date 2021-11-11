@@ -1,5 +1,5 @@
 # general settings
-name: train_FocalIR_SRx4_s48g96_DIV2K
+name: train_test_FocalIR_SRx4_s48g96_DIV2K
 model_type: FocalIRModel
 scale: 4
 num_gpu: 1

@@ -6,9 +6,10 @@ import math
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
+from thop import profile as hp
 
 from basicsr.utils.registry import ARCH_REGISTRY
-from .arch_util import to_2tuple, trunc_normal_
+from basicsr.archs.arch_util import to_2tuple, trunc_normal_
 
 
 def drop_path(x, drop_prob: float = 0., training: bool = False):
@@ -935,11 +936,13 @@ class SwinIR(nn.Module):
 
 if __name__ == '__main__':
     upscale = 4
-    window_size = 8
-    height = (1024 // upscale // window_size + 1) * window_size
-    width = (720 // upscale // window_size + 1) * window_size
+    window_size = 4
+    # height = (1024 // upscale // window_size + 1) * window_size
+    # width = (720 // upscale // window_size + 1) * window_size
+    height = 320
+    width = 180
     model = SwinIR(
-        upscale=2,
+        upscale=4,
         img_size=(height, width),
         window_size=window_size,
         img_range=1.,
@@ -948,9 +951,13 @@ if __name__ == '__main__':
         num_heads=[6, 6, 6, 6],
         mlp_ratio=2,
         upsampler='pixelshuffledirect')
-    print(model)
-    print(height, width, model.flops() / 1e9)
-
+    # print(model)
+    # print(height, width, model.flops() / 1e9)
+    model.eval()
     x = torch.randn((1, 3, height, width))
-    x = model(x)
-    print(x.shape)
+    # x = model(x)
+    # print(x.shape)
+    flops, params = hp(model, inputs=(x,))
+
+    print("FLOPs=", str(flops / 1e9) + '{}'.format("G"))
+    print("params=", str(params / 1e6) + '{}'.format("M"))

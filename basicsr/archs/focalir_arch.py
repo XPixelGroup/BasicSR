@@ -17,12 +17,15 @@
 
 
 import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
-from basicsr.utils.registry import ARCH_REGISTRY
+
 from basicsr.archs.arch_util import to_2tuple, trunc_normal_
+from basicsr.utils.registry import ARCH_REGISTRY
+from thop import profile as hp
 
 
 def drop_path(x, drop_prob: float = 0., training: bool = False):
@@ -1444,13 +1447,12 @@ def profile(model, inputs):
 
 
 if __name__ == '__main__':
-    img_hsize = 224
-    img_wsize = 224
+    img_hsize = 320
+    img_wsize = 180
     x = torch.rand(1, 3, img_hsize, img_wsize).cuda()
-    model = FocalIR(img_size=(img_hsize, img_wsize), upscale=2, embed_dim=96, depths=[6, 6, 6, 6], drop_path_rate=0.2,
-                    focal_levels=[2, 2, 2, 2], expand_sizes=[3, 3, 3, 3], expand_layer="all",
-                    num_heads=[4, 4, 4, 4],
-                    focal_windows=[7, 7, 7, 7], window_size=4, use_shift=False).cuda()
+    model = FocalIR(img_size=(img_hsize, img_wsize), upscale=4, in_chans=3, embed_dim=60, depths=[6, 6, 6, 6], drop_path_rate=0.2,
+                    focal_levels=[2, 2, 2, 2], expand_sizes=[3, 3, 3, 3], expand_layer="all",num_heads=[6, 6, 6, 6],
+                    focal_windows=[7, 5, 3, 1], mlp_ratio=2, upsampler='pixelshuffle', window_size=4, resi_connection='1conv', use_shift=False).cuda()
 
     model.eval()
 
@@ -1460,6 +1462,9 @@ if __name__ == '__main__':
     #n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
     #print(f"number of params: {n_parameters}")
 
-    y = model(x)
-    print(y.shape)
+    flops, params = hp(model, inputs=(x,))
+
+    print("FLOPs=", str(flops / 1e9) + '{}'.format("G"))
+    print("params=", str(params / 1e6) + '{}'.format("M"))
+
     #profile(model, x)
