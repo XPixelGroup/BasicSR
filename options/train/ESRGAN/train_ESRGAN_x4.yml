@@ -20,6 +20,7 @@ datasets:
       type: disk
       # (for lmdb)
       # type: lmdb
+    color: n
 
     gt_size: 128
     use_flip: true
@@ -29,16 +30,18 @@ datasets:
     use_shuffle: true
     num_worker_per_gpu: 6
     batch_size_per_gpu: 16
-    dataset_enlarge_ratio: 100
+    dataset_enlarge_ratio: 1
     prefetch_mode: ~
 
   val:
-    name: Set14
+    name: Set5
     type: PairedImageDataset
-    dataroot_gt: datasets/Set14/GTmod12
-    dataroot_lq: datasets/Set14/LRbicx4
+    dataroot_gt: datasets/benchmark/Set5/HR
+    dataroot_lq: datasets/benchmark/Set5/LR_bicubic/X4
+    filename_tmpl: '{}x4'
     io_backend:
       type: disk
+    color: n
 
 # network structures
 network_g:
@@ -55,7 +58,7 @@ network_d:
 
 # path
 path:
-  pretrain_network_g: experiments/051_RRDBNet_PSNR_x4_f64b23_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
+  pretrain_network_g: ~
   strict_load_g: true
   resume_state: ~
 

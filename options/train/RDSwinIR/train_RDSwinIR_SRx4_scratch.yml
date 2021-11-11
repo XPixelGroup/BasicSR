@@ -1,5 +1,5 @@
 # general settings
-name: train_SwinIR_SRx4_s48g96_DIV2K
+name: train_RDSwinIR_learnable_DIV2K
 model_type: SwinIRModel
 scale: 4
 num_gpu: 1
@@ -19,7 +19,7 @@ datasets:
     io_backend:
       type: lmdb
 
-    gt_size: 96
+    gt_size: 64
     use_flip: true
     use_rot: true
     color: n
@@ -43,16 +43,17 @@ datasets:
 
 # network structures
 network_g:
-  type: SwinIR
+  type: RDSwinIR
   upscale: 4
   in_chans: 3
-  img_size: 48
+  img_size: 32
   window_size: 8
   img_range: 1.
   depths: [6, 6, 6, 6, 6, 6]
   embed_dim: 180
   num_heads: [6, 6, 6, 6, 6, 6]
   mlp_ratio: 2
+  #patch_norm: False
   upsampler: 'pixelshuffle'
   resi_connection: '1conv'
 

@@ -1,0 +1,99 @@
+name: FocalIR_SRx4_DIV2K
+model_type: FocalIRModel
+scale: 4
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Set5/HR
+    dataroot_lq: datasets/benchmark/Set5/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+  test_2:  # the 2nd test dataset
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Set14/HR
+    dataroot_lq: datasets/benchmark/Set14/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+  test_3:
+    name: B100
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/B100/HR
+    dataroot_lq: datasets/benchmark/B100/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+  test_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Urban100/HR
+    dataroot_lq: datasets/benchmark/Urban100/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+  test_5:
+    name: Manga109
+    type: PairedImageDataset
+    dataroot_gt: datasets/benchmark/Manga109/HR
+    dataroot_lq: datasets/benchmark/Manga109/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    color: n
+
+# network structures
+network_g:
+  type: FocalIR
+  upscale: 4
+  in_chans: 3
+  img_size: 48
+  window_size: 4
+  img_range: 1.
+  depths: [6, 6, 6, 6]
+  embed_dim: 60
+  num_heads: [6, 6, 6, 6]
+  drop_path_rate: 0.2
+  focal_levels: [2, 2, 2, 2]
+  expand_sizes: [3, 3, 3, 3]
+  expand_layer: "all"
+  focal_windows: [7, 5, 3, 1]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+  use_shift: False
+
+# path
+path:
+  pretrain_network_g: experiments/train_FocalIR_SRx4_s48g96_DIV2K/models/net_g_5000.pth
+  #pretrain_network_g: experiments/train_SwinIR_SRx4_DIV2K/models/net_g_latest.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+    lpips:
+      type: calculate_lpips
+      crop_border: 4
+      test_y_channel: false
+      better: lower

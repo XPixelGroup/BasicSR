@@ -1,6 +1,6 @@
 # general settings
-name: train_SwinIR_SRx4_s48g96_DIV2K
-model_type: SwinIRModel
+name: train_FocalIR_SRx4_s48g96_DIV2K
+model_type: FocalIRModel
 scale: 4
 num_gpu: 1
 manual_seed: 0
@@ -30,6 +30,8 @@ datasets:
     batch_size_per_gpu: 16
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
+    #prefetch_mode: cuda
+    #pin_memory: true
 
   val:
     name: Set5
@@ -43,18 +45,24 @@ datasets:
 
 # network structures
 network_g:
-  type: SwinIR
+  type: FocalIR
   upscale: 4
   in_chans: 3
   img_size: 48
-  window_size: 8
+  window_size: 4
   img_range: 1.
   depths: [6, 6, 6, 6, 6, 6]
   embed_dim: 180
   num_heads: [6, 6, 6, 6, 6, 6]
+  drop_path_rate: 0.2
+  focal_levels: [2, 2, 2, 2, 2, 2]
+  expand_sizes: [3, 3, 3, 3, 3, 3]
+  expand_layer: "all"
+  focal_windows: [11, 9, 7, 5, 3, 1]
   mlp_ratio: 2
   upsampler: 'pixelshuffle'
   resi_connection: '1conv'
+  use_shift: False
 
 # path
 path:
@@ -87,7 +95,8 @@ train:
 
 # validation settings
 val:
-  val_freq: !!float 5e3
+  #val_freq: !!float 5e3
+  val_freq: 1
   save_img: false
 
   metrics:

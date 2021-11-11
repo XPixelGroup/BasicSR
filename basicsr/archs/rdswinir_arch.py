@@ -6,7 +6,6 @@ import math
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
-from thop import profile as hp
 
 from basicsr.utils.registry import ARCH_REGISTRY
 from basicsr.archs.arch_util import to_2tuple, trunc_normal_
@@ -20,7 +19,7 @@ def drop_path(x, drop_prob: float = 0., training: bool = False):
     if drop_prob == 0. or not training:
         return x
     keep_prob = 1 - drop_prob
-    shape = (x.shape[0], ) + (1, ) * (x.ndim - 1)  # work with diff dim tensors, not just 2D ConvNets
+    shape = (x.shape[0],) + (1,) * (x.ndim - 1)  # work with diff dim tensors, not just 2D ConvNets
     random_tensor = keep_prob + torch.rand(shape, dtype=x.dtype, device=x.device)
     random_tensor.floor_()  # binarize
     output = x.div(keep_prob) * random_tensor
@@ -114,7 +113,7 @@ class WindowAttention(nn.Module):
         self.window_size = window_size  # Wh, Ww
         self.num_heads = num_heads
         head_dim = dim // num_heads
-        self.scale = qk_scale or head_dim**-0.5
+        self.scale = qk_scale or head_dim ** -0.5
 
         # define a parameter table of relative position bias
         self.relative_position_bias_table = nn.Parameter(
@@ -425,7 +424,9 @@ class BasicLayer(nn.Module):
                  drop_path=0.,
                  norm_layer=nn.LayerNorm,
                  downsample=None,
-                 use_checkpoint=False):
+                 use_checkpoint=False,
+                 img_size=224,
+                 patch_size=4):
 
         super().__init__()
         self.dim = dim
@@ -449,6 +450,23 @@ class BasicLayer(nn.Module):
                 drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
                 norm_layer=norm_layer) for i in range(depth)
         ])
+        # define the learnable parameters
+        self.fuse_weight = []
+        for i in range(depth):
+            w = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
+            w.data.fill_(1)
+            w = w.to("cuda")
+            self.fuse_weight.append(w)
+
+        # Convolutional extractor 给稠密连接设计的特征融合器,可惜一样没什么屌用
+        # self.conv_body = [nn.Conv2d(dim * (i + 1), dim, 3, 1, 1) for i in range(depth + 1)]
+        # for c in self.conv_body:
+        #     c.to("cuda")
+
+        self.patch_unembed = PatchUnEmbed(
+            img_size=img_size, patch_size=patch_size, in_chans=0, embed_dim=dim, norm_layer=None)
+        self.patch_embed = PatchEmbed(
+            img_size=img_size, patch_size=patch_size, in_chans=0, embed_dim=dim, norm_layer=None)
 
         # patch merging layer
         if downsample is not None:
@@ -457,11 +475,42 @@ class BasicLayer(nn.Module):
             self.downsample = None
 
     def forward(self, x, x_size):
+        # temp = [x]
+        # batch_size = x.shape[0]
+        count = 0
         for blk in self.blocks:
             if self.use_checkpoint:
                 x = checkpoint.checkpoint(blk, x)
             else:
                 x = blk(x, x_size)
+                '''
+                ######稠密连接,可惜没什么屌用...######
+                if len(temp) > 1:
+                    x = torch.cat((temp[:]))
+                    # print(x.shape)
+                    # 融合
+                    self.patch_unembed(x, x_size)
+                    x = x.view(batch_size, self.dim * count, x_size[0], x_size[1])
+                    x = self.conv_body[count - 1](x)
+                    # 变为patch embeding
+                    # x = self.patch_embed(x, x_size)
+                    x = x.flatten(2).transpose(1, 2)
+                else:
+                    x = temp[0]
+                x = blk(x, x_size)
+                temp.append(x)
+            count += 1
+        # 对temp进行融合
+        x = torch.cat((temp[:]))
+        # print(x.shape)
+        # 融合
+        self.patch_unembed(x, x_size)
+        x = x.view(batch_size, self.dim * count, x_size[0], x_size[1])
+        x = self.conv_body[count - 1](x)
+        # 变为patch embeding
+        # x = self.patch_embed(x, x_size)
+        x = x.flatten(2).transpose(1, 2)
+        '''
         if self.downsample is not None:
             x = self.downsample(x)
         return x
@@ -538,7 +587,9 @@ class RSTB(nn.Module):
             drop_path=drop_path,
             norm_layer=norm_layer,
             downsample=downsample,
-            use_checkpoint=use_checkpoint)
+            use_checkpoint=use_checkpoint,
+            img_size=img_size,
+            patch_size=patch_size)
 
         if resi_connection == '1conv':
             self.conv = nn.Conv2d(dim, dim, 3, 1, 1)
@@ -681,7 +732,7 @@ class UpsampleOneStep(nn.Sequential):
         self.num_feat = num_feat
         self.input_resolution = input_resolution
         m = []
-        m.append(nn.Conv2d(num_feat, (scale**2) * num_out_ch, 3, 1, 1))
+        m.append(nn.Conv2d(num_feat, (scale ** 2) * num_out_ch, 3, 1, 1))
         m.append(nn.PixelShuffle(scale))
         super(UpsampleOneStep, self).__init__(*m)
 
@@ -692,7 +743,7 @@ class UpsampleOneStep(nn.Sequential):
 
 
 @ARCH_REGISTRY.register()
-class SwinIR(nn.Module):
+class RDSwinIR(nn.Module):
     r""" SwinIR
         A PyTorch impl of : `SwinIR: Image Restoration Using Swin Transformer`, based on Swin Transformer.
 
@@ -743,7 +794,7 @@ class SwinIR(nn.Module):
                  upsampler='',
                  resi_connection='1conv',
                  **kwargs):
-        super(SwinIR, self).__init__()
+        super(RDSwinIR, self).__init__()
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
@@ -819,6 +870,13 @@ class SwinIR(nn.Module):
                 resi_connection=resi_connection)
             self.layers.append(layer)
         self.norm = norm_layer(self.num_features)
+        # define the learnable parameters
+        self.fuse_wight = []
+        for i in range(self.num_layers):
+            w = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
+            w.data.fill_(1)
+            w = w.to("cuda")
+            self.fuse_wight.append(w)
 
         # build the last conv layer in deep feature extraction
         if resi_connection == '1conv':
@@ -880,9 +938,10 @@ class SwinIR(nn.Module):
         if self.ape:
             x = x + self.absolute_pos_embed
         x = self.pos_drop(x)
-
+        count = 0
         for layer in self.layers:
-            x = layer(x, x_size)
+            x = layer(x, x_size) + self.fuse_wight[count] * x
+            count += 1
 
         x = self.norm(x)  # b seq_len c
         x = self.patch_unembed(x, x_size)
@@ -936,28 +995,22 @@ class SwinIR(nn.Module):
 
 if __name__ == '__main__':
     upscale = 4
-    window_size = 4
-    # height = (1024 // upscale // window_size + 1) * window_size
-    # width = (720 // upscale // window_size + 1) * window_size
-    height = 320
-    width = 180
-    model = SwinIR(
+    window_size = 8
+    height = (1024 // upscale // window_size + 1) * window_size
+    width = (720 // upscale // window_size + 1) * window_size
+    model = RDSwinIR(
         upscale=4,
         img_size=(height, width),
         window_size=window_size,
         img_range=1.,
-        depths=[6, 6, 6, 6],
-        embed_dim=60,
-        num_heads=[6, 6, 6, 6],
+        depths=[6, 6, 6, 6, 6, 6],
+        embed_dim=180,
+        num_heads=[6, 6, 6, 6, 6, 6],
         mlp_ratio=2,
         upsampler='pixelshuffledirect')
-    # print(model)
-    # print(height, width, model.flops() / 1e9)
-    model.eval()
-    x = torch.randn((1, 3, height, width))
-    # x = model(x)
-    # print(x.shape)
-    flops, params = hp(model, inputs=(x,))
+    print(model)
+    print(height, width, model.flops() / 1e9)
 
-    print("FLOPs=", str(flops / 1e9) + '{}'.format("G"))
-    print("params=", str(params / 1e6) + '{}'.format("M"))
+    x = torch.randn((1, 3, height, width))
+    x = model(x)
+    print(x.shape)
