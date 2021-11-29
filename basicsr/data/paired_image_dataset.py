@@ -12,8 +12,7 @@ from basicsr.utils.registry import DATASET_REGISTRY
 class PairedImageDataset(data.Dataset):
     """Paired image dataset for image restoration.
 
-    Read LQ (Low Quality, e.g. LR (Low Resolution), blurry, noisy, etc) and
-    GT image pairs.
+    Read LQ (Low Quality, e.g. LR (Low Resolution), blurry, noisy, etc) and GT image pairs.
 
     There are three modes:
     1. 'lmdb': Use lmdb files.
@@ -29,12 +28,11 @@ class PairedImageDataset(data.Dataset):
             dataroot_lq (str): Data root path for lq.
             meta_info_file (str): Path for meta information file.
             io_backend (dict): IO backend type and other kwarg.
-            filename_tmpl (str): Template for each filename. Note that the
-                template excludes the file extension. Default: '{}'.
+            filename_tmpl (str): Template for each filename. Note that the template excludes the file extension.
+                Default: '{}'.
             gt_size (int): Cropped patched size for gt patches.
             use_hflip (bool): Use horizontal flips.
-            use_rot (bool): Use rotation (use vertical flip and transposing h
-                and w for implementation).
+            use_rot (bool): Use rotation (use vertical flip and transposing h and w for implementation).
 
             scale (bool): Scale, which will be added automatically.
             phase (str): 'train' or 'val'.
@@ -88,6 +86,7 @@ class PairedImageDataset(data.Dataset):
             # flip, rotation
             img_gt, img_lq = augment([img_gt, img_lq], self.opt['use_hflip'], self.opt['use_rot'])
 
+        # color space transform
         if 'color' in self.opt and self.opt['color'] == 'y':
             img_gt = rgb2ycbcr(img_gt, y_only=True)[..., None]
             img_lq = rgb2ycbcr(img_lq, y_only=True)[..., None]

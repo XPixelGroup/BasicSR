@@ -4,6 +4,7 @@ from torchvision.transforms.functional import normalize
 
 from basicsr.data.data_util import paths_from_lmdb
 from basicsr.utils import FileClient, imfrombytes, img2tensor, scandir
+from basicsr.utils.matlab_functions import rgb2ycbcr
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -40,7 +41,7 @@ class SingleImageDataset(data.Dataset):
             self.paths = paths_from_lmdb(self.lq_folder)
         elif 'meta_info_file' in self.opt:
             with open(self.opt['meta_info_file'], 'r') as fin:
-                self.paths = [osp.join(self.lq_folder, line.split(' ')[0]) for line in fin]
+                self.paths = [osp.join(self.lq_folder, line.rstrip().split(' ')[0]) for line in fin]
         else:
             self.paths = sorted(list(scandir(self.lq_folder, full_path=True)))
 
@@ -53,7 +54,10 @@ class SingleImageDataset(data.Dataset):
         img_bytes = self.file_client.get(lq_path, 'lq')
         img_lq = imfrombytes(img_bytes, float32=True)
 
-        # TODO: color space transform
+        # color space transform
+        if 'color' in self.opt and self.opt['color'] == 'y':
+            img_lq = rgb2ycbcr(img_lq, y_only=True)[..., None]
+
         # BGR to RGB, HWC to CHW, numpy to tensor
         img_lq = img2tensor(img_lq, bgr2rgb=True, float32=True)
         # normalize
