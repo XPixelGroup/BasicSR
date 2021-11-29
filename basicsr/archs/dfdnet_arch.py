@@ -10,7 +10,14 @@ from .vgg_arch import VGGFeatureExtractor
 
 
 class SFTUpBlock(nn.Module):
-    """Spatial feature transform (SFT) with upsampling block."""
+    """Spatial feature transform (SFT) with upsampling block.
+
+    Args:
+        in_channel (int): Number of input channels.
+        out_channel (int): Number of output channels.
+        kernel_size (int): Kernel size in convolutions. Default: 3.
+        padding (int): Padding in convolutions. Default: 1.
+    """
 
     def __init__(self, in_channel, out_channel, kernel_size=3, padding=1):
         super(SFTUpBlock, self).__init__()
@@ -51,6 +58,10 @@ class DFDNet(nn.Module):
     """DFDNet: Deep Face Dictionary Network.
 
     It only processes faces with 512x512 size.
+
+    Args:
+        num_feat (int): Number of feature channels.
+        dict_path (str): Path to the facial component dictionary.
     """
 
     def __init__(self, num_feat, dict_path):

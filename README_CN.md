@@ -132,11 +132,11 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
                   Chao Dong and Chen Change Loy},
   title =        {{BasicSR}: Open Source Image and Video Restoration Toolbox},
   howpublished = {\url{https://github.com/xinntao/BasicSR}},
-  year =         {2020}
+  year =         {2018}
 }
 ```
 
-> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2020.
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2018.
 
 ## :e-mail: 联系
 

@@ -9,15 +9,13 @@ from basicsr.utils.registry import ARCH_REGISTRY
 class DenseBlocksTemporalReduce(nn.Module):
     """A concatenation of 3 dense blocks with reduction in temporal dimension.
 
-    Note that the output temporal dimension is 6 fewer the input temporal
-    dimension, since there are 3 blocks.
+    Note that the output temporal dimension is 6 fewer the input temporal dimension, since there are 3 blocks.
 
     Args:
         num_feat (int): Number of channels in the blocks. Default: 64.
         num_grow_ch (int): Growing factor of the dense blocks. Default: 32
-        adapt_official_weights (bool): Whether to adapt the weights
-            translated from the official implementation. Set to false if you
-            want to train from scratch. Default: False.
+        adapt_official_weights (bool): Whether to adapt the weights translated from the official implementation.
+            Set to false if you want to train from scratch. Default: False.
     """
 
     def __init__(self, num_feat=64, num_grow_ch=32, adapt_official_weights=False):
@@ -87,9 +85,8 @@ class DenseBlocks(nn.Module):
             DUF-S (16 layers): 3
             DUF-M (18 layers): 9
             DUF-L (52 layers): 21
-        adapt_official_weights (bool): Whether to adapt the weights
-            translated from the official implementation. Set to false if you
-            want to train from scratch. Default: False.
+        adapt_official_weights (bool): Whether to adapt the weights translated from the official implementation.
+            Set to false if you want to train from scratch. Default: False.
     """
 
     def __init__(self, num_block, num_feat=64, num_grow_ch=16, adapt_official_weights=False):
@@ -126,8 +123,7 @@ class DenseBlocks(nn.Module):
             x (Tensor): Input tensor with shape (b, num_feat, t, h, w).
 
         Returns:
-            Tensor: Output with shape
-                (b, num_feat + num_block * num_grow_ch, t, h, w).
+            Tensor: Output with shape (b, num_feat + num_block * num_grow_ch, t, h, w).
         """
         for i in range(0, len(self.dense_blocks)):
             y = self.dense_blocks[i](x)
@@ -139,12 +135,10 @@ class DynamicUpsamplingFilter(nn.Module):
     """Dynamic upsampling filter used in DUF.
 
     Ref: https://github.com/yhjo09/VSR-DUF.
-    It only supports input with 3 channels. And it applies the same filters
-    to 3 channels.
+    It only supports input with 3 channels. And it applies the same filters to 3 channels.
 
     Args:
-        filter_size (tuple): Filter size of generated filters.
-            The shape is (kh, kw). Default: (5, 5).
+        filter_size (tuple): Filter size of generated filters. The shape is (kh, kw). Default: (5, 5).
     """
 
     def __init__(self, filter_size=(5, 5)):
@@ -255,7 +249,7 @@ class DUF(nn.Module):
             x (Tensor): Input with shape (b, 7, c, h, w)
 
         Returns:
-            Tensor: Output with shape (b, 1, h * scale, w * scale)
+            Tensor: Output with shape (b, c, h * scale, w * scale)
         """
         num_batches, num_imgs, _, h, w = x.size()
 

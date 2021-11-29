@@ -10,19 +10,16 @@ class MSRResNet(nn.Module):
     """Modified SRResNet.
 
     A compacted version modified from SRResNet in
-    "Photo-Realistic Single Image Super-Resolution Using a Generative
-    Adversarial Network"
+    "Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network"
     It uses residual blocks without BN, similar to EDSR.
     Currently, it supports x2, x3 and x4 upsampling scale factor.
 
     Args:
         num_in_ch (int): Channel number of inputs. Default: 3.
         num_out_ch (int): Channel number of outputs. Default: 3.
-        num_feat (int): Channel number of intermediate features.
-            Default: 64.
+        num_feat (int): Channel number of intermediate features. Default: 64.
         num_block (int): Block number in the body network. Default: 16.
-        upscale (int): Upsampling factor. Support x2, x3 and x4.
-            Default: 4.
+        upscale (int): Upsampling factor. Support x2, x3 and x4. Default: 4.
     """
 
     def __init__(self, num_in_ch=3, num_out_ch=3, num_feat=64, num_block=16, upscale=4):

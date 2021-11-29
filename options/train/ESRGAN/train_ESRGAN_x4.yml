@@ -49,7 +49,7 @@ network_g:
   num_block: 23
 
 network_d:
-  type: VGGStyleDiscriminator128
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 64
 

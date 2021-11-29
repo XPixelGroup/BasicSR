@@ -63,10 +63,10 @@ network_g:
   with_tsa: false
 
 network_d:
-  type: VGGStyleDiscriminator256
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 64
-  syncbn: true
+  input_size: 256
 
 
 # path

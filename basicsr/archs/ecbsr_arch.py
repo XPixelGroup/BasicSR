@@ -6,37 +6,48 @@ from basicsr.utils.registry import ARCH_REGISTRY
 
 
 class SeqConv3x3(nn.Module):
+    """The re-parameterizable block used in the ECBSR architecture.
 
-    def __init__(self, seq_type, inp_planes, out_planes, depth_multiplier=1):
+    Paper: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
+    Ref git repo: https://github.com/xindongzhang/ECBSR
+
+    Args:
+        seq_type (str): Sequence type, option: conv1x1-conv3x3 | conv1x1-sobelx | conv1x1-sobely | conv1x1-laplacian.
+        in_channels (int): Channel number of input.
+        out_channels (int): Channel number of output.
+        depth_multiplier (int): Width multiplier in the expand-and-squeeze conv. Default: 1.
+    """
+
+    def __init__(self, seq_type, in_channels, out_channels, depth_multiplier=1):
         super(SeqConv3x3, self).__init__()
         self.seq_type = seq_type
-        self.inp_planes = inp_planes
-        self.out_planes = out_planes
+        self.in_channels = in_channels
+        self.out_channels = out_channels
 
         if self.seq_type == 'conv1x1-conv3x3':
-            self.mid_planes = int(out_planes * depth_multiplier)
-            conv0 = torch.nn.Conv2d(self.inp_planes, self.mid_planes, kernel_size=1, padding=0)
+            self.mid_planes = int(out_channels * depth_multiplier)
+            conv0 = torch.nn.Conv2d(self.in_channels, self.mid_planes, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
-            conv1 = torch.nn.Conv2d(self.mid_planes, self.out_planes, kernel_size=3)
+            conv1 = torch.nn.Conv2d(self.mid_planes, self.out_channels, kernel_size=3)
             self.k1 = conv1.weight
             self.b1 = conv1.bias
 
         elif self.seq_type == 'conv1x1-sobelx':
-            conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
+            conv0 = torch.nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
             # init scale and bias
-            scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
+            scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(scale)
-            bias = torch.randn(self.out_planes) * 1e-3
-            bias = torch.reshape(bias, (self.out_planes, ))
+            bias = torch.randn(self.out_channels) * 1e-3
+            bias = torch.reshape(bias, (self.out_channels, ))
             self.bias = nn.Parameter(bias)
             # init mask
-            self.mask = torch.zeros((self.out_planes, 1, 3, 3), dtype=torch.float32)
-            for i in range(self.out_planes):
+            self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
+            for i in range(self.out_channels):
                 self.mask[i, 0, 0, 0] = 1.0
                 self.mask[i, 0, 1, 0] = 2.0
                 self.mask[i, 0, 2, 0] = 1.0
@@ -46,19 +57,19 @@ class SeqConv3x3(nn.Module):
             self.mask = nn.Parameter(data=self.mask, requires_grad=False)
 
         elif self.seq_type == 'conv1x1-sobely':
-            conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
+            conv0 = torch.nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
             # init scale and bias
-            scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
+            scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
-            bias = torch.randn(self.out_planes) * 1e-3
-            bias = torch.reshape(bias, (self.out_planes, ))
+            bias = torch.randn(self.out_channels) * 1e-3
+            bias = torch.reshape(bias, (self.out_channels, ))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
             # init mask
-            self.mask = torch.zeros((self.out_planes, 1, 3, 3), dtype=torch.float32)
-            for i in range(self.out_planes):
+            self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
+            for i in range(self.out_channels):
                 self.mask[i, 0, 0, 0] = 1.0
                 self.mask[i, 0, 0, 1] = 2.0
                 self.mask[i, 0, 0, 2] = 1.0
@@ -68,19 +79,19 @@ class SeqConv3x3(nn.Module):
             self.mask = nn.Parameter(data=self.mask, requires_grad=False)
 
         elif self.seq_type == 'conv1x1-laplacian':
-            conv0 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=1, padding=0)
+            conv0 = torch.nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, padding=0)
             self.k0 = conv0.weight
             self.b0 = conv0.bias
 
             # init scale and bias
-            scale = torch.randn(size=(self.out_planes, 1, 1, 1)) * 1e-3
+            scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
-            bias = torch.randn(self.out_planes) * 1e-3
-            bias = torch.reshape(bias, (self.out_planes, ))
+            bias = torch.randn(self.out_channels) * 1e-3
+            bias = torch.reshape(bias, (self.out_channels, ))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
             # init mask
-            self.mask = torch.zeros((self.out_planes, 1, 3, 3), dtype=torch.float32)
-            for i in range(self.out_planes):
+            self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
+            for i in range(self.out_channels):
                 self.mask[i, 0, 0, 1] = 1.0
                 self.mask[i, 0, 1, 0] = 1.0
                 self.mask[i, 0, 1, 2] = 1.0
@@ -113,7 +124,7 @@ class SeqConv3x3(nn.Module):
             y0[:, :, :, 0:1] = b0_pad
             y0[:, :, :, -1:] = b0_pad
             # conv-3x3
-            y1 = F.conv2d(input=y0, weight=self.scale * self.mask, bias=self.bias, stride=1, groups=self.out_planes)
+            y1 = F.conv2d(input=y0, weight=self.scale * self.mask, bias=self.bias, stride=1, groups=self.out_channels)
         return y1
 
     def rep_params(self):
@@ -129,41 +140,53 @@ class SeqConv3x3(nn.Module):
             rep_bias = F.conv2d(input=rep_bias, weight=self.k1).view(-1, ) + self.b1
         else:
             tmp = self.scale * self.mask
-            k1 = torch.zeros((self.out_planes, self.out_planes, 3, 3), device=device)
-            for i in range(self.out_planes):
+            k1 = torch.zeros((self.out_channels, self.out_channels, 3, 3), device=device)
+            for i in range(self.out_channels):
                 k1[i, i, :, :] = tmp[i, 0, :, :]
             b1 = self.bias
             # re-param conv kernel
             rep_weight = F.conv2d(input=k1, weight=self.k0.permute(1, 0, 2, 3))
             # re-param conv bias
-            rep_bias = torch.ones(1, self.out_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
+            rep_bias = torch.ones(1, self.out_channels, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
             rep_bias = F.conv2d(input=rep_bias, weight=k1).view(-1, ) + b1
         return rep_weight, rep_bias
 
 
 class ECB(nn.Module):
+    """The ECB block used in the ECBSR architecture.
 
-    def __init__(self, inp_planes, out_planes, depth_multiplier, act_type='prelu', with_idt=False):
+    Paper: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
+    Ref git repo: https://github.com/xindongzhang/ECBSR
+
+    Args:
+        in_channels (int): Channel number of input.
+        out_channels (int): Channel number of output.
+        depth_multiplier (int): Width multiplier in the expand-and-squeeze conv. Default: 1.
+        act_type (str): Activation type. Option: prelu | relu | rrelu | softplus | linear. Default: prelu.
+        with_idt (bool): Whether to use identity connection. Default: False.
+    """
+
+    def __init__(self, in_channels, out_channels, depth_multiplier, act_type='prelu', with_idt=False):
         super(ECB, self).__init__()
 
         self.depth_multiplier = depth_multiplier
-        self.inp_planes = inp_planes
-        self.out_planes = out_planes
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.act_type = act_type
 
-        if with_idt and (self.inp_planes == self.out_planes):
+        if with_idt and (self.in_channels == self.out_channels):
             self.with_idt = True
         else:
             self.with_idt = False
 
-        self.conv3x3 = torch.nn.Conv2d(self.inp_planes, self.out_planes, kernel_size=3, padding=1)
-        self.conv1x1_3x3 = SeqConv3x3('conv1x1-conv3x3', self.inp_planes, self.out_planes, self.depth_multiplier)
-        self.conv1x1_sbx = SeqConv3x3('conv1x1-sobelx', self.inp_planes, self.out_planes)
-        self.conv1x1_sby = SeqConv3x3('conv1x1-sobely', self.inp_planes, self.out_planes)
-        self.conv1x1_lpl = SeqConv3x3('conv1x1-laplacian', self.inp_planes, self.out_planes)
+        self.conv3x3 = torch.nn.Conv2d(self.in_channels, self.out_channels, kernel_size=3, padding=1)
+        self.conv1x1_3x3 = SeqConv3x3('conv1x1-conv3x3', self.in_channels, self.out_channels, self.depth_multiplier)
+        self.conv1x1_sbx = SeqConv3x3('conv1x1-sobelx', self.in_channels, self.out_channels)
+        self.conv1x1_sby = SeqConv3x3('conv1x1-sobely', self.in_channels, self.out_channels)
+        self.conv1x1_lpl = SeqConv3x3('conv1x1-laplacian', self.in_channels, self.out_channels)
 
         if self.act_type == 'prelu':
-            self.act = nn.PReLU(num_parameters=self.out_planes)
+            self.act = nn.PReLU(num_parameters=self.out_channels)
         elif self.act_type == 'relu':
             self.act = nn.ReLU(inplace=True)
         elif self.act_type == 'rrelu':
@@ -200,8 +223,8 @@ class ECB(nn.Module):
             device = rep_weight.get_device()
             if device < 0:
                 device = None
-            weight_idt = torch.zeros(self.out_planes, self.out_planes, 3, 3, device=device)
-            for i in range(self.out_planes):
+            weight_idt = torch.zeros(self.out_channels, self.out_channels, 3, 3, device=device)
+            for i in range(self.out_channels):
                 weight_idt[i, i, 1, 1] = 1.0
             bias_idt = 0.0
             rep_weight, rep_bias = rep_weight + weight_idt, rep_bias + bias_idt

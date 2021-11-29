@@ -54,7 +54,7 @@ network_g:
   upscale: 4
 
 network_d:
-  type: VGGStyleDiscriminator128
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 64
 
