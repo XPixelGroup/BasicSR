@@ -32,7 +32,7 @@ class PairedImageDataset(data.Dataset):
             filename_tmpl (str): Template for each filename. Note that the
                 template excludes the file extension. Default: '{}'.
             gt_size (int): Cropped patched size for gt patches.
-            use_flip (bool): Use horizontal flips.
+            use_hflip (bool): Use horizontal flips.
             use_rot (bool): Use rotation (use vertical flip and transposing h
                 and w for implementation).
 
@@ -86,7 +86,7 @@ class PairedImageDataset(data.Dataset):
             # random crop
             img_gt, img_lq = paired_random_crop(img_gt, img_lq, gt_size, scale, gt_path)
             # flip, rotation
-            img_gt, img_lq = augment([img_gt, img_lq], self.opt['use_flip'], self.opt['use_rot'])
+            img_gt, img_lq = augment([img_gt, img_lq], self.opt['use_hflip'], self.opt['use_rot'])
 
         if 'color' in self.opt and self.opt['color'] == 'y':
             img_gt = rgb2ycbcr(img_gt, y_only=True)[..., None]

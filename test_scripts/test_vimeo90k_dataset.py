@@ -31,7 +31,7 @@ def main(mode='folder'):
     opt['num_frame'] = 7
     opt['gt_size'] = 256
     opt['random_reverse'] = True
-    opt['use_flip'] = True
+    opt['use_hflip'] = True
     opt['use_rot'] = True
 
     opt['use_shuffle'] = True

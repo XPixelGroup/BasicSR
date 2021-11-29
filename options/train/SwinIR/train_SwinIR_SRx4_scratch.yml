@@ -18,7 +18,7 @@ datasets:
       type: disk
 
     gt_size: 192
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader

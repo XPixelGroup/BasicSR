@@ -42,7 +42,7 @@ class Vimeo90KDataset(data.Dataset):
             num_frame (int): Window size for input frames.
             gt_size (int): Cropped patched size for gt patches.
             random_reverse (bool): Random reverse input frames.
-            use_flip (bool): Use horizontal flips.
+            use_hflip (bool): Use horizontal flips.
             use_rot (bool): Use rotation (use vertical flip and transposing h
                 and w for implementation).
 
@@ -111,7 +111,7 @@ class Vimeo90KDataset(data.Dataset):
 
         # augmentation - flip, rotate
         img_lqs.append(img_gt)
-        img_results = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'])
+        img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
         img_results = img2tensor(img_results)
         img_lqs = torch.stack(img_results[0:-1], dim=0)
@@ -173,7 +173,7 @@ class Vimeo90KRecurrentDataset(Vimeo90KDataset):
 
         # augmentation - flip, rotate
         img_lqs.extend(img_gts)
-        img_results = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'])
+        img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
         img_results = img2tensor(img_results)
         img_lqs = torch.stack(img_results[:7], dim=0)

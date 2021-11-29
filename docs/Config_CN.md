@@ -71,7 +71,7 @@ datasets:
     # 训练中Ground-Truth的Training patch的大小
     gt_size: 128
     # 是否使用horizontal flip, 这里的flip特指 horizontal flip
-    use_flip: true
+    use_hflip: true
     # 是否使用rotation, 这里指的是每隔90°旋转
     use_rot: true
 

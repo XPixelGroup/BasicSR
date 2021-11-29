@@ -43,7 +43,7 @@ class REDSDataset(data.Dataset):
             gt_size (int): Cropped patched size for gt patches.
             interval_list (list): Interval list for temporal augmentation.
             random_reverse (bool): Random reverse input frames.
-            use_flip (bool): Use horizontal flips.
+            use_hflip (bool): Use horizontal flips.
             use_rot (bool): Use rotation (use vertical flip and transposing h
                 and w for implementation).
 
@@ -182,9 +182,9 @@ class REDSDataset(data.Dataset):
         # augmentation - flip, rotate
         img_lqs.append(img_gt)
         if self.flow_root is not None:
-            img_results, img_flows = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'], img_flows)
+            img_results, img_flows = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'], img_flows)
         else:
-            img_results = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'])
+            img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
         img_results = img2tensor(img_results)
         img_lqs = torch.stack(img_results[0:-1], dim=0)
@@ -242,7 +242,7 @@ class REDSRecurrentDataset(data.Dataset):
             gt_size (int): Cropped patched size for gt patches.
             interval_list (list): Interval list for temporal augmentation.
             random_reverse (bool): Random reverse input frames.
-            use_flip (bool): Use horizontal flips.
+            use_hflip (bool): Use horizontal flips.
             use_rot (bool): Use rotation (use vertical flip and transposing h
                 and w for implementation).
 
@@ -345,7 +345,7 @@ class REDSRecurrentDataset(data.Dataset):
 
         # augmentation - flip, rotate
         img_lqs.extend(img_gts)
-        img_results = augment(img_lqs, self.opt['use_flip'], self.opt['use_rot'])
+        img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
         img_results = img2tensor(img_results)
         img_gts = torch.stack(img_results[len(img_lqs) // 2:], dim=0)

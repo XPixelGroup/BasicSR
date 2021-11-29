@@ -34,7 +34,7 @@ def main(mode='folder'):
         opt['io_backend'] = dict(type='lmdb')
 
     opt['gt_size'] = 128
-    opt['use_flip'] = True
+    opt['use_hflip'] = True
     opt['use_rot'] = True
 
     opt['use_shuffle'] = True

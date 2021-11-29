@@ -20,7 +20,7 @@ datasets:
       # type: lmdb
 
     gt_size: 512
-    use_flip: true
+    use_hflip: true
     use_rot: false
 
     # data loader

@@ -20,7 +20,7 @@ scale: 4
 mean: [0.5, 0.5, 0.5]
 std: [0.5, 0.5, 0.5]
 gt_size: 128
-use_flip: true
+use_hflip: true
 use_rot: true
 
 phase: train

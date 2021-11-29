@@ -71,7 +71,7 @@ datasets:
     # Ground-Truth training patch size
     gt_size: 128
     # Whether to use horizontal flip. Here, flip is for horizontal flip
-    use_flip: true
+    use_hflip: true
     # Whether to rotate. Here for rotations with every 90 degree
     use_rot: true
 
