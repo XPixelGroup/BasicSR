@@ -183,7 +183,7 @@ def paired_paths_from_meta_info_file(folders, keys, meta_info_file, filename_tmp
     input_key, gt_key = keys
 
     with open(meta_info_file, 'r') as fin:
-        gt_names = [line.split(' ')[0] for line in fin]
+        gt_names = [line.strip().split(' ')[0] for line in fin]
 
     paths = []
     for gt_name in gt_names:
