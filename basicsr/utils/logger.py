@@ -18,18 +18,22 @@ class AvgTimer():
         self.start()
 
     def start(self):
-        self.start_time = time.time()
+        self.start_time = self.tic = time.time()
 
     def record(self):
         self.count += 1
-        self.current_time = time.time() - self.start_time
+        self.toc = time.time()
+        self.current_time = self.toc - self.tic
         self.total_time += self.current_time
         # calculate average time
         self.avg_time = self.total_time / self.count
+
         # reset
         if self.count > self.window:
             self.count = 0
             self.total_time = 0
+
+        self.tic = time.time()
 
     def get_current_time(self):
         return self.current_time
