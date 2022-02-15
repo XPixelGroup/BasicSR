@@ -33,7 +33,7 @@ def flowread(flow_path, quantize=False, concat_axis=0, *args, **kwargs):
                 raise IOError(f'Invalid flow file: {flow_path}')
             else:
                 if header != 'PIEH':
-                    raise IOError(f'Invalid flow file: {flow_path}, ' 'header does not contain PIEH')
+                    raise IOError(f'Invalid flow file: {flow_path}, header does not contain PIEH')
 
             w = np.fromfile(f, np.int32, 1).squeeze()
             h = np.fromfile(f, np.int32, 1).squeeze()

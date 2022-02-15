@@ -26,7 +26,7 @@ def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
 
     assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
     if input_order not in ['HWC', 'CHW']:
-        raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are ' '"HWC" and "CHW"')
+        raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are "HWC" and "CHW"')
     img = reorder_image(img, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
     img = img.astype(np.float64)
@@ -108,7 +108,7 @@ def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
 
     assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
     if input_order not in ['HWC', 'CHW']:
-        raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are ' '"HWC" and "CHW"')
+        raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are "HWC" and "CHW"')
     img = reorder_image(img, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
     img = img.astype(np.float64)

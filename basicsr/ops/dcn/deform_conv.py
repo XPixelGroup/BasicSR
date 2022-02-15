@@ -44,7 +44,7 @@ class DeformConvFunction(Function):
                 deformable_groups=1,
                 im2col_step=64):
         if input is not None and input.dim() != 4:
-            raise ValueError(f'Expected 4D tensor as input, got {input.dim()}' 'D tensor instead.')
+            raise ValueError(f'Expected 4D tensor as input, got {input.dim()}D tensor instead.')
         ctx.stride = _pair(stride)
         ctx.padding = _pair(padding)
         ctx.dilation = _pair(dilation)

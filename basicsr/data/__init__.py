@@ -33,7 +33,7 @@ def build_dataset(dataset_opt):
     dataset_opt = deepcopy(dataset_opt)
     dataset = DATASET_REGISTRY.get(dataset_opt['type'])(dataset_opt)
     logger = get_root_logger()
-    logger.info(f'Dataset [{dataset.__class__.__name__}] - {dataset_opt["name"]} ' 'is built.')
+    logger.info(f'Dataset [{dataset.__class__.__name__}] - {dataset_opt["name"]} is built.')
     return dataset
 
 
@@ -77,7 +77,7 @@ def build_dataloader(dataset, dataset_opt, num_gpu=1, dist=False, sampler=None, 
     elif phase in ['val', 'test']:  # validation
         dataloader_args = dict(dataset=dataset, batch_size=1, shuffle=False, num_workers=0)
     else:
-        raise ValueError(f'Wrong dataset phase: {phase}. ' "Supported ones are 'train', 'val' and 'test'.")
+        raise ValueError(f"Wrong dataset phase: {phase}. Supported ones are 'train', 'val' and 'test'.")
 
     dataloader_args['pin_memory'] = dataset_opt.get('pin_memory', False)
     dataloader_args['persistent_workers'] = dataset_opt.get('persistent_workers', False)

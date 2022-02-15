@@ -37,7 +37,7 @@ class FFHQDataset(data.Dataset):
         if self.io_backend_opt['type'] == 'lmdb':
             self.io_backend_opt['db_paths'] = self.gt_folder
             if not self.gt_folder.endswith('.lmdb'):
-                raise ValueError("'dataroot_gt' should end with '.lmdb', " f'but received {self.gt_folder}')
+                raise ValueError("'dataroot_gt' should end with '.lmdb', but received {self.gt_folder}")
             with open(osp.join(self.gt_folder, 'meta_info.txt')) as fin:
                 self.paths = [line.split('.')[0] for line in fin]
         else:

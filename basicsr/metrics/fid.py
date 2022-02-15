@@ -74,7 +74,7 @@ def calculate_fid(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
     # Product might be almost singular
     if not np.isfinite(cov_sqrt).all():
-        print('Product of cov matrices is singular. Adding {eps} to diagonal ' 'of cov estimates')
+        print('Product of cov matrices is singular. Adding {eps} to diagonal of cov estimates')
         offset = np.eye(sigma1.shape[0]) * eps
         cov_sqrt = linalg.sqrtm((sigma1 + offset) @ (sigma2 + offset))
 
