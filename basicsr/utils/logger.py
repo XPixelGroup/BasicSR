@@ -143,6 +143,32 @@ def init_wandb_logger(opt):
     logger.info(f'Use wandb logger with id={wandb_id}; project={project}.')
 
 
+def wandb_enabled(opt):
+    if 'debug' in opt['name']: return False
+    if opt['logger'].get('wandb') is None: return False
+    if opt['logger']['wandb'].get('project') is None: return False
+    return True
+
+
+@master_only
+def log_artifact(opt, model, net_label, current_step):
+    if not wandb_enabled(opt):
+        return
+
+    if not opt['logger']['wandb'].get('log_model', False):
+        return
+
+    import wandb
+
+    # Prepend run id to artifact name so it is attributed to the current run
+    name = opt['name']
+    name = f'{wandb.run.id}_{name}'
+    artifact = wandb.Artifact(name, type='model')
+    save_path = model.get_save_path(net_label, current_step)
+    artifact.add_file(save_path)
+    wandb.run.log_artifact(artifact)
+
+
 def get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=None):
     """Get the root logger.
 
