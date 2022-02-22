@@ -7,18 +7,27 @@ from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from basicsr.models import lr_scheduler as lr_scheduler
 from basicsr.utils import get_root_logger
+from basicsr.utils import accelerator_util
 from basicsr.utils.dist_util import master_only
 
+try:
+    import torch_xla.core.xla_model as xm
+except:
+    pass
 
 class BaseModel():
     """Base model."""
 
     def __init__(self, opt):
         self.opt = opt
-        self.device = torch.device('cuda' if opt['num_gpu'] != 0 else 'cpu')
+        self.device = accelerator_util.default_device(opt)
         self.is_train = opt['is_train']
         self.schedulers = []
         self.optimizers = []
+
+    @property
+    def accelerator(self):
+        return accelerator_util.accelerator_name(self.opt)
 
     def feed_data(self, data):
         pass
@@ -106,6 +115,13 @@ class BaseModel():
         else:
             raise NotImplementedError(f'optimizer {optim_type} is not supperted yet.')
         return optimizer
+
+    def optimizer_step(self, optimizer):
+        if self.accelerator == 'xla':
+            xm.optimizer_step(optimizer)
+            xm.mark_step()
+        else:
+            optimizer.step()
 
     def setup_schedulers(self):
         """Set up schedulers."""

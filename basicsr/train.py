@@ -12,7 +12,7 @@ from basicsr.models import build_model
 from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
                            init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
 from basicsr.utils.options import copy_opt_file, dict2str, parse_options
-
+from basicsr.utils.accelerator_util import accelerator_name
 
 def init_tb_loggers(opt):
     # initialize wandb logger before tensorboard logger to allow proper sync
@@ -139,6 +139,8 @@ def train_pipeline(root_path):
     if prefetch_mode is None or prefetch_mode == 'cpu':
         prefetcher = CPUPrefetcher(train_loader)
     elif prefetch_mode == 'cuda':
+        if accelerator_name(opt) != 'cuda':
+            raise ValueError(f"prefetch_mode cuda is not compatible with accelerator {accelerator_name(opt)}.")
         prefetcher = CUDAPrefetcher(train_loader, opt)
         logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:

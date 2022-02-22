@@ -111,7 +111,7 @@ class SRModel(BaseModel):
                 loss_dict['l_style'] = l_style
 
         l_total.backward()
-        self.optimizer_g.step()
+        self.optimizer_step(self.optimizer_g)
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
 

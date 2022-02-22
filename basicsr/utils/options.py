@@ -6,8 +6,8 @@ from collections import OrderedDict
 from os import path as osp
 
 from basicsr.utils import set_random_seed
+from basicsr.utils.accelerator_util import device_count
 from basicsr.utils.dist_util import get_dist_info, init_dist, master_only
-
 
 def ordered_yaml():
     """Support OrderedDict for yaml.
@@ -135,7 +135,7 @@ def parse_options(root_path, is_train=True):
         opt['name'] = 'debug_' + opt['name']
 
     if opt['num_gpu'] == 'auto':
-        opt['num_gpu'] = torch.cuda.device_count()
+        opt['num_gpu'] = device_count(opt)
 
     # datasets
     for phase, dataset in opt['datasets'].items():
