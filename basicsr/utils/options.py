@@ -88,7 +88,7 @@ def preflight_options():
     replication devices.
 
     We use this function so the main training script can determine whether
-    we need to use XLA MP replication.
+    we need to use XLA MP replication before proceeding further.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
@@ -111,7 +111,6 @@ def parse_options(root_path, is_train=True):
 
     # distributed settings
     if use_xmp(opt):
-        # xmp parallelism is handled specially, we don't need opt['dist']
         opt['dist'] = True
         init_xmp()
     elif args.launcher == 'none':
