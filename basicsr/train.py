@@ -11,8 +11,14 @@ from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
                            init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
-from basicsr.utils.options import copy_opt_file, dict2str, parse_options
-from basicsr.utils.accelerator_util import accelerator_name
+from basicsr.utils.options import copy_opt_file, dict2str, parse_options, preflight_options
+from basicsr.utils import accelerator_util
+from basicsr.utils import dist_util
+
+try:
+    import torch_xla.core.xla_model as xm
+except:
+    pass
 
 def init_tb_loggers(opt):
     # initialize wandb logger before tensorboard logger to allow proper sync
@@ -88,13 +94,22 @@ def load_resume_state(opt):
     return resume_state
 
 
-def train_pipeline(root_path):
+def print_xla_device_info(opt):
+    if accelerator_util.accelerator_name(opt) == 'xla':
+        import torch_xla.core.xla_model as xm
+        print(f"XLA device: {xm.xla_device()} [{xm.xla_real_devices([xm.xla_device()])[0]}], ordinal: {xm.get_ordinal()}, replicas: {xm.xrt_world_size()}, is master: {xm.is_master_ordinal()}")
+
+        # These are expected to be the same
+        rank, world_size = dist_util.get_dist_info()
+        assert(rank == xm.get_ordinal())
+        assert(world_size == xm.xrt_world_size())
+
+def _mp_train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
     opt, args = parse_options(root_path, is_train=True)
     opt['root_path'] = root_path
 
-    torch.backends.cudnn.benchmark = True
-    # torch.backends.cudnn.deterministic = True
+    print_xla_device_info(opt)
 
     # load resume states if necessary
     resume_state = load_resume_state(opt)
@@ -139,8 +154,8 @@ def train_pipeline(root_path):
     if prefetch_mode is None or prefetch_mode == 'cpu':
         prefetcher = CPUPrefetcher(train_loader)
     elif prefetch_mode == 'cuda':
-        if accelerator_name(opt) != 'cuda':
-            raise ValueError(f"prefetch_mode cuda is not compatible with accelerator {accelerator_name(opt)}.")
+        if accelerator_util.accelerator_name(opt) != 'cuda':
+            raise ValueError(f"prefetch_mode cuda is not compatible with accelerator {accelerator_util.accelerator_name(opt)}.")
         prefetcher = CUDAPrefetcher(train_loader, opt)
         logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:
@@ -198,7 +213,6 @@ def train_pipeline(root_path):
             iter_timer.start()
             train_data = prefetcher.next()
         # end of iter
-
     # end of epoch
 
     consumed_time = str(datetime.timedelta(seconds=int(time.time() - start_time)))
@@ -210,6 +224,34 @@ def train_pipeline(root_path):
             model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
     if tb_logger:
         tb_logger.close()
+
+
+def _mp_train(rank, root_path):
+    _mp_train_pipeline(root_path)
+
+def train_pipeline(root_path):
+    """
+    Determines whether multiple processes need to be spawned, and then invoke _mp_train_pipeline.
+    This mode is meant to be used with XLA multiprocessing (but it should work in other environments).
+    However, it is incompatible with command-line multi-process launchers.
+    This is also an appropriate entry point to be invoked from Real-ESRGAN for XLA MP support.
+    """
+    # Initial parse to determine whether we need to run under xmp multiprocessing
+    opt, args = preflight_options()
+
+    if opt.get('accelerator', 'cuda') == 'xla':
+        # We can't get the number of XLA devices because it would cause a replication error.
+        # We just assume xla multiprocessing is required, except if a launcher was used.
+        if args.launcher != "none":
+            raise ValueError(f"Launcher {args.launcher} is incompatible with XLA multiprocessing.")
+
+        import torch_xla.distributed.xla_multiprocessing as xmp
+        xmp.spawn(_mp_train, args=(root_path,), start_method='fork')
+    else:
+        torch.backends.cudnn.benchmark = True
+        # torch.backends.cudnn.deterministic = True
+
+        _mp_train_pipeline(root_path)
 
 
 if __name__ == '__main__':

@@ -6,8 +6,8 @@ from collections import OrderedDict
 from os import path as osp
 
 from basicsr.utils import set_random_seed
-from basicsr.utils.accelerator_util import device_count
-from basicsr.utils.dist_util import get_dist_info, init_dist, master_only
+from basicsr.utils.accelerator_util import use_xmp, device_count
+from basicsr.utils.dist_util import get_dist_info, init_dist, init_xmp, master_only
 
 def ordered_yaml():
     """Support OrderedDict for yaml.
@@ -79,7 +79,17 @@ def _postprocess_yml_value(value):
     return value
 
 
-def parse_options(root_path, is_train=True):
+def preflight_options():
+    """
+    Just parse all the options for initial verification.
+
+    Attempting to access xla devices (such as trying to determine the number of
+    available devices, for instance) results in xmp not being able to create the
+    replication devices.
+
+    We use this function so the main training script can determine whether
+    we need to use XLA MP replication.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('-opt', type=str, required=True, help='Path to option YAML file.')
     parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none', help='job launcher')
@@ -94,8 +104,17 @@ def parse_options(root_path, is_train=True):
     with open(args.opt, mode='r') as f:
         opt = yaml.load(f, Loader=ordered_yaml()[0])
 
+    return opt, args
+
+def parse_options(root_path, is_train=True):
+    opt, args = preflight_options()
+
     # distributed settings
-    if args.launcher == 'none':
+    if use_xmp(opt):
+        # xmp parallelism is handled specially, we don't need opt['dist']
+        opt['dist'] = True
+        init_xmp()
+    elif args.launcher == 'none':
         opt['dist'] = False
         print('Disable distributed.', flush=True)
     else:

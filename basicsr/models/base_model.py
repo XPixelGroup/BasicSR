@@ -94,13 +94,18 @@ class BaseModel():
         return self.log_dict
 
     def model_to_device(self, net):
-        """Model to device. It also warps models with DistributedDataParallel
+        """Model to device. It also wraps models with DistributedDataParallel
         or DataParallel.
 
         Args:
             net (nn.Module)
         """
         net = net.to(self.device)
+
+        if self.accelerator == 'xla':
+            # No need to use DataParallel or DistributedDataParallel with xmp
+            return net
+
         if self.opt['dist']:
             find_unused_parameters = self.opt.get('find_unused_parameters', False)
             net = DistributedDataParallel(
@@ -377,7 +382,7 @@ class BaseModel():
             loss_dict (OrderedDict): Loss dict.
         """
         with torch.no_grad():
-            if self.opt['dist']:
+            if self.opt['dist'] and self.accelerator != 'xla':
                 keys = []
                 losses = []
                 for name, value in loss_dict.items():
