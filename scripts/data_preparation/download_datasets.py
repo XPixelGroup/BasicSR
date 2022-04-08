@@ -20,7 +20,7 @@ def download_dataset(dataset, file_ids):
             elif user_response.lower() == 'n':
                 print(f'Skipping {file_name}')
             else:
-                raise ValueError('Wrong input. Only accpets Y/N.')
+                raise ValueError('Wrong input. Only accepts Y/N.')
         else:
             print(f'Downloading {file_name} to {save_path}')
             download_file_from_google_drive(file_id, save_path)

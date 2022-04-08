@@ -26,7 +26,7 @@ class VideoRecurrentModel(VideoBaseModel):
         logger.info(f'Multiple the learning rate for flow network with {flow_lr_mul}.')
         if flow_lr_mul == 1:
             optim_params = self.net_g.parameters()
-        else:  # separate flow params and normal params for differnet lr
+        else:  # separate flow params and normal params for different lr
             normal_params = []
             flow_params = []
             for name, param in self.net_g.named_parameters():
@@ -72,24 +72,28 @@ class VideoRecurrentModel(VideoBaseModel):
         #    'folder1': tensor (num_frame x len(metrics)),
         #    'folder2': tensor (num_frame x len(metrics))
         # }
-        if with_metrics and not hasattr(self, 'metric_results'):
-            self.metric_results = {}
-            num_frame_each_folder = Counter(dataset.data_info['folder'])
-            for folder, num_frame in num_frame_each_folder.items():
-                self.metric_results[folder] = torch.zeros(
-                    num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
-
+        if with_metrics:
+            if not hasattr(self, 'metric_results'):  # only execute in the first run
+                self.metric_results = {}
+                num_frame_each_folder = Counter(dataset.data_info['folder'])
+                for folder, num_frame in num_frame_each_folder.items():
+                    self.metric_results[folder] = torch.zeros(
+                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+            # initialize the best metric results
+            self._initialize_best_metric_results(dataset_name)
+        # zero self.metric_results
         rank, world_size = get_dist_info()
         if with_metrics:
             for _, tensor in self.metric_results.items():
                 tensor.zero_()
 
+        metric_data = dict()
         num_folders = len(dataset)
         num_pad = (world_size - (num_folders % world_size)) % world_size
         if rank == 0:
             pbar = tqdm(total=len(dataset), unit='folder')
-        # Will evaluate (num_folders + num_pad) times, but only the first
-        # num_folders results will be recorded. (To avoid wait-dead)
+        # Will evaluate (num_folders + num_pad) times, but only the first num_folders results will be recorded.
+        # (To avoid wait-dead)
         for i in range(rank, num_folders + num_pad, world_size):
             idx = min(i, num_folders - 1)
             val_data = dataset[idx]
@@ -122,9 +126,11 @@ class VideoRecurrentModel(VideoBaseModel):
                 for idx in range(visuals['result'].size(1)):
                     result = visuals['result'][0, idx, :, :, :]
                     result_img = tensor2img([result])  # uint8, bgr
+                    metric_data['img'] = result_img
                     if 'gt' in visuals:
                         gt = visuals['gt'][0, idx, :, :, :]
                         gt_img = tensor2img([gt])  # uint8, bgr
+                        metric_data['img2'] = gt_img
 
                     if save_img:
                         if self.opt['is_train']:
@@ -145,7 +151,6 @@ class VideoRecurrentModel(VideoBaseModel):
                     # calculate metrics
                     if with_metrics:
                         for metric_idx, opt_ in enumerate(self.opt['val']['metrics'].values()):
-                            metric_data = dict(img1=result_img, img2=gt_img)
                             result = calculate_metric(metric_data, opt_)
                             self.metric_results[folder][idx, metric_idx] += result
 

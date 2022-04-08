@@ -140,8 +140,8 @@ if __name__ == '__main__':
 
         if args.official_adaption:
             path, ext = os.path.splitext(save_crop_path)
-            pathes = sorted(glob.glob(f'{path}_[0-9]*.png'))
-            cropped_faces = [io.imread(path) for path in pathes]
+            paths = sorted(glob.glob(f'{path}_[0-9]*.png'))
+            cropped_faces = [io.imread(path) for path in paths]
         else:
             cropped_faces = face_helper.cropped_faces
 

@@ -157,8 +157,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--dataset',
         type=str,
-        help=("Options: 'DIV2K', 'REDS', 'Vimeo90K' "
-              'You may need to modify the corresponding configurations in codes.'))
+        help=("Options: 'DIV2K', 'REDS', 'Vimeo90K' You may need to modify the corresponding configurations in codes."))
     args = parser.parse_args()
     dataset = args.dataset.lower()
     if dataset == 'div2k':

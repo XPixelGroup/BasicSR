@@ -153,8 +153,7 @@ class BaseNetwork(nn.Module):
 
 def lip2d(x, logit, kernel=3, stride=2, padding=1):
     weight = logit.exp()
-    return F.avg_pool2d(x * weight, kernel, stride, padding) / \
-        F.avg_pool2d(weight, kernel, stride, padding)
+    return F.avg_pool2d(x * weight, kernel, stride, padding) / F.avg_pool2d(weight, kernel, stride, padding)
 
 
 class SoftGate(nn.Module):

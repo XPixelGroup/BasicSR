@@ -14,7 +14,7 @@ datasets:
     dataroot_lq: ./datasets/val_set5/Set5_bicLRx4
     io_backend:
       type: disk
-  test_2:  # the 2st test dataset
+  test_2:  # the 2nd test dataset
     name: val_set14
     type: PairedImageDataset
     dataroot_gt: ./datasets/val_set14/Set14

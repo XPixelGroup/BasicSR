@@ -37,7 +37,7 @@ class FFHQDataset(data.Dataset):
         if self.io_backend_opt['type'] == 'lmdb':
             self.io_backend_opt['db_paths'] = self.gt_folder
             if not self.gt_folder.endswith('.lmdb'):
-                raise ValueError("'dataroot_gt' should end with '.lmdb', " f'but received {self.gt_folder}')
+                raise ValueError("'dataroot_gt' should end with '.lmdb', but received {self.gt_folder}")
             with open(osp.join(self.gt_folder, 'meta_info.txt')) as fin:
                 self.paths = [line.split('.')[0] for line in fin]
         else:
@@ -57,7 +57,7 @@ class FFHQDataset(data.Dataset):
                 img_bytes = self.file_client.get(gt_path)
             except Exception as e:
                 logger = get_root_logger()
-                logger.warn(f'File client error: {e}, remaining retry times: {retry - 1}')
+                logger.warning(f'File client error: {e}, remaining retry times: {retry - 1}')
                 # change another file to read
                 index = random.randint(0, self.__len__())
                 gt_path = self.paths[index]

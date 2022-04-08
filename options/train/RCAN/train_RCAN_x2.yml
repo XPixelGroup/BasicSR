@@ -23,7 +23,7 @@ datasets:
       # type: lmdb
 
     gt_size: 96
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader
@@ -50,7 +50,7 @@ network_g:
   num_group: 10
   num_block: 20
   squeeze_factor: 16
-  upscale: 4
+  upscale: 2
   res_scale: 1
   img_range: 255.
   rgb_mean: [0.4488, 0.4371, 0.4040]
@@ -63,6 +63,7 @@ path:
 
 # training settings
 train:
+  ema_decay: 0.999
   optim_g:
     type: Adam
     lr: !!float 1e-4

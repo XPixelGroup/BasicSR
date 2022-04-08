@@ -53,6 +53,11 @@ class BasicVSR(nn.Module):
         return flows_forward, flows_backward
 
     def forward(self, x):
+        """Forward function of BasicVSR.
+
+        Args:
+            x: Input frames with shape (b, n, c, h, w). n is the temporal dimension / number of frames.
+        """
         flows_forward, flows_backward = self.get_flow(x)
         b, n, _, h, w = x.size()
 
@@ -94,6 +99,13 @@ class BasicVSR(nn.Module):
 
 
 class ConvResidualBlocks(nn.Module):
+    """Conv and residual block used in BasicVSR.
+
+    Args:
+        num_in_ch (int): Number of input channels. Default: 3.
+        num_out_ch (int): Number of output channels. Default: 64.
+        num_block (int): Number of residual blocks. Default: 15.
+    """
 
     def __init__(self, num_in_ch=3, num_out_ch=64, num_block=15):
         super().__init__()
@@ -107,7 +119,15 @@ class ConvResidualBlocks(nn.Module):
 
 @ARCH_REGISTRY.register()
 class IconVSR(nn.Module):
-    """IconVSR, proposed also in the BasicVSR paper
+    """IconVSR, proposed also in the BasicVSR paper.
+
+    Args:
+        num_feat (int): Number of channels. Default: 64.
+        num_block (int): Number of residual blocks for each branch. Default: 15.
+        keyframe_stride (int): Keyframe stride. Default: 5.
+        temporal_padding (int): Temporal padding. Default: 2.
+        spynet_path (str): Path to the pretrained weights of SPyNet. Default: None.
+        edvr_path (str): Path to the pretrained EDVR model. Default: None.
     """
 
     def __init__(self,
@@ -147,7 +167,7 @@ class IconVSR(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.1, inplace=True)
 
     def pad_spatial(self, x):
-        """ Apply padding spatially.
+        """Apply padding spatially.
 
         Since the PCD module in EDVR requires that the resolution is a multiple
         of 4, we apply padding to the input LR images if their resolution is
@@ -249,6 +269,13 @@ class IconVSR(nn.Module):
 
 
 class EDVRFeatureExtractor(nn.Module):
+    """EDVR feature extractor used in IconVSR.
+
+    Args:
+        num_input_frame (int): Number of input frames.
+        num_feat (int): Number of feature channels
+        load_path (str): Path to the pretrained weights of EDVR. Default: None.
+    """
 
     def __init__(self, num_input_frame, num_feat, load_path):
 
@@ -256,9 +283,9 @@ class EDVRFeatureExtractor(nn.Module):
 
         self.center_frame_idx = num_input_frame // 2
 
-        # extrat pyramid features
+        # extract pyramid features
         self.conv_first = nn.Conv2d(3, num_feat, 3, 1, 1)
-        self.feature_extraction = make_layer(ResidualBlockNoBN, 5, num_feat=64)
+        self.feature_extraction = make_layer(ResidualBlockNoBN, 5, num_feat=num_feat)
         self.conv_l2_1 = nn.Conv2d(num_feat, num_feat, 3, 2, 1)
         self.conv_l2_2 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.conv_l3_1 = nn.Conv2d(num_feat, num_feat, 3, 2, 1)

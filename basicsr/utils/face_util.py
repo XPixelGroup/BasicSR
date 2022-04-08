@@ -9,7 +9,7 @@ from basicsr.utils import imwrite
 try:
     import dlib
 except ImportError:
-    print('Please install dlib before testing face restoration.' 'Reference:　https://github.com/davisking/dlib')
+    print('Please install dlib before testing face restoration. Reference:　https://github.com/davisking/dlib')
 
 
 class FaceRestorationHelper(object):

@@ -1,4 +1,8 @@
-# :rocket: BasicSR
+<p align="center">
+  <img src="assets/basicsr_logo.png" height=120>
+</p>
+
+## <div align="center"><b><a href="README.md">English</a> | <a href="README_CN.md">简体中文</a></b></div>
 
 [![LICENSE](https://img.shields.io/github/license/xinntao/basicsr.svg)](https://github.com/xinntao/BasicSR/blob/master/LICENSE/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/basicsr)](https://pypi.org/project/basicsr/)
@@ -7,9 +11,15 @@
 [![Publish-pip](https://github.com/xinntao/BasicSR/actions/workflows/publish-pip.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/publish-pip.yml)
 [![gitee mirror](https://github.com/xinntao/BasicSR/actions/workflows/gitee-mirror.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/gitee-mirror.yml)
 
-[English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR)
+<!-- [English](README.md) **|** [简体中文](README_CN.md) &emsp; [GitHub](https://github.com/xinntao/BasicSR) **|** [Gitee码云](https://gitee.com/xinntao/BasicSR) -->
 
 :rocket: 我们添加了 [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), 它提供了使用BasicSR的指南以及模板 (以python package的形式) :rocket:
+
+:loudspeaker: **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步**
+
+:compass: [入群二维码](#e-mail-%E8%81%94%E7%B3%BB) (QQ、微信)  &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u)
+
+---
 
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 :m: [模型库](docs/ModelZoo_CN.md): :arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
@@ -25,21 +35,13 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 :triangular_flag_on_post: **新的特性/更新**
 
+- :white_check_mark: Oct 5, 2021. 添加 **ECBSR 训练和测试** 代码: [ECBSR](https://github.com/xindongzhang/ECBSR).
+  > ACMMM21: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
+- :white_check_mark: Sep 2, 2021. 添加 **SwinIR 训练和测试** 代码: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang). 更多内容参见 [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
 - :white_check_mark: Aug 5, 2021. 添加了NIQE， 它输出和MATLAB一样的结果 (both are 5.7296 for tests/data/baboon.png).
 - :white_check_mark: July 31, 2021. Add **bi-directional video super-resolution** codes: [**BasicVSR** and IconVSR](https://arxiv.org/abs/2012.02181).
-- :white_check_mark: July 20, 2021. Add **dual-blind face restoration** codes: [**HiFaceGAN**](https://github.com/Lotayou/Face-Renovation) codes by [Lotayou](https://lotayou.github.io/).
-- :white_check_mark: Nov 29, 2020. 添加 **ESRGAN** and **DFDNet** [colab demo](colab).
-- :white_check_mark: Sep 8, 2020. 添加 **盲人脸复原**测试代码: [DFDNet](https://github.com/csxmli2016/DFDNet).
-- :white_check_mark: Aug 27, 2020. 添加 **StyleGAN2 训练和测试** 代码: [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch).
-
-<details>
-  <summary>更多</summary>
-<ul>
-  <li> Sep 8, 2020. 添加 <b>盲人脸复原</b> 测试代码: <b>DFDNet</b>. <br> <i><font color="#DCDCDC">ECCV20: Blind Face Restoration via Deep Multi-scale Component Dictionaries</font></i> <br> <i><font color="#DCDCDC">Xiaoming Li, Chaofeng Chen, Shangchen Zhou, Xianhui Lin, Wangmeng Zuo and Lei Zhang</font></i> </li>
-  <li> Aug 27, 2020. 添加 <b>StyleGAN2</b> 训练和测试代码. <br> <i><font color="#DCDCDC">CVPR20: Analyzing and Improving the Image Quality of StyleGAN</font></i> <br> <i><font color="#DCDCDC">Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen and Timo Aila</font></i> </li>
-  <li>Aug 19, 2020. <b>全新的</b> BasicSR v1.0.0 上线.</li>
-</ul>
-</details>
+  > CVPR21: BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond
+- **[更多](docs/history_updates.md)**
 
 :sparkles: **使用 BasicSR 的项目**
 - [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): 通用图像复原的实用算法
@@ -64,21 +66,21 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 我们提供了简单的流程来快速上手 训练/测试/推理 模型. 这些命令并不能涵盖所有用法, 更多的细节参见下面的部分.
 
-| GAN |  |  |  | | |
-| :--- | :---:        |     :---:      | :--- | :---:        |     :---:      |
-| StyleGAN2   | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) | | | |
-| **Face Restoration** |  |  |  | | |
-| DFDNet | - | [测试](docs/HOWTOs_CN.md#如何测试-DFDNet) | | | |
-| **Super Resolution** |  |  |  | | |
-| ESRGAN | *TODO* | *TODO* | SRGAN | *TODO* | *TODO*|
-| EDSR | *TODO* | *TODO* | SRResNet | *TODO* | *TODO*|
-| RCAN | *TODO* | *TODO* |  |  | |
-| EDVR | *TODO* | *TODO* | DUF | - | *TODO* |
-| BasicVSR | *TODO* | *TODO* | TOF | - | *TODO* |
-| **Deblurring** |  |  |  | | |
-| DeblurGANv2 | - | *TODO* |  | | |
-| **Denoise** |  |  |  | | |
-| RIDNet | - | *TODO* | CBDNet | - | *TODO*|
+| GAN                  |                                              |                                              |          |                                                |                                                        |
+| :------------------- | :------------------------------------------: | :------------------------------------------: | :------- | :--------------------------------------------: | :----------------------------------------------------: |
+| StyleGAN2            | [训练](docs/HOWTOs_CN.md#如何训练-StyleGAN2) | [测试](docs/HOWTOs_CN.md#如何测试-StyleGAN2) |          |                                                |                                                        |
+| **Face Restoration** |                                              |                                              |          |                                                |                                                        |
+| DFDNet               |                      -                       |  [测试](docs/HOWTOs_CN.md#如何测试-DFDNet)   |          |                                                |                                                        |
+| **Super Resolution** |                                              |                                              |          |                                                |                                                        |
+| ESRGAN               |                    *TODO*                    |                    *TODO*                    | SRGAN    |                     *TODO*                     |                         *TODO*                         |
+| EDSR                 |                    *TODO*                    |                    *TODO*                    | SRResNet |                     *TODO*                     |                         *TODO*                         |
+| RCAN                 |                    *TODO*                    |                    *TODO*                    | SwinIR   | [Train](docs/HOWTOs.md#how-to-train-swinir-sr) | [Inference](docs/HOWTOs.md#how-to-inference-swinir-sr) |
+| EDVR                 |                    *TODO*                    |                    *TODO*                    | DUF      |                       -                        |                         *TODO*                         |
+| BasicVSR             |                    *TODO*                    |                    *TODO*                    | TOF      |                       -                        |                         *TODO*                         |
+| **Deblurring**       |                                              |                                              |          |                                                |                                                        |
+| DeblurGANv2          |                      -                       |                    *TODO*                    |          |                                                |                                                        |
+| **Denoise**          |                                              |                                              |          |                                                |                                                        |
+| RIDNet               |                      -                       |                    *TODO*                    | CBDNet   |                       -                        |                         *TODO*                         |
 
 ## :wrench: 依赖和安装
 
@@ -114,7 +116,7 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
 
 参见 [DesignConvention_CN.md](docs/DesignConvention_CN.md).<br>
 下图概括了整体的框架. 每个模块更多的描述参见: <br>
-**[Datasets_CN.md](docs/Datasets_CN.md)**&emsp;|&emsp;**[Models_CN.md](docs/Models_CN.md)**&emsp;|&emsp;**[Config_CN.md](Config_CN.md)**&emsp;|&emsp;**[Logging_CN.md](docs/Logging_CN.md)**
+**[Datasets_CN.md](docs/Datasets_CN.md)**&emsp;|&emsp;**[Models_CN.md](docs/Models_CN.md)**&emsp;|&emsp;**[Config_CN.md](docs/Config_CN.md)**&emsp;|&emsp;**[Logging_CN.md](docs/Logging_CN.md)**
 
 ![overall_structure](./assets/overall_structure.png)
 
@@ -134,12 +136,22 @@ For detailed instructions refer to [INSTALL.md](INSTALL.md).
                   Chao Dong and Chen Change Loy},
   title =        {{BasicSR}: Open Source Image and Video Restoration Toolbox},
   howpublished = {\url{https://github.com/xinntao/BasicSR}},
-  year =         {2020}
+  year =         {2018}
 }
 ```
 
-> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2020.
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2018.
 
 ## :e-mail: 联系
 
 若有任何问题, 请电邮 `xintao.wang@outlook.com`.
+
+<br>
+
+- **QQ群**: 扫描左边二维码 或者 搜索QQ群号: 320960100   入群答案：互帮互助共同进步
+- **微信群**: 因为微信群超过200人，需要邀请才可以进群；要进微信群的小伙伴可以先添加 Liangbin 的个人微信 (右边二维码)，他会在空闲的时候拉大家入群~
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
+  <img src="https://user-images.githubusercontent.com/17445847/139572512-8e192aac-00fa-432b-ac8e-a33026b019df.png"  height="300">
+</p>

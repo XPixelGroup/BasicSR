@@ -23,7 +23,7 @@ datasets:
     gt_size: 256
     interval_list: [1]
     random_reverse: false
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader
@@ -53,9 +53,10 @@ network_g:
   spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
 
 network_d:
-  type: VGGStyleDiscriminator256
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 32
+  input_size: 256
 
 # path
 path:

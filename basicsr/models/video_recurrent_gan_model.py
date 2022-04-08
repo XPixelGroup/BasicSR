@@ -117,7 +117,7 @@ class VideoRecurrentGANModel(VideoRecurrentModel):
         self.optimizer_g.zero_grad()
         self.output = self.net_g(self.lq)
 
-        b, n, c, h, w = self.output.size()
+        _, _, c, h, w = self.output.size()
 
         l_g_total = 0
         loss_dict = OrderedDict()

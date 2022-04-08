@@ -3,7 +3,7 @@
 ## Contents
 
 - [Requirements](#requirements)
-- [BASICSR_EXT and BASICSR_JIT enviroment variables](#basicsr_ext-and-basicsr_jit-environment-variables)
+- [BASICSR_EXT and BASICSR_JIT environment variables](#basicsr_ext-and-basicsr_jit-environment-variables)
 - [Installation Options](#installation-options)
   - [Install from PyPI](#install-from-pypi)
   - [Install from a local clone](#Install-from-a-local-clone)
@@ -19,7 +19,7 @@
 ## BASICSR_EXT and BASICSR_JIT Environment Variables
 
 If you want to use PyTorch C++ extensions:<br>
-&emsp;deformable convolution: [*dcn* for EDVR](basicsr/ops)<br>
+&emsp;deformable convolution: [*dcn* for EDVR](basicsr/ops) (For torchvision>=0.9.0, we use the official `torchvision.ops.deform_conv2d` instead)<br>
 &emsp;StyleGAN customized operators: [*upfirdn2d* and *fused_act* for StyleGAN2](basicsr/ops)<br>
 you also need to:
 
@@ -49,7 +49,7 @@ If you do not need those PyTorch C++ extensions, just skip it. There is no need 
 
 There are two options to install BASICSR, according to your needs.
 
-- If you just want to use BASICSR as a **package** (just like [GFPGAN](https://github.com/TencentARC/GFPGAN) and []()), it is recommanded to install from PyPI.
+- If you just want to use BASICSR as a **package** (just like [GFPGAN](https://github.com/TencentARC/GFPGAN) and []()), it is recommended to install from PyPI.
 - If you want to **investigate** the details of BASICSR OR **develop** it OR **modify** it to fulfill your needs, it is better to install from a local clone.
 
 ### Install from PyPI

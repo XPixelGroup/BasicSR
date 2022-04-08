@@ -6,7 +6,7 @@ from basicsr.data import build_dataloader, build_dataset
 
 
 def main(mode='folder'):
-    """Test vimeo90k dataset.
+    """Test reds dataset.
 
     Args:
         mode: There are two modes: 'lmdb', 'folder'.
@@ -15,23 +15,27 @@ def main(mode='folder'):
     opt['dist'] = False
     opt['phase'] = 'train'
 
-    opt['name'] = 'Vimeo90K'
-    opt['type'] = 'Vimeo90KDataset'
+    opt['name'] = 'REDS'
+    opt['type'] = 'REDSDataset'
     if mode == 'folder':
-        opt['dataroot_gt'] = 'datasets/vimeo90k/vimeo_septuplet/sequences'
-        opt['dataroot_lq'] = 'datasets/vimeo90k/vimeo_septuplet_matlabLRx4/sequences'  # noqa E501
-        opt['meta_info_file'] = 'basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt'  # noqa E501
+        opt['dataroot_gt'] = 'datasets/REDS/train_sharp'
+        opt['dataroot_lq'] = 'datasets/REDS/train_sharp_bicubic'
+        opt['dataroot_flow'] = None
+        opt['meta_info_file'] = 'basicsr/data/meta_info/meta_info_REDS_GT.txt'
         opt['io_backend'] = dict(type='disk')
     elif mode == 'lmdb':
-        opt['dataroot_gt'] = 'datasets/vimeo90k/vimeo90k_train_GT_only4th.lmdb'
-        opt['dataroot_lq'] = 'datasets/vimeo90k/vimeo90k_train_LR7frames.lmdb'
-        opt['meta_info_file'] = 'basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt'  # noqa E501
+        opt['dataroot_gt'] = 'datasets/REDS/train_sharp_with_val.lmdb'
+        opt['dataroot_lq'] = 'datasets/REDS/train_sharp_bicubic_with_val.lmdb'
+        opt['dataroot_flow'] = None
+        opt['meta_info_file'] = 'basicsr/data/meta_info/meta_info_REDS_GT.txt'
         opt['io_backend'] = dict(type='lmdb')
 
-    opt['num_frame'] = 7
+    opt['val_partition'] = 'REDS4'
+    opt['num_frame'] = 5
     opt['gt_size'] = 256
+    opt['interval_list'] = [1]
     opt['random_reverse'] = True
-    opt['use_flip'] = True
+    opt['use_hflip'] = True
     opt['use_rot'] = True
 
     opt['use_shuffle'] = True

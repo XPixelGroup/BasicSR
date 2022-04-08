@@ -9,6 +9,12 @@ This BasicSR project is released under the Apache 2.0 license.
   - The codes are largely modified from the repository [DFDNet](https://github.com/csxmli2016/DFDNet). Their license is [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 - DiffJPEG
   - Modified from https://github.com/mlomnitz/DiffJPEG.
+- [pytorch-image-models](https://github.com/rwightman/pytorch-image-models/)
+  - We use the implementation of `DropPath` and `trunc_normal_` from [pytorch-image-models](https://github.com/rwightman/pytorch-image-models/). The LICENSE is included as [LICENSE_pytorch-image-models](LICENSE/LICENSE_pytorch-image-models).
+- [SwinIR](https://github.com/JingyunLiang/SwinIR)
+  - The arch implementation of SwinIR is from [SwinIR](https://github.com/JingyunLiang/SwinIR). The LICENSE is included as [LICENSE_SwinIR](LICENSE/LICENSE_SwinIR).
+- [ECBSR](https://github.com/xindongzhang/ECBSR)
+  - The arch implementation of ECBSR is from [ECBSR](https://github.com/xindongzhang/ECBSR). The LICENSE of ECBSR is [Apache License 2.0](https://github.com/xindongzhang/ECBSR/blob/main/LICENSE)
 
 ## References
 

@@ -16,7 +16,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
         require_mod_crop (bool): Require mod crop for each image.
             Default: False.
         scale (int): Scale factor for mod_crop. Default: 1.
-        return_imgname(bool): Whether return image names. Defalt False.
+        return_imgname(bool): Whether return image names. Default False.
 
     Returns:
         Tensor: size (t, c, h, w), RGB, [0, 1].
@@ -129,7 +129,7 @@ def paired_paths_from_lmdb(folders, keys):
     """
     assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
                                f'But got {len(folders)}')
-    assert len(keys) == 2, ('The len of keys should be 2 with [input_key, gt_key]. ' f'But got {len(keys)}')
+    assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
@@ -178,12 +178,12 @@ def paired_paths_from_meta_info_file(folders, keys, meta_info_file, filename_tmp
     """
     assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
                                f'But got {len(folders)}')
-    assert len(keys) == 2, ('The len of keys should be 2 with [input_key, gt_key]. ' f'But got {len(keys)}')
+    assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
     with open(meta_info_file, 'r') as fin:
-        gt_names = [line.split(' ')[0] for line in fin]
+        gt_names = [line.strip().split(' ')[0] for line in fin]
 
     paths = []
     for gt_name in gt_names:
@@ -212,7 +212,7 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     """
     assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
                                f'But got {len(folders)}')
-    assert len(keys) == 2, ('The len of keys should be 2 with [input_key, gt_key]. ' f'But got {len(keys)}')
+    assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
@@ -225,7 +225,7 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
         basename, ext = osp.splitext(osp.basename(gt_path))
         input_name = f'{filename_tmpl.format(basename)}{ext}'
         input_path = osp.join(input_folder, input_name)
-        assert input_name in input_paths, (f'{input_name} is not in ' f'{input_key}_paths.')
+        assert input_name in input_paths, f'{input_name} is not in {input_key}_paths.'
         gt_path = osp.join(gt_folder, gt_path)
         paths.append(dict([(f'{input_key}_path', input_path), (f'{gt_key}_path', gt_path)]))
     return paths

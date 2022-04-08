@@ -25,9 +25,9 @@ class ToyDiscriminator(nn.Module):
 
 def main():
     # use fixed random seed
-    manualSeed = 999
-    random.seed(manualSeed)
-    torch.manual_seed(manualSeed)
+    manual_seed = 999
+    random.seed(manual_seed)
+    torch.manual_seed(manual_seed)
 
     img_real = torch.rand((1, 3, 6, 6))
     img_fake = torch.rand((1, 3, 6, 6))

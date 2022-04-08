@@ -22,7 +22,7 @@ datasets:
       # type: lmdb
 
     gt_size: 128
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader
@@ -57,6 +57,7 @@ path:
 
 # training settings
 train:
+  ema_decay: 0.999
   optim_g:
     type: Adam
     lr: !!float 2e-4

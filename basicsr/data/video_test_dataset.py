@@ -205,7 +205,7 @@ class VideoTestDUFDataset(VideoTestDataset):
     Args:
         opt (dict): Config for train dataset.
             Most of keys are the same as VideoTestDataset.
-            It has the follwing extra keys:
+            It has the following extra keys:
 
             use_duf_downsampling (bool): Whether to use duf downsampling to
                 generate low-resolution frames.

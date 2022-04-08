@@ -22,7 +22,7 @@ datasets:
     gt_size: 256
     interval_list: [1]
     random_reverse: false
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader
@@ -48,6 +48,7 @@ datasets:
 
 # network structures
 network_g:
+  ema_decay: 0.999
   type: EDVR
   num_in_ch: 3
   num_out_ch: 3

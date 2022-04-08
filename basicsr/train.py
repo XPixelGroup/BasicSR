@@ -9,9 +9,9 @@ from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
-from basicsr.utils import (MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str, init_tb_logger,
-                           init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
-from basicsr.utils.options import dict2str, parse_options
+from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
+                           init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
+from basicsr.utils.options import copy_opt_file, dict2str, parse_options
 
 
 def init_tb_loggers(opt):
@@ -28,7 +28,7 @@ def init_tb_loggers(opt):
 
 def create_train_val_dataloader(opt, logger):
     # create train and val dataloaders
-    train_loader, val_loader = None, None
+    train_loader, val_loaders = None, []
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
             dataset_enlarge_ratio = dataset_opt.get('dataset_enlarge_ratio', 1)
@@ -53,16 +53,16 @@ def create_train_val_dataloader(opt, logger):
                         f'\n\tWorld size (gpu number): {opt["world_size"]}'
                         f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
                         f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
-
-        elif phase == 'val':
+        elif phase.split('_')[0] == 'val':
             val_set = build_dataset(dataset_opt)
             val_loader = build_dataloader(
                 val_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed'])
-            logger.info(f'Number of val images/folders in {dataset_opt["name"]}: ' f'{len(val_set)}')
+            logger.info(f'Number of val images/folders in {dataset_opt["name"]}: {len(val_set)}')
+            val_loaders.append(val_loader)
         else:
             raise ValueError(f'Dataset phase {phase} is not recognized.')
 
-    return train_loader, train_sampler, val_loader, total_epochs, total_iters
+    return train_loader, train_sampler, val_loaders, total_epochs, total_iters
 
 
 def load_resume_state(opt):
@@ -90,7 +90,7 @@ def load_resume_state(opt):
 
 def train_pipeline(root_path):
     # parse options, set distributed setting, set ramdom seed
-    opt = parse_options(root_path, is_train=True)
+    opt, args = parse_options(root_path, is_train=True)
     opt['root_path'] = root_path
 
     torch.backends.cudnn.benchmark = True
@@ -104,6 +104,9 @@ def train_pipeline(root_path):
         if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name'] and opt['rank'] == 0:
             mkdir_and_rename(osp.join(opt['root_path'], 'tb_logger', opt['name']))
 
+    # copy the yml file to the experiment root
+    copy_opt_file(args.opt, opt['path']['experiments_root'])
+
     # WARNING: should not use get_root_logger in the above codes, including the called functions
     # Otherwise the logger will not be properly initialized
     log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
@@ -115,17 +118,16 @@ def train_pipeline(root_path):
 
     # create train and validation dataloaders
     result = create_train_val_dataloader(opt, logger)
-    train_loader, train_sampler, val_loader, total_epochs, total_iters = result
+    train_loader, train_sampler, val_loaders, total_epochs, total_iters = result
 
     # create model
+    model = build_model(opt)
     if resume_state:  # resume training
-        model = build_model(opt)
         model.resume_training(resume_state)  # handle optimizers and schedulers
-        logger.info(f"Resuming training from epoch: {resume_state['epoch']}, " f"iter: {resume_state['iter']}.")
+        logger.info(f"Resuming training from epoch: {resume_state['epoch']}, iter: {resume_state['iter']}.")
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:
-        model = build_model(opt)
         start_epoch = 0
         current_iter = 0
 
@@ -142,11 +144,11 @@ def train_pipeline(root_path):
         if opt['datasets']['train'].get('pin_memory') is not True:
             raise ValueError('Please set pin_memory=True for CUDAPrefetcher.')
     else:
-        raise ValueError(f'Wrong prefetch_mode {prefetch_mode}.' "Supported ones are: None, 'cuda', 'cpu'.")
+        raise ValueError(f"Wrong prefetch_mode {prefetch_mode}. Supported ones are: None, 'cuda', 'cpu'.")
 
     # training
     logger.info(f'Start training from epoch: {start_epoch}, iter: {current_iter}')
-    data_time, iter_time = time.time(), time.time()
+    data_timer, iter_timer = AvgTimer(), AvgTimer()
     start_time = time.time()
 
     for epoch in range(start_epoch, total_epochs + 1):
@@ -155,7 +157,7 @@ def train_pipeline(root_path):
         train_data = prefetcher.next()
 
         while train_data is not None:
-            data_time = time.time() - data_time
+            data_timer.record()
 
             current_iter += 1
             if current_iter > total_iters:
@@ -165,12 +167,16 @@ def train_pipeline(root_path):
             # training
             model.feed_data(train_data)
             model.optimize_parameters(current_iter)
-            iter_time = time.time() - iter_time
+            iter_timer.record()
+            if current_iter == 1:
+                # reset start time in msg_logger for more accurate eta_time
+                # not work in resume mode
+                msg_logger.reset_start_time()
             # log
             if current_iter % opt['logger']['print_freq'] == 0:
                 log_vars = {'epoch': epoch, 'iter': current_iter}
                 log_vars.update({'lrs': model.get_current_learning_rate()})
-                log_vars.update({'time': iter_time, 'data_time': data_time})
+                log_vars.update({'time': iter_timer.get_avg_time(), 'data_time': data_timer.get_avg_time()})
                 log_vars.update(model.get_current_log())
                 msg_logger(log_vars)
 
@@ -181,10 +187,13 @@ def train_pipeline(root_path):
 
             # validation
             if opt.get('val') is not None and (current_iter % opt['val']['val_freq'] == 0):
-                model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
+                if len(val_loaders) > 1:
+                    logger.warning('Multiple validation datasets are *only* supported by SRModel.')
+                for val_loader in val_loaders:
+                    model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
 
-            data_time = time.time()
-            iter_time = time.time()
+            data_timer.start()
+            iter_timer.start()
             train_data = prefetcher.next()
         # end of iter
 
@@ -195,7 +204,8 @@ def train_pipeline(root_path):
     logger.info('Save the latest model.')
     model.save(epoch=-1, current_iter=-1)  # -1 stands for the latest
     if opt.get('val') is not None:
-        model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
+        for val_loader in val_loaders:
+            model.validation(val_loader, current_iter, tb_logger, opt['val']['save_img'])
     if tb_logger:
         tb_logger.close()
 

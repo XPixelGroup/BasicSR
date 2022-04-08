@@ -39,7 +39,7 @@ class L1Loss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(L1Loss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -49,8 +49,7 @@ class L1Loss(nn.Module):
         Args:
             pred (Tensor): of shape (N, C, H, W). Predicted tensor.
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
-            weight (Tensor, optional): of shape (N, C, H, W). Element-wise
-                weights. Default: None.
+            weight (Tensor, optional): of shape (N, C, H, W). Element-wise weights. Default: None.
         """
         return self.loss_weight * l1_loss(pred, target, weight, reduction=self.reduction)
 
@@ -68,7 +67,7 @@ class MSELoss(nn.Module):
     def __init__(self, loss_weight=1.0, reduction='mean'):
         super(MSELoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -78,8 +77,7 @@ class MSELoss(nn.Module):
         Args:
             pred (Tensor): of shape (N, C, H, W). Predicted tensor.
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
-            weight (Tensor, optional): of shape (N, C, H, W). Element-wise
-                weights. Default: None.
+            weight (Tensor, optional): of shape (N, C, H, W). Element-wise weights. Default: None.
         """
         return self.loss_weight * mse_loss(pred, target, weight, reduction=self.reduction)
 
@@ -96,14 +94,13 @@ class CharbonnierLoss(nn.Module):
         loss_weight (float): Loss weight for L1 loss. Default: 1.0.
         reduction (str): Specifies the reduction to apply to the output.
             Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
-        eps (float): A value used to control the curvature near zero.
-            Default: 1e-12.
+        eps (float): A value used to control the curvature near zero. Default: 1e-12.
     """
 
     def __init__(self, loss_weight=1.0, reduction='mean', eps=1e-12):
         super(CharbonnierLoss, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
-            raise ValueError(f'Unsupported reduction mode: {reduction}. ' f'Supported ones are: {_reduction_modes}')
+            raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
         self.loss_weight = loss_weight
         self.reduction = reduction
@@ -114,8 +111,7 @@ class CharbonnierLoss(nn.Module):
         Args:
             pred (Tensor): of shape (N, C, H, W). Predicted tensor.
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
-            weight (Tensor, optional): of shape (N, C, H, W). Element-wise
-                weights. Default: None.
+            weight (Tensor, optional): of shape (N, C, H, W). Element-wise weights. Default: None.
         """
         return self.loss_weight * charbonnier_loss(pred, target, weight, eps=self.eps, reduction=self.reduction)
 
@@ -124,12 +120,14 @@ class CharbonnierLoss(nn.Module):
 class WeightedTVLoss(L1Loss):
     """Weighted TV loss.
 
-        Args:
-            loss_weight (float): Loss weight. Default: 1.0.
+    Args:
+        loss_weight (float): Loss weight. Default: 1.0.
     """
 
-    def __init__(self, loss_weight=1.0):
-        super(WeightedTVLoss, self).__init__(loss_weight=loss_weight)
+    def __init__(self, loss_weight=1.0, reduction='mean'):
+        if reduction not in ['mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: mean | sum')
+        super(WeightedTVLoss, self).__init__(loss_weight=loss_weight, reduction=reduction)
 
     def forward(self, pred, weight=None):
         if weight is None:
@@ -139,8 +137,8 @@ class WeightedTVLoss(L1Loss):
             y_weight = weight[:, :, :-1, :]
             x_weight = weight[:, :, :, :-1]
 
-        y_diff = super(WeightedTVLoss, self).forward(pred[:, :, :-1, :], pred[:, :, 1:, :], weight=y_weight)
-        x_diff = super(WeightedTVLoss, self).forward(pred[:, :, :, :-1], pred[:, :, :, 1:], weight=x_weight)
+        y_diff = super().forward(pred[:, :, :-1, :], pred[:, :, 1:, :], weight=y_weight)
+        x_diff = super().forward(pred[:, :, :, :-1], pred[:, :, :, 1:], weight=x_weight)
 
         loss = x_diff + y_diff
 
@@ -155,7 +153,7 @@ class PerceptualLoss(nn.Module):
         layer_weights (dict): The weight for each layer of vgg feature.
             Here is an example: {'conv5_4': 1.}, which means the conv5_4
             feature layer (before relu5_4) will be extracted with weight
-            1.0 in calculting losses.
+            1.0 in calculating losses.
         vgg_type (str): The type of vgg network used as feature extractor.
             Default: 'vgg19'.
         use_input_norm (bool):  If True, normalize the input image in vgg.
@@ -382,7 +380,7 @@ class MultiScaleGANLoss(GANLoss):
                     # Only compute GAN loss for the last layer
                     # in case of multiscale feature matching
                     pred_i = pred_i[-1]
-                # Safe operaton: 0-dim tensor calling self.mean() does nothing
+                # Safe operation: 0-dim tensor calling self.mean() does nothing
                 loss_tensor = super().forward(pred_i, target_is_real, is_disc).mean()
                 loss += loss_tensor
             return loss / len(input)
@@ -478,17 +476,17 @@ class GANFeatLoss(nn.Module):
         elif criterion == 'charbonnier':
             self.loss_op = CharbonnierLoss(loss_weight, reduction)
         else:
-            raise ValueError(f'Unsupported loss mode: {criterion}. ' f'Supported ones are: l1|l2|charbonnier')
+            raise ValueError(f'Unsupported loss mode: {criterion}. Supported ones are: l1|l2|charbonnier')
 
         self.loss_weight = loss_weight
 
     def forward(self, pred_fake, pred_real):
-        num_D = len(pred_fake)
+        num_d = len(pred_fake)
         loss = 0
-        for i in range(num_D):  # for each discriminator
+        for i in range(num_d):  # for each discriminator
             # last output is the final prediction, exclude it
             num_intermediate_outputs = len(pred_fake[i]) - 1
             for j in range(num_intermediate_outputs):  # for each layer output
                 unweighted_loss = self.loss_op(pred_fake[i][j], pred_real[i][j].detach())
-                loss += unweighted_loss / num_D
+                loss += unweighted_loss / num_d
         return loss * self.loss_weight

@@ -23,7 +23,7 @@ datasets:
     gt_size: 256
     interval_list: [1]
     random_reverse: false
-    use_flip: true
+    use_hflip: true
     use_rot: true
 
     # data loader
@@ -63,10 +63,10 @@ network_g:
   with_tsa: false
 
 network_d:
-  type: VGGStyleDiscriminator256
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 64
-  syncbn: true
+  input_size: 256
 
 
 # path
@@ -77,6 +77,7 @@ path:
 
 # training settings
 train:
+  ema_decay: 0.999
   optim_g:
     type: Adam
     lr: !!float 1e-4

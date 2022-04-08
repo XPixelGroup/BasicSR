@@ -12,7 +12,7 @@ datasets:
     dataroot_lq: datasets/Set5/LRbicx4
     io_backend:
       type: disk
-  test_2:  # the 2st test dataset
+  test_2:  # the 2nd test dataset
     name: Set14
     type: PairedImageDataset
     dataroot_gt: datasets/Set14/GTmod12

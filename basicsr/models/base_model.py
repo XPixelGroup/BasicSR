@@ -47,6 +47,31 @@ class BaseModel():
         else:
             self.nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
+    def _initialize_best_metric_results(self, dataset_name):
+        """Initialize the best metric results dict for recording the best metric value and iteration."""
+        if hasattr(self, 'best_metric_results') and dataset_name in self.best_metric_results:
+            return
+        elif not hasattr(self, 'best_metric_results'):
+            self.best_metric_results = dict()
+
+        # add a dataset record
+        record = dict()
+        for metric, content in self.opt['val']['metrics'].items():
+            better = content.get('better', 'higher')
+            init_val = float('-inf') if better == 'higher' else float('inf')
+            record[metric] = dict(better=better, val=init_val, iter=-1)
+        self.best_metric_results[dataset_name] = record
+
+    def _update_best_metric_result(self, dataset_name, metric, val, current_iter):
+        if self.best_metric_results[dataset_name][metric]['better'] == 'higher':
+            if val >= self.best_metric_results[dataset_name][metric]['val']:
+                self.best_metric_results[dataset_name][metric]['val'] = val
+                self.best_metric_results[dataset_name][metric]['iter'] = current_iter
+        else:
+            if val <= self.best_metric_results[dataset_name][metric]['val']:
+                self.best_metric_results[dataset_name][metric]['val'] = val
+                self.best_metric_results[dataset_name][metric]['iter'] = current_iter
+
     def model_ema(self, decay=0.999):
         net_g = self.get_bare_model(self.net_g)
 
@@ -111,7 +136,7 @@ class BaseModel():
             net (nn.Module)
         """
         if isinstance(net, (DataParallel, DistributedDataParallel)):
-            net_cls_str = (f'{net.__class__.__name__} - ' f'{net.module.__class__.__name__}')
+            net_cls_str = f'{net.__class__.__name__} - {net.module.__class__.__name__}'
         else:
             net_cls_str = f'{net.__class__.__name__}'
 
@@ -204,20 +229,20 @@ class BaseModel():
                 torch.save(save_dict, save_path)
             except Exception as e:
                 logger = get_root_logger()
-                logger.warn(f'Save model error: {e}, remaining retry times: {retry - 1}')
+                logger.warning(f'Save model error: {e}, remaining retry times: {retry - 1}')
                 time.sleep(1)
             else:
                 break
             finally:
                 retry -= 1
         if retry == 0:
-            logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+            logger.warning(f'Still cannot save {save_path}. Just ignore it.')
             # raise IOError(f'Cannot save {save_path}.')
 
     def _print_different_keys_loading(self, crt_net, load_net, strict=True):
-        """Print keys with differnet name or different size when loading models.
+        """Print keys with different name or different size when loading models.
 
-        1. Print keys with differnet names.
+        1. Print keys with different names.
         2. If strict=False, print the same key but with different tensor size.
             It also ignore these keys with different sizes (not load).
 
@@ -302,14 +327,14 @@ class BaseModel():
                     torch.save(state, save_path)
                 except Exception as e:
                     logger = get_root_logger()
-                    logger.warn(f'Save training state error: {e}, remaining retry times: {retry - 1}')
+                    logger.warning(f'Save training state error: {e}, remaining retry times: {retry - 1}')
                     time.sleep(1)
                 else:
                     break
                 finally:
                     retry -= 1
             if retry == 0:
-                logger.warn(f'Still cannot save {save_path}. Just ignore it.')
+                logger.warning(f'Still cannot save {save_path}. Just ignore it.')
                 # raise IOError(f'Cannot save {save_path}.')
 
     def resume_training(self, resume_state):

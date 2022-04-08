@@ -46,12 +46,12 @@ def quality_to_factor(quality):
 
 
 # ------------------------ compression ------------------------#
-class rgb_to_ycbcr_jpeg(nn.Module):
+class RGB2YCbCrJpeg(nn.Module):
     """ Converts RGB image to YCbCr
     """
 
     def __init__(self):
-        super(rgb_to_ycbcr_jpeg, self).__init__()
+        super(RGB2YCbCrJpeg, self).__init__()
         matrix = np.array([[0.299, 0.587, 0.114], [-0.168736, -0.331264, 0.5], [0.5, -0.418688, -0.081312]],
                           dtype=np.float32).T
         self.shift = nn.Parameter(torch.tensor([0., 128., 128.]))
@@ -70,12 +70,12 @@ class rgb_to_ycbcr_jpeg(nn.Module):
         return result.view(image.shape)
 
 
-class chroma_subsampling(nn.Module):
+class ChromaSubsampling(nn.Module):
     """ Chroma subsampling on CbCr channels
     """
 
     def __init__(self):
-        super(chroma_subsampling, self).__init__()
+        super(ChromaSubsampling, self).__init__()
 
     def forward(self, image):
         """
@@ -95,12 +95,12 @@ class chroma_subsampling(nn.Module):
         return image[:, :, :, 0], cb.squeeze(3), cr.squeeze(3)
 
 
-class block_splitting(nn.Module):
+class BlockSplitting(nn.Module):
     """ Splitting image into patches
     """
 
     def __init__(self):
-        super(block_splitting, self).__init__()
+        super(BlockSplitting, self).__init__()
         self.k = 8
 
     def forward(self, image):
@@ -118,12 +118,12 @@ class block_splitting(nn.Module):
         return image_transposed.contiguous().view(batch_size, -1, self.k, self.k)
 
 
-class dct_8x8(nn.Module):
+class DCT8x8(nn.Module):
     """ Discrete Cosine Transformation
     """
 
     def __init__(self):
-        super(dct_8x8, self).__init__()
+        super(DCT8x8, self).__init__()
         tensor = np.zeros((8, 8, 8, 8), dtype=np.float32)
         for x, y, u, v in itertools.product(range(8), repeat=4):
             tensor[x, y, u, v] = np.cos((2 * x + 1) * u * np.pi / 16) * np.cos((2 * y + 1) * v * np.pi / 16)
@@ -145,7 +145,7 @@ class dct_8x8(nn.Module):
         return result
 
 
-class y_quantize(nn.Module):
+class YQuantize(nn.Module):
     """ JPEG Quantization for Y channel
 
     Args:
@@ -153,7 +153,7 @@ class y_quantize(nn.Module):
     """
 
     def __init__(self, rounding):
-        super(y_quantize, self).__init__()
+        super(YQuantize, self).__init__()
         self.rounding = rounding
         self.y_table = y_table
 
@@ -175,7 +175,7 @@ class y_quantize(nn.Module):
         return image
 
 
-class c_quantize(nn.Module):
+class CQuantize(nn.Module):
     """ JPEG Quantization for CbCr channels
 
     Args:
@@ -183,7 +183,7 @@ class c_quantize(nn.Module):
     """
 
     def __init__(self, rounding):
-        super(c_quantize, self).__init__()
+        super(CQuantize, self).__init__()
         self.rounding = rounding
         self.c_table = c_table
 
@@ -205,7 +205,7 @@ class c_quantize(nn.Module):
         return image
 
 
-class compress_jpeg(nn.Module):
+class CompressJpeg(nn.Module):
     """Full JPEG compression algorithm
 
     Args:
@@ -213,11 +213,11 @@ class compress_jpeg(nn.Module):
     """
 
     def __init__(self, rounding=torch.round):
-        super(compress_jpeg, self).__init__()
-        self.l1 = nn.Sequential(rgb_to_ycbcr_jpeg(), chroma_subsampling())
-        self.l2 = nn.Sequential(block_splitting(), dct_8x8())
-        self.c_quantize = c_quantize(rounding=rounding)
-        self.y_quantize = y_quantize(rounding=rounding)
+        super(CompressJpeg, self).__init__()
+        self.l1 = nn.Sequential(RGB2YCbCrJpeg(), ChromaSubsampling())
+        self.l2 = nn.Sequential(BlockSplitting(), DCT8x8())
+        self.c_quantize = CQuantize(rounding=rounding)
+        self.y_quantize = YQuantize(rounding=rounding)
 
     def forward(self, image, factor=1):
         """
@@ -244,12 +244,12 @@ class compress_jpeg(nn.Module):
 # ------------------------ decompression ------------------------#
 
 
-class y_dequantize(nn.Module):
+class YDequantize(nn.Module):
     """Dequantize Y channel
     """
 
     def __init__(self):
-        super(y_dequantize, self).__init__()
+        super(YDequantize, self).__init__()
         self.y_table = y_table
 
     def forward(self, image, factor=1):
@@ -269,12 +269,12 @@ class y_dequantize(nn.Module):
         return out
 
 
-class c_dequantize(nn.Module):
-    """ Dequantize CbCr channel
+class CDequantize(nn.Module):
+    """Dequantize CbCr channel
     """
 
     def __init__(self):
-        super(c_dequantize, self).__init__()
+        super(CDequantize, self).__init__()
         self.c_table = c_table
 
     def forward(self, image, factor=1):
@@ -294,12 +294,12 @@ class c_dequantize(nn.Module):
         return out
 
 
-class idct_8x8(nn.Module):
+class iDCT8x8(nn.Module):
     """Inverse discrete Cosine Transformation
     """
 
     def __init__(self):
-        super(idct_8x8, self).__init__()
+        super(iDCT8x8, self).__init__()
         alpha = np.array([1. / np.sqrt(2)] + [1] * 7)
         self.alpha = nn.Parameter(torch.from_numpy(np.outer(alpha, alpha)).float())
         tensor = np.zeros((8, 8, 8, 8), dtype=np.float32)
@@ -321,12 +321,12 @@ class idct_8x8(nn.Module):
         return result
 
 
-class block_merging(nn.Module):
+class BlockMerging(nn.Module):
     """Merge patches into image
     """
 
     def __init__(self):
-        super(block_merging, self).__init__()
+        super(BlockMerging, self).__init__()
 
     def forward(self, patches, height, width):
         """
@@ -345,12 +345,12 @@ class block_merging(nn.Module):
         return image_transposed.contiguous().view(batch_size, height, width)
 
 
-class chroma_upsampling(nn.Module):
+class ChromaUpsampling(nn.Module):
     """Upsample chroma layers
     """
 
     def __init__(self):
-        super(chroma_upsampling, self).__init__()
+        super(ChromaUpsampling, self).__init__()
 
     def forward(self, y, cb, cr):
         """
@@ -375,12 +375,12 @@ class chroma_upsampling(nn.Module):
         return torch.cat([y.unsqueeze(3), cb.unsqueeze(3), cr.unsqueeze(3)], dim=3)
 
 
-class ycbcr_to_rgb_jpeg(nn.Module):
+class YCbCr2RGBJpeg(nn.Module):
     """Converts YCbCr image to RGB JPEG
     """
 
     def __init__(self):
-        super(ycbcr_to_rgb_jpeg, self).__init__()
+        super(YCbCr2RGBJpeg, self).__init__()
 
         matrix = np.array([[1., 0., 1.402], [1, -0.344136, -0.714136], [1, 1.772, 0]], dtype=np.float32).T
         self.shift = nn.Parameter(torch.tensor([0, -128., -128.]))
@@ -398,7 +398,7 @@ class ycbcr_to_rgb_jpeg(nn.Module):
         return result.view(image.shape).permute(0, 3, 1, 2)
 
 
-class decompress_jpeg(nn.Module):
+class DeCompressJpeg(nn.Module):
     """Full JPEG decompression algorithm
 
     Args:
@@ -406,13 +406,13 @@ class decompress_jpeg(nn.Module):
     """
 
     def __init__(self, rounding=torch.round):
-        super(decompress_jpeg, self).__init__()
-        self.c_dequantize = c_dequantize()
-        self.y_dequantize = y_dequantize()
-        self.idct = idct_8x8()
-        self.merging = block_merging()
-        self.chroma = chroma_upsampling()
-        self.colors = ycbcr_to_rgb_jpeg()
+        super(DeCompressJpeg, self).__init__()
+        self.c_dequantize = CDequantize()
+        self.y_dequantize = YDequantize()
+        self.idct = iDCT8x8()
+        self.merging = BlockMerging()
+        self.chroma = ChromaUpsampling()
+        self.colors = YCbCr2RGBJpeg()
 
     def forward(self, y, cb, cr, imgh, imgw, factor=1):
         """
@@ -447,7 +447,7 @@ class decompress_jpeg(nn.Module):
 
 
 class DiffJPEG(nn.Module):
-    """This JPEG algorithm result is slightly differnet from cv2.
+    """This JPEG algorithm result is slightly different from cv2.
     DiffJPEG supports batch processing.
 
     Args:
@@ -461,8 +461,8 @@ class DiffJPEG(nn.Module):
         else:
             rounding = torch.round
 
-        self.compress = compress_jpeg(rounding=rounding)
-        self.decompress = decompress_jpeg(rounding=rounding)
+        self.compress = CompressJpeg(rounding=rounding)
+        self.decompress = DeCompressJpeg(rounding=rounding)
 
     def forward(self, x, quality):
         """

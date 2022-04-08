@@ -116,10 +116,10 @@ class LmdbBackend(BaseStorageBackend):
 
         Args:
             filepath (str | obj:`Path`): Here, filepath is the lmdb key.
-            client_key (str): Used for distinguishing differnet lmdb envs.
+            client_key (str): Used for distinguishing different lmdb envs.
         """
         filepath = str(filepath)
-        assert client_key in self._client, (f'client_key {client_key} is not ' 'in lmdb clients.')
+        assert client_key in self._client, (f'client_key {client_key} is not in lmdb clients.')
         client = self._client[client_key]
         with client.begin(write=False) as txn:
             value_buf = txn.get(filepath.encode('ascii'))
