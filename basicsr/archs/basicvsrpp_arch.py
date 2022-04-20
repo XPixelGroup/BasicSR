@@ -400,7 +400,7 @@ class SecondOrderDeformableAlignment(ModulatedDeformConvPack):
 
 # if __name__ == '__main__':
 #     spynet_path = 'experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth'
-#     model = BasicVSRPlusPlus(spynet_path=spynet_path).cuda()
+#     model = BasicVSR(spynet_path=spynet_path).cuda()
 #     input = torch.rand(1, 2, 3, 64, 64).cuda()
 #     output = model(input)
 #     print('===================')
