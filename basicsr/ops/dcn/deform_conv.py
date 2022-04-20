@@ -1,11 +1,14 @@
 import math
 import os
 import torch
+import torchvision
+from distutils.version import LooseVersion
 from torch import nn as nn
 from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 from torch.nn import functional as F
 from torch.nn.modules.utils import _pair, _single
+from torchvision import ops as tvops
 
 BASICSR_JIT = os.getenv('BASICSR_JIT')
 if BASICSR_JIT == 'True':
@@ -23,11 +26,16 @@ else:
     try:
         from . import deform_conv_ext
     except ImportError:
-        pass
+        deform_conv_ext = None
         # avoid annoying print output
         # print(f'Cannot import deform_conv_ext. Error: {error}. You may need to: \n '
         #       '1. compile with BASICSR_EXT=True. or\n '
         #       '2. set BASICSR_JIT=True during running')
+
+if LooseVersion(torchvision.__version__) >= LooseVersion('0.9.0'):
+    TORCHVISION_OPS = True
+else:
+    TORCHVISION_OPS = False
 
 
 class DeformConvFunction(Function):
@@ -186,6 +194,40 @@ class ModulatedDeformConvFunction(Function):
 
 deform_conv = DeformConvFunction.apply
 modulated_deform_conv = ModulatedDeformConvFunction.apply
+
+
+def deform_conv_tvops(input,
+                      offset,
+                      weight,
+                      stride=1,
+                      padding=0,
+                      dilation=0,
+                      groups=1,
+                      deformable_groups=1,
+                      im2col_step=64):
+    assert weight.size(1) == input.size(1) // groups
+    assert offset.size(1) == 2 * deformable_groups * weight.size(2) * weight.size(3)
+    return tvops.deform_conv2d(input, offset, weight, None, stride, padding, dilation, None)
+
+
+def modulated_deform_conv_tvops(input,
+                                offset,
+                                mask,
+                                weight,
+                                bias=None,
+                                stride=1,
+                                padding=0,
+                                dilation=1,
+                                groups=1,
+                                deformable_groups=1):
+    assert weight.size(1) == input.size(1) // groups
+    assert offset.size(1) == 2 * deformable_groups * weight.size(2) * weight.size(3)
+    return tvops.deform_conv2d(input, offset, weight, bias, stride, padding, dilation, mask)
+
+
+if deform_conv_ext is None and TORCHVISION_OPS:
+    deform_conv = deform_conv_tvops
+    modulated_deform_conv = modulated_deform_conv_tvops
 
 
 class DeformConv(nn.Module):
