@@ -7,6 +7,7 @@ import subprocess
 import time
 import torch
 from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
+from scripts.create_compile_commands import create_compile_commands
 
 version_file = 'basicsr/version.py'
 
@@ -164,3 +165,5 @@ if __name__ == '__main__':
         ext_modules=ext_modules,
         cmdclass={'build_ext': BuildExtension},
         zip_safe=False)
+
+create_compile_commands('build')
