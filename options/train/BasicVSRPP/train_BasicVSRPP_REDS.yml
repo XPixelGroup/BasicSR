@@ -1,0 +1,112 @@
+# general settings
+name: train_BasicVSRPP_REDS
+model_type: VideoRecurrentModel
+scale: 4
+num_gpu: 8  # official: 8 GPUs
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: REDS
+    type: REDSRecurrentDataset
+    dataroot_gt: datasets/REDS/train_sharp
+    dataroot_lq: datasets/REDS/train_sharp_bicubic
+    meta_info_file: datasets/REDS/meta_info/meta_info_REDS_GT.txt
+    val_partition: REDS4  # set to 'official' when use the official validation partition
+    test_mode: False
+    io_backend:
+      type: disk
+
+    num_frame: 30
+    gt_size: 256
+    interval_list: [1]
+    random_reverse: false
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 6
+    batch_size_per_gpu: 1
+    dataset_enlarge_ratio: 1
+    prefetch_mode: ~
+
+  val:
+    name: REDS4
+    type: VideoRecurrentTestDataset
+    dataroot_gt: datasets/REDS4/GT
+    dataroot_lq: datasets/REDS4/sharp_bicubic
+
+    cache_data: true
+    io_backend:
+      type: disk
+
+    num_frame: -1  # not needed
+
+# network structures
+network_g:
+  type: BasicVSRPlusPlus
+  mid_channels: 64
+  num_blocks: 7
+  is_low_res_input: true
+  spynet_path: experiments/pretrained_models/flownet/spynet_sintel_final-3d2a1287.pth
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: CosineAnnealingRestartLR
+    periods: [600000]
+    restart_weights: [1]
+    eta_min: !!float 1e-7
+
+  total_iter: 600000
+  warmup_iter: -1  # no warm up
+  fix_flow: 5000
+  flow_lr_mul: 0.25
+
+  # losses
+  pixel_opt:
+    type: CharbonnierLoss
+    loss_weight: 1.0
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500
+
+find_unused_parameters: true
