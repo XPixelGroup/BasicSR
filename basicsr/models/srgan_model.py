@@ -51,6 +51,11 @@ class SRGANModel(SRModel):
         else:
             self.cri_pix = None
 
+        if train_opt.get('artifacts_opt'):
+            self.cri_artifacts = build_loss(train_opt['artifacts_opt']).to(self.device)
+        else:
+            self.cri_artifacts = None
+
         if train_opt.get('perceptual_opt'):
             self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device)
         else:

@@ -106,6 +106,11 @@ def get_local_weights(residual, ksize):
 
 def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
 
+    """
+    Calculate the artifact map of LDL
+    (Details or Artifacts: A Locally Discriminative Learning Approach to Realistic Image Super-Resolution. In CVPR 2022)
+    """
+
     residual_ema = torch.sum(torch.abs(img_gt - img_ema), 1, keepdim=True)
     residual_SR = torch.sum(torch.abs(img_gt - img_output), 1, keepdim=True)
 
