@@ -1,6 +1,6 @@
 import functools
+import torch
 from torch.nn import functional as F
-
 
 def reduce_loss(loss, reduction):
     """Reduce loss as specified.

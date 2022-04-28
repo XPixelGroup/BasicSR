@@ -10,7 +10,7 @@ from basicsr.models.srgan_model import SRGANModel
 from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.img_process_util import filter2D
 from basicsr.utils.registry import MODEL_REGISTRY
-
+from basicsr.losses.loss_util import get_refined_artifact_map
 
 @MODEL_REGISTRY.register(suffix='basicsr')
 class RealESRGANModel(SRGANModel):
