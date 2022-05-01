@@ -2,6 +2,7 @@ import functools
 import torch
 from torch.nn import functional as F
 
+
 def reduce_loss(loss, reduction):
     """Reduce loss as specified.
 
@@ -94,6 +95,7 @@ def weighted_loss(loss_func):
 
     return wrapper
 
+
 def get_local_weights(residual, ksize):
 
     pad = (ksize - 1) // 2
@@ -104,17 +106,16 @@ def get_local_weights(residual, ksize):
 
     return pixel_level_weight
 
-def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
 
-    """
-    Calculate the artifact map of LDL
+def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
+    """Calculate the artifact map of LDL
     (Details or Artifacts: A Locally Discriminative Learning Approach to Realistic Image Super-Resolution. In CVPR 2022)
     """
 
     residual_ema = torch.sum(torch.abs(img_gt - img_ema), 1, keepdim=True)
     residual_SR = torch.sum(torch.abs(img_gt - img_output), 1, keepdim=True)
 
-    patch_level_weight = torch.var(residual_SR.clone(), dim=(-1, -2, -3), keepdim=True) ** (1/5)
+    patch_level_weight = torch.var(residual_SR.clone(), dim=(-1, -2, -3), keepdim=True)**(1 / 5)
     pixel_level_weight = get_local_weights(residual_SR.clone(), ksize)
     overall_weight = patch_level_weight * pixel_level_weight
 
