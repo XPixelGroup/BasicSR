@@ -6,11 +6,11 @@ from torch.nn import functional as F
 
 from basicsr.data.degradations import random_add_gaussian_noise_pt, random_add_poisson_noise_pt
 from basicsr.data.transforms import paired_random_crop
+from basicsr.losses.loss_util import get_refined_artifact_map
 from basicsr.models.srgan_model import SRGANModel
 from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.img_process_util import filter2D
 from basicsr.utils.registry import MODEL_REGISTRY
-from basicsr.losses.loss_util import get_refined_artifact_map
 
 
 @MODEL_REGISTRY.register(suffix='basicsr')
@@ -222,8 +222,7 @@ class RealESRGANModel(SRGANModel):
             if self.cri_artifacts:
                 pixel_weight = get_refined_artifact_map(self.gt, self.output, self.output_ema, 7)
                 l_g_artifacts = self.cri_artifacts(
-                    torch.mul(pixel_weight, self.output),
-                    torch.mul(pixel_weight, self.gt))
+                    torch.mul(pixel_weight, self.output), torch.mul(pixel_weight, self.gt))
                 l_g_total += l_g_artifacts
                 loss_dict['l_g_artifacts'] = l_g_artifacts
             # perceptual loss
