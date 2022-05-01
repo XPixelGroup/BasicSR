@@ -101,10 +101,11 @@ def get_local_weights(residual, ksize):
 
     Args:
         residual (Tensor): Residual between predicted and ground truth images.
-        ksize (Int): size of local window.
+        ksize (Int): size of the local window.
 
     Returns:
-        pixel_level_weight: weight for each pixel to be discriminated as an artifact pixel.
+        pixel_level_weight: weight for each pixel to be discriminated as an artifact pixel
+        (calculated with only local conditions).
     """
 
     pad = (ksize - 1) // 2
@@ -119,6 +120,16 @@ def get_local_weights(residual, ksize):
 def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
     """Calculate the artifact map of LDL
     (Details or Artifacts: A Locally Discriminative Learning Approach to Realistic Image Super-Resolution. In CVPR 2022)
+
+    Args:
+        img_gt (Tensor): ground truth images.
+        img_output (Tensor): output images given by the optimizing model.
+        img_output (Tensor): output images given by the ema model.
+        ksize (Int): size of the local window.
+
+    Returns:
+        overall_weight: weight for each pixel to be discriminated as an artifact pixel
+        (calculated based on both local and global observations).
     """
 
     residual_ema = torch.sum(torch.abs(img_gt - img_ema), 1, keepdim=True)
