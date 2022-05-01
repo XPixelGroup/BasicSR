@@ -105,6 +105,7 @@ path:
 
 # training settings
 train:
+  ema_decay: 0.999
   optim_g:
     type: Adam
     lr: !!float 1e-4
@@ -129,7 +130,7 @@ train:
     type: L1Loss
     loss_weight: !!float 1e-2
     reduction: mean
-  artifacts_opt:
+  ldl_opt:
     type: L1Loss
     loss_weight: !!float 1.0
     reduction: mean
@@ -159,7 +160,6 @@ train:
 
   net_d_iters: 1
   net_d_init_iters: 0
-  ema_decay: 0.999
 
 # Uncomment these for validation
 # validation settings
@@ -180,7 +180,3 @@ logger:
 dist_params:
   backend: nccl
   port: 29500
-
-# run
-# PYTHONPATH=":${PYTHONPATH}" CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 --master_port=4321 basicsr/train.py -opt options/train/LDL/train_LDL_Real_x4.yml --launcher pytorch --auto_resume
-# PYTHONPATH="./:${PYTHONPATH}" CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/LDL/train_LDL_Real_x4.yml --auto_resume

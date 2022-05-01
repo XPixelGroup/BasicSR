@@ -97,6 +97,15 @@ def weighted_loss(loss_func):
 
 
 def get_local_weights(residual, ksize):
+    """Get local weights for generating the artifact map of LDL.
+
+    Args:
+        residual (Tensor): Residual between predicted and ground truth images.
+        ksize (Int): size of local window.
+
+    Returns:
+        pixel_level_weight: weight for each pixel to be discriminated as an artifact pixel.
+    """
 
     pad = (ksize - 1) // 2
     residual_pad = F.pad(residual, pad=[pad, pad, pad, pad], mode='reflect')
@@ -113,12 +122,12 @@ def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
     """
 
     residual_ema = torch.sum(torch.abs(img_gt - img_ema), 1, keepdim=True)
-    residual_SR = torch.sum(torch.abs(img_gt - img_output), 1, keepdim=True)
+    residual_sr = torch.sum(torch.abs(img_gt - img_output), 1, keepdim=True)
 
-    patch_level_weight = torch.var(residual_SR.clone(), dim=(-1, -2, -3), keepdim=True)**(1 / 5)
-    pixel_level_weight = get_local_weights(residual_SR.clone(), ksize)
+    patch_level_weight = torch.var(residual_sr.clone(), dim=(-1, -2, -3), keepdim=True)**(1 / 5)
+    pixel_level_weight = get_local_weights(residual_sr.clone(), ksize)
     overall_weight = patch_level_weight * pixel_level_weight
 
-    overall_weight[residual_SR < residual_ema] = 0
+    overall_weight[residual_sr < residual_ema] = 0
 
     return overall_weight
