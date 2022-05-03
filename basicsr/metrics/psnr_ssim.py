@@ -78,9 +78,7 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     img2 = img2.to(torch.float64)
 
     mse = torch.mean((img - img2)**2, dim=[1, 2, 3])
-    if mse == 0:
-        return float('inf')
-    return 10. * torch.log10(1. / mse)
+    return 10. * torch.log10(1. / (mse + 1e-8))
 
 
 @METRIC_REGISTRY.register()
