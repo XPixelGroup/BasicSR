@@ -6,6 +6,9 @@ tb_logger/*
 wandb/*
 tmp/*
 
+docs/api
+scripts/__init__.py
+
 *.DS_Store
 .idea
 
