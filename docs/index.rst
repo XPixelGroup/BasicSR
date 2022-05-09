@@ -2,10 +2,11 @@ Welcome to BasicSR's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
    :caption: API
 
-   api.rst
+   api/api_basicsr.rst
+   api/api_scripts.rst
 
 Indices and tables
 ==================

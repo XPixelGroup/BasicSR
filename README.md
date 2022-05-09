@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/basicsr_logo.png" height=120>
+  <img src="assets/basicsr_xpixel_logo.png" height=120>
 </p>
 
 ## <div align="center"><b><a href="README.md">English</a> | <a href="README_CN.md">简体中文</a></b></div>
@@ -46,6 +46,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源 
 - **[More](docs/history_updates.md)**
 
 :sparkles: **Projects that use BasicSR**
+
 - [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): A practical algorithm for general image restoration
 - [**GFPGAN**](https://github.com/TencentARC/GFPGAN): A practical algorithm for real-world face restoration
 
@@ -88,6 +89,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 ## :wrench: Dependencies and Installation
 
 For detailed instructions refer to [INSTALL.md](INSTALL.md).
+
 ## :hourglass_flowing_sand: TODO List
 
 Please see [project boards](https://github.com/xinntao/BasicSR/projects).
@@ -142,8 +144,7 @@ The following is a BibTeX reference. The BibTeX entry requires the `url` LaTeX p
 }
 ```
 
-> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. https://github.com/xinntao/BasicSR, 2018.
-
+> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. <https://github.com/xinntao/BasicSR>, 2018.
 
 ## :e-mail: Contact
 

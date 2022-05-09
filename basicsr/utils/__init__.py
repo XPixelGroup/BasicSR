@@ -1,3 +1,4 @@
+from .color_util import bgr2ycbcr, rgb2ycbcr, rgb2ycbcr_pt, ycbcr2bgr, ycbcr2rgb
 from .diffjpeg import DiffJPEG
 from .file_client import FileClient
 from .img_process_util import USMSharp, usm_sharp
@@ -6,6 +7,12 @@ from .logger import AvgTimer, MessageLogger, get_env_info, get_root_logger, init
 from .misc import check_resume, get_time_str, make_exp_dirs, mkdir_and_rename, scandir, set_random_seed, sizeof_fmt
 
 __all__ = [
+    #  color_util.py
+    'bgr2ycbcr',
+    'rgb2ycbcr',
+    'rgb2ycbcr_pt',
+    'ycbcr2bgr',
+    'ycbcr2rgb',
     # file_client.py
     'FileClient',
     # img_util.py

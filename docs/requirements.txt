@@ -1,0 +1,21 @@
+# add all requirements to auto generate the docs
+addict
+future
+lmdb
+numpy
+opencv-python
+Pillow
+pyyaml
+recommonmark
+requests
+scikit-image
+scipy
+sphinx
+sphinx_intl
+sphinx_markdown_tables
+sphinx_rtd_theme
+tb-nightly
+torch>=1.7
+torchvision
+tqdm
+yapf
