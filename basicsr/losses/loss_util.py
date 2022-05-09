@@ -99,13 +99,14 @@ def weighted_loss(loss_func):
 def get_local_weights(residual, ksize):
     """Get local weights for generating the artifact map of LDL.
 
+    It is only called by the `get_refined_artifact_map` function.
+
     Args:
         residual (Tensor): Residual between predicted and ground truth images.
         ksize (Int): size of the local window.
 
     Returns:
-        pixel_level_weight: weight for each pixel to be discriminated as an artifact pixel
-        (calculated with only local conditions).
+        Tensor: weight for each pixel to be discriminated as an artifact pixel
     """
 
     pad = (ksize - 1) // 2
@@ -124,7 +125,7 @@ def get_refined_artifact_map(img_gt, img_output, img_ema, ksize):
     Args:
         img_gt (Tensor): ground truth images.
         img_output (Tensor): output images given by the optimizing model.
-        img_output (Tensor): output images given by the ema model.
+        img_ema (Tensor): output images given by the ema model.
         ksize (Int): size of the local window.
 
     Returns:
