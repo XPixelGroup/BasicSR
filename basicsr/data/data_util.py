@@ -217,17 +217,29 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     input_key, gt_key = keys
 
     input_paths = list(scandir(input_folder))
+    input_paths.sort()
     gt_paths = list(scandir(gt_folder))
+    gt_paths.sort()
     assert len(input_paths) == len(gt_paths), (f'{input_key} and {gt_key} datasets have different number of images: '
                                                f'{len(input_paths)}, {len(gt_paths)}.')
     paths = []
-    for gt_path in gt_paths:
-        basename, ext = osp.splitext(osp.basename(gt_path))
-        input_name = f'{filename_tmpl.format(basename)}{ext}'
+    for idx in range(len(gt_paths)):
+        gt_path = gt_paths[idx]
+        basename_gt, ext_gt = osp.splitext(osp.basename(gt_path))
+        gt_name = f'{filename_tmpl.format(basename_gt)}{ext_gt}'
+        gt_path = osp.join(gt_folder, gt_name)
+        assert gt_name in gt_paths, (f'{gt_name} is not in '
+                                           f'{gt_key}_paths.')
+        input_path = input_paths[idx]
+        basename_input, ext_input = osp.splitext(osp.basename(input_path))
+        input_name = f'{filename_tmpl.format(basename_input)}{ext_input}'
         input_path = osp.join(input_folder, input_name)
-        assert input_name in input_paths, f'{input_name} is not in {input_key}_paths.'
-        gt_path = osp.join(gt_folder, gt_path)
-        paths.append(dict([(f'{input_key}_path', input_path), (f'{gt_key}_path', gt_path)]))
+        assert input_name in input_paths, (f'{input_name} is not in '
+                                           f'{input_key}_paths.')
+        paths.append(
+            dict([(f'{input_key}_path', input_path),
+                  (f'{gt_key}_path', gt_path)]))
+        
     return paths
 
 
