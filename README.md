@@ -153,9 +153,10 @@ If you have any questions, please email `xintao.wang@outlook.com`.
 <br>
 
 - **QQ群**: 扫描左边二维码 或者 搜索QQ群号: 320960100   入群答案：互帮互助共同进步
-- **微信群**: 因为微信群超过200人，需要邀请才可以进群；要进微信群的小伙伴可以先添加 Liangbin 的个人微信 (右边二维码)，他会在空闲的时候拉大家入群~
+- **微信群**: 我们的群一已经满500人啦，进群二可以扫描中间的二维码；如果进群遇到问题，也可以添加 Liangbin 的个人微信 (右边二维码)，他会在空闲的时候拉大家入群~
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;  &emsp;
+  <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;
+  <img src="https://user-images.githubusercontent.com/52127135/168712228-61c48534-a659-4f8b-a442-79f04c52c803.jpg"  height="300">  &emsp;
   <img src="https://user-images.githubusercontent.com/17445847/139572512-8e192aac-00fa-432b-ac8e-a33026b019df.png"  height="300">
 </p>
