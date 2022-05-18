@@ -6,6 +6,16 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
+_xmp_dist = None
+
+class XMPDist():
+    def __init__(self):
+        super().__init__()
+
+        import torch_xla.core.xla_model as xm
+        self.rank = xm.get_ordinal()
+        self.world_size = xm.xrt_world_size()
+        self.is_master = xm.is_master_ordinal()
 
 def init_dist(launcher, backend='nccl', **kwargs):
     if mp.get_start_method(allow_none=True) is None:
@@ -17,6 +27,9 @@ def init_dist(launcher, backend='nccl', **kwargs):
     else:
         raise ValueError(f'Invalid launcher type: {launcher}')
 
+def init_xmp():
+    global _xmp_dist
+    _xmp_dist = XMPDist()
 
 def _init_dist_pytorch(backend, **kwargs):
     rank = int(os.environ['RANK'])
@@ -58,6 +71,9 @@ def _init_dist_slurm(backend, port=None):
 
 
 def get_dist_info():
+    if _xmp_dist is not None:
+        return _xmp_dist.rank, _xmp_dist.world_size
+
     if dist.is_available():
         initialized = dist.is_initialized()
     else:
@@ -75,6 +91,9 @@ def master_only(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        if _xmp_dist is not None and _xmp_dist.is_master:
+            return func(*args, **kwargs)
+
         rank, _ = get_dist_info()
         if rank == 0:
             return func(*args, **kwargs)
