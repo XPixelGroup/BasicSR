@@ -11,7 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-# import subprocess
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.abspath('..'))
@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'BasicSR'
-copyright = '2018-2021, BasicSR Authors'
+copyright = '2018-2022, BasicSR Authors'
 author = 'BasicSR Authors'
 
 # -- General configuration ---------------------------------------------------
@@ -58,3 +58,26 @@ html_static_path = ['_static']
 
 # The master toctree document.
 master_doc = 'index'
+
+# def run_apidoc(_):
+#     # automatically generate api docs
+#     modules = ['basicsr']
+#     for module in modules:
+#         cur_dir = os.path.abspath(os.path.dirname(__file__))
+#         output_path = os.path.join(cur_dir, 'api')
+#         cmd_path = 'sphinx-apidoc'
+#         if hasattr(sys, 'real_prefix'):  # Check to see if we are in a virtualenv
+#             # If we are, assemble the path manually
+#             cmd_path = os.path.abspath(os.path.join(sys.prefix, 'bin', 'sphinx-apidoc'))
+#         subprocess.check_call([cmd_path, '-e', '-o', output_path, '../' + module, '--force'])
+
+# def setup(app):
+#     app.connect('builder-inited', run_apidoc)
+
+
+def auto_generate_api(app):
+    subprocess.run(['python', './auto_generate_api.py'])
+
+
+def setup(app):
+    app.connect('builder-inited', auto_generate_api)

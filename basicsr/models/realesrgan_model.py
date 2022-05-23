@@ -6,6 +6,7 @@ from torch.nn import functional as F
 
 from basicsr.data.degradations import random_add_gaussian_noise_pt, random_add_poisson_noise_pt
 from basicsr.data.transforms import paired_random_crop
+from basicsr.losses.loss_util import get_refined_artifact_map
 from basicsr.models.srgan_model import SRGANModel
 from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.img_process_util import filter2D
@@ -207,6 +208,8 @@ class RealESRGANModel(SRGANModel):
 
         self.optimizer_g.zero_grad()
         self.output = self.net_g(self.lq)
+        if self.cri_ldl:
+            self.output_ema = self.net_g_ema(self.lq)
 
         l_g_total = 0
         loss_dict = OrderedDict()
@@ -216,6 +219,11 @@ class RealESRGANModel(SRGANModel):
                 l_g_pix = self.cri_pix(self.output, l1_gt)
                 l_g_total += l_g_pix
                 loss_dict['l_g_pix'] = l_g_pix
+            if self.cri_ldl:
+                pixel_weight = get_refined_artifact_map(self.gt, self.output, self.output_ema, 7)
+                l_g_ldl = self.cri_ldl(torch.mul(pixel_weight, self.output), torch.mul(pixel_weight, self.gt))
+                l_g_total += l_g_ldl
+                loss_dict['l_g_ldl'] = l_g_ldl
             # perceptual loss
             if self.cri_perceptual:
                 l_g_percep, l_g_style = self.cri_perceptual(self.output, percep_gt)
