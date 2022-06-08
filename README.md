@@ -157,6 +157,6 @@ If you have any questions, please email `xintao.wang@outlook.com`.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;
-  <img src="https://user-images.githubusercontent.com/52127135/168712228-61c48534-a659-4f8b-a442-79f04c52c803.jpg"  height="300">  &emsp;
+  <img src="https://user-images.githubusercontent.com/52127135/172553058-6cf32e10-2959-42dd-b26a-f802f09343b0.png"  height="300">  &emsp;
   <img src="https://user-images.githubusercontent.com/17445847/139572512-8e192aac-00fa-432b-ac8e-a33026b019df.png"  height="300">
 </p>
