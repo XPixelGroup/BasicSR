@@ -367,7 +367,7 @@ def convert_basicvsrpp_model():
     # print('=================')
 
     ori_net = torch.load(
-        'experiments/pretrained_models/BasicVSRPP/basicvsr_plusplus_c64n7_8x1_600k_reds4_20210217-db622b2f.pth')
+        'experiments/pretrained_models/BasicVSRPP/basicvsr_plusplus_c64n7_8x1_300k_vimeo90k_bi_20210305-4ef437e2.pth')
 
     # for k, v in ori_net['state_dict'].items():
     #     print(k)
@@ -398,7 +398,7 @@ def convert_basicvsrpp_model():
 
             crt_net[crt_k] = ori_net['state_dict'][ort_k]
 
-    torch.save(crt_net, 'experiments/pretrained_models/Converted-BasicVSRPP/BasicVSRPP_x4_SR_REDS_official.pth')
+    torch.save(crt_net, 'experiments/pretrained_models/Converted-BasicVSRPP/BasicVSRPP_x4_SR_Vimeo90K_BI_official.pth')
 
 
 if __name__ == '__main__':
