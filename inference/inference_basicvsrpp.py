@@ -24,9 +24,7 @@ def inference(imgs, imgnames, model, save_path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--model_path',
-        type=str,
-        default='experiments/pretrained_models/Converted-BasicVSRPP/BasicVSRPP_x4_SR_REDS_official.pth')
+        '--model_path', type=str, default='experiments/pretrained_models/BasicVSRPP_x4_SR_REDS_official.pth')
     parser.add_argument(
         '--input_path', type=str, default='datasets/REDS4/sharp_bicubic/000', help='input test image folder')
     parser.add_argument('--save_path', type=str, default='results/BasicVSRPP/000', help='save image path')
