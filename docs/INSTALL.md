@@ -105,7 +105,7 @@ There are two options to install BASICSR, according to your needs.
 1. Install BasicSR<br>
     Please run the following commands in the **BasicSR root path** to install BasicSR:<br>
 
-    -  If you do not need C++ extensions (more details are [here](#basicsr_ext-and-basicsr_jit-environment-variables)):
+    - If you do not need C++ extensions (more details are [here](#basicsr_ext-and-basicsr_jit-environment-variables)):
 
         ```bash
         python setup.py develop
