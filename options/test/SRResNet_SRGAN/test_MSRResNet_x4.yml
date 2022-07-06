@@ -1,9 +1,15 @@
+# ----------- Commands for running
+# ----------- Single GPU
+# PYTHONPATH="./:${PYTHONPATH}"  CUDA_VISIBLE_DEVICES=0 python basicsr/test.py -opt options/test/SRResNet_SRGAN/test_MSRResNet_x4.yml
+
+# general settings
 name: 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb
 model_type: SRModel
 scale: 4
 num_gpu: 1  # set num_gpu: 0 for cpu mode
 manual_seed: 0
 
+# test dataset settings
 datasets:
   test_1:  # the 1st test dataset
     name: Set5
@@ -19,8 +25,7 @@ datasets:
     dataroot_lq: datasets/Set14/LRbicx4
     io_backend:
       type: disk
-
-  test_3:
+  test_3: # the 3rd test dataset
     name: DIV2K100
     type: PairedImageDataset
     dataroot_gt: datasets/DIV2K/DIV2K_valid_HR
@@ -41,6 +46,7 @@ network_g:
 # path
 path:
   pretrain_network_g: experiments/001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb/models/net_g_1000000.pth
+  param_key_g: params
   strict_load_g: true
 
 # validation settings
@@ -53,7 +59,9 @@ val:
       type: calculate_psnr
       crop_border: 4
       test_y_channel: false
+      better: higher  # the higher, the better. Default: higher
     ssim:
       type: calculate_ssim
       crop_border: 4
       test_y_channel: false
+      better: higher
