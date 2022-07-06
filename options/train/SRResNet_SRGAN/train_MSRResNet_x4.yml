@@ -67,6 +67,7 @@ network_g:
 # path
 path:
   pretrain_network_g: ~
+  param_key_g: params
   strict_load_g: true
   resume_state: ~
 
