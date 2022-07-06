@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from basicsr.losses.losses import CharbonnierLoss, L1Loss, MSELoss, WeightedTVLoss
+from basicsr.losses.basic_loss import CharbonnierLoss, L1Loss, MSELoss, WeightedTVLoss
 
 
 @pytest.mark.parametrize('loss_class', [L1Loss, MSELoss, CharbonnierLoss])
