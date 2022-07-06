@@ -24,7 +24,6 @@ datasets:
     color: y
 
     # data loader
-    use_shuffle: true
     num_worker_per_gpu: 12
     batch_size_per_gpu: 32
     dataset_enlarge_ratio: 10

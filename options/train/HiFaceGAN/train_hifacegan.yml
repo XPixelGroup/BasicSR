@@ -24,7 +24,6 @@ datasets:
     use_rot: false
 
     # data loader
-    use_shuffle: true
     num_worker_per_gpu: 1
     batch_size_per_gpu: 1
     dataset_enlarge_ratio: 1

@@ -76,8 +76,6 @@ datasets:
     use_rot: true
 
     #### The following are data loader settings
-    # Whether to shuffle
-    use_shuffle: true
     # Number of workers of reading data for each GPU
     num_worker_per_gpu: 6
     # Total training batch size
