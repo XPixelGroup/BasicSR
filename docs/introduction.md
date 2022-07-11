@@ -13,3 +13,4 @@ The figure below shows the overall framework. More descriptions for each compone
 - [**Training and testing commands**](docs/TrainTest.md)
 - [**Options/Configs**](docs/Config.md).
 - [**Logging**](docs/Logging.md).
+- 📈 [Training curves in wandb](https://app.wandb.ai/xintao/basicsr)
