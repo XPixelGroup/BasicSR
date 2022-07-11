@@ -13,20 +13,20 @@
 
 <div align="center">
 
-⚡[**HowTo**](#-HOWTOs) **|** 🔧[Install](docs/INSTALL.md) **|** 💻[Training Commands](docs/TrainTest.md) **|** 🏰[**Model Zoo**](docs/ModelZoo.md) **|** 🚩[**Updates**](#-updates) **|** ⏳[TODO List](https://github.com/xinntao/BasicSR/projects) **|** 📝[Introduction](#docs/introduction.md)  **|** ❓[FAQ](docs/FAQ.md) **|** 🎨[Contribution](docs/CONTRIBUTING.md) **|** 🐢[DatasetPrepare](docs/DatasetPreparation.md)
+⚡[**HowTo**](#-HOWTOs) **|** 🔧[**Installation**](docs/INSTALL.md) **|** 💻[Training Commands](docs/TrainTest.md) **|** 🐢[DatasetPrepare](docs/DatasetPreparation.md) **|** 🏰[**Model Zoo**](docs/ModelZoo.md)
 
+📕[中文解读文档](https://github.com/XPixelGroup/BasicSR-docs)  **|**📝[Introduction](#docs/introduction.md) **|** ⏳[TODO List](https://github.com/xinntao/BasicSR/projects) **|** ❓[FAQ](docs/FAQ.md)
 </div>
 
-🚀 We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. 🚀 <br>
-📢 **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步** <br>
-🧭 [入群二维码](#e-mail-contact) (QQ、微信) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u) <br>
-
----
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="18" alt="google colab logo"></a> Google Colab: [GitHub Link](colab) **|** [Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing) <br>
 📁 Dataset Download: ⏬ [Google Drive](https://drive.google.com/drive/folders/1gt5eT293esqY0yr1Anbm36EdnxWW_5oH?usp=sharing) ⏬ [百度网盘](https://pan.baidu.com/s/1AZDcEAFwwc1OC3KCd7EDnQ) (提取码:basr)<br>
 Ⓜ️ Model Download ⏬ Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
 ⏬ 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ) <br>
 📈 [Training curves in wandb](https://app.wandb.ai/xintao/basicsr) <br>
+
+🚀 We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. 🚀 <br>
+📢 **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步** <br>
+🧭 [入群二维码](#e-mail-contact) (QQ、微信) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u) <br>
 
 ---
 
