@@ -12,7 +12,10 @@
 [![gitee mirror](https://github.com/xinntao/BasicSR/actions/workflows/gitee-mirror.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/gitee-mirror.yml)
 
 <div align="center">
+
 ⚡[**HowTo**](#-HOWTOs) **|** 🔧[Install](docs/INSTALL.md) **|** 💻[Training Commands](docs/TrainTest.md) **|** 🏰[**Model Zoo**](docs/ModelZoo.md) **|** 🚩[**Updates**](#-updates) **|** ⏳[TODO List](https://github.com/xinntao/BasicSR/projects) **|** 📝[Introduction](#docs/introduction.md)  **|** ❓[FAQ](docs/FAQ.md) **|** 🎨[Contribution](docs/CONTRIBUTING.md) **|** 🐢[DatasetPrepare](docs/DatasetPreparation.md)
+
+</div>
 
 🚀 We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. 🚀 <br>
 📢 **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步** <br>
