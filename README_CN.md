@@ -85,7 +85,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 ## :wrench: 依赖和安装
 
-For detailed instructions refer to [INSTALL.md](INSTALL.md).
+For detailed instructions refer to [docs/INSTALL.md](docs/INSTALL.md).
 
 ## :hourglass_flowing_sand: TODO 清单
 
