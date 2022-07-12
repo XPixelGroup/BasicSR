@@ -7,7 +7,6 @@
 - [Installation Options](#installation-options)
   - [Install from PyPI](#install-from-pypi)
   - [Install from a local clone](#Install-from-a-local-clone)
-- [FAQ](#faq)
 
 ## Requirements
 
@@ -131,5 +130,3 @@ There are two options to install BASICSR, according to your needs.
     CUDNN_LIB_DIR=/usr/local/cuda \
     BASICSR_EXT=True python setup.py develop
     ```
-
-## FAQ
