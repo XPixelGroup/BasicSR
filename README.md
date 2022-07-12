@@ -29,6 +29,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源 
 
 🚩 **New Features/Updates**
 
+- ✅ May 9, 2022. BasicSR joins [XPixel](http://xpixel.group/).
 - ✅ Oct 5, 2021. Add **ECBSR training and testing** codes: [ECBSR](https://github.com/xindongzhang/ECBSR).
   > ACMMM21: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
 - ✅ Sep 2, 2021. Add **SwinIR training and testing** codes: [SwinIR](https://github.com/JingyunLiang/SwinIR) by [Jingyun Liang](https://github.com/JingyunLiang). More details are in [HOWTOs.md](docs/HOWTOs.md#how-to-train-swinir-sr)
@@ -47,7 +48,7 @@ Other recommended projects:<br>
 ▶️ [HandyView](https://github.com/xinntao/HandyView): A PyQt5-based image viewer that is handy for view and comparison. <br>
 ▶️ [HandyFigure](https://github.com/xinntao/HandyFigure): Open source of paper figures <br>
 <sub>([ESRGAN](https://github.com/xinntao/ESRGAN), [EDVR](https://github.com/xinntao/EDVR), [DNI](https://github.com/xinntao/DNI), [SFTGAN](https://github.com/xinntao/SFTGAN))</sub>
-<sub>([HandyView](https://github.com/xinntao/HandyView), [HandyFigure](https://github.com/xinntao/HandyFigure), [HandyCrawler](https://github.com/xinntao/HandyCrawler), [HandyWriting](https://github.com/xinntao/HandyWriting))</sub>
+<sub>([HandyCrawler](https://github.com/xinntao/HandyCrawler), [HandyWriting](https://github.com/xinntao/HandyWriting))</sub>
 
 ---
 
@@ -77,7 +78,7 @@ These pipelines/commands cannot cover all the cases and more details are in the 
 - [**Real-ESRGAN**](https://github.com/xinntao/Real-ESRGAN): A practical algorithm for general image restoration
 - [**GFPGAN**](https://github.com/TencentARC/GFPGAN): A practical algorithm for real-world face restoration
 
-If you use `BasicSR` in your open-source projects, welcome to contact me (by [email](#e-mail-contact) or opening an issue/pull request). I will add your projects to the above list 😊
+If you use `BasicSR` in your open-source projects, welcome to contact me (by [email](#-contact) or opening an issue/pull request). I will add your projects to the above list 😊
 
 ## 📜 License and Acknowledgement
 
