@@ -1,6 +1,7 @@
 # Colab
 
 <a href="https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
+[Google Drive Link](https://drive.google.com/drive/folders/1G_qcpvkT5ixmw5XoN6MupkOzcK1km625?usp=sharing)
 
 To maintain a small size of BasicSR repo, we do not include the original colab notebooks in this repo, but provide links to the google colab.
 

@@ -4,7 +4,7 @@
 
 ## <div align="center"><b><a href="README.md">English</a> | <a href="README_CN.md">简体中文</a></b></div>
 
-[![LICENSE](https://img.shields.io/github/license/xinntao/basicsr.svg)](https://github.com/xinntao/BasicSR/blob/master/LICENSE/LICENSE)
+[![LICENSE](https://img.shields.io/github/license/xinntao/basicsr.svg)](https://github.com/xinntao/BasicSR/blob/master/LICENSE.txt)
 [![PyPI](https://img.shields.io/pypi/v/basicsr)](https://pypi.org/project/basicsr/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/xinntao/BasicSR.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xinntao/BasicSR/context:python)
 [![python lint](https://github.com/xinntao/BasicSR/actions/workflows/pylint.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/pylint.yml)
@@ -85,7 +85,7 @@ BasicSR (**Basic** **S**uper **R**estoration) 是一个基于 PyTorch 的开源�
 
 ## :wrench: 依赖和安装
 
-For detailed instructions refer to [INSTALL.md](INSTALL.md).
+For detailed instructions refer to [docs/INSTALL.md](docs/INSTALL.md).
 
 ## :hourglass_flowing_sand: TODO 清单
 
