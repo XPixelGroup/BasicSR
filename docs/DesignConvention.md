@@ -1,6 +1,6 @@
 # Codebase Designs and Conventions
 
-[English](DesignConvention.md) **|** [简体中文](DesignConvention_CN.md)
+[English](DesignConvention.md) **|** [简体中文](BasicSR_docs_CN.md)
 
 #### Contents
 
@@ -51,6 +51,7 @@ for module in _dataset_modules:
     if dataset_cls is not None:
         break
 ```
+
 We use the similar techniques for the following modules. Pay attention to the conventions of file suffix when using them:
 
 | Module         | File Suffix     | Example        |

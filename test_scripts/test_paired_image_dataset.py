@@ -37,7 +37,6 @@ def main(mode='folder'):
     opt['use_hflip'] = True
     opt['use_rot'] = True
 
-    opt['use_shuffle'] = True
     opt['num_worker_per_gpu'] = 2
     opt['batch_size_per_gpu'] = 16
     opt['scale'] = 4

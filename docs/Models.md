@@ -1,6 +1,6 @@
 # Models
 
-[English](Models.md) **|** [简体中文](Models_CN.md)
+[English](Models.md) **|** [简体中文](BasicSR_docs_CN.md)
 
 #### Contents
 

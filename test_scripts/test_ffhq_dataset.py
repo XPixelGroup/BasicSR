@@ -23,7 +23,6 @@ def main():
     opt['mean'] = [0.5, 0.5, 0.5]
     opt['std'] = [0.5, 0.5, 0.5]
 
-    opt['use_shuffle'] = True
     opt['num_worker_per_gpu'] = 1
     opt['batch_size_per_gpu'] = 4
 
