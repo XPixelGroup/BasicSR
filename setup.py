@@ -138,8 +138,10 @@ if __name__ == '__main__':
                 sources=['src/upfirdn2d.cpp'],
                 sources_cuda=['src/upfirdn2d_kernel.cu']),
         ]
+        setup_kwargs = dict(cmdclass={'build_ext': BuildExtension})
     else:
         ext_modules = []
+        setup_kwargs = dict()
 
     write_version_py()
     setup(
@@ -166,5 +168,5 @@ if __name__ == '__main__':
         setup_requires=['cython', 'numpy', 'torch'],
         install_requires=get_requirements(),
         ext_modules=ext_modules,
-        cmdclass={'build_ext': BuildExtension},
-        zip_safe=False)
+        zip_safe=False,
+        **setup_kwargs)
