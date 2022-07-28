@@ -90,7 +90,7 @@ def ycbcr2rgb(img):
             and range as input image.
     """
     img_type = img.dtype
-    img = _convert_input_type_range(img) * 255
+    img = _convert_input_type_range(img)
     out_img = np.matmul(img, [[0.00456621, 0.00456621, 0.00456621], [0, -0.00153632, 0.00791071],
                               [0.00625893, -0.00318811, 0]]) * 255.0 + [-222.921, 135.576, -276.836]  # noqa: E126
     out_img = _convert_output_type_range(out_img, img_type)
@@ -119,7 +119,7 @@ def ycbcr2bgr(img):
             and range as input image.
     """
     img_type = img.dtype
-    img = _convert_input_type_range(img) * 255
+    img = _convert_input_type_range(img)
     out_img = np.matmul(img, [[0.00456621, 0.00456621, 0.00456621], [0.00791071, -0.00153632, 0],
                               [0, -0.00318811, 0.00625893]]) * 255.0 + [-276.836, 135.576, -222.921]  # noqa: E126
     out_img = _convert_output_type_range(out_img, img_type)
@@ -140,14 +140,14 @@ def _convert_input_type_range(img):
 
     Returns:
         (ndarray): The converted image with type of np.float32 and range of
-            [0, 1].
+            [0, 255].
     """
     img_type = img.dtype
     img = img.astype(np.float32)
     if img_type == np.float32:
-        pass
+        img *= 255
     elif img_type == np.uint8:
-        img /= 255.
+        pass
     else:
         raise TypeError(f'The img type should be np.float32 or np.uint8, but got {img_type}')
     return img
