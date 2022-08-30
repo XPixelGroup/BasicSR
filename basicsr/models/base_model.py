@@ -149,7 +149,7 @@ class BaseModel():
         logger.info(net_str)
 
     def _set_lr(self, lr_groups_l):
-        """Set learning rate for warmup.
+        """Set learning rate for warm-up.
 
         Args:
             lr_groups_l (list): List for lr_groups, each for an optimizer.
@@ -171,7 +171,7 @@ class BaseModel():
 
         Args:
             current_iter (int): Current iteration.
-            warmup_iter (int)： Warmup iter numbers. -1 for no warmup.
+            warmup_iter (int)： Warm-up iter numbers. -1 for no warm-up.
                 Default： -1.
         """
         if current_iter > 1:

@@ -18,7 +18,7 @@ You can put the downloaded models in the `experiments/pretrained_models` folder.
 
 **[Download official pre-trained models]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))
 
-You can use the scrip to download pre-trained models from Google Drive.
+You can use the script to download pre-trained models from Google Drive.
 
 ```python
 python scripts/download_pretrained_models.py ESRGAN

@@ -19,7 +19,7 @@ Taking `001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb` as an example:
 - `DIV2K`: Training data is DIV2K
 - `1000k`: Total training iteration is 1000k
 - `B16G1`: Batch size is 16; one GPU is used for training
-- `wandb`: Use wandb logger; the training process has beed uploaded to wandb server
+- `wandb`: Use wandb logger; the training process has been uploaded to wandb server
 
 **Note**: If `debug` is in the experiment name, it will enter the debug mode. That is, the program will log and validate more intensively and will not use `tensorboard logger` and `wandb logger`.
 
