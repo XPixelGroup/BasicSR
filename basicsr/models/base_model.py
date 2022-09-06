@@ -105,6 +105,8 @@ class BaseModel():
             optimizer = torch.optim.Adam(params, lr, **kwargs)
         elif optim_type == 'AdamW':
             optimizer = torch.optim.AdamW(params, lr, **kwargs)
+        elif optim_type == 'RAdam':
+            optimizer = torch.optim.RAdam(params, lr, **kwargs)
         else:
             raise NotImplementedError(f'optimizer {optim_type} is not supperted yet.')
         return optimizer
