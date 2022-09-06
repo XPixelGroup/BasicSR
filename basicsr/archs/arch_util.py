@@ -64,10 +64,6 @@ def make_layer(basic_block, num_basic_block, **kwarg):
 class ResidualBlockNoBN(nn.Module):
     """Residual block without BN.
 
-    It has a style of:
-        ---Conv-ReLU-Conv-+-
-         |________________|
-
     Args:
         num_feat (int): Channel number of intermediate features.
             Default: 64.
