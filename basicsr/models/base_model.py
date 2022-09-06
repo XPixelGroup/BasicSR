@@ -105,8 +105,18 @@ class BaseModel():
             optimizer = torch.optim.Adam(params, lr, **kwargs)
         elif optim_type == 'AdamW':
             optimizer = torch.optim.AdamW(params, lr, **kwargs)
+        elif optim_type == 'Adamax':
+            optimizer = torch.optim.Adamax(params, lr, **kwargs)
+        elif optim_type == 'SGD':
+            optimizer = torch.optim.SGD(params, lr, **kwargs)
+        elif optim_type == 'ASGD':
+            optimizer = torch.optim.ASGD(params, lr, **kwargs)
+        elif optim_type == 'RMSprop':
+            optimizer = torch.optim.RMSprop(params, lr, **kwargs)
+        elif optim_type == 'Rprop':
+            optimizer = torch.optim.Rprop(params, lr, **kwargs)
         else:
-            raise NotImplementedError(f'optimizer {optim_type} is not supperted yet.')
+            raise NotImplementedError(f'optimizer {optim_type} is not supported yet.')
         return optimizer
 
     def setup_schedulers(self):
