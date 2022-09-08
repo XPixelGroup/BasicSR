@@ -209,8 +209,7 @@ class DCNv2Pack(ModulatedDeformConvPack):
     from the preceding features, this DCNv2Pack takes another different
     features to generate offsets and masks.
 
-    Ref:
-        Delving Deep into Deformable Alignment in Video Super-Resolution.
+    ``Paper: Delving Deep into Deformable Alignment in Video Super-Resolution``
     """
 
     def forward(self, x, feat):

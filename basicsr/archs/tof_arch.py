@@ -42,15 +42,15 @@ class BasicModule(nn.Module):
 class SPyNetTOF(nn.Module):
     """SPyNet architecture for TOF.
 
-    Note that this implementation is specifically for TOFlow. Please use
-    spynet_arch.py for general use. They differ in the following aspects:
-        1. The basic modules here contain BatchNorm.
-        2. Normalization and denormalization are not done here, as
-            they are done in TOFlow.
-    Paper:
-        Optical Flow Estimation using a Spatial Pyramid Network
-    Code reference:
-        https://github.com/Coldog2333/pytoflow
+    Note that this implementation is specifically for TOFlow. Please use :file:`spynet_arch.py` for general use.
+    They differ in the following aspects:
+
+    1. The basic modules here contain BatchNorm.
+    2. Normalization and denormalization are not done here, as they are done in TOFlow.
+
+    ``Paper: Optical Flow Estimation using a Spatial Pyramid Network``
+
+    Reference: https://github.com/Coldog2333/pytoflow
 
     Args:
         load_path (str): Path for pretrained SPyNet. Default: None.
@@ -94,13 +94,13 @@ class SPyNetTOF(nn.Module):
 class TOFlow(nn.Module):
     """PyTorch implementation of TOFlow.
 
-    In TOFlow, the LR frames are pre-upsampled and have the same size with
-    the GT frames.
-    Paper:
-        Xue et al., Video Enhancement with Task-Oriented Flow, IJCV 2018
-    Code reference:
-        1. https://github.com/anchen1011/toflow
-        2. https://github.com/Coldog2333/pytoflow
+    In TOFlow, the LR frames are pre-upsampled and have the same size with the GT frames.
+
+    ``Paper: Video Enhancement with Task-Oriented Flow``
+
+    Reference: https://github.com/anchen1011/toflow
+
+    Reference: https://github.com/Coldog2333/pytoflow
 
     Args:
         adapt_official_weights (bool): Whether to adapt the weights translated

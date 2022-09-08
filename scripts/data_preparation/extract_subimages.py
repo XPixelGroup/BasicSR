@@ -14,28 +14,28 @@ def main():
 
     It is used for DIV2K dataset.
 
-    opt (dict): Configuration dict. It contains:
+    Args:
+        opt (dict): Configuration dict. It contains:
         n_thread (int): Thread number.
-        compression_level (int):  CV_IMWRITE_PNG_COMPRESSION from 0 to 9.
-            A higher value means a smaller size and longer compression time.
-            Use 0 for faster CPU decompression. Default: 3, same in cv2.
-
+        compression_level (int):  CV_IMWRITE_PNG_COMPRESSION from 0 to 9. A higher value means a smaller size and
+            longer compression time. Use 0 for faster CPU decompression. Default: 3, same in cv2.
         input_folder (str): Path to the input folder.
         save_folder (str): Path to save folder.
         crop_size (int): Crop size.
         step (int): Step for overlapped sliding window.
-        thresh_size (int): Threshold size. Patches whose size is lower
-            than thresh_size will be dropped.
+        thresh_size (int): Threshold size. Patches whose size is lower than thresh_size will be dropped.
 
     Usage:
         For each folder, run this script.
         Typically, there are four folders to be processed for DIV2K dataset.
-            DIV2K_train_HR
-            DIV2K_train_LR_bicubic/X2
-            DIV2K_train_LR_bicubic/X3
-            DIV2K_train_LR_bicubic/X4
-        After process, each sub_folder should have the same number of
-        subimages.
+
+            * DIV2K_train_HR
+            * DIV2K_train_LR_bicubic/X2
+            * DIV2K_train_LR_bicubic/X3
+            * DIV2K_train_LR_bicubic/X4
+
+        After process, each sub_folder should have the same number of subimages.
+
         Remember to modify opt configurations according to your settings.
     """
 
@@ -81,9 +81,9 @@ def extract_subimages(opt):
 
     Args:
         opt (dict): Configuration dict. It contains:
-            input_folder (str): Path to the input folder.
-            save_folder (str): Path to save folder.
-            n_thread (int): Thread number.
+        input_folder (str): Path to the input folder.
+        save_folder (str): Path to save folder.
+        n_thread (int): Thread number.
     """
     input_folder = opt['input_folder']
     save_folder = opt['save_folder']
@@ -112,12 +112,11 @@ def worker(path, opt):
     Args:
         path (str): Image path.
         opt (dict): Configuration dict. It contains:
-            crop_size (int): Crop size.
-            step (int): Step for overlapped sliding window.
-            thresh_size (int): Threshold size. Patches whose size is lower
-                than thresh_size will be dropped.
-            save_folder (str): Path to save folder.
-            compression_level (int): for cv2.IMWRITE_PNG_COMPRESSION.
+        crop_size (int): Crop size.
+        step (int): Step for overlapped sliding window.
+        thresh_size (int): Threshold size. Patches whose size is lower than thresh_size will be dropped.
+        save_folder (str): Path to save folder.
+        compression_level (int): for cv2.IMWRITE_PNG_COMPRESSION.
 
     Returns:
         process_info (str): Process information displayed in progress bar.

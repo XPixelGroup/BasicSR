@@ -15,31 +15,32 @@ class VideoTestDataset(data.Dataset):
     Supported datasets: Vid4, REDS4, REDSofficial.
     More generally, it supports testing dataset with following structures:
 
-    dataroot
-    ├── subfolder1
-        ├── frame000
-        ├── frame001
+    ::
+
+        dataroot
+        ├── subfolder1
+            ├── frame000
+            ├── frame001
+            ├── ...
+        ├── subfolder2
+            ├── frame000
+            ├── frame001
+            ├── ...
         ├── ...
-    ├── subfolder1
-        ├── frame000
-        ├── frame001
-        ├── ...
-    ├── ...
 
     For testing datasets, there is no need to prepare LMDB files.
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
-            dataroot_gt (str): Data root path for gt.
-            dataroot_lq (str): Data root path for lq.
-            io_backend (dict): IO backend type and other kwarg.
-            cache_data (bool): Whether to cache testing datasets.
-            name (str): Dataset name.
-            meta_info_file (str): The path to the file storing the list of test
-                folders. If not provided, all the folders in the dataroot will
-                be used.
-            num_frame (int): Window size for input frames.
-            padding (str): Padding mode.
+        dataroot_gt (str): Data root path for gt.
+        dataroot_lq (str): Data root path for lq.
+        io_backend (dict): IO backend type and other kwarg.
+        cache_data (bool): Whether to cache testing datasets.
+        name (str): Dataset name.
+        meta_info_file (str): The path to the file storing the list of test folders. If not provided, all the folders
+            in the dataroot will be used.
+        num_frame (int): Window size for input frames.
+        padding (str): Padding mode.
     """
 
     def __init__(self, opt):
@@ -138,16 +139,15 @@ class VideoTestVimeo90KDataset(data.Dataset):
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
-            dataroot_gt (str): Data root path for gt.
-            dataroot_lq (str): Data root path for lq.
-            io_backend (dict): IO backend type and other kwarg.
-            cache_data (bool): Whether to cache testing datasets.
-            name (str): Dataset name.
-            meta_info_file (str): The path to the file storing the list of test
-                folders. If not provided, all the folders in the dataroot will
-                be used.
-            num_frame (int): Window size for input frames.
-            padding (str): Padding mode.
+        dataroot_gt (str): Data root path for gt.
+        dataroot_lq (str): Data root path for lq.
+        io_backend (dict): IO backend type and other kwarg.
+        cache_data (bool): Whether to cache testing datasets.
+        name (str): Dataset name.
+        meta_info_file (str): The path to the file storing the list of test folders. If not provided, all the folders
+            in the dataroot will be used.
+        num_frame (int): Window size for input frames.
+        padding (str): Padding mode.
     """
 
     def __init__(self, opt):
@@ -203,13 +203,10 @@ class VideoTestDUFDataset(VideoTestDataset):
     """ Video test dataset for DUF dataset.
 
     Args:
-        opt (dict): Config for train dataset.
-            Most of keys are the same as VideoTestDataset.
+        opt (dict): Config for train dataset. Most of keys are the same as VideoTestDataset.
             It has the following extra keys:
-
-            use_duf_downsampling (bool): Whether to use duf downsampling to
-                generate low-resolution frames.
-            scale (bool): Scale, which will be added automatically.
+        use_duf_downsampling (bool): Whether to use duf downsampling to generate low-resolution frames.
+        scale (bool): Scale, which will be added automatically.
     """
 
     def __getitem__(self, index):
@@ -257,9 +254,8 @@ class VideoRecurrentTestDataset(VideoTestDataset):
     frames as input and output corresponding HR video frames.
 
     Args:
-        Same as VideoTestDataset.
-        Unused opt:
-            padding (str): Padding mode.
+        opt (dict): Same as VideoTestDataset. Unused opt:
+        padding (str): Padding mode.
 
     """
 

@@ -31,23 +31,19 @@ class REDSDataset(data.Dataset):
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
-            dataroot_gt (str): Data root path for gt.
-            dataroot_lq (str): Data root path for lq.
-            dataroot_flow (str, optional): Data root path for flow.
-            meta_info_file (str): Path for meta information file.
-            val_partition (str): Validation partition types. 'REDS4' or
-                'official'.
-            io_backend (dict): IO backend type and other kwarg.
-
-            num_frame (int): Window size for input frames.
-            gt_size (int): Cropped patched size for gt patches.
-            interval_list (list): Interval list for temporal augmentation.
-            random_reverse (bool): Random reverse input frames.
-            use_hflip (bool): Use horizontal flips.
-            use_rot (bool): Use rotation (use vertical flip and transposing h
-                and w for implementation).
-
-            scale (bool): Scale, which will be added automatically.
+        dataroot_gt (str): Data root path for gt.
+        dataroot_lq (str): Data root path for lq.
+        dataroot_flow (str, optional): Data root path for flow.
+        meta_info_file (str): Path for meta information file.
+        val_partition (str): Validation partition types. 'REDS4' or 'official'.
+        io_backend (dict): IO backend type and other kwarg.
+        num_frame (int): Window size for input frames.
+        gt_size (int): Cropped patched size for gt patches.
+        interval_list (list): Interval list for temporal augmentation.
+        random_reverse (bool): Random reverse input frames.
+        use_hflip (bool): Use horizontal flips.
+        use_rot (bool): Use rotation (use vertical flip and transposing h and w for implementation).
+        scale (bool): Scale, which will be added automatically.
     """
 
     def __init__(self, opt):
@@ -230,23 +226,19 @@ class REDSRecurrentDataset(data.Dataset):
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
-            dataroot_gt (str): Data root path for gt.
-            dataroot_lq (str): Data root path for lq.
-            dataroot_flow (str, optional): Data root path for flow.
-            meta_info_file (str): Path for meta information file.
-            val_partition (str): Validation partition types. 'REDS4' or
-                'official'.
-            io_backend (dict): IO backend type and other kwarg.
-
-            num_frame (int): Window size for input frames.
-            gt_size (int): Cropped patched size for gt patches.
-            interval_list (list): Interval list for temporal augmentation.
-            random_reverse (bool): Random reverse input frames.
-            use_hflip (bool): Use horizontal flips.
-            use_rot (bool): Use rotation (use vertical flip and transposing h
-                and w for implementation).
-
-            scale (bool): Scale, which will be added automatically.
+        dataroot_gt (str): Data root path for gt.
+        dataroot_lq (str): Data root path for lq.
+        dataroot_flow (str, optional): Data root path for flow.
+        meta_info_file (str): Path for meta information file.
+        val_partition (str): Validation partition types. 'REDS4' or 'official'.
+        io_backend (dict): IO backend type and other kwarg.
+        num_frame (int): Window size for input frames.
+        gt_size (int): Cropped patched size for gt patches.
+        interval_list (list): Interval list for temporal augmentation.
+        random_reverse (bool): Random reverse input frames.
+        use_hflip (bool): Use horizontal flips.
+        use_rot (bool): Use rotation (use vertical flip and transposing h and w for implementation).
+        scale (bool): Scale, which will be added automatically.
     """
 
     def __init__(self, opt):

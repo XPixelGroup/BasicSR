@@ -19,3 +19,38 @@ This folder includes:
 cd docs
 make html
 ```
+
+## 规范
+
+rst 语法参考: https://3vshej.cn/rstSyntax/
+
+着重几个点：
+
+```rst
+- 空行
+- :file:`file`, :func:`func`, :class:`class`, :math:`\gamma`
+- **粗体**，*斜体*
+- ``Paper: title``
+- Reference: link
+```
+
+Examples:
+
+```python
+class SPyNetTOF(nn.Module):
+    """SPyNet architecture for TOF.
+
+    Note that this implementation is specifically for TOFlow. Please use :file:`spynet_arch.py` for general use.
+    They differ in the following aspects:
+
+    1. The basic modules here contain BatchNorm.
+    2. Normalization and denormalization are not done here, as they are done in TOFlow.
+
+    ``Paper: Optical Flow Estimation using a Spatial Pyramid Network``
+
+    Reference: https://github.com/Coldog2333/pytoflow
+
+    Args:
+        load_path (str): Path for pretrained SPyNet. Default: None.
+    """
+```

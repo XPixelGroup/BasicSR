@@ -50,19 +50,15 @@ def extract_inception_features(data_generator, inception, len_generator=None, de
 def calculate_fid(mu1, sigma1, mu2, sigma2, eps=1e-6):
     """Numpy implementation of the Frechet Distance.
 
-    The Frechet distance between two multivariate Gaussians X_1 ~ N(mu_1, C_1)
-    and X_2 ~ N(mu_2, C_2) is
-        d^2 = ||mu_1 - mu_2||^2 + Tr(C_1 + C_2 - 2*sqrt(C_1*C_2)).
+    The Frechet distance between two multivariate Gaussians X_1 ~ N(mu_1, C_1) and X_2 ~ N(mu_2, C_2) is:
+    d^2 = ||mu_1 - mu_2||^2 + Tr(C_1 + C_2 - 2*sqrt(C_1*C_2)).
     Stable version by Dougal J. Sutherland.
 
     Args:
         mu1 (np.array): The sample mean over activations.
-        sigma1 (np.array): The covariance matrix over activations for
-            generated samples.
-        mu2 (np.array): The sample mean over activations, precalculated on an
-               representative data set.
-        sigma2 (np.array): The covariance matrix over activations,
-            precalculated on an representative data set.
+        sigma1 (np.array): The covariance matrix over activations for generated samples.
+        mu2 (np.array): The sample mean over activations, precalculated on an representative data set.
+        sigma2 (np.array): The covariance matrix over activations, precalculated on an representative data set.
 
     Returns:
         float: The Frechet Distance.

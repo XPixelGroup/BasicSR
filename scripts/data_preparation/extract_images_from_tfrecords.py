@@ -155,8 +155,7 @@ if __name__ == '__main__':
 
     We have tested it on TensorFlow 1.15
 
-    Ref:
-    http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
+    References: http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(

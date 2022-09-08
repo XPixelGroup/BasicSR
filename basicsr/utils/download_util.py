@@ -11,8 +11,7 @@ from .misc import sizeof_fmt
 def download_file_from_google_drive(file_id, save_path):
     """Download files from google drive.
 
-    Ref:
-    https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive  # noqa E501
+    Reference: https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
 
     Args:
         file_id (str): File id.
@@ -70,7 +69,7 @@ def save_response_content(response, destination, file_size=None, chunk_size=3276
 def load_file_from_url(url, model_dir=None, progress=True, file_name=None):
     """Load file form http url, will download models if necessary.
 
-    Ref:https://github.com/1adrianb/face-alignment/blob/master/face_alignment/utils.py
+    Reference: https://github.com/1adrianb/face-alignment/blob/master/face_alignment/utils.py
 
     Args:
         url (str): URL to be downloaded.

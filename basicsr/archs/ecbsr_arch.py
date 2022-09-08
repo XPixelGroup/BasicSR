@@ -8,8 +8,9 @@ from basicsr.utils.registry import ARCH_REGISTRY
 class SeqConv3x3(nn.Module):
     """The re-parameterizable block used in the ECBSR architecture.
 
-    Paper: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices
-    Ref git repo: https://github.com/xindongzhang/ECBSR
+    ``Paper: Edge-oriented Convolution Block for Real-time Super Resolution on Mobile Devices``
+
+    Reference: https://github.com/xindongzhang/ECBSR
 
     Args:
         seq_type (str): Sequence type, option: conv1x1-conv3x3 | conv1x1-sobelx | conv1x1-sobely | conv1x1-laplacian.
