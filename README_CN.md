@@ -128,20 +128,19 @@ For detailed instructions refer to [docs/INSTALL.md](docs/INSTALL.md).
 
 ## :earth_asia: 引用
 
-如果 BasicSR 对你有所帮助, 可以考虑引用BasicSR. <br>
+如果 BasicSR 对你有帮助, 请引用BasicSR. <br>
 下面是一个 BibTex 引用条目, 它需要 `url` LaTeX package.
 
 ``` latex
-@misc{wang2020basicsr,
-  author =       {Xintao Wang and Ke Yu and Kelvin C.K. Chan and
-                  Chao Dong and Chen Change Loy},
+@misc{basicsr,
+  author =       {Xintao Wang and Liangbin Xie and Ke Yu and Kelvin C.K. Chan and Chen Change Loy and Chao Dong},
   title =        {{BasicSR}: Open Source Image and Video Restoration Toolbox},
-  howpublished = {\url{https://github.com/xinntao/BasicSR}},
-  year =         {2018}
+  howpublished = {\url{https://github.com/XPixelGroup/BasicSR}},
+  year =         {2022}
 }
 ```
 
-> Xintao Wang, Ke Yu, Kelvin C.K. Chan, Chao Dong and Chen Change Loy. BasicSR: Open Source Image and Video Restoration Toolbox. <https://github.com/xinntao/BasicSR>, 2018.
+> Xintao Wang, Liangbin Xie, Ke Yu, Kelvin C.K. Chan, Chen Change Loy and Chao Dong. BasicSR: Open Source Image and Video Restoration Toolbox. <https://github.com/xinntao/BasicSR>, 2022.
 
 ## :e-mail: 联系
 
