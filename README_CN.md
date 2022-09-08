@@ -144,7 +144,7 @@ For detailed instructions refer to [docs/INSTALL.md](docs/INSTALL.md).
 
 ## :e-mail: 联系
 
-若有任何问题, 请电邮 `xintao.wang@outlook.com`.
+若有任何问题, 请电邮 `xintao.alpha@gmail.com`, `xintao.wang@outlook.com`.
 
 <br>
 

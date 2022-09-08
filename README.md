@@ -108,7 +108,7 @@ The following is a BibTeX reference. The BibTeX entry requires the `url` LaTeX p
 
 ## 📧 Contact
 
-If you have any questions, please email `xintao.wang@outlook.com`.
+If you have any questions, please email `xintao.alpha@gmail.com`, `xintao.wang@outlook.com`.
 
 <br>
 
