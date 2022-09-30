@@ -1,6 +1,6 @@
 # Configuration
 
-[English](Config.md) **|** [简体中文](Config_CN.md)
+[English](Config.md) **|** [简体中文](BasicSR_docs_CN.md)
 
 #### Contents
 
@@ -19,7 +19,7 @@ Taking `001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb` as an example:
 - `DIV2K`: Training data is DIV2K
 - `1000k`: Total training iteration is 1000k
 - `B16G1`: Batch size is 16; one GPU is used for training
-- `wandb`: Use wandb logger; the training process has beed uploaded to wandb server
+- `wandb`: Use wandb logger; the training process has been uploaded to wandb server
 
 **Note**: If `debug` is in the experiment name, it will enter the debug mode. That is, the program will log and validate more intensively and will not use `tensorboard logger` and `wandb logger`.
 
@@ -76,8 +76,6 @@ datasets:
     use_rot: true
 
     #### The following are data loader settings
-    # Whether to shuffle
-    use_shuffle: true
     # Number of workers of reading data for each GPU
     num_worker_per_gpu: 6
     # Total training batch size

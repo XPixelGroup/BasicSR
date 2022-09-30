@@ -132,7 +132,7 @@ def sizeof_fmt(size, suffix='B'):
         suffix (str): Suffix. Default: 'B'.
 
     Return:
-        str: Formatted file siz.
+        str: Formatted file size.
     """
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(size) < 1024.0:

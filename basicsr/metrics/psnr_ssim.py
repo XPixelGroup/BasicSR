@@ -12,7 +12,7 @@ from basicsr.utils.registry import METRIC_REGISTRY
 def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
     """Calculate PSNR (Peak Signal-to-Noise Ratio).
 
-    Ref: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio
+    Reference: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio
 
     Args:
         img (ndarray): Images with range [0, 255].
@@ -52,7 +52,7 @@ def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
 def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     """Calculate PSNR (Peak Signal-to-Noise Ratio) (PyTorch version).
 
-    Ref: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio
+    Reference: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio
 
     Args:
         img (Tensor): Images with range [0, 1], shape (n, 3/1, h, w).
@@ -85,8 +85,7 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
 def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
     """Calculate SSIM (structural similarity).
 
-    Ref:
-    Image quality assessment: From error visibility to structural similarity
+    ``Paper: Image quality assessment: From error visibility to structural similarity``
 
     The results are the same as that of the official released MATLAB code in
     https://ece.uwaterloo.ca/~z70wang/research/ssim/.
@@ -133,8 +132,7 @@ def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
 def calculate_ssim_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     """Calculate SSIM (structural similarity) (PyTorch version).
 
-    Ref:
-    Image quality assessment: From error visibility to structural similarity
+    ``Paper: Image quality assessment: From error visibility to structural similarity``
 
     The results are the same as that of the official released MATLAB code in
     https://ece.uwaterloo.ca/~z70wang/research/ssim/.

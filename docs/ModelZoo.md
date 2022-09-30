@@ -2,8 +2,10 @@
 
 [English](ModelZoo.md) **|** [简体中文](ModelZoo_CN.md)
 
-:arrow_double_down: Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
-:arrow_double_down: 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
+Download: ⏬ Google Drive: [Pretrained Models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing) **|** [Reproduced Experiments](https://drive.google.com/drive/folders/1XN4WXKJ53KQ0Cu0Yv-uCt8DZWq6uufaP?usp=sharing)
+⏬ 百度网盘: [预训练模型](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g) **|** [复现实验](https://pan.baidu.com/s/1UElD6q8sVAgn_cxeBDOlvQ)
+
+📈 [Training curves in wandb](https://app.wandb.ai/xintao/basicsr)
 
 ---
 
@@ -16,7 +18,7 @@ You can put the downloaded models in the `experiments/pretrained_models` folder.
 
 **[Download official pre-trained models]** ([Google Drive](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing), [百度网盘](https://pan.baidu.com/s/1R6Nc4v3cl79XPAiK0Toe7g))
 
-You can use the scrip to download pre-trained models from Google Drive.
+You can use the script to download pre-trained models from Google Drive.
 
 ```python
 python scripts/download_pretrained_models.py ESRGAN
@@ -90,14 +92,13 @@ We do not use the self-ensemble (flip testing) strategy and any other post-proce
 EDVR\_(training dataset)\_(track name)\_(model complexity)
 
 - track name. There are four tracks in the NTIRE 2019 Challenges on Video Restoration and Enhancement:
-    - **SR**: super-resolution with a fixed downsampling kernel (MATLAB bicubic downsampling kernel is frequently used). Most of the previous video SR methods focus on this setting.
-    - **SRblur**: the inputs are also degraded with motion blur.
-    - **deblur**: standard deblurring (motion blur).
-    - **deblurcomp**: motion blur + video compression artifacts.
+  - **SR**: super-resolution with a fixed downsampling kernel (MATLAB bicubic downsampling kernel is frequently used). Most of the previous video SR methods focus on this setting.
+  - **SRblur**: the inputs are also degraded with motion blur.
+  - **deblur**: standard deblurring (motion blur).
+  - **deblurcomp**: motion blur + video compression artifacts.
 - model complexity
-    - **L** (Large): # of channels = 128, # of back residual blocks = 40. This setting is used in our competition submission.
-    - **M** (Moderate): # of channels = 64, # of back residual blocks = 10.
-
+  - **L** (Large): # of channels = 128, # of back residual blocks = 40. This setting is used in our competition submission.
+  - **M** (Moderate): # of channels = 64, # of back residual blocks = 10.
 
 | Model name |[Test Set] PSNR/SSIM |
 |:----------:|:----------:|
@@ -119,8 +120,8 @@ EDVR\_(training dataset)\_(track name)\_(model complexity)
 | EDVR_REDS_deblur_Stage2 | [REDS] (RGB) / [[↓Results]]()|
 | EDVR_REDS_deblurcomp_Stage2 | [REDS] (RGB) / [[↓Results]]()  |
 
-
 ## DUF
+
 The models are converted from the [officially released models](https://github.com/yhjo09/VSR-DUF). <br/>
 
 | Model name | [Test Set] PSNR/SSIM<sup>1</sup> | Official Results<sup>2</sup> |
@@ -137,6 +138,7 @@ The models are converted from the [officially released models](https://github.co
 <sup>4</sup> Y or RGB denotes the evaluation on Y (luminance) or RGB channels.
 
 ## TOF
+
 The models are converted from the [officially released models](https://github.com/anchen1011/toflow).<br/>
 
 | Model name | [Test Set] PSNR/SSIM | Official Results<sup>1</sup> |

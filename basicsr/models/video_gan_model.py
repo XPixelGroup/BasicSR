@@ -8,10 +8,12 @@ class VideoGANModel(SRGANModel, VideoBaseModel):
     """Video GAN model.
 
     Use multiple inheritance.
-    It will first use the functions of SRGANModel:
-        init_training_settings
-        setup_optimizers
-        optimize_parameters
-        save
-    Then find functions in VideoBaseModel.
+    It will first use the functions of :class:`SRGANModel`:
+
+    - :func:`init_training_settings`
+    - :func:`setup_optimizers`
+    - :func:`optimize_parameters`
+    - :func:`save`
+
+    Then find functions in :class:`VideoBaseModel`.
     """

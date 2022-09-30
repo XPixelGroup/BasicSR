@@ -97,10 +97,12 @@ def paired_paths_from_lmdb(folders, keys):
 
     Contents of lmdb. Taking the `lq.lmdb` for example, the file structure is:
 
-    lq.lmdb
-    ├── data.mdb
-    ├── lock.mdb
-    ├── meta_info.txt
+    ::
+
+        lq.lmdb
+        ├── data.mdb
+        ├── lock.mdb
+        ├── meta_info.txt
 
     The data.mdb and lock.mdb are standard lmdb files and you can refer to
     https://lmdb.readthedocs.io/en/release/ for more details.

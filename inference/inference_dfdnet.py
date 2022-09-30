@@ -8,7 +8,13 @@ from skimage import io
 
 from basicsr.archs.dfdnet_arch import DFDNet
 from basicsr.utils import imwrite, tensor2img
-from basicsr.utils.face_util import FaceRestorationHelper
+
+try:
+    from facexlib.utils.face_restoration_helper import FaceRestoreHelper
+except ImportError:
+    print('Please install facexlib: pip install facexlib')
+
+# TODO： need to modify, as we have updated the FaceRestorationHelper
 
 
 def get_part_location(landmarks):
@@ -116,7 +122,7 @@ if __name__ == '__main__':
     save_restore_root = os.path.join(result_root, 'restored_faces')
     save_final_root = os.path.join(result_root, 'final_results')
 
-    face_helper = FaceRestorationHelper(args.upscale_factor, face_size=512)
+    face_helper = FaceRestoreHelper(args.upscale_factor, face_size=512)
 
     # scan all the jpg and png images
     for img_path in sorted(glob.glob(os.path.join(args.test_path, '*.[jp][pn]g'))):

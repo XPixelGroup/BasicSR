@@ -1,7 +1,7 @@
 addict
 future
 lmdb
-numpy
+numpy>=1.17
 opencv-python
 Pillow
 pyyaml

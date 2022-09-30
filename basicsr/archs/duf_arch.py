@@ -134,7 +134,8 @@ class DenseBlocks(nn.Module):
 class DynamicUpsamplingFilter(nn.Module):
     """Dynamic upsampling filter used in DUF.
 
-    Ref: https://github.com/yhjo09/VSR-DUF.
+    Reference: https://github.com/yhjo09/VSR-DUF
+
     It only supports input with 3 channels. And it applies the same filters to 3 channels.
 
     Args:
@@ -158,12 +159,10 @@ class DynamicUpsamplingFilter(nn.Module):
 
         Args:
             x (Tensor): Input image with 3 channels. The shape is (n, 3, h, w).
-            filters (Tensor): Generated dynamic filters.
-                The shape is (n, filter_prod, upsampling_square, h, w).
+            filters (Tensor): Generated dynamic filters. The shape is (n, filter_prod, upsampling_square, h, w).
                 filter_prod: prod of filter kernel size, e.g., 1*5*5=25.
-                upsampling_square: similar to pixel shuffle,
-                    upsampling_square = upsampling * upsampling
-                    e.g., for x 4 upsampling, upsampling_square= 4*4 = 16
+                upsampling_square: similar to pixel shuffle, upsampling_square = upsampling * upsampling.
+                e.g., for x 4 upsampling, upsampling_square= 4*4 = 16
 
         Returns:
             Tensor: Filtered image with shape (n, 3*upsampling_square, h, w)
@@ -183,10 +182,10 @@ class DynamicUpsamplingFilter(nn.Module):
 class DUF(nn.Module):
     """Network architecture for DUF
 
-    Paper: Jo et.al. Deep Video Super-Resolution Network Using Dynamic
-            Upsampling Filters Without Explicit Motion Compensation, CVPR, 2018
-    Code reference:
-        https://github.com/yhjo09/VSR-DUF
+    ``Paper: Deep Video Super-Resolution Network Using Dynamic Upsampling Filters Without Explicit Motion Compensation``
+
+    Reference: https://github.com/yhjo09/VSR-DUF
+
     For all the models below, 'adapt_official_weights' is only necessary when
     loading the weights converted from the official TensorFlow weights.
     Please set it to False if you are training the model from scratch.

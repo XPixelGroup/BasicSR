@@ -2,6 +2,8 @@
 
 [English](DatasetPreparation.md) **|** [简体中文](DatasetPreparation_CN.md)
 
+📁 Dataset Download: ⏬ [Google Drive](https://drive.google.com/drive/folders/1gt5eT293esqY0yr1Anbm36EdnxWW_5oH?usp=sharing) ⏬ [百度网盘](https://pan.baidu.com/s/1AZDcEAFwwc1OC3KCd7EDnQ) (提取码:basr)
+
 #### Contents
 
 1. [Data Storage Format](#Data-Storage-Format)
@@ -77,7 +79,7 @@ During training, we use LMDB to speed up the IO and CPU decompression. (During t
 
 1. Some machines will clean cache regularly, and LMDB depends on the cache mechanism. Therefore, if the data fails to be cached, you need to check it. After the command `free -h`, the cache occupied by LMDB will be recorded under the `buff/cache` entry.
 1. Whether the memory of the machine is large enough to put the whole LMDB data in. If not, it will affect the speed due to the need to constantly update the cache.
-1. If you cache the LMDB dataset for the first time, it may affect the training speed. So before training, you can enter the LMDB dataset directory and cache the data by: ` cat data.mdb > /dev/nul`.
+1. If you cache the LMDB dataset for the first time, it may affect the training speed. So before training, you can enter the LMDB dataset directory and cache the data by: `cat data.mdb > /dev/nul`.
 
 In addition to the standard LMDB file (data.mdb and lock.mdb), we also add `meta_info.txt` to record additional information.
 Here is an example:

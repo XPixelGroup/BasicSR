@@ -15,38 +15,45 @@ class Vimeo90KDataset(data.Dataset):
     The keys are generated from a meta info txt file.
     basicsr/data/meta_info/meta_info_Vimeo90K_train_GT.txt
 
-    Each line contains:
-    1. clip name; 2. frame number; 3. image shape, separated by a white space.
+    Each line contains the following items, separated by a white space.
+
+    1. clip name;
+    2. frame number;
+    3. image shape
+
     Examples:
+
+    ::
+
         00001/0001 7 (256,448,3)
         00001/0002 7 (256,448,3)
 
-    Key examples: "00001/0001"
-    GT (gt): Ground-Truth;
-    LQ (lq): Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames.
+    - Key examples: "00001/0001"
+    - GT (gt): Ground-Truth;
+    - LQ (lq): Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames.
 
     The neighboring frame list for different num_frame:
-    num_frame | frame list
-             1 | 4
-             3 | 3,4,5
-             5 | 2,3,4,5,6
-             7 | 1,2,3,4,5,6,7
+
+    ::
+
+        num_frame | frame list
+                1 | 4
+                3 | 3,4,5
+                5 | 2,3,4,5,6
+                7 | 1,2,3,4,5,6,7
 
     Args:
         opt (dict): Config for train dataset. It contains the following keys:
-            dataroot_gt (str): Data root path for gt.
-            dataroot_lq (str): Data root path for lq.
-            meta_info_file (str): Path for meta information file.
-            io_backend (dict): IO backend type and other kwarg.
-
-            num_frame (int): Window size for input frames.
-            gt_size (int): Cropped patched size for gt patches.
-            random_reverse (bool): Random reverse input frames.
-            use_hflip (bool): Use horizontal flips.
-            use_rot (bool): Use rotation (use vertical flip and transposing h
-                and w for implementation).
-
-            scale (bool): Scale, which will be added automatically.
+        dataroot_gt (str): Data root path for gt.
+        dataroot_lq (str): Data root path for lq.
+        meta_info_file (str): Path for meta information file.
+        io_backend (dict): IO backend type and other kwarg.
+        num_frame (int): Window size for input frames.
+        gt_size (int): Cropped patched size for gt patches.
+        random_reverse (bool): Random reverse input frames.
+        use_hflip (bool): Use horizontal flips.
+        use_rot (bool): Use rotation (use vertical flip and transposing h and w for implementation).
+        scale (bool): Scale, which will be added automatically.
     """
 
     def __init__(self, opt):

@@ -1,4 +1,5 @@
 import argparse
+import os
 import random
 import torch
 import yaml
@@ -13,7 +14,7 @@ def ordered_yaml():
     """Support OrderedDict for yaml.
 
     Returns:
-        yaml Loader and Dumper.
+        tuple: yaml Loader and Dumper.
     """
     try:
         from yaml import CDumper as Dumper
@@ -32,6 +33,22 @@ def ordered_yaml():
     Dumper.add_representer(OrderedDict, dict_representer)
     Loader.add_constructor(_mapping_tag, dict_constructor)
     return Loader, Dumper
+
+
+def yaml_load(f):
+    """Load yaml file or string.
+
+    Args:
+        f (str): File path or a python string.
+
+    Returns:
+        dict: Loaded dict.
+    """
+    if os.path.isfile(f):
+        with open(f, 'r') as f:
+            return yaml.load(f, Loader=ordered_yaml()[0])
+    else:
+        return yaml.load(f, Loader=ordered_yaml()[0])
 
 
 def dict2str(opt, indent_level=1):
@@ -91,8 +108,7 @@ def parse_options(root_path, is_train=True):
     args = parser.parse_args()
 
     # parse yml to dict
-    with open(args.opt, mode='r') as f:
-        opt = yaml.load(f, Loader=ordered_yaml()[0])
+    opt = yaml_load(args.opt)
 
     # distributed settings
     if args.launcher == 'none':

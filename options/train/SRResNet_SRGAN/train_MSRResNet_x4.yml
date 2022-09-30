@@ -1,6 +1,10 @@
 # Modified SRResNet w/o BN from:
 # Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
 
+# ----------- Commands for running
+# ----------- Single GPU with auto_resume
+# PYTHONPATH="./:${PYTHONPATH}"  CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/SRResNet_SRGAN/train_MSRResNet_x4.yml --auto_resume
+
 # general settings
 name: 001_MSRResNet_x4_f64b16_DIV2K_1000k_B16G1_wandb
 model_type: SRModel
@@ -30,7 +34,6 @@ datasets:
     use_rot: true
 
     # data loader
-    use_shuffle: true
     num_worker_per_gpu: 6
     batch_size_per_gpu: 16
     dataset_enlarge_ratio: 100
@@ -64,6 +67,7 @@ network_g:
 # path
 path:
   pretrain_network_g: ~
+  param_key_g: params
   strict_load_g: true
   resume_state: ~
 

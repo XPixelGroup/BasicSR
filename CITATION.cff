@@ -6,5 +6,15 @@ date-released: 2022-02-16
 url: "https://github.com/XPixelGroup/BasicSR"
 license: Apache-2.0
 authors:
-  - family-names: BasicSR
-    given-names: Authors
+  - family-names: Wang
+    given-names: Xintao
+  - family-names: Xie
+    given-names: Liangbin
+  - family-names: Yu
+    given-names: Ke
+  - family-names: Chan
+    given-names: Kelvin C.K.
+  - family-names: Loy
+    given-names: Chen Change
+  - family-names: Dong
+    given-names: Chao

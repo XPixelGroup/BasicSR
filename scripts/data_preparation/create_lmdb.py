@@ -11,10 +11,12 @@ def create_lmdb_for_div2k():
     Usage:
         Before run this script, please run `extract_subimages.py`.
         Typically, there are four folders to be processed for DIV2K dataset.
-            DIV2K_train_HR_sub
-            DIV2K_train_LR_bicubic/X2_sub
-            DIV2K_train_LR_bicubic/X3_sub
-            DIV2K_train_LR_bicubic/X4_sub
+
+            * DIV2K_train_HR_sub
+            * DIV2K_train_LR_bicubic/X2_sub
+            * DIV2K_train_LR_bicubic/X3_sub
+            * DIV2K_train_LR_bicubic/X4_sub
+
         Remember to modify opt configurations according to your settings.
     """
     # HR images
@@ -63,10 +65,12 @@ def create_lmdb_for_reds():
     """Create lmdb files for REDS dataset.
 
     Usage:
-        Before run this script, please run `merge_reds_train_val.py`.
+        Before run this script, please run :file:`merge_reds_train_val.py`.
         We take two folders for example:
-            train_sharp
-            train_sharp_bicubic
+
+            * train_sharp
+            * train_sharp_bicubic
+
         Remember to modify opt configurations according to your settings.
     """
     # train_sharp

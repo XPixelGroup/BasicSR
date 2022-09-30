@@ -2,7 +2,7 @@
 
 **[Download official pre-trained models](https://drive.google.com/drive/folders/15DgDtfaLASQ3iAPJEVHQF49g9msexECG?usp=sharing)**
 
-You can use the scrip to download pre-trained models from Google Drive.
+You can use the script to download pre-trained models from Google Drive.
 
 ```python
 python scripts/download_pretrained_models.py

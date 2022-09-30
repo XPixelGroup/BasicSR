@@ -72,9 +72,9 @@ class ResidualGroup(nn.Module):
 class RCAN(nn.Module):
     """Residual Channel Attention Networks.
 
-    Paper: Image Super-Resolution Using Very Deep Residual Channel Attention
-        Networks
-    Ref git repo: https://github.com/yulunzhang/RCAN.
+    ``Paper: Image Super-Resolution Using Very Deep Residual Channel Attention Networks``
+
+    Reference: https://github.com/yulunzhang/RCAN
 
     Args:
         num_in_ch (int): Channel number of inputs.

@@ -18,10 +18,13 @@ def make_lmdb_from_imgs(data_path,
     """Make lmdb from images.
 
     Contents of lmdb. The file structure is:
-    example.lmdb
-    ├── data.mdb
-    ├── lock.mdb
-    ├── meta_info.txt
+
+    ::
+
+        example.lmdb
+        ├── data.mdb
+        ├── lock.mdb
+        ├── meta_info.txt
 
     The data.mdb and lock.mdb are standard lmdb files and you can refer to
     https://lmdb.readthedocs.io/en/release/ for more details.

@@ -168,6 +168,7 @@ class HiFaceGAN(SPADEGenerator):
 class HiFaceGANDiscriminator(BaseNetwork):
     """
     Inspired by pix2pixHD multiscale discriminator.
+
     Args:
         num_in_ch (int): Channel number of inputs. Default: 3.
         num_out_ch (int): Channel number of outputs. Default: 3.
