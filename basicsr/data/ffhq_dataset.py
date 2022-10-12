@@ -5,7 +5,7 @@ from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
 from basicsr.data.transforms import augment
-from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
+from basicsr.utils import ColorSpace, FileClient, get_root_logger, imfrombytes, img2tensor
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -70,8 +70,10 @@ class FFHQDataset(data.Dataset):
 
         # random horizontal flip
         img_gt = augment(img_gt, hflip=self.opt['use_hflip'], rotation=False)
+        # color space transform
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_gt = img2tensor(img_gt, bgr2rgb=True, float32=True)
+        img_gt = img2tensor(img_gt, color_space=color_space, float32=True)
         # normalize
         normalize(img_gt, self.mean, self.std, inplace=True)
         return {'gt': img_gt, 'gt_path': gt_path}

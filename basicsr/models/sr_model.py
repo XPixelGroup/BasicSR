@@ -183,6 +183,7 @@ class SRModel(BaseModel):
 
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         dataset_name = dataloader.dataset.opt['name']
+        color_space = dataloader.dataset.opt['color'] if 'color' in dataloader.dataset.opt else 'rgb'
         with_metrics = self.opt['val'].get('metrics') is not None
         use_pbar = self.opt['val'].get('pbar', False)
 
@@ -205,10 +206,10 @@ class SRModel(BaseModel):
             self.test()
 
             visuals = self.get_current_visuals()
-            sr_img = tensor2img([visuals['result']])
+            sr_img = tensor2img([visuals['result']], color_space=color_space)
             metric_data['img'] = sr_img
             if 'gt' in visuals:
-                gt_img = tensor2img([visuals['gt']])
+                gt_img = tensor2img([visuals['gt']], color_space=color_space)
                 metric_data['img2'] = gt_img
                 del self.gt
 

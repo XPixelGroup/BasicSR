@@ -10,7 +10,7 @@ from torch.utils import data as data
 
 from basicsr.data.degradations import circular_lowpass_kernel, random_mixed_kernels
 from basicsr.data.transforms import augment
-from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
+from basicsr.utils import ColorSpace, FileClient, get_root_logger, imfrombytes, img2tensor
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -181,8 +181,10 @@ class RealESRGANDataset(data.Dataset):
         else:
             sinc_kernel = self.pulse_tensor
 
+        # color space transform
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_gt = img2tensor([img_gt], bgr2rgb=True, float32=True)[0]
+        img_gt = img2tensor([img_gt], color_space=color_space, float32=True)[0]
         kernel = torch.FloatTensor(kernel)
         kernel2 = torch.FloatTensor(kernel2)
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop
-from basicsr.utils import FileClient, get_root_logger, imfrombytes, img2tensor
+from basicsr.utils import ColorSpace, FileClient, get_root_logger, imfrombytes, img2tensor
 from basicsr.utils.flow_util import dequantize_flow
 from basicsr.utils.registry import DATASET_REGISTRY
 
@@ -182,12 +182,16 @@ class REDSDataset(data.Dataset):
         else:
             img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
-        img_results = img2tensor(img_results)
+        # color space transform
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
+
+        # BGR to RGB, HWC to CHW, numpy to tensor
+        img_results = img2tensor(img_results, color_space=color_space)
         img_lqs = torch.stack(img_results[0:-1], dim=0)
         img_gt = img_results[-1]
 
         if self.flow_root is not None:
-            img_flows = img2tensor(img_flows)
+            img_flows = img2tensor(img_flows, color_space=ColorSpace.RAW)
             # add the zero center flow
             img_flows.insert(self.num_half_frames, torch.zeros_like(img_flows[0]))
             img_flows = torch.stack(img_flows, dim=0)
@@ -339,7 +343,11 @@ class REDSRecurrentDataset(data.Dataset):
         img_lqs.extend(img_gts)
         img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
-        img_results = img2tensor(img_results)
+        # color space transform
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
+
+        # BGR to RGB, HWC to CHW, numpy to tensor
+        img_results = img2tensor(img_results, color_space=color_space)
         img_gts = torch.stack(img_results[len(img_lqs) // 2:], dim=0)
         img_lqs = torch.stack(img_results[:len(img_lqs) // 2], dim=0)
 
