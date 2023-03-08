@@ -204,8 +204,8 @@ def _ssim_pth(img, img2):
     It is called by func:`calculate_ssim_pt`.
 
     Args:
-        img (Tensor): Images with range [0, 1], shape (n, 3/1, h, w).
-        img2 (Tensor): Images with range [0, 1], shape (n, 3/1, h, w).
+        img (Tensor): Images with range [0, 255], shape (n, 3/1, h, w).
+        img2 (Tensor): Images with range [0, 255], shape (n, 3/1, h, w).
 
     Returns:
         float: SSIM result.
