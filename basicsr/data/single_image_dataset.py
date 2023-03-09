@@ -3,7 +3,7 @@ from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
 from basicsr.data.data_util import paths_from_lmdb
-from basicsr.utils import FileClient, imfrombytes, img2tensor, rgb2ycbcr, scandir
+from basicsr.utils import ColorSpace, FileClient, imfrombytes, img2tensor, scandir
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -54,11 +54,10 @@ class SingleImageDataset(data.Dataset):
         img_lq = imfrombytes(img_bytes, float32=True)
 
         # color space transform
-        if 'color' in self.opt and self.opt['color'] == 'y':
-            img_lq = rgb2ycbcr(img_lq, y_only=True)[..., None]
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
 
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_lq = img2tensor(img_lq, bgr2rgb=True, float32=True)
+        img_lq = img2tensor(img_lq, color_space=color_space, float32=True)
         # normalize
         if self.mean is not None or self.std is not None:
             normalize(img_lq, self.mean, self.std, inplace=True)

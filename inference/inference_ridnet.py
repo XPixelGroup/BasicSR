@@ -7,7 +7,7 @@ import torch
 from tqdm import tqdm
 
 from basicsr.archs.ridnet_arch import RIDNet
-from basicsr.utils.img_util import img2tensor, tensor2img
+from basicsr.utils.img_util import ColorSpace, img2tensor, tensor2img
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -41,11 +41,11 @@ if __name__ == '__main__':
         pbar.set_description(f'{idx}: {img_name}')
         # read image
         img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-        img = img2tensor(img, bgr2rgb=True, float32=True).unsqueeze(0).to(device)
+        img = img2tensor(img, color_space=ColorSpace.RGB, float32=True).unsqueeze(0).to(device)
         # inference
         with torch.no_grad():
             output = net(img)
         # save image
-        output = tensor2img(output, rgb2bgr=True, out_type=np.uint8, min_max=(0, 255))
+        output = tensor2img(output, color_space=ColorSpace.RGB, out_type=np.uint8, min_max=(0, 255))
         save_img_path = os.path.join(result_root, f'{img_name}_x{args.noise_g}_RIDNet.png')
         cv2.imwrite(save_img_path, output)

@@ -8,7 +8,7 @@ from basicsr.data.transforms import mod_crop
 from basicsr.utils import img2tensor, scandir
 
 
-def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
+def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False, color_space='rgb'):
     """Read a sequence of images from a given folder path.
 
     Args:
@@ -30,7 +30,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
 
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
-    imgs = img2tensor(imgs, bgr2rgb=True, float32=True)
+    imgs = img2tensor(imgs, color_space=color_space, float32=True)
     imgs = torch.stack(imgs, dim=0)
 
     if return_imgname:
