@@ -251,3 +251,31 @@ class PerceptualLoss(nn.Module):
         features_t = features.transpose(1, 2)
         gram = features.bmm(features_t) / (c * h * w)
         return gram
+
+
+@LOSS_REGISTRY.register()
+class WSL1Loss(nn.Module):
+    """WS_L1 (WS mean absolute error, WS_MAE) loss.
+
+    Args:
+        loss_weight (float): Loss weight for WSL1 loss. Default: 1.0.
+        reduction (str): Specifies the reduction to apply to the output.
+            Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
+    """
+
+    def __init__(self, loss_weight=1.0, reduction='mean') -> None:
+        super(WSL1Loss, self).__init__()
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
+
+        self.loss_weight = loss_weight
+        self.reduction = reduction
+
+    def forward(self, pred, target, ws_weight):
+        """
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+            ws_weight (Tensor, optional): of shape (N, 1, H, 1). Element-wise weights. Default: None.
+        """
+        return torch.mean(torch.mean(torch.abs(pred - target), (1, 3), keepdim=True) * ws_weight)

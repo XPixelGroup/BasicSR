@@ -3,6 +3,7 @@ from copy import deepcopy
 from basicsr.utils.registry import METRIC_REGISTRY
 from .niqe import calculate_niqe
 from .psnr_ssim import calculate_psnr, calculate_ssim
+from .odi_metric import calculate_psnr_ws, calculate_ssim_ws
 
 __all__ = ['calculate_psnr', 'calculate_ssim', 'calculate_niqe']
 

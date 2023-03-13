@@ -1,0 +1,126 @@
+# general settings for image SR training
+name: ART_SR_x4
+model_type: ARTModel
+scale: 4
+num_gpu: 1
+manual_seed: 10
+
+# dataset and data loader settings
+datasets:
+  train:
+    task: SR
+    name: Flickr360
+    type: ERPPairedImageDataset
+    # PairedImageDataset
+    dataroot_gt: datasets/SR/train/Flickr360/HR
+    # datasets/SR/train/DF/HR
+    dataroot_lq: datasets/SR/train/Flickr360/LR_bicubic/X4
+    # datasets/SR/train/DF/LR_bicubic/X4
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+    gt_size: 256
+    gt_h: 1024
+    gt_w: 2048
+    condition_type: cos_latitude
+    # coord
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 8
+    batch_size_per_gpu: 8
+    dataset_enlarge_ratio: 10
+    prefetch_mode: ~
+
+  val:
+    name: Flickr360
+    type: PairedImageDataset
+    dataroot_gt: datasets/SR/val/Flickr360/HR
+    dataroot_lq: datasets/SR/val/Flickr360/LR_bicubic/X4
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+    # condition_type: cos_latitude
+
+# network structures
+network_g:
+  type: ART
+  upscale: 4
+  in_chans: 3
+  img_size: 64
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  interval: [4, 4, 4, 4, 4, 4]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 4
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/net_g_245000.pth
+  # experiments/pretrained_models/net_g_latest.pth
+  # experiments/pretrained_models/SR_ART_x4.pth
+  # experiments/pretrained_models/SR_ART_x2.pth # save training time if we finetune from x2 and halve initial lr.
+  strict_load_g: false
+  resume_state: ~
+
+# training settings
+train:
+  optim_g:
+    type: Adam
+    # lr: !!float 2e-4
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [ 250000, 400000, 450000, 475000 ]
+    # milestones: [ 125000, 200000, 225000, 237500 ]
+    gamma: 0.5
+
+  total_iter: 500000
+  # total_iter: 250000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: WSL1Loss
+    loss_weight: 1.0
+    reduction: mean
+# validation settings
+val:
+  val_freq: !!float 5e3
+  save_img: false
+
+  metrics:
+    ws_psnr: # metric name, can be arbitrary
+      type: calculate_psnr_ws
+      crop_border: 0
+      test_y_channel: false
+
+    ws_ssim:
+      type: calculate_ssim_ws
+      crop_border: 0
+      test_y_channel: false
+
+
+# logging settings
+logger:
+  print_freq: 200
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500

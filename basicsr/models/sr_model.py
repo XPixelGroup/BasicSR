@@ -162,7 +162,7 @@ class SRModel(BaseModel):
         else:
             self.net_g.eval()
             with torch.no_grad():
-                out_list = [self.net_g_ema(aug) for aug in lq_list]
+                out_list = [self.net_g(aug) for aug in lq_list]
             self.net_g.train()
 
         # merge results

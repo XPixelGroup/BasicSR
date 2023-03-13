@@ -1,0 +1,93 @@
+# general settings
+name: test_ART_SR_x4_ARTPTH
+model_type: ARTModel
+scale: 4
+num_gpu: 1
+manual_seed: 10
+
+datasets:
+  test_1:
+    name: Flickr360
+    type: PairedImageDataset
+    dataroot_gt: datasets/SR/val/Flickr360/HR
+    dataroot_lq: datasets/SR/val/Flickr360/LR_bicubic/X4
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+  # test_1:  # the 1st test dataset
+  #   name: DIV2K
+  #   type: SingleImageDataset
+  #   # PairedImageDataset
+  #   #
+  #   #
+  #   # dataroot_gt: /home/jmf/data/SR/val/DIV2K/HR
+  #   dataroot_lq: /home/jmf/data/SR/val/DIV2K/DIV2K_test_LR_bicubic/X4
+  #   # /home/jmf/data/SR/val/DIV2K/DIV2K_valid_LR_bicubic/X4
+  #   filename_tmpl: '{}'
+  #   io_backend:
+  #     type: disk
+  # test_1:  # the 1st test dataset
+  #   name: Set5
+  #   type: PairedImageDataset
+  #   dataroot_gt: datasets/SR/Set5/HR
+  #   dataroot_lq: datasets/SR/Set5/LR_bicubic/X4
+  #   filename_tmpl: '{}x4'
+  #   io_backend:
+  #     type: disk
+
+  # test_2:  # the 2nd test dataset
+  #   name: Set14
+  #   type: PairedImageDataset
+  #   dataroot_gt: datasets/SR/Set14/HR
+  #   dataroot_lq: datasets/SR/Set14/LR_bicubic/X4
+  #   filename_tmpl: '{}x4'
+  #   io_backend:
+  #     type: disk
+
+
+# network structures
+network_g:
+  type: ART
+  upscale: 4
+  in_chans: 3
+  img_size: 64
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  interval: [4, 4, 4, 4, 4, 4]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 4
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/SR_ART_x4.pth
+  # experiments/pretrained_models/net_g_245000.pth
+  # experiments/ART_SR_x4/models/net_g_20000.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: false
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    ws_psnr:
+      type: calculate_psnr_ws
+      crop_border: 0
+      test_y_channel: false
+    ws_ssim:
+      type: calculate_ssim_ws
+      crop_border: 0
+      test_y_channel: false
+    # psnr: # metric name, can be arbitrary
+    #   type: calculate_psnr
+    #   crop_border: 0
+    #   test_y_channel: true
+    # ssim:
+    #   type: calculate_ssim
+    #   crop_border: 0
+    #   test_y_channel: true
