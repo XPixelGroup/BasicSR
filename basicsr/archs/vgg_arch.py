@@ -3,7 +3,7 @@ import torch
 from collections import OrderedDict
 from torch import nn as nn
 from torchvision.models import vgg as vgg
-
+from torchvision.models import VGG19_Weights
 from basicsr.utils.registry import ARCH_REGISTRY
 
 VGG_PRETRAIN_PATH = 'experiments/pretrained_models/vgg19-dcbb9e9d.pth'
@@ -105,7 +105,7 @@ class VGGFeatureExtractor(nn.Module):
             state_dict = torch.load(VGG_PRETRAIN_PATH, map_location=lambda storage, loc: storage)
             vgg_net.load_state_dict(state_dict)
         else:
-            vgg_net = getattr(vgg, vgg_type)(pretrained=True)
+            vgg_net = getattr(vgg, vgg_type)(weights=VGG19_Weights.DEFAULT)
 
         features = vgg_net.features[:max_idx + 1]
 
