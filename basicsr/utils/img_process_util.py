@@ -20,6 +20,8 @@ def filter2D(img, kernel):
 
     ph, pw = img.size()[-2:]
 
+    kernel = kernel.type_as(img).to(img.device)
+
     if kernel.size(0) == 1:
         # apply the same kernel to all batch images
         img = img.view(b * c, 1, ph, pw)

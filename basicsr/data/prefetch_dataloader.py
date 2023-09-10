@@ -120,3 +120,39 @@ class CUDAPrefetcher():
     def reset(self):
         self.loader = iter(self.ori_loader)
         self.preload()
+
+
+class MPSPrefetcher():
+    """MPS prefetcher for Apple Silicon.
+
+    Args:
+        loader: Dataloader.
+        opt (dict): Options.
+    """
+
+    def __init__(self, loader, opt):
+        self.ori_loader = loader
+        self.loader = iter(loader)
+        self.opt = opt
+        self.device = torch.device('mps')
+        self.preload()
+
+    def preload(self):
+        try:
+            self.batch = next(self.loader)  # self.batch is a dict
+        except StopIteration:
+            self.batch = None
+            return None
+        # Move tensors to MPS device
+        for k, v in self.batch.items():
+            if torch.is_tensor(v):
+                self.batch[k] = v.to(device=self.device, non_blocking=True)
+
+    def next(self):
+        batch = self.batch
+        self.preload()
+        return batch
+
+    def reset(self):
+        self.loader = iter(self.ori_loader)
+        self.preload()

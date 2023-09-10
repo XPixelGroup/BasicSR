@@ -8,6 +8,7 @@ from torch.nn.parallel import DataParallel, DistributedDataParallel
 from basicsr.models import lr_scheduler as lr_scheduler
 from basicsr.utils import get_root_logger
 from basicsr.utils.dist_util import master_only
+from basicsr.utils.torch_device_factory import TorchDeviceFactory
 
 
 class BaseModel():
@@ -15,7 +16,7 @@ class BaseModel():
 
     def __init__(self, opt):
         self.opt = opt
-        self.device = torch.device('cuda' if opt['num_gpu'] != 0 else 'cpu')
+        self.device = torch.device(opt['device'])#TorchDeviceFactory.get(opt)
         self.is_train = opt['is_train']
         self.schedulers = []
         self.optimizers = []

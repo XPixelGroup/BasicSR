@@ -7,7 +7,7 @@ from os import path as osp
 
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
-from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
+from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher, MPSPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
                            init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
@@ -143,8 +143,10 @@ def train_pipeline(root_path):
         logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:
             raise ValueError('Please set pin_memory=True for CUDAPrefetcher.')
+    elif prefetch_mode == 'mps':
+        prefetcher = MPSPrefetcher(train_loader, opt)
     else:
-        raise ValueError(f"Wrong prefetch_mode {prefetch_mode}. Supported ones are: None, 'cuda', 'cpu'.")
+        raise ValueError(f"Wrong prefetch_mode {prefetch_mode}. Supported ones are: None, 'cuda', 'cpu', 'mps.")
 
     # training
     logger.info(f'Start training from epoch: {start_epoch}, iter: {current_iter}')
