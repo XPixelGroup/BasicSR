@@ -204,6 +204,12 @@ class BaseModel():
     def get_current_learning_rate(self):
         return [param_group['lr'] for param_group in self.optimizers[0].param_groups]
 
+    def get_save_path(self, net_label, current_iter):
+        if current_iter == -1:
+            current_iter = 'latest'
+        save_filename = f'{net_label}_{current_iter}.pth'
+        return os.path.join(self.opt['path']['models'], save_filename)
+
     @master_only
     def save_network(self, net, net_label, current_iter, param_key='params'):
         """Save networks.
@@ -215,10 +221,7 @@ class BaseModel():
             param_key (str | list[str]): The parameter key(s) to save network.
                 Default: 'params'.
         """
-        if current_iter == -1:
-            current_iter = 'latest'
-        save_filename = f'{net_label}_{current_iter}.pth'
-        save_path = os.path.join(self.opt['path']['models'], save_filename)
+        save_path = self.get_save_path(net_label, current_iter)
 
         net = net if isinstance(net, list) else [net]
         param_key = param_key if isinstance(param_key, list) else [param_key]
