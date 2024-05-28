@@ -61,6 +61,8 @@ datasets:
     dataroot_gt: datasets/DIV2K/DIV2K_train_HR_sub
     # LQ (Low-Quality) folder path
     dataroot_lq: datasets/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    # Colorspace before feed into network, rgb in default
+    color: rgb
     # template for file name. Usually, LQ files have suffix like `_x4`. It is used for file name mismatching
     filename_tmpl: '{}'
     # IO backend, more details are in [docs/DatasetPreparation.md]
@@ -96,6 +98,8 @@ datasets:
     dataroot_gt: datasets/Set5/GTmod12
     # LQ (Low-Quality) folder path
     dataroot_lq: datasets/Set5/LRbicx4
+    # Colorspace before feed into network
+    color: rgb
     # IO backend, more details are in [docs/DatasetPreparation.md]
     io_backend:
       # directly read from disk

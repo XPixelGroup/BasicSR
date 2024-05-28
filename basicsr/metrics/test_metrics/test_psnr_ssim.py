@@ -3,7 +3,7 @@ import torch
 
 from basicsr.metrics import calculate_psnr, calculate_ssim
 from basicsr.metrics.psnr_ssim import calculate_psnr_pt, calculate_ssim_pt
-from basicsr.utils import img2tensor
+from basicsr.utils import ColorSpace, img2tensor
 
 
 def test(img_path, img_path2, crop_border, test_y_channel=False):
@@ -16,8 +16,8 @@ def test(img_path, img_path2, crop_border, test_y_channel=False):
     print(f'\tNumpy\tPSNR: {psnr:.6f} dB, \tSSIM: {ssim:.6f}')
 
     # --------------------- PyTorch (CPU) ---------------------
-    img = img2tensor(img / 255., bgr2rgb=True, float32=True).unsqueeze_(0)
-    img2 = img2tensor(img2 / 255., bgr2rgb=True, float32=True).unsqueeze_(0)
+    img = img2tensor(img / 255., color_space=ColorSpace.RGB, float32=True).unsqueeze_(0)
+    img2 = img2tensor(img2 / 255., color_space=ColorSpace.RGB, float32=True).unsqueeze_(0)
 
     psnr_pth = calculate_psnr_pt(img, img2, crop_border=crop_border, test_y_channel=test_y_channel)
     ssim_pth = calculate_ssim_pt(img, img2, crop_border=crop_border, test_y_channel=test_y_channel)

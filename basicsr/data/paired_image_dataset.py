@@ -3,7 +3,7 @@ from torchvision.transforms.functional import normalize
 
 from basicsr.data.data_util import paired_paths_from_folder, paired_paths_from_lmdb, paired_paths_from_meta_info_file
 from basicsr.data.transforms import augment, paired_random_crop
-from basicsr.utils import FileClient, bgr2ycbcr, imfrombytes, img2tensor
+from basicsr.utils import ColorSpace, FileClient, imfrombytes, img2tensor
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
@@ -83,18 +83,16 @@ class PairedImageDataset(data.Dataset):
             # flip, rotation
             img_gt, img_lq = augment([img_gt, img_lq], self.opt['use_hflip'], self.opt['use_rot'])
 
-        # color space transform
-        if 'color' in self.opt and self.opt['color'] == 'y':
-            img_gt = bgr2ycbcr(img_gt, y_only=True)[..., None]
-            img_lq = bgr2ycbcr(img_lq, y_only=True)[..., None]
-
         # crop the unmatched GT images during validation or testing, especially for SR benchmark datasets
         # TODO: It is better to update the datasets, rather than force to crop
         if self.opt['phase'] != 'train':
             img_gt = img_gt[0:img_lq.shape[0] * scale, 0:img_lq.shape[1] * scale, :]
 
+        # color space transform
+        color_space = ColorSpace.RGB if 'color' not in self.opt else self.opt['color']
+
         # BGR to RGB, HWC to CHW, numpy to tensor
-        img_gt, img_lq = img2tensor([img_gt, img_lq], bgr2rgb=True, float32=True)
+        img_gt, img_lq = img2tensor([img_gt, img_lq], color_space=color_space, float32=True)
         # normalize
         if self.mean is not None or self.std is not None:
             normalize(img_lq, self.mean, self.std, inplace=True)

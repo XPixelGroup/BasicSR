@@ -4,7 +4,7 @@ import numpy as np
 import os.path as osp
 from torchvision.transforms.functional import normalize
 
-from basicsr.utils import img2tensor
+from basicsr.utils import ColorSpace, img2tensor
 
 try:
     import lpips
@@ -32,7 +32,7 @@ def main():
         img_restored = cv2.imread(osp.join(folder_restored, basename + suffix + ext), cv2.IMREAD_UNCHANGED).astype(
             np.float32) / 255.
 
-        img_gt, img_restored = img2tensor([img_gt, img_restored], bgr2rgb=True, float32=True)
+        img_gt, img_restored = img2tensor([img_gt, img_restored], color_space=ColorSpace.RGB, float32=True)
         # norm to [-1, 1]
         normalize(img_gt, mean, std, inplace=True)
         normalize(img_restored, mean, std, inplace=True)

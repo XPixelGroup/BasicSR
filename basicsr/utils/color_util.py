@@ -91,6 +91,8 @@ def ycbcr2rgb(img):
     """
     img_type = img.dtype
     img = _convert_input_type_range(img) * 255
+    if img.shape[2] == 1:  # only y channel
+        img = np.pad(img, ((0, 0), (0, 0), (0, 2)), 'constant')
     out_img = np.matmul(img, [[0.00456621, 0.00456621, 0.00456621], [0, -0.00153632, 0.00791071],
                               [0.00625893, -0.00318811, 0]]) * 255.0 + [-222.921, 135.576, -276.836]  # noqa: E126
     out_img = _convert_output_type_range(out_img, img_type)
@@ -120,6 +122,8 @@ def ycbcr2bgr(img):
     """
     img_type = img.dtype
     img = _convert_input_type_range(img) * 255
+    if img.shape[2] == 1:  # only y channel
+        img = np.pad(img, ((0, 0), (0, 0), (0, 2)), 'constant')
     out_img = np.matmul(img, [[0.00456621, 0.00456621, 0.00456621], [0.00791071, -0.00153632, 0],
                               [0, -0.00318811, 0.00625893]]) * 255.0 + [-276.836, 135.576, -222.921]  # noqa: E126
     out_img = _convert_output_type_range(out_img, img_type)
