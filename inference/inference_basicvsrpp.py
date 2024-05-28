@@ -7,7 +7,7 @@ import torch
 
 from basicsr.archs.basicvsrpp_arch import BasicVSRPlusPlus
 from basicsr.data.data_util import read_img_seq
-from basicsr.utils.img_util import tensor2img
+from basicsr.utils import tensor2img
 
 
 def inference(imgs, imgnames, model, save_path):
@@ -23,7 +23,8 @@ def inference(imgs, imgnames, model, save_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='experiments/pretrained_models/BasicVSRPP_REDS4.pth')
+    parser.add_argument(
+        '--model_path', type=str, default='experiments/pretrained_models/BasicVSRPP_x4_SR_REDS_official.pth')
     parser.add_argument(
         '--input_path', type=str, default='datasets/REDS4/sharp_bicubic/000', help='input test image folder')
     parser.add_argument('--save_path', type=str, default='results/BasicVSRPP/000', help='save image path')
@@ -34,7 +35,7 @@ def main():
 
     # set up model
     model = BasicVSRPlusPlus(mid_channels=64, num_blocks=7)
-    model.load_state_dict(torch.load(args.model_path)['params'], strict=True)
+    model.load_state_dict(torch.load(args.model_path), strict=True)
     model.eval()
     model = model.to(device)
 

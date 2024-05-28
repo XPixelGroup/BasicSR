@@ -357,6 +357,50 @@ def convert_duf_model():
     torch.save(crt_net, 'experiments/pretrained_models/DUF_x2_16L_official.pth')
 
 
+def convert_basicvsrpp_model():
+    from basicsr.archs.basicvsrpp_arch import BasicVSRPlusPlus
+    basicvsrpp = BasicVSRPlusPlus(mid_channels=64, num_blocks=7)
+    crt_net = basicvsrpp.state_dict()
+    # for k, v in crt_net.items():
+    #     print(k)
+
+    # print('=================')
+
+    ori_net = torch.load(
+        'experiments/pretrained_models/BasicVSRPP/basicvsr_plusplus_c64n7_8x1_300k_vimeo90k_bi_20210305-4ef437e2.pth')
+
+    # for k, v in ori_net['state_dict'].items():
+    #     print(k)
+
+    for ort_k, _ in ori_net['state_dict'].items():
+        if 'generator' in ort_k:
+            # delete 'generator'
+            crt_k = ort_k[10:]
+
+            # spynet module
+            if 'spynet.basic_module' in ort_k:
+                if 'weight' in ort_k:
+                    number = int(crt_k[-13])
+                    crt_k = crt_k[:-13] + f'{number * 2}.weight'
+                elif 'bias' in ort_k:
+                    number = int(crt_k[-11])
+                    crt_k = crt_k[:-11] + f'{number * 2}.bias'
+
+            # upsample module
+            if 'upsample1.upsample_conv.weight' in ort_k:
+                crt_k = 'upconv1.weight'
+            elif 'upsample1.upsample_conv.bias' in ort_k:
+                crt_k = 'upconv1.bias'
+            elif 'upsample2.upsample_conv.weight' in ort_k:
+                crt_k = 'upconv2.weight'
+            elif 'upsample2.upsample_conv.bias' in ort_k:
+                crt_k = 'upconv2.bias'
+
+            crt_net[crt_k] = ori_net['state_dict'][ort_k]
+
+    torch.save(crt_net, 'experiments/pretrained_models/Converted-BasicVSRPP/BasicVSRPP_x4_SR_Vimeo90K_BI_official.pth')
+
+
 if __name__ == '__main__':
     # convert EDSR models
     # ori_net_path = 'path to original model'
@@ -364,4 +408,4 @@ if __name__ == '__main__':
     # save_path = 'save path'
     # convert_edsr(ori_net_path, crt_net_path, save_path, num_block=32)
 
-    convert_duf_model()
+    convert_basicvsrpp_model()
