@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: PYTHONPATH=:./basicsr:./basicsr basicsr/train.py -opt options/train/SwinIR/train_SwinIR_meta_upscale.yml",
+            "type": "python",
+            "request": "launch",
+            "program": "PYTHONPATH=:./basicsr",
+            "env": {},
+            "console": "integratedTerminal",
+            "args": [
+                "basicsr/train.py",
+                "-opt",
+                "options/train/SwinIR/train_SwinIR_meta_upscale.yml"
+            ],
+            "cwd": "/home/zzy/zyzhao/super_resolution/BasicSR"
+        }
+    ]
+}

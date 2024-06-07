@@ -129,14 +129,24 @@ class UNetDiscriminatorSN(nn.Module):
         x3 = F.interpolate(x3, scale_factor=2, mode='bilinear', align_corners=False)
         x4 = F.leaky_relu(self.conv4(x3), negative_slope=0.2, inplace=True)
 
+        # print("x.shape: ", x.shape)
+        # print("x0.shape: ", x0.shape)
+        # print("x1.shape: ", x1.shape)
+        # print("x2.shape: ", x2.shape)
+        # print("x3.shape: ", x3.shape)
+        # print("x4.shape: ", x4.shape)
+        
         if self.skip_connection:
             x4 = x4 + x2
         x4 = F.interpolate(x4, scale_factor=2, mode='bilinear', align_corners=False)
         x5 = F.leaky_relu(self.conv5(x4), negative_slope=0.2, inplace=True)
+        
+        # print("x5.shape: ", x5.shape)
 
         if self.skip_connection:
             x5 = x5 + x1
-        x5 = F.interpolate(x5, scale_factor=2, mode='bilinear', align_corners=False)
+        # x5 = F.interpolate(x5, scale_factor=2, mode='bilinear', align_corners=False)
+        x5 = F.interpolate(x5, size=(x.shape[2], x.shape[3]), mode='bilinear', align_corners=False)
         x6 = F.leaky_relu(self.conv6(x5), negative_slope=0.2, inplace=True)
 
         if self.skip_connection:

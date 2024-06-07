@@ -10,7 +10,8 @@ import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 
 from basicsr.utils.registry import ARCH_REGISTRY
-from .arch_util import to_2tuple, trunc_normal_
+from basicsr.archs.arch_util import to_2tuple, trunc_normal_
+from basicsr.ops.meta_upscale.meta_upscale import MetaUpscale
 
 
 def drop_path(x, drop_prob: float = 0., training: bool = False):
@@ -710,15 +711,12 @@ class Pos2Weight(nn.Module):
     def forward(self, x):
         x = self.meta_block(x)
         return x
-        
     
-    
-class MetaUpsample(nn.Module):
+class MetaUpsample_im2col(nn.Module):
     """Meta Upsample module
     """
-    
     def __init__(self, in_c, out_c=1, kernel_size=3, s_v=2., s_h=2.):
-        super(MetaUpsample, self).__init__()
+        super(MetaUpsample_im2col, self).__init__()
         self.in_c = in_c
         self.out_c = out_c
         self.kernel_size = kernel_size
@@ -735,30 +733,49 @@ class MetaUpsample(nn.Module):
         out_h = int(x.size(2) * self.s_v)
         out_w = int(x.size(3) * self.s_h)
         
-        
+        n = x.size(0)
         v_idxes = np.arange(out_h) // self.s_v
         h_idxes = np.arange(out_w) // self.s_h
-        x_up = x[:, :, v_idxes, :][:, :, :, h_idxes] # (n, in_c, out_h, out_w)
-        x_up = F.unfold(x_up, self.kernel_size, padding=1).permute(2, 0, 1) # (h_out * w_out, n, c_in * k * k)
+        x = x[:, :, v_idxes, :][:, :, :, h_idxes] # (n, in_c, out_h, out_w)
+        x = F.unfold(x, self.kernel_size, padding=1).permute(2, 0, 1) # (h_out * w_out, n, c_in * k * k)
         
         weight = self.phi(pos_mat) # (out_h * out_w, k * k * in_c * out_c)
-        weight = weight.contiguous().view(out_h * out_w, self.kernel_size * self.kernel_size, self.in_c, self.out_c)
-        weight = weight.permute(0, 2, 1, 3).contiguous().view(out_h * out_w, self.kernel_size * self.kernel_size * self.in_c, self.out_c)
+        weight = weight.view(out_h * out_w, self.kernel_size * self.kernel_size * self.in_c, self.out_c)
         
         # (h_out * w_out, n, c_in * k * k) @ (h_out * w_out, c_in * k * k * out_c) -> (h_out * w_out, n, out_c)
-        out = torch.bmm(x_up, weight).permute(1, 2, 0)
-        return out.contiguous().view(x.size(0), self.out_c, out_h, out_w)
+        out = torch.bmm(x, weight).permute(1, 2, 0)
+        return out.contiguous().view(n, self.out_c, out_h, out_w)
     
-    def flops(self):
-        out_h = 721
-        out_w = 1440
-        flops = out_h * out_w * self.in_c * self.kernel_size * self.kernel_size * self.out_c
-        return flops
+    
+class MetaUpsample(nn.Module):
+    """Meta Upsample module
+    """
+    
+    def __init__(self, in_c, out_c=1, kernel_size=3, s_v=2., s_h=2.):
+        super(MetaUpsample, self).__init__()
+        self.in_c = in_c
+        self.out_c = out_c
+        self.kernel_size = kernel_size
+        self.s_v = s_v
+        self.s_h = s_h
+        self.phi = Pos2Weight(in_c, out_c, kernel_size)
+        
+        self.up = MetaUpscale(s_v, s_h, in_c, out_c, kernel_size)
+        
+    def forward(self, x, pos_mat):
+        """
+        Args:
+            x (torch.Tensor): LR feature map. Shape: (n, in_c, in_h, in_w).
+            pos_mat (torch.Tensor): Position matrix. Shape: (out_h * out_w, 4)
+        """
+        weight = self.phi(pos_mat)
+        out = self.up(x, weight)
+        return out
                 
 
 
 @ARCH_REGISTRY.register()
-class SwinIRMeta(nn.Module):
+class SwinIRMetaUpsample(nn.Module):
     r""" SwinIRMeta
         A PyTorch impl of : `SwinIR: Image Restoration Using Swin Transformer`, based on Swin Transformer.
         Use Meta-SR as upsampler.
@@ -789,7 +806,7 @@ class SwinIRMeta(nn.Module):
     """
 
     def __init__(self,
-                 img_size=64,
+                 img_size=(96, 144),
                  patch_size=1,
                  in_chans=3,
                  embed_dim=96,
@@ -812,7 +829,7 @@ class SwinIRMeta(nn.Module):
                  upsampler='meta',
                  resi_connection='1conv',
                  **kwargs):
-        super(SwinIRMeta, self).__init__()
+        super(SwinIRMetaUpsample, self).__init__()
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
@@ -825,6 +842,12 @@ class SwinIRMeta(nn.Module):
         self.upscale_v = upscale_v
         self.upscale_h = upscale_h
         self.upsampler = upsampler
+        
+        in_height = img_size[0]
+        in_width = img_size[1]
+        out_height = int(in_height * upscale_v)
+        out_width = int(in_width * upscale_h)
+        self.pos_mat = self.get_pos_mat(in_height, in_width, out_height, out_width)
 
         # ------------------------- 1, shallow feature extraction ------------------------- #
         self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 3, 1, 1)
@@ -922,7 +945,7 @@ class SwinIRMeta(nn.Module):
         #     self.conv_last = nn.Conv2d(num_feat, num_out_ch, 3, 1, 1)
         #     self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
         if self.upsampler == 'meta':
-            self.upsample = MetaUpsample(embed_dim, num_out_ch, 3, upscale_v, upscale_h)
+            self.upsample = MetaUpsample_im2col(embed_dim, num_out_ch, 3, upscale_v, upscale_h)
         else:
             # only support meta upsampler
             raise ValueError(f'upsampler {self.upsampler} is not supported. Supported upsamplers: meta')
@@ -945,6 +968,21 @@ class SwinIRMeta(nn.Module):
     @torch.jit.ignore
     def no_weight_decay_keywords(self):
         return {'relative_position_bias_table'}
+    
+    def get_pos_mat(self, in_h, in_w, out_h, out_w):
+        s_v = out_h / in_h
+        s_h = out_w / in_w
+        
+        pos_mat = nn.Parameter(torch.zeros(out_h, out_w, 4), requires_grad=False).cuda()
+        pos_mat[:, :, 2] = 1 / s_v
+        pos_mat[:, :, 3] = 1 / s_h
+        
+        v_idxes = np.arange(out_h) / s_v - np.arange(out_h) // s_v
+        h_idxes = np.arange(out_w) / s_h - np.arange(out_w) // s_h
+        
+        pos_mat[:, :, :2] = torch.Tensor(np.stack(np.meshgrid(h_idxes, v_idxes))[::-1, :, :].copy()).permute(1, 2, 0)
+        
+        return pos_mat.contiguous().view(-1, 4) # (out_h * out_w, 4)
 
     def forward_features(self, x):
         x_size = (x.shape[2], x.shape[3])
@@ -961,7 +999,7 @@ class SwinIRMeta(nn.Module):
 
         return x
 
-    def forward(self, x, pos_mat=None):
+    def forward(self, x):
         self.mean = self.mean.type_as(x)
         x = (x - self.mean) * self.img_range
 
@@ -991,10 +1029,9 @@ class SwinIRMeta(nn.Module):
         #     x = x + self.conv_last(res)
         
         if self.upsampler == 'meta':
-            assert pos_mat is not None, 'pos_mat should be provided for Meta-Upsampler.'
             x = self.conv_first(x)
             x = self.conv_after_body(self.forward_features(x)) + x
-            x = self.upsample(x, pos_mat)
+            x = self.upsample(x, self.pos_mat)
 
         x = x / self.img_range + self.mean
 
@@ -1011,20 +1048,6 @@ class SwinIRMeta(nn.Module):
         flops += self.upsample.flops()
         return flops
 
-def get_pos_mat(in_h, in_w, out_h, out_w):
-    s_v = out_h / in_h
-    s_h = out_w / in_w
-    
-    pos_mat = torch.zeros(out_h, out_w, 4)
-    pos_mat[:, :, 2] = 1 / s_v
-    pos_mat[:, :, 3] = 1 / s_h
-    
-    v_idxes = np.arange(out_h) / s_v - np.arange(out_h) // s_v
-    h_idxes = np.arange(out_w) / s_h - np.arange(out_w) // s_h
-    
-    pos_mat[:, :, :2] = torch.Tensor(np.stack(np.meshgrid(h_idxes, v_idxes))[::-1, :, :].copy()).permute(1, 2, 0)
-    
-    return pos_mat.contiguous().view(-1, 4)
 
 if __name__ == '__main__':
     upscale_v = 721 / 96
@@ -1035,25 +1058,27 @@ if __name__ == '__main__':
     height = int((in_height - 1) // window_size + 1) * window_size
     width = int((in_width - 1) // window_size + 1) * window_size
     print(height, width)
-    model = SwinIRMeta(
+    model = SwinIRMetaUpsample(
         upscale_v=upscale_v,
         upscale_h=upscale_h,
         img_size=(height, width),
         in_chans=1,
         window_size=window_size,
         img_range=1.,
-        depths=[6, 6, 6, 6],
+        depths=[6, 6, 6, 6, 6],
         embed_dim=60,
-        num_heads=[6, 6, 6, 6],
+        num_heads=[6, 6, 6, 6, 6],
         mlp_ratio=2,
         upsampler='meta')
     
-    device = torch.device('cuda:0')
-    model = model.to(device)
-    print(model)
-    print(height, width, f'{model.flops() / 1e9} flops')
+    x = torch.randn((1, 1, 96, 144))
+    x = model(x)
+    
+    from torchkeras import summary
+    summary(model, input_shape=(1, 96, 144))
+    
+    # print(model)
+    # print(height, width)
 
-    pos_mat = get_pos_mat(in_height, in_width, 721, 1440).to(device)
-    x = torch.randn((1, 1, height, width), device=device)
-    x = model(x, pos_mat)
-    print(x.shape)
+    
+    # print(x.shape)

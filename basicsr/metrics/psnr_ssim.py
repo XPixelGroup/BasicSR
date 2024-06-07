@@ -7,6 +7,24 @@ from basicsr.metrics.metric_util import reorder_image, to_y_channel
 from basicsr.utils.color_util import rgb2ycbcr_pt
 from basicsr.utils.registry import METRIC_REGISTRY
 
+@METRIC_REGISTRY.register()
+def calculate_mse(img, img2, crop_border, **kwargs):
+    """Calculate MSE (Mean Square Error).
+
+    Args:
+        img (ndarray): Metfiled with float values.
+        img2 (ndarray): Metfiled with float values.
+        crop_border (int): Cropped pixels in each edge of an image. These pixels are not involved in the calculation.
+
+    Returns:
+        float: MSE result.
+    """
+
+    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
+    img = img[crop_border:-crop_border, crop_border:-crop_border, ...]
+    img2 = img2[crop_border:-crop_border, crop_border:-crop_border, ...]
+    return np.mean((img - img2)**2)
+
 
 @METRIC_REGISTRY.register()
 def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):

@@ -4,6 +4,7 @@ import numpy as np
 import os
 import torch
 from torchvision.utils import make_grid
+import matplotlib.pyplot as plt
 
 
 def img2tensor(imgs, bgr2rgb=True, float32=True):
@@ -94,6 +95,41 @@ def tensor2img(tensor, rgb2bgr=True, out_type=np.uint8, min_max=(0, 1)):
     return result
 
 
+def metfield2img(tensor, mean=275.90152, std=23.808582):
+    if not (torch.is_tensor(tensor) or (isinstance(tensor, list) and all(torch.is_tensor(t) for t in tensor))):
+        raise TypeError(f'tensor or list of tensors expected, got {type(tensor)}')
+
+    if torch.is_tensor(tensor):
+        tensor = [tensor]
+    result = []
+    for _tensor in tensor:
+        _tensor = _tensor.squeeze(0).float().detach().cpu()
+        # _tensor = _tensor * std + mean
+
+        n_dim = _tensor.dim()
+        if n_dim == 4:
+            img_np = make_grid(_tensor, nrow=int(math.sqrt(_tensor.size(0))), normalize=False).numpy()
+            img_np = img_np.transpose(1, 2, 0)
+            if img_np.shape[2] == 1:  # gray image
+                img_np = np.squeeze(img_np, axis=2)
+
+        elif n_dim == 3:
+            img_np = _tensor.numpy()
+            img_np = img_np.transpose(1, 2, 0)
+            if img_np.shape[2] == 1:  # gray image
+                img_np = np.squeeze(img_np, axis=2)
+                
+        elif n_dim == 2:
+            img_np = _tensor.numpy()
+        else:
+            raise TypeError(f'Only support 4D, 3D or 2D tensor. But received with dimension: {n_dim}')
+            # Unlike MATLAB, numpy.unit8() WILL NOT round by default.
+        result.append(img_np)
+    if len(result) == 1:
+        result = result[0]
+    return result
+
+
 def tensor2img_fast(tensor, rgb2bgr=True, min_max=(0, 1)):
     """This implementation is slightly faster than tensor2img.
     It now only supports torch tensor with shape (1, c, h, w).
@@ -151,6 +187,32 @@ def imwrite(img, file_path, params=None, auto_mkdir=True):
     ok = cv2.imwrite(file_path, img, params)
     if not ok:
         raise IOError('Failed in writing images.')
+    
+def metimwrite(img, file_path, params=None, auto_mkdir=True):
+    """Write met image to file.
+
+    Args:
+        img (ndarray): Image array to be written.
+        file_path (str): Image file path.
+        params (None or list): Same as opencv's :func:`imwrite` interface.
+        auto_mkdir (bool): If the parent folder of `file_path` does not exist,
+            whether to create it automatically.
+
+    Returns:
+        bool: Successful or not.
+    """
+    if auto_mkdir:
+        dir_name = os.path.abspath(os.path.dirname(file_path))
+        os.makedirs(dir_name, exist_ok=True)
+    
+    # print(img.shape)
+    plt.figure(figsize=(12, 8))
+    plt.imshow(img, vmin=-2.3, vmax=1.1)
+    plt.colorbar()
+    plt.savefig(file_path, dpi=300)
+    plt.close()
+    
+    return True
 
 
 def crop_border(imgs, crop_border):

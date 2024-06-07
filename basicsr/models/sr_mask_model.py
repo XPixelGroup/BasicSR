@@ -13,11 +13,11 @@ from .base_model import BaseModel
 
 
 @MODEL_REGISTRY.register()
-class SRModel(BaseModel):
+class SRMaskModel(BaseModel):
     """Base SR model for single image super-resolution."""
 
     def __init__(self, opt):
-        super(SRModel, self).__init__(opt)
+        super(SRMaskModel, self).__init__(opt)
 
         # define network
         self.net_g = build_network(opt['network_g'])
@@ -87,16 +87,18 @@ class SRModel(BaseModel):
 
     def feed_data(self, data):
         self.lq = data['lq'].to(self.device)
-        if 'gt' in data:
-            self.gt = data['gt'].to(self.device)
+        self.gt = data['gt'].to(self.device)
+        self.lq_mask = data['lq_mask'].to(self.device)
+        self.gt_mask = data['gt_mask'].to(self.device)
 
     def optimize_parameters(self, current_iter):
         self.optimizer_g.zero_grad()
-        self.output = self.net_g(self.lq)
+        self.output = self.net_g(self.lq, self.lq_mask) * self.gt_mask
 
         l_total = 0
         loss_dict = OrderedDict()
         # pixel loss
+        # TODO: add mask to losses
         if self.cri_pix:
             l_pix = self.cri_pix(self.output, self.gt)
             l_total += l_pix
