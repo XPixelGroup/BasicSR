@@ -149,10 +149,10 @@ For detailed instructions refer to [docs/INSTALL.md](docs/INSTALL.md).
 <br>
 
 - **QQ群**: 扫描左边二维码 或者 搜索QQ群号: 320960100   入群答案：互帮互助共同进步
-- **微信群**: 我们的群一已经满500人啦，进群二可以扫描中间的二维码；如果进群遇到问题，也可以添加 Liangbin 的个人微信 (右边二维码)，他会在空闲的时候拉大家入群~
+- **微信群**: 我们的群一和群二已经满500人啦，进群三可以扫描中间的二维码；如果进群遇到问题，也可以添加 Liangbin 的个人微信 (右边二维码)，他会在空闲的时候拉大家入群~
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/17445847/134879983-6f2d663b-16e7-49f2-97e1-7c53c8a5f71a.jpg"  height="300">  &emsp;
-  <img src="https://user-images.githubusercontent.com/52127135/172553058-6cf32e10-2959-42dd-b26a-f802f09343b0.png"  height="300">  &emsp;
+  <img src="https://user-images.githubusercontent.com/52127135/233817575-b62c2b3e-3e38-4558-b78f-d6f190bd2046.png"  height="300">  &emsp;
   <img src="https://user-images.githubusercontent.com/17445847/139572512-8e192aac-00fa-432b-ac8e-a33026b019df.png"  height="300">
 </p>
