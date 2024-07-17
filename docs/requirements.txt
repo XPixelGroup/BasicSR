@@ -14,7 +14,7 @@ sphinx
 sphinx_intl
 sphinx_markdown_tables
 sphinx_rtd_theme
-tb-nightly
+tensorboard
 torch>=1.7
 torchvision
 tqdm
