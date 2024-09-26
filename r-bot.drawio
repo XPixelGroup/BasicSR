@@ -1,0 +1,196 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.16">
+  <diagram name="Page-1" id="kaDvxghzX0mULwTv-LZ7">
+    <mxGraphModel dx="2567" dy="1552" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="uk2FloNmh11kyuh5neVs-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-308" y="-208" as="sourcePoint" />
+            <mxPoint x="-238" y="-68" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="uk2FloNmh11kyuh5neVs-1" target="uk2FloNmh11kyuh5neVs-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-148" y="-208" />
+              <mxPoint x="-148" y="-138" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="uk2FloNmh11kyuh5neVs-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-238" y="-278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="uk2FloNmh11kyuh5neVs-1" target="uk2FloNmh11kyuh5neVs-35" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-1" value="Query" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-388" y="-238" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-3" value="Business&lt;div&gt;Meta data&lt;/div&gt;" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="-228" y="-318" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-45" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="uk2FloNmh11kyuh5neVs-4" target="uk2FloNmh11kyuh5neVs-15" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-4" value="Fintuned LLM" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Bot_Services.svg;" parent="1" vertex="1">
+          <mxGeometry x="-60" y="-288" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="uk2FloNmh11kyuh5neVs-5" target="uk2FloNmh11kyuh5neVs-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-5" value="Business Images" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="-228" y="-88" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-47" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.055;entryY=0.926;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="uk2FloNmh11kyuh5neVs-6" target="uk2FloNmh11kyuh5neVs-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="72" y="-188" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-21" y="-178" />
+              <mxPoint x="72" y="-178" />
+              <mxPoint x="72" y="-167" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-6" value="&lt;div style=&quot;font-size: 12px;&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;&lt;br&gt;Personalized Images&lt;/font&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;fillColor=#232F3E;dashed=0;verticalLabelPosition=middle;verticalAlign=bottom;align=center;html=1;whiteSpace=wrap;fontSize=10;fontStyle=1;spacing=3;shape=mxgraph.aws4.productIcon;prIcon=mxgraph.aws4.rekognition_image;" parent="1" vertex="1">
+          <mxGeometry x="-54" y="-162.6" width="41" height="69.6" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="uk2FloNmh11kyuh5neVs-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-68" y="-248" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.029;entryY=0.49;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="uk2FloNmh11kyuh5neVs-3" target="uk2FloNmh11kyuh5neVs-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-15" value="Streamlit UI" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.web;" parent="1" vertex="1">
+          <mxGeometry x="175" y="-359" width="72.66" height="57.4" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-16" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="-438" y="-238" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-36" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="uk2FloNmh11kyuh5neVs-35" target="uk2FloNmh11kyuh5neVs-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-35" value="User reviews" style="swimlane;" parent="1" vertex="1" collapsed="1">
+          <mxGeometry x="-88" y="-418" width="110" height="40" as="geometry">
+            <mxRectangle x="390" y="-80" width="80" height="70" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-48" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="98" y="-149" width="206" height="181" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-49" value="" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="122" y="-108" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-50" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Text-Image Similarity Search with&lt;br&gt;CLIP&#39;s features&lt;/font&gt;" style="whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="182" y="-130" width="105" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-51" value="" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="122" y="-63" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="uk2FloNmh11kyuh5neVs-52" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Sentence Transformer&#39;s text features&lt;/font&gt;" style="whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="182" y="-63" width="107" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-1" value="Chroma DB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="105" y="-10" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="545" y="-403" width="354" height="147" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-3" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Bot_Services.svg;" parent="1" vertex="1">
+          <mxGeometry x="566.2199999999999" y="-393" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-6" value="" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.concepts.document_blank;" parent="1" vertex="1">
+          <mxGeometry x="578.56" y="-303" width="20" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-10" value="" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.concepts.document_blank;" parent="1" vertex="1">
+          <mxGeometry x="628.56" y="-304" width="20" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-13" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.checked_doc;" parent="1" vertex="1">
+          <mxGeometry x="732.4399999999999" y="-306.29999999999995" width="30" height="31.6" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-18" value="" style="editableCssRules=.*;html=1;shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;aspect=fixed;imageAspect=0;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnY9Imh0dHBzOi8vdmVjdGEuaW8vbmFubyIgd2lkdGg9IjIwLjAwMTA0NTIyNzA1MDc4IiBoZWlnaHQ9IjIwLjAwMTA0NTIyNzA1MDc4IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyMC4wMDEwNDUyMjcwNTA3OCAyMC4wMDEwNDUyMjcwNTA3OCI+JiN4YTsJPHN0eWxlIHR5cGU9InRleHQvY3NzIj4mI3hhOwkuc3Qwe2ZpbGw6I2FlY2JmYTt9JiN4YTsJLnN0MXtmaWxsOiM2NjlkZjY7fSYjeGE7CS5zdDJ7ZmlsbDojNDI4NWY0O30mI3hhOwk8L3N0eWxlPiYjeGE7CTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00LjczIDguODN2Mi42M2E0LjkxIDQuOTEgMCAwIDAgMS43MSAxLjc0VjguODN6Ii8+JiN4YTsJPHBhdGggY2xhc3M9InN0MSIgZD0iTTcuODkgNi40MXY3LjUzQTcuNjIgNy42MiAwIDAgMCA5IDE0YTggOCAwIDAgMCAxIDBWNi40MXoiLz4mI3hhOwk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTEuNjQgOS44NnYzLjI5YTUgNSAwIDAgMCAxLjctMS44MlY5Ljg2eiIvPiYjeGE7CTxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0xNS43NCAxNC4zMmwtMS40MiAxLjQyYS40Mi40MiAwIDAgMCAwIC42bDMuNTQgMy41NGEuNDIuNDIgMCAwIDAgLjU5IDBsMS40My0xLjQzYS40Mi40MiAwIDAgMCAwLS41OWwtMy41NC0zLjU0YS40Mi40MiAwIDAgMC0uNiAwIi8+JiN4YTsJPHBhdGggY2xhc3M9InN0MSIgZD0iTTkgMGE5IDkgMCAxIDAgMCAxOEE5IDkgMCAxIDAgOSAwbTAgMTUuNjlhNi42OCA2LjY4IDAgMCAxIC4wMDctMTMuMzYgNi42OCA2LjY4IDAgMCAxIDQuNzI3IDExLjQwM0E2LjY4IDYuNjggMCAwIDEgOSAxNS42OSIvPiYjeGE7PC9zdmc+;" parent="1" vertex="1">
+          <mxGeometry x="777.4399999999999" y="-303" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-20" value="Tacobell" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="558.56" y="-343" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-21" value="KFC" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="708.56" y="-343" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-22" value="Subway" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="606.56" y="-343" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-23" value="Domino&#39;s" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="658.56" y="-337" width="60" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-25" value="KFC opening time?" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="762.4399999999999" y="-343" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-26" value="" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.bots;" parent="1" vertex="1">
+          <mxGeometry x="828.56" y="-339" width="53.68" height="51" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-27" value="" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.concepts.document_blank;" parent="1" vertex="1">
+          <mxGeometry x="666.56" y="-304" width="20" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-28" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/essentials-72/24/039_-_Cross-128.png" parent="1" vertex="1">
+          <mxGeometry x="631.56" y="-294" width="17" height="17" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-29" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/essentials-72/24/039_-_Cross-128.png" parent="1" vertex="1">
+          <mxGeometry x="668.06" y="-294" width="17" height="17" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-30" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/essentials-72/24/039_-_Cross-128.png" parent="1" vertex="1">
+          <mxGeometry x="580.06" y="-293" width="17" height="17" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-31" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shadow=0;dashed=0;strokeWidth=1;shape=mxgraph.ios.iAddIcon;fillColor=#7AdF78;fillColor2=#1A9917;strokeColor=#ffffff;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="703.56" y="-297" width="15" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="5Ty_rDfWxCvQlMKUGbTs-33" value="Train RAFT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="798.56" y="-393" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-1" value="&amp;nbsp;Based on the provided user reviews, I would rate the overall quality of service provided by &lt;b&gt;Majestic Security as 4.3 out of 5 stars&lt;/b&gt;. This rating suggests that the majority of custome rs are satisfied with the service, but there may be some minor issues or areas for improvement. The high rating indicates that Majestic Security is doing a good job in terms of providing relia ble and effective security services. However, it&#39;s essential to note that chat individual experiences may vary, and some customers may have had different experiences. To get a more comprehensive un derstanding, it would be helpful to read the actual user reviews to identify common themes and areas of improvement." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1053" y="-171" width="500" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-4" value="Based on the user reviews, I would rate the overall quality of service provided by Majestic Security as&lt;b&gt; 4.3 out of 5 stars&lt;/b&gt;. This is indicated by the &lt;b&gt;&quot;avg rating&lt;/b&gt;&quot; field in the business information, which shows an average rating of 4.3 based on 48 reviews. This suggests that most customers have had a positive experience with the company. &lt;b&gt;&amp;lt;ANSWER&amp;gt;: Excellent&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1055" y="-33" width="494" height="106" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-5" value="How would you rate the overall quality of service provided by Majestic Security based on user reviews?" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1053" y="-266" width="258" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-6" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn0.iconfinder.com/data/icons/evericons-24px-vol-1/24/question-128.png" vertex="1" parent="1">
+          <mxGeometry x="973.5" y="-262" width="52" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-7" value="Fintuned Local LLM" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Bot_Services.svg;" vertex="1" parent="1">
+          <mxGeometry x="-60" y="-288" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-8" value="Fintuned LLM" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Bot_Services.svg;" vertex="1" parent="1">
+          <mxGeometry x="980" y="-8.5" width="39" height="39" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-9" value="Llama3-instruct" style="shape=mxgraph.signs.nature.snowflake;html=1;pointerEvents=1;fillColor=#000000;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="980" y="-136" width="38" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-14" value="CLIP" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Computer_Vision.svg;" vertex="1" parent="1">
+          <mxGeometry x="9" y="-149" width="27" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-16" value="&lt;b&gt;Context: &lt;/b&gt;JSON content of business data from Google including 3 distractors.&amp;nbsp;&lt;div&gt;&lt;b&gt;Cot answer&lt;/b&gt;: To rate the overall quality of service provided by Majestic Security based on user reviews, I can analyze the average rating (4.3) and the number of reviews (48). This suggests that a significant portion of customers have had positive experiences with the company.\n\n&lt;b&gt;##begin_quote##&lt;/b&gt;The high average rating indicates a strong level of satisfaction among users.&lt;b&gt;##end_quote##&lt;/b&gt;Taking this into account, I would rate the overall quality of service provided by Majestic Security as follows:&lt;div&gt;&lt;b&gt;&amp;lt;ANSWER&amp;gt;&lt;/b&gt;: Excellent&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="558.56" y="-262" width="323.44" height="224" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-17" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;font color=&quot;#6666ff&quot;&gt;Enhancing Business Intelligence: beyond google maps&lt;/font&gt;&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-415" y="-497" width="646" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-18" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/Serverless_Search.svg;" vertex="1" parent="1">
+          <mxGeometry x="-228" y="-248" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-20" value="MI210" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=data:image/webp,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;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="612" y="-396" width="29.22" height="29.22" as="geometry" />
+        </mxCell>
+        <mxCell id="_9NyEC3-VUTEY0KYw4lJ-24" value="Synthetic Dataset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0cee2;strokeColor=#56517e;" vertex="1" parent="1">
+          <mxGeometry x="557.78" y="-50" width="145.78" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
