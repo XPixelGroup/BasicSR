@@ -160,7 +160,7 @@ class BasicVSRPlusPlus(nn.Module):
             feats dict(list[tensor]): Features from previous branches. Each
                 component is a list of tensors with shape (n, c, h, w).
             flows (tensor): Optical flows with shape (n, t - 1, 2, h, w).
-            module_name (str): The name of the propgation branches. Can either
+            module_name (str): The name of the propagation branches. Can either
                 be 'backward_1', 'forward_1', 'backward_2', 'forward_2'.
 
         Return:
@@ -322,7 +322,7 @@ class BasicVSRPlusPlus(nn.Module):
             f'but got {h} and {w}.')
         flows_forward, flows_backward = self.compute_flow(lqs_downsample)
 
-        # feature propgation
+        # feature propagation
         for iter_ in [1, 2]:
             for direction in ['backward', 'forward']:
                 module = f'{direction}_{iter_}'

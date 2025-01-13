@@ -107,7 +107,7 @@ class DegradationSimulator:
 
 
 if __name__ == '__main__':
-    simuator = DegradationSimulator()
+    simulator = DegradationSimulator()
     gt_folder = 'datasets/FFHQ_512_gt'
     deg = 'sr4x'
-    simuator.create_training_dataset(deg, gt_folder)
+    simulator.create_training_dataset(deg, gt_folder)
