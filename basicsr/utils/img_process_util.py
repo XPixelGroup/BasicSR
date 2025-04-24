@@ -1,7 +1,9 @@
+# img_process_util.py
+
 import cv2
 import numpy as np
 import torch
-from torch.nn import functional as F
+import torch.nn.functional as F
 
 
 def filter2D(img, kernel):
@@ -10,6 +12,9 @@ def filter2D(img, kernel):
     Args:
         img (Tensor): (b, c, h, w)
         kernel (Tensor): (b, k, k)
+
+    Returns:
+        Tensor: Filtered image with shape (b, c, h, w)
     """
     k = kernel.size(-1)
     b, c, h, w = img.size()
@@ -34,33 +39,44 @@ def filter2D(img, kernel):
 def usm_sharp(img, weight=0.5, radius=50, threshold=10):
     """USM sharpening.
 
-    Input image: I; Blurry image: B.
-    1. sharp = I + weight * (I - B)
-    2. Mask = 1 if abs(I - B) > threshold, else: 0
-    3. Blur mask:
-    4. Out = Mask * sharp + (1 - Mask) * I
-
-
     Args:
-        img (Numpy array): Input image, HWC, BGR; float32, [0, 1].
+        img (Numpy array or Tensor): Input image, HWC, BGR; float32, [0, 1].
         weight (float): Sharp weight. Default: 1.
         radius (float): Kernel size of Gaussian blur. Default: 50.
-        threshold (int):
+        threshold (int): Threshold for the sharpening mask.
+
+    Returns:
+        Numpy array or Tensor: Sharpened image, same type as input
     """
     if radius % 2 == 0:
         radius += 1
-    blur = cv2.GaussianBlur(img, (radius, radius), 0)
-    residual = img - blur
+
+    if torch.is_tensor(img):
+        device = img.device
+        # Move to CPU for OpenCV operations
+        img_np = img.cpu().numpy()
+    else:
+        device = None
+        img_np = img
+
+    blur = cv2.GaussianBlur(img_np, (radius, radius), 0)
+    residual = img_np - blur
     mask = np.abs(residual) * 255 > threshold
     mask = mask.astype('float32')
     soft_mask = cv2.GaussianBlur(mask, (radius, radius), 0)
 
-    sharp = img + weight * residual
+    sharp = img_np + weight * residual
     sharp = np.clip(sharp, 0, 1)
-    return soft_mask * sharp + (1 - soft_mask) * img
+    output = soft_mask * sharp + (1 - soft_mask) * img_np
+
+    if device is not None:
+        # Convert back to tensor if input was tensor
+        output = torch.from_numpy(output).to(device)
+    return output
 
 
 class USMSharp(torch.nn.Module):
+    """PyTorch version of Unsharp Masking sharpening layer."""
 
     def __init__(self, radius=50, sigma=0):
         super(USMSharp, self).__init__()
@@ -72,6 +88,19 @@ class USMSharp(torch.nn.Module):
         self.register_buffer('kernel', kernel)
 
     def forward(self, img, weight=0.5, threshold=10):
+        """Forward function.
+
+        Args:
+            img (Tensor): Input image tensor (b, c, h, w)
+            weight (float): Sharpening weight
+            threshold (float): Threshold for the sharpening mask
+
+        Returns:
+            Tensor: Sharpened image tensor (b, c, h, w)
+        """
+        device = img.device
+        self.kernel = self.kernel.to(device)  # Ensure kernel is on same device as input
+
         blur = filter2D(img, self.kernel)
         residual = img - blur
 
@@ -79,5 +108,5 @@ class USMSharp(torch.nn.Module):
         mask = mask.float()
         soft_mask = filter2D(mask, self.kernel)
         sharp = img + weight * residual
-        sharp = torch.clip(sharp, 0, 1)
+        sharp = torch.clamp(sharp, 0, 1)
         return soft_mask * sharp + (1 - soft_mask) * img

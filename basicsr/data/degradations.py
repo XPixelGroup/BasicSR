@@ -1,3 +1,5 @@
+# degradations.py
+
 import cv2
 import math
 import numpy as np
@@ -5,7 +7,7 @@ import random
 import torch
 from scipy import special
 from scipy.stats import multivariate_normal
-from torchvision.transforms.functional import rgb_to_grayscale
+from torchvision.transforms import functional as F
 
 # -------------------------------------------------------------------- #
 # --------------------------- blur kernels --------------------------- #
@@ -112,8 +114,6 @@ def bivariate_Gaussian(kernel_size, sig_x, sig_y, theta, grid=None, isotropic=Tr
 def bivariate_generalized_Gaussian(kernel_size, sig_x, sig_y, theta, beta, grid=None, isotropic=True):
     """Generate a bivariate generalized Gaussian kernel.
 
-    ``Paper: Parameter Estimation For Multivariate Generalized Gaussian Distributions``
-
     In the isotropic mode, only `sig_x` is used. `sig_y` and `theta` is ignored.
 
     Args:
@@ -142,10 +142,6 @@ def bivariate_generalized_Gaussian(kernel_size, sig_x, sig_y, theta, beta, grid=
 
 def bivariate_plateau(kernel_size, sig_x, sig_y, theta, beta, grid=None, isotropic=True):
     """Generate a plateau-like anisotropic kernel.
-
-    1 / (1+x^(beta))
-
-    Reference: https://stats.stackexchange.com/questions/203629/is-there-a-plateau-shaped-distribution
 
     In the isotropic mode, only `sig_x` is used. `sig_y` and `theta` is ignored.
 
@@ -179,21 +175,7 @@ def random_bivariate_Gaussian(kernel_size,
                               rotation_range,
                               noise_range=None,
                               isotropic=True):
-    """Randomly generate bivariate isotropic or anisotropic Gaussian kernels.
-
-    In the isotropic mode, only `sigma_x_range` is used. `sigma_y_range` and `rotation_range` is ignored.
-
-    Args:
-        kernel_size (int):
-        sigma_x_range (tuple): [0.6, 5]
-        sigma_y_range (tuple): [0.6, 5]
-        rotation range (tuple): [-math.pi, math.pi]
-        noise_range(tuple, optional): multiplicative kernel noise,
-            [0.75, 1.25]. Default: None
-
-    Returns:
-        kernel (ndarray):
-    """
+    """Randomly generate bivariate isotropic or anisotropic Gaussian kernels."""
     assert kernel_size % 2 == 1, 'Kernel size must be an odd number.'
     assert sigma_x_range[0] < sigma_x_range[1], 'Wrong sigma_x_range.'
     sigma_x = np.random.uniform(sigma_x_range[0], sigma_x_range[1])
@@ -224,22 +206,7 @@ def random_bivariate_generalized_Gaussian(kernel_size,
                                           beta_range,
                                           noise_range=None,
                                           isotropic=True):
-    """Randomly generate bivariate generalized Gaussian kernels.
-
-    In the isotropic mode, only `sigma_x_range` is used. `sigma_y_range` and `rotation_range` is ignored.
-
-    Args:
-        kernel_size (int):
-        sigma_x_range (tuple): [0.6, 5]
-        sigma_y_range (tuple): [0.6, 5]
-        rotation range (tuple): [-math.pi, math.pi]
-        beta_range (tuple): [0.5, 8]
-        noise_range(tuple, optional): multiplicative kernel noise,
-            [0.75, 1.25]. Default: None
-
-    Returns:
-        kernel (ndarray):
-    """
+    """Randomly generate bivariate generalized Gaussian kernels."""
     assert kernel_size % 2 == 1, 'Kernel size must be an odd number.'
     assert sigma_x_range[0] < sigma_x_range[1], 'Wrong sigma_x_range.'
     sigma_x = np.random.uniform(sigma_x_range[0], sigma_x_range[1])
@@ -252,7 +219,6 @@ def random_bivariate_generalized_Gaussian(kernel_size,
         sigma_y = sigma_x
         rotation = 0
 
-    # assume beta_range[0] < 1 < beta_range[1]
     if np.random.uniform() < 0.5:
         beta = np.random.uniform(beta_range[0], 1)
     else:
@@ -260,7 +226,6 @@ def random_bivariate_generalized_Gaussian(kernel_size,
 
     kernel = bivariate_generalized_Gaussian(kernel_size, sigma_x, sigma_y, rotation, beta, isotropic=isotropic)
 
-    # add multiplicative noise
     if noise_range is not None:
         assert noise_range[0] < noise_range[1], 'Wrong noise range.'
         noise = np.random.uniform(noise_range[0], noise_range[1], size=kernel.shape)
@@ -276,22 +241,7 @@ def random_bivariate_plateau(kernel_size,
                              beta_range,
                              noise_range=None,
                              isotropic=True):
-    """Randomly generate bivariate plateau kernels.
-
-    In the isotropic mode, only `sigma_x_range` is used. `sigma_y_range` and `rotation_range` is ignored.
-
-    Args:
-        kernel_size (int):
-        sigma_x_range (tuple): [0.6, 5]
-        sigma_y_range (tuple): [0.6, 5]
-        rotation range (tuple): [-math.pi/2, math.pi/2]
-        beta_range (tuple): [1, 4]
-        noise_range(tuple, optional): multiplicative kernel noise,
-            [0.75, 1.25]. Default: None
-
-    Returns:
-        kernel (ndarray):
-    """
+    """Randomly generate bivariate plateau kernels."""
     assert kernel_size % 2 == 1, 'Kernel size must be an odd number.'
     assert sigma_x_range[0] < sigma_x_range[1], 'Wrong sigma_x_range.'
     sigma_x = np.random.uniform(sigma_x_range[0], sigma_x_range[1])
@@ -304,14 +254,12 @@ def random_bivariate_plateau(kernel_size,
         sigma_y = sigma_x
         rotation = 0
 
-    # TODO: this may be not proper
     if np.random.uniform() < 0.5:
         beta = np.random.uniform(beta_range[0], 1)
     else:
         beta = np.random.uniform(1, beta_range[1])
 
     kernel = bivariate_plateau(kernel_size, sigma_x, sigma_y, rotation, beta, isotropic=isotropic)
-    # add multiplicative noise
     if noise_range is not None:
         assert noise_range[0] < noise_range[1], 'Wrong noise range.'
         noise = np.random.uniform(noise_range[0], noise_range[1], size=kernel.shape)
@@ -330,25 +278,7 @@ def random_mixed_kernels(kernel_list,
                          betag_range=(0.5, 8),
                          betap_range=(0.5, 8),
                          noise_range=None):
-    """Randomly generate mixed kernels.
-
-    Args:
-        kernel_list (tuple): a list name of kernel types,
-            support ['iso', 'aniso', 'skew', 'generalized', 'plateau_iso',
-            'plateau_aniso']
-        kernel_prob (tuple): corresponding kernel probability for each
-            kernel type
-        kernel_size (int):
-        sigma_x_range (tuple): [0.6, 5]
-        sigma_y_range (tuple): [0.6, 5]
-        rotation range (tuple): [-math.pi, math.pi]
-        beta_range (tuple): [0.5, 8]
-        noise_range(tuple, optional): multiplicative kernel noise,
-            [0.75, 1.25]. Default: None
-
-    Returns:
-        kernel (ndarray):
-    """
+    """Randomly generate mixed kernels."""
     kernel_type = random.choices(kernel_list, kernel_prob)[0]
     if kernel_type == 'iso':
         kernel = random_bivariate_Gaussian(
@@ -381,9 +311,6 @@ def random_mixed_kernels(kernel_list,
         kernel = random_bivariate_plateau(
             kernel_size, sigma_x_range, sigma_y_range, rotation_range, betap_range, noise_range=None, isotropic=False)
     return kernel
-
-
-np.seterr(divide='ignore', invalid='ignore')
 
 
 def circular_lowpass_kernel(cutoff, kernel_size, pad_to=0):
@@ -534,9 +461,9 @@ def random_add_gaussian_noise(img, sigma_range=(0, 1.0), gray_prob=0, clip=True,
 
 
 def random_generate_gaussian_noise_pt(img, sigma_range=(0, 10), gray_prob=0):
-    sigma = torch.rand(
-        img.size(0), dtype=img.dtype, device=img.device) * (sigma_range[1] - sigma_range[0]) + sigma_range[0]
-    gray_noise = torch.rand(img.size(0), dtype=img.dtype, device=img.device)
+    device = img.device  # Get the device of input tensor
+    sigma = torch.rand(img.size(0), dtype=img.dtype, device=device) * (sigma_range[1] - sigma_range[0]) + sigma_range[0]
+    gray_noise = torch.rand(img.size(0), dtype=img.dtype, device=device)
     gray_noise = (gray_noise < gray_prob).float()
     return generate_gaussian_noise_pt(img, sigma, gray_noise)
 
@@ -607,46 +534,34 @@ def add_poisson_noise(img, scale=1.0, clip=True, rounds=False, gray_noise=False)
 
 
 def generate_poisson_noise_pt(img, scale=1.0, gray_noise=0):
-    """Generate a batch of poisson noise (PyTorch version)
-
-    Args:
-        img (Tensor): Input image, shape (b, c, h, w), range [0, 1], float32.
-        scale (float | Tensor): Noise scale. Number or Tensor with shape (b).
-            Default: 1.0.
-        gray_noise (float | Tensor): 0-1 number or Tensor with shape (b).
-            0 for False, 1 for True. Default: 0.
-
-    Returns:
-        (Tensor): Returned noisy image, shape (b, c, h, w), range[0, 1],
-            float32.
-    """
+    """Generate a batch of poisson noise (PyTorch version)"""
     b, _, h, w = img.size()
+    device = img.device  # Get the device of input tensor
+
     if isinstance(gray_noise, (float, int)):
         cal_gray_noise = gray_noise > 0
     else:
         gray_noise = gray_noise.view(b, 1, 1, 1)
         cal_gray_noise = torch.sum(gray_noise) > 0
+
     if cal_gray_noise:
-        img_gray = rgb_to_grayscale(img, num_output_channels=1)
-        # round and clip image for counting vals correctly
+        img_gray = F.rgb_to_grayscale(img)
         img_gray = torch.clamp((img_gray * 255.0).round(), 0, 255) / 255.
-        # use for-loop to get the unique values for each sample
         vals_list = [len(torch.unique(img_gray[i, :, :, :])) for i in range(b)]
         vals_list = [2**np.ceil(np.log2(vals)) for vals in vals_list]
-        vals = img_gray.new_tensor(vals_list).view(b, 1, 1, 1)
+        vals = torch.tensor(vals_list, dtype=img.dtype, device=device).view(b, 1, 1, 1)  # Create tensor on correct device
         out = torch.poisson(img_gray * vals) / vals
         noise_gray = out - img_gray
         noise_gray = noise_gray.expand(b, 3, h, w)
 
-    # always calculate color noise
-    # round and clip image for counting vals correctly
+    # Color noise
     img = torch.clamp((img * 255.0).round(), 0, 255) / 255.
-    # use for-loop to get the unique values for each sample
     vals_list = [len(torch.unique(img[i, :, :, :])) for i in range(b)]
     vals_list = [2**np.ceil(np.log2(vals)) for vals in vals_list]
-    vals = img.new_tensor(vals_list).view(b, 1, 1, 1)
+    vals = torch.tensor(vals_list, dtype=img.dtype, device=device).view(b, 1, 1, 1)  # Create tensor on correct device
     out = torch.poisson(img * vals) / vals
     noise = out - img
+
     if cal_gray_noise:
         noise = noise * (1 - gray_noise) + noise_gray * gray_noise
     if not isinstance(scale, (float, int)):
@@ -682,15 +597,6 @@ def add_poisson_noise_pt(img, scale=1.0, clip=True, rounds=False, gray_noise=0):
 # ----------------------- Random Poisson (Shot) Noise ----------------------- #
 
 
-def random_generate_poisson_noise(img, scale_range=(0, 1.0), gray_prob=0):
-    scale = np.random.uniform(scale_range[0], scale_range[1])
-    if np.random.uniform() < gray_prob:
-        gray_noise = True
-    else:
-        gray_noise = False
-    return generate_poisson_noise(img, scale, gray_noise)
-
-
 def random_add_poisson_noise(img, scale_range=(0, 1.0), gray_prob=0, clip=True, rounds=False):
     noise = random_generate_poisson_noise(img, scale_range, gray_prob)
     out = img + noise
@@ -704,9 +610,9 @@ def random_add_poisson_noise(img, scale_range=(0, 1.0), gray_prob=0, clip=True, 
 
 
 def random_generate_poisson_noise_pt(img, scale_range=(0, 1.0), gray_prob=0):
-    scale = torch.rand(
-        img.size(0), dtype=img.dtype, device=img.device) * (scale_range[1] - scale_range[0]) + scale_range[0]
-    gray_noise = torch.rand(img.size(0), dtype=img.dtype, device=img.device)
+    device = img.device  # Get the device of input tensor
+    scale = torch.rand(img.size(0), dtype=img.dtype, device=device) * (scale_range[1] - scale_range[0]) + scale_range[0]
+    gray_noise = torch.rand(img.size(0), dtype=img.dtype, device=device)
     gray_noise = (gray_noise < gray_prob).float()
     return generate_poisson_noise_pt(img, scale, gray_noise)
 
