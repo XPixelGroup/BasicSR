@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+packages = ["basicsr"]
+
+[project]
+name = "basicsr"
+version = "1.4.2"
+authors = [
+  { name="Xintao Wang", email="xintao.wang@outlook.com" },
+]
+description = "Open Source Image and Video Super-Resolution Toolbox"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = {text = "Apache-2.0"}
+
+dependencies = [
+  "addict", "future", "lmdb", "numpy", "opencv-python", "Pillow",
+  "pyyaml", "requests", "scikit-image", "scipy", "tb-nightly",
+  "torch", "torchvision", "tqdm", "yapf", "cython"
+]
+
+[project.urls]
+Homepage = "github.com/Disty0/BasicSR"
+Issues = "https://github.com/XPixelGroup/BasicSR/issues"
