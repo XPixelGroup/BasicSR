@@ -102,7 +102,7 @@ def parse_options(root_path, is_train=True):
     parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none', help='job launcher')
     parser.add_argument('--auto_resume', action='store_true')
     parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument('--local-rank', type=int, default=0)
     parser.add_argument(
         '--force_yml', nargs='+', default=None, help='Force to update yml files. Examples: train:ema_decay=0.999')
     args = parser.parse_args()
@@ -119,7 +119,7 @@ def parse_options(root_path, is_train=True):
         if args.launcher == 'slurm' and 'dist_params' in opt:
             init_dist(args.launcher, **opt['dist_params'])
         else:
-            init_dist(args.launcher)
+            init_dist(args.launcher, **opt['dist_params'])
     opt['rank'], opt['world_size'] = get_dist_info()
 
     # random seed
@@ -146,12 +146,21 @@ def parse_options(root_path, is_train=True):
     opt['auto_resume'] = args.auto_resume
     opt['is_train'] = is_train
 
+    opt['dtype'] = opt.get('dtype', 'float32')
+    if opt['dtype'] == 'float32':
+        opt['dtype'] = torch.float32
+    elif opt['dtype'] == 'bfloat16':
+        opt['dtype'] = torch.bfloat16
+
     # debug setting
     if args.debug and not opt['name'].startswith('debug'):
         opt['name'] = 'debug_' + opt['name']
 
     if opt['num_gpu'] == 'auto':
-        opt['num_gpu'] = torch.cuda.device_count()
+        if torch.cuda.is_available():
+            opt['num_gpu'] = torch.cuda.device_count()
+        if torch.xpu.is_available():
+            opt['num_gpu'] = torch.xpu.device_count()
 
     # datasets
     for phase, dataset in opt['datasets'].items():

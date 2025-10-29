@@ -7,7 +7,7 @@ from os import path as osp
 
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
-from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
+from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher, XPUPrefetcher
 from basicsr.models import build_model
 from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
                            init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
@@ -82,8 +82,14 @@ def load_resume_state(opt):
     if resume_state_path is None:
         resume_state = None
     else:
-        device_id = torch.cuda.current_device()
-        resume_state = torch.load(resume_state_path, map_location=lambda storage, loc: storage.cuda(device_id))
+        map_location = None
+        if torch.cuda.is_available():
+            device_id = torch.cuda.current_device()
+            map_location = lambda storage, loc: storage.cuda(device_id)
+        if torch.xpu.is_available():
+            device_id = torch.xpu.current_device()
+            map_location = f'xpu:{device_id}'
+        resume_state = torch.load(resume_state_path, map_location=map_location)
         check_resume(opt, resume_state['iter'])
     return resume_state
 
@@ -138,13 +144,18 @@ def train_pipeline(root_path):
     prefetch_mode = opt['datasets']['train'].get('prefetch_mode')
     if prefetch_mode is None or prefetch_mode == 'cpu':
         prefetcher = CPUPrefetcher(train_loader)
+    elif prefetch_mode == 'xpu':
+        prefetcher = XPUPrefetcher(train_loader, opt)
+        logger.info(f'Use {prefetch_mode} prefetch dataloader')
+        if opt['datasets']['train'].get('pin_memory') is not True:
+            raise ValueError('Please set pin_memory=True for XPUPrefetcher.')
     elif prefetch_mode == 'cuda':
         prefetcher = CUDAPrefetcher(train_loader, opt)
         logger.info(f'Use {prefetch_mode} prefetch dataloader')
         if opt['datasets']['train'].get('pin_memory') is not True:
             raise ValueError('Please set pin_memory=True for CUDAPrefetcher.')
     else:
-        raise ValueError(f"Wrong prefetch_mode {prefetch_mode}. Supported ones are: None, 'cuda', 'cpu'.")
+        raise ValueError(f"Wrong prefetch_mode {prefetch_mode}. Supported ones are: None, 'xpu', 'cuda', 'cpu'.")
 
     # training
     logger.info(f'Start training from epoch: {start_epoch}, iter: {current_iter}')

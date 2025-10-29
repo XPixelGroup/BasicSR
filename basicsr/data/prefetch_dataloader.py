@@ -120,3 +120,43 @@ class CUDAPrefetcher():
     def reset(self):
         self.loader = iter(self.ori_loader)
         self.preload()
+
+class XPUPrefetcher():
+    """XPU prefetcher.
+
+    It may consume more GPU memory.
+
+    Args:
+        loader: Dataloader.
+        opt (dict): Options.
+    """
+
+    def __init__(self, loader, opt):
+        self.ori_loader = loader
+        self.loader = iter(loader)
+        self.opt = opt
+        self.stream = torch.xpu.Stream()
+        self.device = torch.device('xpu' if opt['num_gpu'] != 0 else 'cpu')
+        self.preload()
+
+    def preload(self):
+        try:
+            self.batch = next(self.loader)  # self.batch is a dict
+        except StopIteration:
+            self.batch = None
+            return None
+        # put tensors to gpu
+        with torch.cuda.stream(self.stream):
+            for k, v in self.batch.items():
+                if torch.is_tensor(v):
+                    self.batch[k] = self.batch[k].to(device=self.device, non_blocking=True)
+
+    def next(self):
+        torch.xpu.current_stream().wait_stream(self.stream)
+        batch = self.batch
+        self.preload()
+        return batch
+
+    def reset(self):
+        self.loader = iter(self.ori_loader)
+        self.preload()

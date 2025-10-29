@@ -43,7 +43,7 @@ class SRModel(BaseModel):
             # define network net_g with Exponential Moving Average (EMA)
             # net_g_ema is used only for testing on one GPU and saving
             # There is no need to wrap with DistributedDataParallel
-            self.net_g_ema = build_network(self.opt['network_g']).to(self.device)
+            self.net_g_ema = build_network(self.opt['network_g']).to(self.device, dtype=self.dtype)
             # load pretrained model
             load_path = self.opt['path'].get('pretrain_network_g', None)
             if load_path is not None:
@@ -54,12 +54,12 @@ class SRModel(BaseModel):
 
         # define losses
         if train_opt.get('pixel_opt'):
-            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
+            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device, dtype=self.dtype)
         else:
             self.cri_pix = None
 
         if train_opt.get('perceptual_opt'):
-            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device, dtype=self.dtype)
         else:
             self.cri_perceptual = None
 
@@ -85,9 +85,9 @@ class SRModel(BaseModel):
         self.optimizers.append(self.optimizer_g)
 
     def feed_data(self, data):
-        self.lq = data['lq'].to(self.device)
+        self.lq = data['lq'].to(self.device, dtype=self.dtype)
         if 'gt' in data:
-            self.gt = data['gt'].to(self.device)
+            self.gt = data['gt'].to(self.device, dtype=self.dtype)
 
     def optimize_parameters(self, current_iter):
         self.optimizer_g.zero_grad()
@@ -144,7 +144,7 @@ class SRModel(BaseModel):
             elif op == 't':
                 tfnp = v2np.transpose((0, 1, 3, 2)).copy()
 
-            ret = torch.Tensor(tfnp).to(self.device)
+            ret = torch.Tensor(tfnp).to(self.device, dtype=self.dtype)
             # if self.precision == 'half': ret = ret.half()
 
             return ret
@@ -215,8 +215,7 @@ class SRModel(BaseModel):
             # tentative for out of GPU memory
             del self.lq
             del self.output
-            torch.cuda.empty_cache()
-
+            self.empty_cache()
             if save_img:
                 if self.opt['is_train']:
                     save_img_path = osp.join(self.opt['path']['visualization'], img_name,
@@ -265,10 +264,10 @@ class SRModel(BaseModel):
 
     def get_current_visuals(self):
         out_dict = OrderedDict()
-        out_dict['lq'] = self.lq.detach().cpu()
-        out_dict['result'] = self.output.detach().cpu()
+        out_dict['lq'] = self.lq.detach().cpu().float()
+        out_dict['result'] = self.output.detach().cpu().float()
         if hasattr(self, 'gt'):
-            out_dict['gt'] = self.gt.detach().cpu()
+            out_dict['gt'] = self.gt.detach().cpu().float()
         return out_dict
 
     def save(self, epoch, current_iter):

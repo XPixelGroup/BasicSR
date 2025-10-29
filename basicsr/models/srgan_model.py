@@ -22,7 +22,7 @@ class SRGANModel(SRModel):
             # define network net_g with Exponential Moving Average (EMA)
             # net_g_ema is used only for testing on one GPU and saving
             # There is no need to wrap with DistributedDataParallel
-            self.net_g_ema = build_network(self.opt['network_g']).to(self.device)
+            self.net_g_ema = build_network(self.opt['network_g']).to(self.device, dtype=self.dtype)
             # load pretrained model
             load_path = self.opt['path'].get('pretrain_network_g', None)
             if load_path is not None:
@@ -47,22 +47,22 @@ class SRGANModel(SRModel):
 
         # define losses
         if train_opt.get('pixel_opt'):
-            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device)
+            self.cri_pix = build_loss(train_opt['pixel_opt']).to(self.device, dtype=self.dtype)
         else:
             self.cri_pix = None
 
         if train_opt.get('ldl_opt'):
-            self.cri_ldl = build_loss(train_opt['ldl_opt']).to(self.device)
+            self.cri_ldl = build_loss(train_opt['ldl_opt']).to(self.device, dtype=self.dtype)
         else:
             self.cri_ldl = None
 
         if train_opt.get('perceptual_opt'):
-            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device)
+            self.cri_perceptual = build_loss(train_opt['perceptual_opt']).to(self.device, dtype=self.dtype)
         else:
             self.cri_perceptual = None
 
         if train_opt.get('gan_opt'):
-            self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device)
+            self.cri_gan = build_loss(train_opt['gan_opt']).to(self.device, dtype=self.dtype)
 
         self.net_d_iters = train_opt.get('net_d_iters', 1)
         self.net_d_init_iters = train_opt.get('net_d_init_iters', 0)

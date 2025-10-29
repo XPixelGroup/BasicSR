@@ -78,7 +78,7 @@ class VideoRecurrentModel(VideoBaseModel):
                 num_frame_each_folder = Counter(dataset.data_info['folder'])
                 for folder, num_frame in num_frame_each_folder.items():
                     self.metric_results[folder] = torch.zeros(
-                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device=self.device)
             # initialize the best metric results
             self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results

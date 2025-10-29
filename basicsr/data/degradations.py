@@ -634,7 +634,11 @@ def generate_poisson_noise_pt(img, scale=1.0, gray_noise=0):
         vals_list = [len(torch.unique(img_gray[i, :, :, :])) for i in range(b)]
         vals_list = [2**np.ceil(np.log2(vals)) for vals in vals_list]
         vals = img_gray.new_tensor(vals_list).view(b, 1, 1, 1)
-        out = torch.poisson(img_gray * vals) / vals
+        device = img_gray.device
+        if device.type == 'xpu':
+            out = torch.poisson((img_gray * vals).to('cpu')).to(device) / vals
+        else:
+            out = torch.poisson(img * vals) / vals
         noise_gray = out - img_gray
         noise_gray = noise_gray.expand(b, 3, h, w)
 
@@ -645,7 +649,11 @@ def generate_poisson_noise_pt(img, scale=1.0, gray_noise=0):
     vals_list = [len(torch.unique(img[i, :, :, :])) for i in range(b)]
     vals_list = [2**np.ceil(np.log2(vals)) for vals in vals_list]
     vals = img.new_tensor(vals_list).view(b, 1, 1, 1)
-    out = torch.poisson(img * vals) / vals
+    device = img.device
+    if device.type == 'xpu':
+        out = torch.poisson((img * vals).to('cpu')).to(device) / vals
+    else:
+        out = torch.poisson(img * vals) / vals
     noise = out - img
     if cal_gray_noise:
         noise = noise * (1 - gray_noise) + noise_gray * gray_noise

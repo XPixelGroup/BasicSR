@@ -6,7 +6,6 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-
 def init_dist(launcher, backend='nccl', **kwargs):
     if mp.get_start_method(allow_none=True) is None:
         mp.set_start_method('spawn')
@@ -20,9 +19,13 @@ def init_dist(launcher, backend='nccl', **kwargs):
 
 def _init_dist_pytorch(backend, **kwargs):
     rank = int(os.environ['RANK'])
-    num_gpus = torch.cuda.device_count()
-    torch.cuda.set_device(rank % num_gpus)
-    dist.init_process_group(backend=backend, **kwargs)
+    if backend == 'xccl':
+        num_gpus = torch.xpu.device_count()
+        torch.xpu.set_device(rank % num_gpus)
+    if backend == 'nccl':
+        num_gpus = torch.cuda.device_count()
+        torch.cuda.set_device(rank % num_gpus)
+    dist.init_process_group(backend=backend)
 
 
 def _init_dist_slurm(backend, port=None):

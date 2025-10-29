@@ -15,10 +15,22 @@ class BaseModel():
 
     def __init__(self, opt):
         self.opt = opt
-        self.device = torch.device('cuda' if opt['num_gpu'] != 0 else 'cpu')
+        self.device = 'cpu'
+        self.dtype = opt['dtype']
+        if opt['num_gpu'] != 0:
+            if torch.cuda.is_available():
+                self.device = 'cuda'
+            if torch.xpu.is_available():
+                self.device = 'xpu'
         self.is_train = opt['is_train']
         self.schedulers = []
         self.optimizers = []
+
+    def empty_cache(self):
+        if self.device == 'cuda':
+            torch.cuda.empty_cache()
+        elif self.device == 'xpu':
+            torch.xpu.empty_cache()
 
     def feed_data(self, data):
         pass
@@ -91,11 +103,16 @@ class BaseModel():
         Args:
             net (nn.Module)
         """
-        net = net.to(self.device)
+        net = net.to(self.device, dtype = self.dtype)
         if self.opt['dist']:
             find_unused_parameters = self.opt.get('find_unused_parameters', False)
+            ids = [0]
+            if self.device == 'cuda':
+                ids = [torch.cuda.current_device()]
+            if self.device == 'xpu':
+                ids = [torch.xpu.current_device()]
             net = DistributedDataParallel(
-                net, device_ids=[torch.cuda.current_device()], find_unused_parameters=find_unused_parameters)
+                net, device_ids=ids, find_unused_parameters=find_unused_parameters)
         elif self.opt['num_gpu'] > 1:
             net = DataParallel(net)
         return net
