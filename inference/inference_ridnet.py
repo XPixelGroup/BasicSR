@@ -1,8 +1,9 @@
 import argparse
-import cv2
 import glob
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 import torch
 from tqdm import tqdm
 
@@ -17,8 +18,9 @@ if __name__ == '__main__':
     parser.add_argument(
         '--model_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/RIDNet/RIDNet.pth')
+        # noqa: E251
+        default='experiments/pretrained_models/RIDNet/RIDNet.pth',
+    )
     args = parser.parse_args()
     if args.test_path.endswith('/'):  # solve when path ends with /
         args.test_path = args.test_path[:-1]

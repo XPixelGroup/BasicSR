@@ -30,6 +30,7 @@ def download_dataset(dataset, file_ids):
             extracted_path = save_path.replace('.zip', '')
             print(f'Extract {save_path} to {extracted_path}')
             import zipfile
+
             with zipfile.ZipFile(save_path, 'r') as zip_ref:
                 zip_ref.extractall(extracted_path)
 
@@ -38,6 +39,7 @@ def download_dataset(dataset, file_ids):
             if osp.isdir(subfolder):
                 print(f'Move {subfolder} to {extracted_path}')
                 import shutil
+
                 for path in glob.glob(osp.join(subfolder, '*')):
                     shutil.move(path, extracted_path)
                 shutil.rmtree(subfolder)
@@ -47,10 +49,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        'dataset',
-        type=str,
-        help=("Options: 'Set5', 'Set14'. "
-              "Set to 'all' if you want to download all the dataset."))
+        'dataset', type=str, help=("Options: 'Set5', 'Set14'. Set to 'all' if you want to download all the dataset.")
+    )
     args = parser.parse_args()
 
     file_ids = {
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         },
         'Set14': {
             'Set14.zip': '1vsw07sV8wGrRQ8UARe2fO5jjgy9QJy_E',
-        }
+        },
     }
 
     if args.dataset == 'all':

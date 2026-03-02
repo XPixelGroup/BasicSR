@@ -1,4 +1,5 @@
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .srgan_model import SRGANModel
 from .video_base_model import VideoBaseModel
 

@@ -1,9 +1,10 @@
 # Modified from https://github.com/JingyunLiang/SwinIR
 import argparse
-import cv2
 import glob
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 import torch
 from torch.nn import functional as F
 
@@ -18,7 +19,8 @@ def main():
         '--task',
         type=str,
         default='classical_sr',
-        help='classical_sr, lightweight_sr, real_sr, gray_dn, color_dn, jpeg_car')
+        help='classical_sr, lightweight_sr, real_sr, gray_dn, color_dn, jpeg_car',
+    )
     # dn: denoising; car: compression artifact removal
     # TODO: it now only supports sr, need to adapt to dn and jpeg_car
     parser.add_argument('--patch_size', type=int, default=64, help='training patch size')
@@ -29,7 +31,8 @@ def main():
     parser.add_argument(
         '--model_path',
         type=str,
-        default='experiments/pretrained_models/SwinIR/001_classicalSR_DF2K_s64w8_SwinIR-M_x4.pth')
+        default='experiments/pretrained_models/SwinIR/001_classicalSR_DF2K_s64w8_SwinIR-M_x4.pth',
+    )
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
@@ -49,7 +52,7 @@ def main():
         imgname = os.path.splitext(os.path.basename(path))[0]
         print('Testing', idx, imgname)
         # read image
-        img = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        img = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.0
         img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
         img = img.unsqueeze(0).to(device)
 
@@ -66,7 +69,7 @@ def main():
 
             output = model(img)
             _, _, h, w = output.size()
-            output = output[:, :, 0:h - mod_pad_h * args.scale, 0:w - mod_pad_w * args.scale]
+            output = output[:, :, 0 : h - mod_pad_h * args.scale, 0 : w - mod_pad_w * args.scale]
 
         # save image
         output = output.data.squeeze().float().cpu().clamp_(0, 1).numpy()
@@ -84,13 +87,14 @@ def define_model(args):
             in_chans=3,
             img_size=args.patch_size,
             window_size=8,
-            img_range=1.,
+            img_range=1.0,
             depths=[6, 6, 6, 6, 6, 6],
             embed_dim=180,
             num_heads=[6, 6, 6, 6, 6, 6],
             mlp_ratio=2,
             upsampler='pixelshuffle',
-            resi_connection='1conv')
+            resi_connection='1conv',
+        )
 
     # 002 lightweight image sr
     # use 'pixelshuffledirect' to save parameters
@@ -100,13 +104,14 @@ def define_model(args):
             in_chans=3,
             img_size=64,
             window_size=8,
-            img_range=1.,
+            img_range=1.0,
             depths=[6, 6, 6, 6],
             embed_dim=60,
             num_heads=[6, 6, 6, 6],
             mlp_ratio=2,
             upsampler='pixelshuffledirect',
-            resi_connection='1conv')
+            resi_connection='1conv',
+        )
 
     # 003 real-world image sr
     elif args.task == 'real_sr':
@@ -117,13 +122,14 @@ def define_model(args):
                 in_chans=3,
                 img_size=64,
                 window_size=8,
-                img_range=1.,
+                img_range=1.0,
                 depths=[6, 6, 6, 6, 6, 6],
                 embed_dim=180,
                 num_heads=[6, 6, 6, 6, 6, 6],
                 mlp_ratio=2,
                 upsampler='nearest+conv',
-                resi_connection='1conv')
+                resi_connection='1conv',
+            )
         else:
             # larger model size; use '3conv' to save parameters and memory; use ema for GAN training
             model = SwinIR(
@@ -131,13 +137,14 @@ def define_model(args):
                 in_chans=3,
                 img_size=64,
                 window_size=8,
-                img_range=1.,
+                img_range=1.0,
                 depths=[6, 6, 6, 6, 6, 6, 6, 6, 6],
                 embed_dim=248,
                 num_heads=[8, 8, 8, 8, 8, 8, 8, 8, 8],
                 mlp_ratio=2,
                 upsampler='nearest+conv',
-                resi_connection='3conv')
+                resi_connection='3conv',
+            )
 
     # 004 grayscale image denoising
     elif args.task == 'gray_dn':
@@ -146,13 +153,14 @@ def define_model(args):
             in_chans=1,
             img_size=128,
             window_size=8,
-            img_range=1.,
+            img_range=1.0,
             depths=[6, 6, 6, 6, 6, 6],
             embed_dim=180,
             num_heads=[6, 6, 6, 6, 6, 6],
             mlp_ratio=2,
             upsampler='',
-            resi_connection='1conv')
+            resi_connection='1conv',
+        )
 
     # 005 color image denoising
     elif args.task == 'color_dn':
@@ -161,13 +169,14 @@ def define_model(args):
             in_chans=3,
             img_size=128,
             window_size=8,
-            img_range=1.,
+            img_range=1.0,
             depths=[6, 6, 6, 6, 6, 6],
             embed_dim=180,
             num_heads=[6, 6, 6, 6, 6, 6],
             mlp_ratio=2,
             upsampler='',
-            resi_connection='1conv')
+            resi_connection='1conv',
+        )
 
     # 006 JPEG compression artifact reduction
     # use window_size=7 because JPEG encoding uses 8x8; use img_range=255 because it's slightly better than 1
@@ -177,13 +186,14 @@ def define_model(args):
             in_chans=1,
             img_size=126,
             window_size=7,
-            img_range=255.,
+            img_range=255.0,
             depths=[6, 6, 6, 6, 6, 6],
             embed_dim=180,
             num_heads=[6, 6, 6, 6, 6, 6],
             mlp_ratio=2,
             upsampler='',
-            resi_connection='1conv')
+            resi_connection='1conv',
+        )
 
     loadnet = torch.load(args.model_path)
     if 'params_ema' in loadnet:

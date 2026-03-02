@@ -1,6 +1,7 @@
 import os
-import torch
 from collections import OrderedDict
+
+import torch
 from torch import nn as nn
 from torchvision.models import vgg as vgg
 
@@ -9,27 +10,127 @@ from basicsr.utils.registry import ARCH_REGISTRY
 VGG_PRETRAIN_PATH = 'experiments/pretrained_models/vgg19-dcbb9e9d.pth'
 NAMES = {
     'vgg11': [
-        'conv1_1', 'relu1_1', 'pool1', 'conv2_1', 'relu2_1', 'pool2', 'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2',
-        'pool3', 'conv4_1', 'relu4_1', 'conv4_2', 'relu4_2', 'pool4', 'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2',
-        'pool5'
+        'conv1_1',
+        'relu1_1',
+        'pool1',
+        'conv2_1',
+        'relu2_1',
+        'pool2',
+        'conv3_1',
+        'relu3_1',
+        'conv3_2',
+        'relu3_2',
+        'pool3',
+        'conv4_1',
+        'relu4_1',
+        'conv4_2',
+        'relu4_2',
+        'pool4',
+        'conv5_1',
+        'relu5_1',
+        'conv5_2',
+        'relu5_2',
+        'pool5',
     ],
     'vgg13': [
-        'conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
-        'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'pool3', 'conv4_1', 'relu4_1', 'conv4_2', 'relu4_2', 'pool4',
-        'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'pool5'
+        'conv1_1',
+        'relu1_1',
+        'conv1_2',
+        'relu1_2',
+        'pool1',
+        'conv2_1',
+        'relu2_1',
+        'conv2_2',
+        'relu2_2',
+        'pool2',
+        'conv3_1',
+        'relu3_1',
+        'conv3_2',
+        'relu3_2',
+        'pool3',
+        'conv4_1',
+        'relu4_1',
+        'conv4_2',
+        'relu4_2',
+        'pool4',
+        'conv5_1',
+        'relu5_1',
+        'conv5_2',
+        'relu5_2',
+        'pool5',
     ],
     'vgg16': [
-        'conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
-        'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'pool3', 'conv4_1', 'relu4_1', 'conv4_2',
-        'relu4_2', 'conv4_3', 'relu4_3', 'pool4', 'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3',
-        'pool5'
+        'conv1_1',
+        'relu1_1',
+        'conv1_2',
+        'relu1_2',
+        'pool1',
+        'conv2_1',
+        'relu2_1',
+        'conv2_2',
+        'relu2_2',
+        'pool2',
+        'conv3_1',
+        'relu3_1',
+        'conv3_2',
+        'relu3_2',
+        'conv3_3',
+        'relu3_3',
+        'pool3',
+        'conv4_1',
+        'relu4_1',
+        'conv4_2',
+        'relu4_2',
+        'conv4_3',
+        'relu4_3',
+        'pool4',
+        'conv5_1',
+        'relu5_1',
+        'conv5_2',
+        'relu5_2',
+        'conv5_3',
+        'relu5_3',
+        'pool5',
     ],
     'vgg19': [
-        'conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
-        'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'conv3_4', 'relu3_4', 'pool3', 'conv4_1',
-        'relu4_1', 'conv4_2', 'relu4_2', 'conv4_3', 'relu4_3', 'conv4_4', 'relu4_4', 'pool4', 'conv5_1', 'relu5_1',
-        'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3', 'conv5_4', 'relu5_4', 'pool5'
-    ]
+        'conv1_1',
+        'relu1_1',
+        'conv1_2',
+        'relu1_2',
+        'pool1',
+        'conv2_1',
+        'relu2_1',
+        'conv2_2',
+        'relu2_2',
+        'pool2',
+        'conv3_1',
+        'relu3_1',
+        'conv3_2',
+        'relu3_2',
+        'conv3_3',
+        'relu3_3',
+        'conv3_4',
+        'relu3_4',
+        'pool3',
+        'conv4_1',
+        'relu4_1',
+        'conv4_2',
+        'relu4_2',
+        'conv4_3',
+        'relu4_3',
+        'conv4_4',
+        'relu4_4',
+        'pool4',
+        'conv5_1',
+        'relu5_1',
+        'conv5_2',
+        'relu5_2',
+        'conv5_3',
+        'relu5_3',
+        'conv5_4',
+        'relu5_4',
+        'pool5',
+    ],
 }
 
 
@@ -75,14 +176,16 @@ class VGGFeatureExtractor(nn.Module):
         pooling_stride (int): The stride of max pooling operation. Default: 2.
     """
 
-    def __init__(self,
-                 layer_name_list,
-                 vgg_type='vgg19',
-                 use_input_norm=True,
-                 range_norm=False,
-                 requires_grad=False,
-                 remove_pooling=False,
-                 pooling_stride=2):
+    def __init__(
+        self,
+        layer_name_list,
+        vgg_type='vgg19',
+        use_input_norm=True,
+        range_norm=False,
+        requires_grad=False,
+        remove_pooling=False,
+        pooling_stride=2,
+    ):
         super(VGGFeatureExtractor, self).__init__()
 
         self.layer_name_list = layer_name_list
@@ -107,7 +210,7 @@ class VGGFeatureExtractor(nn.Module):
         else:
             vgg_net = getattr(vgg, vgg_type)(pretrained=True)
 
-        features = vgg_net.features[:max_idx + 1]
+        features = vgg_net.features[: max_idx + 1]
 
         modified_net = OrderedDict()
         for k, v in zip(self.names, features):

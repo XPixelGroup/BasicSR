@@ -1,8 +1,9 @@
 import argparse
-import cv2
 import glob
 import os
 import shutil
+
+import cv2
 import torch
 
 from basicsr.archs.basicvsrpp_arch import BasicVSRPlusPlus
@@ -25,7 +26,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='experiments/pretrained_models/BasicVSRPP_REDS4.pth')
     parser.add_argument(
-        '--input_path', type=str, default='datasets/REDS4/sharp_bicubic/000', help='input test image folder')
+        '--input_path', type=str, default='datasets/REDS4/sharp_bicubic/000', help='input test image folder'
+    )
     parser.add_argument('--save_path', type=str, default='results/BasicVSRPP/000', help='save image path')
     parser.add_argument('--interval', type=int, default=100, help='interval size')
     args = parser.parse_args()
@@ -60,7 +62,7 @@ def main():
     else:
         for idx in range(0, num_imgs, args.interval):
             interval = min(args.interval, num_imgs - idx)
-            imgs, imgnames = read_img_seq(imgs_list[idx:idx + interval], return_imgname=True)
+            imgs, imgnames = read_img_seq(imgs_list[idx : idx + interval], return_imgname=True)
             imgs = imgs.unsqueeze(0).to(device)
             inference(imgs, imgnames, model, args.save_path)
 

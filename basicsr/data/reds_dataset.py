@@ -1,7 +1,8 @@
-import numpy as np
 import random
-import torch
 from pathlib import Path
+
+import numpy as np
+import torch
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop
@@ -51,7 +52,7 @@ class REDSDataset(data.Dataset):
         self.opt = opt
         self.gt_root, self.lq_root = Path(opt['dataroot_gt']), Path(opt['dataroot_lq'])
         self.flow_root = Path(opt['dataroot_flow']) if opt['dataroot_flow'] is not None else None
-        assert opt['num_frame'] % 2 == 1, (f'num_frame should be odd number, but got {opt["num_frame"]}')
+        assert opt['num_frame'] % 2 == 1, f'num_frame should be odd number, but got {opt["num_frame"]}'
         self.num_frame = opt['num_frame']
         self.num_half_frames = opt['num_frame'] // 2
 
@@ -67,8 +68,9 @@ class REDSDataset(data.Dataset):
         elif opt['val_partition'] == 'official':
             val_partition = [f'{v:03d}' for v in range(240, 270)]
         else:
-            raise ValueError(f'Wrong validation partition {opt["val_partition"]}.'
-                             f"Supported ones are ['official', 'REDS4'].")
+            raise ValueError(
+                f"Wrong validation partition {opt['val_partition']}.Supported ones are ['official', 'REDS4']."
+            )
         self.keys = [v for v in self.keys if v.split('/')[0] not in val_partition]
 
         # file client (io backend)
@@ -89,8 +91,7 @@ class REDSDataset(data.Dataset):
         self.random_reverse = opt['random_reverse']
         interval_str = ','.join(str(x) for x in opt['interval_list'])
         logger = get_root_logger()
-        logger.info(f'Temporal augmentation interval list: [{interval_str}]; '
-                    f'random reverse is {self.random_reverse}.')
+        logger.info(f'Temporal augmentation interval list: [{interval_str}]; random reverse is {self.random_reverse}.')
 
     def __getitem__(self, index):
         if self.file_client is None:
@@ -111,7 +112,7 @@ class REDSDataset(data.Dataset):
         # each clip has 100 frames starting from 0 to 99
         while (start_frame_idx < 0) or (end_frame_idx > 99):
             center_frame_idx = random.randint(0, 99)
-            start_frame_idx = (center_frame_idx - self.num_half_frames * interval)
+            start_frame_idx = center_frame_idx - self.num_half_frames * interval
             end_frame_idx = center_frame_idx + self.num_half_frames * interval
         frame_name = f'{center_frame_idx:08d}'
         neighbor_list = list(range(start_frame_idx, end_frame_idx + 1, interval))
@@ -119,7 +120,7 @@ class REDSDataset(data.Dataset):
         if self.random_reverse and random.random() < 0.5:
             neighbor_list.reverse()
 
-        assert len(neighbor_list) == self.num_frame, (f'Wrong length of neighbor list: {len(neighbor_list)}')
+        assert len(neighbor_list) == self.num_frame, f'Wrong length of neighbor list: {len(neighbor_list)}'
 
         # get the GT frame (as the center frame)
         if self.is_lmdb:
@@ -148,7 +149,7 @@ class REDSDataset(data.Dataset):
                 if self.is_lmdb:
                     flow_path = f'{clip_name}/{frame_name}_p{i}'
                 else:
-                    flow_path = (self.flow_root / clip_name / f'{frame_name}_p{i}.png')
+                    flow_path = self.flow_root / clip_name / f'{frame_name}_p{i}.png'
                 img_bytes = self.file_client.get(flow_path, 'flow')
                 cat_flow = imfrombytes(img_bytes, flag='grayscale', float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
@@ -159,7 +160,7 @@ class REDSDataset(data.Dataset):
                 if self.is_lmdb:
                     flow_path = f'{clip_name}/{frame_name}_n{i}'
                 else:
-                    flow_path = (self.flow_root / clip_name / f'{frame_name}_n{i}.png')
+                    flow_path = self.flow_root / clip_name / f'{frame_name}_n{i}.png'
                 img_bytes = self.file_client.get(flow_path, 'flow')
                 cat_flow = imfrombytes(img_bytes, flag='grayscale', float32=False)  # uint8, [0, 255]
                 dx, dy = np.split(cat_flow, 2, axis=0)
@@ -173,7 +174,7 @@ class REDSDataset(data.Dataset):
         # randomly crop
         img_gt, img_lqs = paired_random_crop(img_gt, img_lqs, gt_size, scale, img_gt_path)
         if self.flow_root is not None:
-            img_lqs, img_flows = img_lqs[:self.num_frame], img_lqs[self.num_frame:]
+            img_lqs, img_flows = img_lqs[: self.num_frame], img_lqs[self.num_frame :]
 
         # augmentation - flip, rotate
         img_lqs.append(img_gt)
@@ -259,8 +260,9 @@ class REDSRecurrentDataset(data.Dataset):
         elif opt['val_partition'] == 'official':
             val_partition = [f'{v:03d}' for v in range(240, 270)]
         else:
-            raise ValueError(f'Wrong validation partition {opt["val_partition"]}.'
-                             f"Supported ones are ['official', 'REDS4'].")
+            raise ValueError(
+                f"Wrong validation partition {opt['val_partition']}.Supported ones are ['official', 'REDS4']."
+            )
         if opt['test_mode']:
             self.keys = [v for v in self.keys if v.split('/')[0] in val_partition]
         else:
@@ -284,8 +286,7 @@ class REDSRecurrentDataset(data.Dataset):
         self.random_reverse = opt.get('random_reverse', False)
         interval_str = ','.join(str(x) for x in self.interval_list)
         logger = get_root_logger()
-        logger.info(f'Temporal augmentation interval list: [{interval_str}]; '
-                    f'random reverse is {self.random_reverse}.')
+        logger.info(f'Temporal augmentation interval list: [{interval_str}]; random reverse is {self.random_reverse}.')
 
     def __getitem__(self, index):
         if self.file_client is None:
@@ -340,8 +341,8 @@ class REDSRecurrentDataset(data.Dataset):
         img_results = augment(img_lqs, self.opt['use_hflip'], self.opt['use_rot'])
 
         img_results = img2tensor(img_results)
-        img_gts = torch.stack(img_results[len(img_lqs) // 2:], dim=0)
-        img_lqs = torch.stack(img_results[:len(img_lqs) // 2], dim=0)
+        img_gts = torch.stack(img_results[len(img_lqs) // 2 :], dim=0)
+        img_lqs = torch.stack(img_results[: len(img_lqs) // 2], dim=0)
 
         # img_lqs: (t, c, h, w)
         # img_gts: (t, c, h, w)

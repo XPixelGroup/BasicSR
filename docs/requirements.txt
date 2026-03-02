@@ -1,21 +1,18 @@
-# add all requirements to auto generate the docs
-addict
-future
+# Requirements for building the docs
 lmdb
-numpy
+numpy>=1.23
 opencv-python
-Pillow
+Pillow>=9.4
 pyyaml
-recommonmark
 requests
-scikit-image
-scipy
-sphinx
-sphinx_intl
-sphinx_markdown_tables
-sphinx_rtd_theme
-tb-nightly
-torch>=1.7
-torchvision
+scikit-image>=0.19
+scipy>=1.10
+tensorboard>=2.12
+torch>=2.0
+torchvision>=0.15
 tqdm
-yapf
+# Sphinx docs
+myst-parser
+sphinx>=7.0
+sphinx-rtd-theme
+sphinx-intl

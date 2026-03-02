@@ -34,7 +34,7 @@ def convert_net(ori_net, crt_net):
         elif 'multi_scale_dilation' in crt_k:
             if 'conv_blocks' in crt_k:
                 _, _, c, d, e = crt_k.split('.')
-                ori_k = f'MSDilate.conv{int(c)+1}.{d}.{e}'
+                ori_k = f'MSDilate.conv{int(c) + 1}.{d}.{e}'
             else:
                 ori_k = crt_k.replace('multi_scale_dilation.conv_fusion', 'MSDilate.convi')
 
@@ -53,9 +53,7 @@ def convert_net(ori_net, crt_net):
 
         # replace
         if crt_net[crt_k].size() != ori_net[ori_k].size():
-            raise ValueError('Wrong tensor size: \n'
-                             f'crt_net: {crt_net[crt_k].size()}\n'
-                             f'ori_net: {ori_net[ori_k].size()}')
+            raise ValueError(f'Wrong tensor size: \ncrt_net: {crt_net[crt_k].size()}\nori_net: {ori_net[ori_k].size()}')
         else:
             crt_net[crt_k] = ori_net[ori_k]
 
@@ -71,4 +69,5 @@ if __name__ == '__main__':
     torch.save(
         dict(params=crt_net_params),
         'experiments/pretrained_models/DFDNet/DFDNet_official.pth',
-        _use_new_zipfile_serialization=False)
+        _use_new_zipfile_serialization=False,
+    )

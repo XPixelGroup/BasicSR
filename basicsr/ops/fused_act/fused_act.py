@@ -1,6 +1,7 @@
 # modify from https://github.com/rosinality/stylegan2-pytorch/blob/master/op/fused_act.py # noqa:E501
 
 import os
+
 import torch
 from torch import nn
 from torch.autograd import Function
@@ -8,6 +9,7 @@ from torch.autograd import Function
 BASICSR_JIT = os.getenv('BASICSR_JIT')
 if BASICSR_JIT == 'True':
     from torch.utils.cpp_extension import load
+
     module_path = os.path.dirname(__file__)
     fused_act_ext = load(
         'fused',
@@ -28,7 +30,6 @@ else:
 
 
 class FusedLeakyReLUFunctionBackward(Function):
-
     @staticmethod
     def forward(ctx, grad_output, out, negative_slope, scale):
         ctx.save_for_backward(out)
@@ -50,15 +51,15 @@ class FusedLeakyReLUFunctionBackward(Function):
 
     @staticmethod
     def backward(ctx, gradgrad_input, gradgrad_bias):
-        out, = ctx.saved_tensors
-        gradgrad_out = fused_act_ext.fused_bias_act(gradgrad_input, gradgrad_bias, out, 3, 1, ctx.negative_slope,
-                                                    ctx.scale)
+        (out,) = ctx.saved_tensors
+        gradgrad_out = fused_act_ext.fused_bias_act(
+            gradgrad_input, gradgrad_bias, out, 3, 1, ctx.negative_slope, ctx.scale
+        )
 
         return gradgrad_out, None, None, None
 
 
 class FusedLeakyReLUFunction(Function):
-
     @staticmethod
     def forward(ctx, input, bias, negative_slope, scale):
         empty = input.new_empty(0)
@@ -71,7 +72,7 @@ class FusedLeakyReLUFunction(Function):
 
     @staticmethod
     def backward(ctx, grad_output):
-        out, = ctx.saved_tensors
+        (out,) = ctx.saved_tensors
 
         grad_input, grad_bias = FusedLeakyReLUFunctionBackward.apply(grad_output, out, ctx.negative_slope, ctx.scale)
 
@@ -79,7 +80,6 @@ class FusedLeakyReLUFunction(Function):
 
 
 class FusedLeakyReLU(nn.Module):
-
     def __init__(self, channel, negative_slope=0.2, scale=2**0.5):
         super().__init__()
 

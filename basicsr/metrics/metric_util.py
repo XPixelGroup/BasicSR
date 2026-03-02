@@ -38,8 +38,8 @@ def to_y_channel(img):
     Returns:
         (ndarray): Images with range [0, 255] (float type) without round.
     """
-    img = img.astype(np.float32) / 255.
+    img = img.astype(np.float32) / 255.0
     if img.ndim == 3 and img.shape[2] == 3:
         img = bgr2ycbcr(img, y_only=True)
         img = img[..., None]
-    return img * 255.
+    return img * 255.0

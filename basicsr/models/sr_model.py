@@ -1,6 +1,7 @@
-import torch
 from collections import OrderedDict
 from os import path as osp
+
+import torch
 from tqdm import tqdm
 
 from basicsr.archs import build_network
@@ -8,6 +9,7 @@ from basicsr.losses import build_loss
 from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .base_model import BaseModel
 
 
@@ -219,15 +221,20 @@ class SRModel(BaseModel):
 
             if save_img:
                 if self.opt['is_train']:
-                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                             f'{img_name}_{current_iter}.png')
+                    save_img_path = osp.join(
+                        self.opt['path']['visualization'], img_name, f'{img_name}_{current_iter}.png'
+                    )
                 else:
                     if self.opt['val']['suffix']:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'],
+                            dataset_name,
+                            f'{img_name}_{self.opt["val"]["suffix"]}.png',
+                        )
                     else:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                 f'{img_name}_{self.opt["name"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'], dataset_name, f'{img_name}_{self.opt["name"]}.png'
+                        )
                 imwrite(sr_img, save_img_path)
 
             if with_metrics:
@@ -242,7 +249,7 @@ class SRModel(BaseModel):
 
         if with_metrics:
             for metric in self.metric_results.keys():
-                self.metric_results[metric] /= (idx + 1)
+                self.metric_results[metric] /= idx + 1
                 # update the best metric result
                 self._update_best_metric_result(dataset_name, metric, self.metric_results[metric], current_iter)
 
@@ -253,8 +260,10 @@ class SRModel(BaseModel):
         for metric, value in self.metric_results.items():
             log_str += f'\t # {metric}: {value:.4f}'
             if hasattr(self, 'best_metric_results'):
-                log_str += (f'\tBest: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
-                            f'{self.best_metric_results[dataset_name][metric]["iter"]} iter')
+                log_str += (
+                    f'\tBest: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
+                    f'{self.best_metric_results[dataset_name][metric]["iter"]} iter'
+                )
             log_str += '\n'
 
         logger = get_root_logger()

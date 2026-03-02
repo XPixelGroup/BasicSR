@@ -2,6 +2,7 @@ import torch
 from torch import nn as nn
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .arch_util import Upsample, make_layer
 
 
@@ -16,8 +17,12 @@ class ChannelAttention(nn.Module):
     def __init__(self, num_feat, squeeze_factor=16):
         super(ChannelAttention, self).__init__()
         self.attention = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1), nn.Conv2d(num_feat, num_feat // squeeze_factor, 1, padding=0),
-            nn.ReLU(inplace=True), nn.Conv2d(num_feat // squeeze_factor, num_feat, 1, padding=0), nn.Sigmoid())
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(num_feat, num_feat // squeeze_factor, 1, padding=0),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(num_feat // squeeze_factor, num_feat, 1, padding=0),
+            nn.Sigmoid(),
+        )
 
     def forward(self, x):
         y = self.attention(x)
@@ -38,8 +43,11 @@ class RCAB(nn.Module):
         self.res_scale = res_scale
 
         self.rcab = nn.Sequential(
-            nn.Conv2d(num_feat, num_feat, 3, 1, 1), nn.ReLU(True), nn.Conv2d(num_feat, num_feat, 3, 1, 1),
-            ChannelAttention(num_feat, squeeze_factor))
+            nn.Conv2d(num_feat, num_feat, 3, 1, 1),
+            nn.ReLU(True),
+            nn.Conv2d(num_feat, num_feat, 3, 1, 1),
+            ChannelAttention(num_feat, squeeze_factor),
+        )
 
     def forward(self, x):
         res = self.rcab(x) * self.res_scale
@@ -60,7 +68,8 @@ class ResidualGroup(nn.Module):
         super(ResidualGroup, self).__init__()
 
         self.residual_group = make_layer(
-            RCAB, num_block, num_feat=num_feat, squeeze_factor=squeeze_factor, res_scale=res_scale)
+            RCAB, num_block, num_feat=num_feat, squeeze_factor=squeeze_factor, res_scale=res_scale
+        )
         self.conv = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
 
     def forward(self, x):
@@ -93,17 +102,19 @@ class RCAN(nn.Module):
             Default: (0.4488, 0.4371, 0.4040), calculated from DIV2K dataset.
     """
 
-    def __init__(self,
-                 num_in_ch,
-                 num_out_ch,
-                 num_feat=64,
-                 num_group=10,
-                 num_block=16,
-                 squeeze_factor=16,
-                 upscale=4,
-                 res_scale=1,
-                 img_range=255.,
-                 rgb_mean=(0.4488, 0.4371, 0.4040)):
+    def __init__(
+        self,
+        num_in_ch,
+        num_out_ch,
+        num_feat=64,
+        num_group=10,
+        num_block=16,
+        squeeze_factor=16,
+        upscale=4,
+        res_scale=1,
+        img_range=255.0,
+        rgb_mean=(0.4488, 0.4371, 0.4040),
+    ):
         super(RCAN, self).__init__()
 
         self.img_range = img_range
@@ -116,7 +127,8 @@ class RCAN(nn.Module):
             num_feat=num_feat,
             num_block=num_block,
             squeeze_factor=squeeze_factor,
-            res_scale=res_scale)
+            res_scale=res_scale,
+        )
         self.conv_after_body = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.upsample = Upsample(upscale, num_feat)
         self.conv_last = nn.Conv2d(num_feat, num_out_ch, 3, 1, 1)

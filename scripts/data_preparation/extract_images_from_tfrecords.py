@@ -1,8 +1,9 @@
 import argparse
-import cv2
 import glob
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 
 from basicsr.utils.lmdb_util import LmdbMaker
 
@@ -159,7 +160,8 @@ if __name__ == '__main__':
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--dataset', type=str, default='ffhq', help="Dataset name. Options: 'ffhq' | 'celeba'. Default: 'ffhq'.")
+        '--dataset', type=str, default='ffhq', help="Dataset name. Options: 'ffhq' | 'celeba'. Default: 'ffhq'."
+    )
     parser.add_argument(
         '--tf_file',
         type=str,
@@ -169,13 +171,16 @@ if __name__ == '__main__':
             'Put quotes around the wildcard argument to prevent the shell '
             'from expanding it.'
             "Example: 'datasets/celeba/celeba_tfrecords/validation/validation-r08-s-*-of-*.tfrecords'"  # noqa:E501
-        ))
+        ),
+    )
     parser.add_argument('--log_resolution', type=int, default=10, help='Log scale of resolution.')
     parser.add_argument('--save_root', type=str, default='datasets/ffhq/', help='Save root path.')
     parser.add_argument(
-        '--save_type', type=str, default='img', help="Save type. Options: 'img' | 'lmdb'. Default: 'img'.")
+        '--save_type', type=str, default='img', help="Save type. Options: 'img' | 'lmdb'. Default: 'img'."
+    )
     parser.add_argument(
-        '--compress_level', type=int, default=1, help='Compress level when encoding images. Default: 1.')
+        '--compress_level', type=int, default=1, help='Compress level when encoding images. Default: 1.'
+    )
     args = parser.parse_args()
 
     try:
@@ -189,11 +194,13 @@ if __name__ == '__main__':
             args.log_resolution,
             args.save_root,
             save_type=args.save_type,
-            compress_level=args.compress_level)
+            compress_level=args.compress_level,
+        )
     else:
         convert_celeba_tfrecords(
             args.tf_file,
             args.log_resolution,
             args.save_root,
             save_type=args.save_type,
-            compress_level=args.compress_level)
+            compress_level=args.compress_level,
+        )

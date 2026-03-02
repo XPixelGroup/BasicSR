@@ -1,19 +1,21 @@
 import glob
 import subprocess
-import torch
 from os import path as osp
+
+import torch
 from torch.serialization import _is_zipfile, _open_file_like
 
 
 def update_sha(paths):
     print('# Update sha ...')
     for idx, path in enumerate(paths):
-        print(f'{idx+1:03d}: Processing {path}')
+        print(f'{idx + 1:03d}: Processing {path}')
         net = torch.load(path, map_location=torch.device('cpu'))
         basename = osp.basename(path)
         if 'params' not in net and 'params_ema' not in net:
-            user_response = input(f'WARN: Model {basename} does not have "params"/"params_ema" key. '
-                                  'Do you still want to continue? Y/N\n')
+            user_response = input(
+                f'WARN: Model {basename} does not have "params"/"params_ema" key. Do you still want to continue? Y/N\n'
+            )
             if user_response.lower() == 'y':
                 pass
             elif user_response.lower() == 'n':
@@ -45,7 +47,7 @@ def convert_to_backward_compatible_models(paths):
     """
     print('# Convert to backward compatible pth files ...')
     for idx, path in enumerate(paths):
-        print(f'{idx+1:03d}: Processing {path}')
+        print(f'{idx + 1:03d}: Processing {path}')
         flag_need_conversion = False
         with _open_file_like(path, 'rb') as opened_file:
             if _is_zipfile(opened_file):

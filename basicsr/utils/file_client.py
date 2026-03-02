@@ -32,6 +32,7 @@ class MemcachedBackend(BaseStorageBackend):
     def __init__(self, server_list_cfg, client_cfg, sys_path=None):
         if sys_path is not None:
             import sys
+
             sys.path.append(sys_path)
         try:
             import mc
@@ -47,6 +48,7 @@ class MemcachedBackend(BaseStorageBackend):
     def get(self, filepath):
         filepath = str(filepath)
         import mc
+
         self._client.Get(filepath, self._mc_buffer)
         value_buf = mc.ConvertBuffer(self._mc_buffer)
         return value_buf
@@ -104,8 +106,10 @@ class LmdbBackend(BaseStorageBackend):
             self.db_paths = [str(v) for v in db_paths]
         elif isinstance(db_paths, str):
             self.db_paths = [str(db_paths)]
-        assert len(client_keys) == len(self.db_paths), ('client_keys and db_paths should have the same length, '
-                                                        f'but received {len(client_keys)} and {len(self.db_paths)}.')
+        assert len(client_keys) == len(self.db_paths), (
+            'client_keys and db_paths should have the same length, '
+            f'but received {len(client_keys)} and {len(self.db_paths)}.'
+        )
 
         self._client = {}
         for client, path in zip(client_keys, self.db_paths):
@@ -119,7 +123,7 @@ class LmdbBackend(BaseStorageBackend):
             client_key (str): Used for distinguishing different lmdb envs.
         """
         filepath = str(filepath)
-        assert client_key in self._client, (f'client_key {client_key} is not in lmdb clients.')
+        assert client_key in self._client, f'client_key {client_key} is not in lmdb clients.'
         client = self._client[client_key]
         with client.begin(write=False) as txn:
             value_buf = txn.get(filepath.encode('ascii'))
@@ -150,8 +154,9 @@ class FileClient(object):
 
     def __init__(self, backend='disk', **kwargs):
         if backend not in self._backends:
-            raise ValueError(f'Backend {backend} is not supported. Currently supported ones'
-                             f' are {list(self._backends.keys())}')
+            raise ValueError(
+                f'Backend {backend} is not supported. Currently supported ones are {list(self._backends.keys())}'
+            )
         self.backend = backend
         self.client = self._backends[backend](**kwargs)
 

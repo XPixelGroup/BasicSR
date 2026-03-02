@@ -1,7 +1,8 @@
 import argparse
 import glob
-import numpy as np
 import os
+
+import numpy as np
 import torch
 import torchvision.transforms as transforms
 from skimage import io
@@ -27,7 +28,8 @@ def get_part_location(landmarks):
     # left eye
     mean_left_eye = np.mean(landmarks[map_left_eye], 0)  # (x, y)
     half_len_left_eye = np.max(
-        (np.max(np.max(landmarks[map_left_eye], 0) - np.min(landmarks[map_left_eye], 0)) / 2, 16))  # A number
+        (np.max(np.max(landmarks[map_left_eye], 0) - np.min(landmarks[map_left_eye], 0)) / 2, 16)
+    )  # A number
     loc_left_eye = np.hstack((mean_left_eye - half_len_left_eye + 1, mean_left_eye + half_len_left_eye)).astype(int)
     loc_left_eye = torch.from_numpy(loc_left_eye).unsqueeze(0)
     # (1, 4), the four numbers forms two  coordinates in the diagonal
@@ -35,20 +37,20 @@ def get_part_location(landmarks):
     # right eye
     mean_right_eye = np.mean(landmarks[map_right_eye], 0)
     half_len_right_eye = np.max(
-        (np.max(np.max(landmarks[map_right_eye], 0) - np.min(landmarks[map_right_eye], 0)) / 2, 16))
-    loc_right_eye = np.hstack(
-        (mean_right_eye - half_len_right_eye + 1, mean_right_eye + half_len_right_eye)).astype(int)
+        (np.max(np.max(landmarks[map_right_eye], 0) - np.min(landmarks[map_right_eye], 0)) / 2, 16)
+    )
+    loc_right_eye = np.hstack((mean_right_eye - half_len_right_eye + 1, mean_right_eye + half_len_right_eye)).astype(
+        int
+    )
     loc_right_eye = torch.from_numpy(loc_right_eye).unsqueeze(0)
     # nose
     mean_nose = np.mean(landmarks[map_nose], 0)
-    half_len_nose = np.max(
-        (np.max(np.max(landmarks[map_nose], 0) - np.min(landmarks[map_nose], 0)) / 2, 16))  # noqa: E126
+    half_len_nose = np.max((np.max(np.max(landmarks[map_nose], 0) - np.min(landmarks[map_nose], 0)) / 2, 16))  # noqa: E126
     loc_nose = np.hstack((mean_nose - half_len_nose + 1, mean_nose + half_len_nose)).astype(int)
     loc_nose = torch.from_numpy(loc_nose).unsqueeze(0)
     # mouth
     mean_mouth = np.mean(landmarks[map_mouth], 0)
-    half_len_mouth = np.max(
-        (np.max(np.max(landmarks[map_mouth], 0) - np.min(landmarks[map_mouth], 0)) / 2, 16))  # noqa: E126
+    half_len_mouth = np.max((np.max(np.max(landmarks[map_mouth], 0) - np.min(landmarks[map_mouth], 0)) / 2, 16))  # noqa: E126
     loc_mouth = np.hstack((mean_mouth - half_len_mouth + 1, mean_mouth + half_len_mouth)).astype(int)
     loc_mouth = torch.from_numpy(loc_mouth).unsqueeze(0)
 
@@ -67,13 +69,15 @@ if __name__ == '__main__':
     parser.add_argument(
         '--model_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/DFDNet/DFDNet_official-d1fa5650.pth')
+        # noqa: E251
+        default='experiments/pretrained_models/DFDNet/DFDNet_official-d1fa5650.pth',
+    )
     parser.add_argument(
         '--dict_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/DFDNet/DFDNet_dict_512-f79685f0.pth')
+        # noqa: E251
+        default='experiments/pretrained_models/DFDNet/DFDNet_dict_512-f79685f0.pth',
+    )
     parser.add_argument('--test_path', type=str, default='datasets/TestWhole')
     parser.add_argument('--upsample_num_times', type=int, default=1)
     parser.add_argument('--save_inverse_affine', action='store_true')
@@ -89,20 +93,20 @@ if __name__ == '__main__':
     parser.add_argument(
         '--detection_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/dlib/mmod_human_face_detector-4cb19393.dat'  # noqa: E501
+        # noqa: E251
+        default='experiments/pretrained_models/dlib/mmod_human_face_detector-4cb19393.dat',  # noqa: E501
     )
     parser.add_argument(
         '--landmark5_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/dlib/shape_predictor_5_face_landmarks-c4b1e980.dat'  # noqa: E501
+        # noqa: E251
+        default='experiments/pretrained_models/dlib/shape_predictor_5_face_landmarks-c4b1e980.dat',  # noqa: E501
     )
     parser.add_argument(
         '--landmark68_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/dlib/shape_predictor_68_face_landmarks-fbdc2cb8.dat'  # noqa: E501
+        # noqa: E251
+        default='experiments/pretrained_models/dlib/shape_predictor_68_face_landmarks-fbdc2cb8.dat',  # noqa: E501
     )
 
     args = parser.parse_args()
@@ -137,7 +141,8 @@ if __name__ == '__main__':
         face_helper.init_dlib(args.detection_path, args.landmark5_path, args.landmark68_path)
         # detect faces
         num_det_faces = face_helper.detect_faces(
-            img_path, upsample_num_times=args.upsample_num_times, only_keep_largest=args.only_keep_largest)
+            img_path, upsample_num_times=args.upsample_num_times, only_keep_largest=args.only_keep_largest
+        )
         # get 5 face landmarks for each face
         num_landmarks = face_helper.get_face_landmarks_5()
         print(f'\tDetect {num_det_faces} faces, {num_landmarks} landmarks.')

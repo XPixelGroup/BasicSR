@@ -8,10 +8,9 @@
 
 [![LICENSE](https://img.shields.io/github/license/xinntao/basicsr.svg)](https://github.com/xinntao/BasicSR/blob/master/LICENSE.txt)
 [![PyPI](https://img.shields.io/pypi/v/basicsr)](https://pypi.org/project/basicsr/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/xinntao/BasicSR.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xinntao/BasicSR/context:python)
-[![python lint](https://github.com/xinntao/BasicSR/actions/workflows/pylint.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/pylint.yml)
-[![Publish-pip](https://github.com/xinntao/BasicSR/actions/workflows/publish-pip.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/publish-pip.yml)
-[![gitee mirror](https://github.com/xinntao/BasicSR/actions/workflows/gitee-mirror.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/gitee-mirror.yml)
+[![Python](https://img.shields.io/pypi/pyversions/basicsr)](https://pypi.org/project/basicsr/)
+[![Lint](https://github.com/xinntao/BasicSR/actions/workflows/pylint.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/pylint.yml)
+[![Publish](https://github.com/xinntao/BasicSR/actions/workflows/publish-pip.yml/badge.svg)](https://github.com/xinntao/BasicSR/blob/master/.github/workflows/publish-pip.yml)
 
 </div>
 
@@ -25,6 +24,26 @@
 🚀 We add [BasicSR-Examples](https://github.com/xinntao/BasicSR-examples), which provides guidance and templates of using BasicSR as a python package. 🚀 <br>
 📢 **技术交流QQ群**：**320960100** &emsp; 入群答案：**互帮互助共同进步** <br>
 🧭 [入群二维码](#-contact) (QQ、微信) &emsp;&emsp; [入群指南 (腾讯文档)](https://docs.qq.com/doc/DYXBSUmxOT0xBZ05u) <br>
+
+---
+
+## Installation
+
+```bash
+pip install basicsr
+```
+
+For development or CUDA extension builds:
+
+```bash
+git clone https://github.com/XPixelGroup/BasicSR
+cd BasicSR
+pip install -e ".[dev]"
+# Optional: compile CUDA ops
+BASICSR_EXT=True pip install -e .
+```
+
+> **Requirements**: Python ≥ 3.9, PyTorch ≥ 2.0
 
 ---
 
@@ -120,4 +139,3 @@ If you have any questions, please email `xintao.alpha@gmail.com`, `xintao.wang@o
   <img src="https://user-images.githubusercontent.com/17445847/139572512-8e192aac-00fa-432b-ac8e-a33026b019df.png"  height="300">
 </p>
 
-![visitors](https://visitor-badge.glitch.me/badge?page_id=XPixelGroup/BasicSR) (start from 2022-11-06)

@@ -1,5 +1,6 @@
 from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .video_base_model import VideoBaseModel
 
 
@@ -33,12 +34,9 @@ class EDVRModel(VideoBaseModel):
             optim_params = [
                 {  # add normal params first
                     'params': normal_params,
-                    'lr': train_opt['optim_g']['lr']
+                    'lr': train_opt['optim_g']['lr'],
                 },
-                {
-                    'params': dcn_params,
-                    'lr': train_opt['optim_g']['lr'] * dcn_lr_mul
-                },
+                {'params': dcn_params, 'lr': train_opt['optim_g']['lr'] * dcn_lr_mul},
             ]
 
         optim_type = train_opt['optim_g'].pop('type')

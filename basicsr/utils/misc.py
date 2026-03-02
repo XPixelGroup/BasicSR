@@ -1,9 +1,10 @@
-import numpy as np
 import os
 import random
 import time
-import torch
 from os import path as osp
+
+import numpy as np
+import torch
 
 from .dist_util import master_only
 
@@ -111,10 +112,11 @@ def check_resume(opt, resume_iter):
         for network in networks:
             name = f'pretrain_{network}'
             basename = network.replace('network_', '')
-            if opt['path'].get('ignore_resume_networks') is None or (network
-                                                                     not in opt['path']['ignore_resume_networks']):
+            if opt['path'].get('ignore_resume_networks') is None or (
+                network not in opt['path']['ignore_resume_networks']
+            ):
                 opt['path'][name] = osp.join(opt['path']['models'], f'net_{basename}_{resume_iter}.pth')
-                print(f"Set {name} to {opt['path'][name]}")
+                print(f'Set {name} to {opt["path"][name]}')
 
         # change param_key to params in resume
         param_keys = [key for key in opt['path'].keys() if key.startswith('param_key')]

@@ -3,6 +3,7 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .arch_util import DCNv2Pack, ResidualBlockNoBN, make_layer
 
 
@@ -268,18 +269,20 @@ class EDVR(nn.Module):
         with_tsa (bool): Whether has TSA module. Default: True.
     """
 
-    def __init__(self,
-                 num_in_ch=3,
-                 num_out_ch=3,
-                 num_feat=64,
-                 num_frame=5,
-                 deformable_groups=8,
-                 num_extract_block=5,
-                 num_reconstruct_block=10,
-                 center_frame_idx=None,
-                 hr_in=False,
-                 with_predeblur=False,
-                 with_tsa=True):
+    def __init__(
+        self,
+        num_in_ch=3,
+        num_out_ch=3,
+        num_feat=64,
+        num_frame=5,
+        deformable_groups=8,
+        num_extract_block=5,
+        num_reconstruct_block=10,
+        center_frame_idx=None,
+        hr_in=False,
+        with_predeblur=False,
+        with_tsa=True,
+    ):
         super(EDVR, self).__init__()
         if center_frame_idx is None:
             self.center_frame_idx = num_frame // 2
@@ -325,9 +328,9 @@ class EDVR(nn.Module):
     def forward(self, x):
         b, t, c, h, w = x.size()
         if self.hr_in:
-            assert h % 16 == 0 and w % 16 == 0, ('The height and width must be multiple of 16.')
+            assert h % 16 == 0 and w % 16 == 0, 'The height and width must be multiple of 16.'
         else:
-            assert h % 4 == 0 and w % 4 == 0, ('The height and width must be multiple of 4.')
+            assert h % 4 == 0 and w % 4 == 0, 'The height and width must be multiple of 4.'
 
         x_center = x[:, self.center_frame_idx, :, :, :].contiguous()
 
@@ -354,13 +357,16 @@ class EDVR(nn.Module):
 
         # PCD alignment
         ref_feat_l = [  # reference feature list
-            feat_l1[:, self.center_frame_idx, :, :, :].clone(), feat_l2[:, self.center_frame_idx, :, :, :].clone(),
-            feat_l3[:, self.center_frame_idx, :, :, :].clone()
+            feat_l1[:, self.center_frame_idx, :, :, :].clone(),
+            feat_l2[:, self.center_frame_idx, :, :, :].clone(),
+            feat_l3[:, self.center_frame_idx, :, :, :].clone(),
         ]
         aligned_feat = []
         for i in range(t):
             nbr_feat_l = [  # neighboring feature list
-                feat_l1[:, i, :, :, :].clone(), feat_l2[:, i, :, :, :].clone(), feat_l3[:, i, :, :, :].clone()
+                feat_l1[:, i, :, :, :].clone(),
+                feat_l2[:, i, :, :, :].clone(),
+                feat_l3[:, i, :, :, :].clone(),
             ]
             aligned_feat.append(self.pcd_align(nbr_feat_l, ref_feat_l))
         aligned_feat = torch.stack(aligned_feat, dim=1)  # (b, t, c, h, w)

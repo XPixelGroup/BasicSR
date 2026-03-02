@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from basicsr.utils.registry import METRIC_REGISTRY
+
 from .niqe import calculate_niqe
 from .psnr_ssim import calculate_psnr, calculate_ssim
 

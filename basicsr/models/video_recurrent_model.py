@@ -1,6 +1,7 @@
-import torch
 from collections import Counter
 from os import path as osp
+
+import torch
 from torch import distributed as dist
 from tqdm import tqdm
 
@@ -8,12 +9,12 @@ from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .video_base_model import VideoBaseModel
 
 
 @MODEL_REGISTRY.register()
 class VideoRecurrentModel(VideoBaseModel):
-
     def __init__(self, opt):
         super(VideoRecurrentModel, self).__init__(opt)
         if self.is_train:
@@ -37,12 +38,9 @@ class VideoRecurrentModel(VideoBaseModel):
             optim_params = [
                 {  # add normal params first
                     'params': normal_params,
-                    'lr': train_opt['optim_g']['lr']
+                    'lr': train_opt['optim_g']['lr'],
                 },
-                {
-                    'params': flow_params,
-                    'lr': train_opt['optim_g']['lr'] * flow_lr_mul
-                },
+                {'params': flow_params, 'lr': train_opt['optim_g']['lr'] * flow_lr_mul},
             ]
 
         optim_type = train_opt['optim_g'].pop('type')
@@ -78,7 +76,8 @@ class VideoRecurrentModel(VideoBaseModel):
                 num_frame_each_folder = Counter(dataset.data_info['folder'])
                 for folder, num_frame in num_frame_each_folder.items():
                     self.metric_results[folder] = torch.zeros(
-                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda'
+                    )
             # initialize the best metric results
             self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
@@ -140,11 +139,19 @@ class VideoRecurrentModel(VideoBaseModel):
                                 clip_ = val_data['lq_path'].split('/')[-3]
                                 seq_ = val_data['lq_path'].split('/')[-2]
                                 name_ = f'{clip_}_{seq_}'
-                                img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
-                                                    f"{name_}_{self.opt['name']}.png")
+                                img_path = osp.join(
+                                    self.opt['path']['visualization'],
+                                    dataset_name,
+                                    folder,
+                                    f'{name_}_{self.opt["name"]}.png',
+                                )
                             else:  # others
-                                img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
-                                                    f"{idx:08d}_{self.opt['name']}.png")
+                                img_path = osp.join(
+                                    self.opt['path']['visualization'],
+                                    dataset_name,
+                                    folder,
+                                    f'{idx:08d}_{self.opt["name"]}.png',
+                                )
                             # image name only for REDS dataset
                         imwrite(result_img, img_path)
 

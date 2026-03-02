@@ -3,6 +3,7 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .arch_util import flow_warp
 
 
@@ -17,14 +18,19 @@ class BasicModule(nn.Module):
         super(BasicModule, self).__init__()
         self.basic_module = nn.Sequential(
             nn.Conv2d(in_channels=8, out_channels=32, kernel_size=7, stride=1, padding=3, bias=False),
-            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, stride=1, padding=3, bias=False),
-            nn.BatchNorm2d(64), nn.ReLU(inplace=True),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
             nn.Conv2d(in_channels=64, out_channels=32, kernel_size=7, stride=1, padding=3, bias=False),
-            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
             nn.Conv2d(in_channels=32, out_channels=16, kernel_size=7, stride=1, padding=3, bias=False),
-            nn.BatchNorm2d(16), nn.ReLU(inplace=True),
-            nn.Conv2d(in_channels=16, out_channels=2, kernel_size=7, stride=1, padding=3))
+            nn.BatchNorm2d(16),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=16, out_channels=2, kernel_size=7, stride=1, padding=3),
+        )
 
     def forward(self, tensor_input):
         """
@@ -86,7 +92,8 @@ class SPyNetTOF(nn.Module):
         for i in range(4):
             flow_up = F.interpolate(input=flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
             flow = flow_up + self.basic_module[i](
-                torch.cat([ref[i], flow_warp(supp[i], flow_up.permute(0, 2, 3, 1)), flow_up], 1))
+                torch.cat([ref[i], flow_warp(supp[i], flow_up.permute(0, 2, 3, 1)), flow_up], 1)
+            )
         return flow
 
 

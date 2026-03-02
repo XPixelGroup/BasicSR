@@ -1,6 +1,7 @@
 # modify from https://github.com/rosinality/stylegan2-pytorch/blob/master/op/upfirdn2d.py  # noqa:E501
 
 import os
+
 import torch
 from torch.autograd import Function
 from torch.nn import functional as F
@@ -8,6 +9,7 @@ from torch.nn import functional as F
 BASICSR_JIT = os.getenv('BASICSR_JIT')
 if BASICSR_JIT == 'True':
     from torch.utils.cpp_extension import load
+
     module_path = os.path.dirname(__file__)
     upfirdn2d_ext = load(
         'upfirdn2d',
@@ -28,7 +30,6 @@ else:
 
 
 class UpFirDn2dBackward(Function):
-
     @staticmethod
     def forward(ctx, grad_output, kernel, grad_kernel, up, down, pad, g_pad, in_size, out_size):
 
@@ -71,7 +72,7 @@ class UpFirDn2dBackward(Function):
 
     @staticmethod
     def backward(ctx, gradgrad_input):
-        kernel, = ctx.saved_tensors
+        (kernel,) = ctx.saved_tensors
 
         gradgrad_input = gradgrad_input.reshape(-1, ctx.in_size[2], ctx.in_size[3], 1)
 
@@ -95,7 +96,6 @@ class UpFirDn2dBackward(Function):
 
 
 class UpFirDn2d(Function):
-
     @staticmethod
     def forward(ctx, input, kernel, up, down, pad):
         up_x, up_y = up
@@ -171,7 +171,12 @@ def upfirdn2d_native(input, kernel, up_x, up_y, down_x, down_y, pad_x0, pad_x1, 
     out = out.view(-1, in_h * up_y, in_w * up_x, minor)
 
     out = F.pad(out, [0, 0, max(pad_x0, 0), max(pad_x1, 0), max(pad_y0, 0), max(pad_y1, 0)])
-    out = out[:, max(-pad_y0, 0):out.shape[1] - max(-pad_y1, 0), max(-pad_x0, 0):out.shape[2] - max(-pad_x1, 0), :, ]
+    out = out[
+        :,
+        max(-pad_y0, 0) : out.shape[1] - max(-pad_y1, 0),
+        max(-pad_x0, 0) : out.shape[2] - max(-pad_x1, 0),
+        :,
+    ]
 
     out = out.permute(0, 3, 1, 2)
     out = out.reshape([-1, 1, in_h * up_y + pad_y0 + pad_y1, in_w * up_x + pad_x0 + pad_x1])

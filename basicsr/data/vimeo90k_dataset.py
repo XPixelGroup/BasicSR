@@ -1,6 +1,7 @@
 import random
-import torch
 from pathlib import Path
+
+import torch
 from torch.utils import data as data
 
 from basicsr.data.transforms import augment, paired_random_crop
@@ -135,7 +136,6 @@ class Vimeo90KDataset(data.Dataset):
 
 @DATASET_REGISTRY.register()
 class Vimeo90KRecurrentDataset(Vimeo90KDataset):
-
     def __init__(self, opt):
         super(Vimeo90KRecurrentDataset, self).__init__(opt)
 

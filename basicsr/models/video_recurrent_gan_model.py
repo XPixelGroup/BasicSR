@@ -1,16 +1,17 @@
-import torch
 from collections import OrderedDict
+
+import torch
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
 from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .video_recurrent_model import VideoRecurrentModel
 
 
 @MODEL_REGISTRY.register()
 class VideoRecurrentGANModel(VideoRecurrentModel):
-
     def init_training_settings(self):
         train_opt = self.opt['train']
 
@@ -79,12 +80,9 @@ class VideoRecurrentGANModel(VideoRecurrentModel):
             optim_params = [
                 {  # add flow params first
                     'params': flow_params,
-                    'lr': train_opt['lr_flow']
+                    'lr': train_opt['lr_flow'],
                 },
-                {
-                    'params': normal_params,
-                    'lr': train_opt['optim_g']['lr']
-                },
+                {'params': normal_params, 'lr': train_opt['optim_g']['lr']},
             ]
         else:
             optim_params = self.net_g.parameters()
@@ -121,7 +119,7 @@ class VideoRecurrentGANModel(VideoRecurrentModel):
 
         l_g_total = 0
         loss_dict = OrderedDict()
-        if (current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters):
+        if current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters:
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)

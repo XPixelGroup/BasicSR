@@ -1,5 +1,6 @@
 import argparse
 import math
+
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -40,7 +41,8 @@ def calculate_fid_folder():
         shuffle=False,
         num_workers=args.num_workers,
         sampler=None,
-        drop_last=False)
+        drop_last=False,
+    )
     args.num_sample = min(args.num_sample, len(dataset))
     total_batch = math.ceil(args.num_sample / args.batch_size)
 
@@ -54,7 +56,7 @@ def calculate_fid_folder():
     features = extract_inception_features(data_generator(data_loader, total_batch), inception, total_batch, device)
     features = features.numpy()
     total_len = features.shape[0]
-    features = features[:args.num_sample]
+    features = features[: args.num_sample]
     print(f'Extracted {total_len} features, use the first {features.shape[0]} features to calculate stats.')
 
     sample_mean = np.mean(features, 0)

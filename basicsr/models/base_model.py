@@ -1,8 +1,9 @@
 import os
 import time
-import torch
 from collections import OrderedDict
 from copy import deepcopy
+
+import torch
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from basicsr.models import lr_scheduler as lr_scheduler
@@ -10,7 +11,7 @@ from basicsr.utils import get_root_logger
 from basicsr.utils.dist_util import master_only
 
 
-class BaseModel():
+class BaseModel:
     """Base model."""
 
     def __init__(self, opt):
@@ -95,7 +96,8 @@ class BaseModel():
         if self.opt['dist']:
             find_unused_parameters = self.opt.get('find_unused_parameters', False)
             net = DistributedDataParallel(
-                net, device_ids=[torch.cuda.current_device()], find_unused_parameters=find_unused_parameters)
+                net, device_ids=[torch.cuda.current_device()], find_unused_parameters=find_unused_parameters
+            )
         elif self.opt['num_gpu'] > 1:
             net = DataParallel(net)
         return net
@@ -171,8 +173,7 @@ class BaseModel():
                 param_group['lr'] = lr
 
     def _get_init_lr(self):
-        """Get the initial lr, which is set by the scheduler.
-        """
+        """Get the initial lr, which is set by the scheduler."""
         init_lr_groups_l = []
         for optimizer in self.optimizers:
             init_lr_groups_l.append([v['initial_lr'] for v in optimizer.param_groups])
@@ -282,8 +283,9 @@ class BaseModel():
             common_keys = crt_net_keys & load_net_keys
             for k in common_keys:
                 if crt_net[k].size() != load_net[k].size():
-                    logger.warning(f'Size different, ignore [{k}]: crt_net: '
-                                   f'{crt_net[k].shape}; load_net: {load_net[k].shape}')
+                    logger.warning(
+                        f'Size different, ignore [{k}]: crt_net: {crt_net[k].shape}; load_net: {load_net[k].shape}'
+                    )
                     load_net[k + '.ignore'] = load_net.pop(k)
 
     def load_network(self, net, load_path, strict=True, param_key='params'):

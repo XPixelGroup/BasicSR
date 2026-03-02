@@ -4,6 +4,7 @@ from torch.nn import functional as F
 
 from basicsr.archs.vgg_arch import VGGFeatureExtractor
 from basicsr.utils.registry import LOSS_REGISTRY
+
 from .loss_util import weighted_loss
 
 _reduction_modes = ['none', 'mean', 'sum']
@@ -21,7 +22,7 @@ def mse_loss(pred, target):
 
 @weighted_loss
 def charbonnier_loss(pred, target, eps=1e-12):
-    return torch.sqrt((pred - target)**2 + eps)
+    return torch.sqrt((pred - target) ** 2 + eps)
 
 
 @LOSS_REGISTRY.register()
@@ -167,14 +168,16 @@ class PerceptualLoss(nn.Module):
         criterion (str): Criterion used for perceptual loss. Default: 'l1'.
     """
 
-    def __init__(self,
-                 layer_weights,
-                 vgg_type='vgg19',
-                 use_input_norm=True,
-                 range_norm=False,
-                 perceptual_weight=1.0,
-                 style_weight=0.,
-                 criterion='l1'):
+    def __init__(
+        self,
+        layer_weights,
+        vgg_type='vgg19',
+        use_input_norm=True,
+        range_norm=False,
+        perceptual_weight=1.0,
+        style_weight=0.0,
+        criterion='l1',
+    ):
         super(PerceptualLoss, self).__init__()
         self.perceptual_weight = perceptual_weight
         self.style_weight = style_weight
@@ -183,7 +186,8 @@ class PerceptualLoss(nn.Module):
             layer_name_list=list(layer_weights.keys()),
             vgg_type=vgg_type,
             use_input_norm=use_input_norm,
-            range_norm=range_norm)
+            range_norm=range_norm,
+        )
 
         self.criterion_type = criterion
         if self.criterion_type == 'l1':
@@ -226,11 +230,15 @@ class PerceptualLoss(nn.Module):
             style_loss = 0
             for k in x_features.keys():
                 if self.criterion_type == 'fro':
-                    style_loss += torch.norm(
-                        self._gram_mat(x_features[k]) - self._gram_mat(gt_features[k]), p='fro') * self.layer_weights[k]
+                    style_loss += (
+                        torch.norm(self._gram_mat(x_features[k]) - self._gram_mat(gt_features[k]), p='fro')
+                        * self.layer_weights[k]
+                    )
                 else:
-                    style_loss += self.criterion(self._gram_mat(x_features[k]), self._gram_mat(
-                        gt_features[k])) * self.layer_weights[k]
+                    style_loss += (
+                        self.criterion(self._gram_mat(x_features[k]), self._gram_mat(gt_features[k]))
+                        * self.layer_weights[k]
+                    )
             style_loss *= self.style_weight
         else:
             style_loss = None

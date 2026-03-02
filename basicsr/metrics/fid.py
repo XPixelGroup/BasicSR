@@ -64,7 +64,7 @@ def calculate_fid(mu1, sigma1, mu2, sigma2, eps=1e-6):
         float: The Frechet Distance.
     """
     assert mu1.shape == mu2.shape, 'Two mean vectors have different lengths'
-    assert sigma1.shape == sigma2.shape, ('Two covariances have different dimensions')
+    assert sigma1.shape == sigma2.shape, 'Two covariances have different dimensions'
 
     cov_sqrt, _ = linalg.sqrtm(sigma1 @ sigma2, disp=False)
 

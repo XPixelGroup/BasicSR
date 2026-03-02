@@ -2,23 +2,38 @@ import datetime
 import logging
 import math
 import time
-import torch
 from os import path as osp
+
+import torch
 
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.data.data_sampler import EnlargedSampler
 from basicsr.data.prefetch_dataloader import CPUPrefetcher, CUDAPrefetcher
 from basicsr.models import build_model
-from basicsr.utils import (AvgTimer, MessageLogger, check_resume, get_env_info, get_root_logger, get_time_str,
-                           init_tb_logger, init_wandb_logger, make_exp_dirs, mkdir_and_rename, scandir)
+from basicsr.utils import (
+    AvgTimer,
+    MessageLogger,
+    check_resume,
+    get_env_info,
+    get_root_logger,
+    get_time_str,
+    init_tb_logger,
+    init_wandb_logger,
+    make_exp_dirs,
+    mkdir_and_rename,
+    scandir,
+)
 from basicsr.utils.options import copy_opt_file, dict2str, parse_options
 
 
 def init_tb_loggers(opt):
     # initialize wandb logger before tensorboard logger to allow proper sync
-    if (opt['logger'].get('wandb') is not None) and (opt['logger']['wandb'].get('project')
-                                                     is not None) and ('debug' not in opt['name']):
-        assert opt['logger'].get('use_tb_logger') is True, ('should turn on tensorboard when using wandb')
+    if (
+        (opt['logger'].get('wandb') is not None)
+        and (opt['logger']['wandb'].get('project') is not None)
+        and ('debug' not in opt['name'])
+    ):
+        assert opt['logger'].get('use_tb_logger') is True, 'should turn on tensorboard when using wandb'
         init_wandb_logger(opt)
     tb_logger = None
     if opt['logger'].get('use_tb_logger') and 'debug' not in opt['name']:
@@ -40,23 +55,28 @@ def create_train_val_dataloader(opt, logger):
                 num_gpu=opt['num_gpu'],
                 dist=opt['dist'],
                 sampler=train_sampler,
-                seed=opt['manual_seed'])
+                seed=opt['manual_seed'],
+            )
 
             num_iter_per_epoch = math.ceil(
-                len(train_set) * dataset_enlarge_ratio / (dataset_opt['batch_size_per_gpu'] * opt['world_size']))
+                len(train_set) * dataset_enlarge_ratio / (dataset_opt['batch_size_per_gpu'] * opt['world_size'])
+            )
             total_iters = int(opt['train']['total_iter'])
             total_epochs = math.ceil(total_iters / (num_iter_per_epoch))
-            logger.info('Training statistics:'
-                        f'\n\tNumber of train images: {len(train_set)}'
-                        f'\n\tDataset enlarge ratio: {dataset_enlarge_ratio}'
-                        f'\n\tBatch size per gpu: {dataset_opt["batch_size_per_gpu"]}'
-                        f'\n\tWorld size (gpu number): {opt["world_size"]}'
-                        f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
-                        f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
+            logger.info(
+                'Training statistics:'
+                f'\n\tNumber of train images: {len(train_set)}'
+                f'\n\tDataset enlarge ratio: {dataset_enlarge_ratio}'
+                f'\n\tBatch size per gpu: {dataset_opt["batch_size_per_gpu"]}'
+                f'\n\tWorld size (gpu number): {opt["world_size"]}'
+                f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
+                f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.'
+            )
         elif phase.split('_')[0] == 'val':
             val_set = build_dataset(dataset_opt)
             val_loader = build_dataloader(
-                val_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed'])
+                val_set, dataset_opt, num_gpu=opt['num_gpu'], dist=opt['dist'], sampler=None, seed=opt['manual_seed']
+            )
             logger.info(f'Number of val images/folders in {dataset_opt["name"]}: {len(val_set)}')
             val_loaders.append(val_loader)
         else:
@@ -109,7 +129,7 @@ def train_pipeline(root_path):
 
     # WARNING: should not use get_root_logger in the above codes, including the called functions
     # Otherwise the logger will not be properly initialized
-    log_file = osp.join(opt['path']['log'], f"train_{opt['name']}_{get_time_str()}.log")
+    log_file = osp.join(opt['path']['log'], f'train_{opt["name"]}_{get_time_str()}.log')
     logger = get_root_logger(logger_name='basicsr', log_level=logging.INFO, log_file=log_file)
     logger.info(get_env_info())
     logger.info(dict2str(opt))
@@ -124,7 +144,7 @@ def train_pipeline(root_path):
     model = build_model(opt)
     if resume_state:  # resume training
         model.resume_training(resume_state)  # handle optimizers and schedulers
-        logger.info(f"Resuming training from epoch: {resume_state['epoch']}, iter: {resume_state['iter']}.")
+        logger.info(f'Resuming training from epoch: {resume_state["epoch"]}, iter: {resume_state["iter"]}.')
         start_epoch = resume_state['epoch']
         current_iter = resume_state['iter']
     else:

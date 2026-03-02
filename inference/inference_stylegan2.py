@@ -1,6 +1,7 @@
 import argparse
 import math
 import os
+
 import torch
 from torchvision import utils
 
@@ -15,10 +16,9 @@ def generate(args, g_ema, device, mean_latent, randomize_noise):
         for i in range(args.pics):
             sample_z = torch.randn(args.sample, args.latent, device=device)
 
-            sample, _ = g_ema([sample_z],
-                              truncation=args.truncation,
-                              randomize_noise=randomize_noise,
-                              truncation_latent=mean_latent)
+            sample, _ = g_ema(
+                [sample_z], truncation=args.truncation, randomize_noise=randomize_noise, truncation_latent=mean_latent
+            )
 
             utils.save_image(
                 sample,
@@ -42,8 +42,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--ckpt',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/StyleGAN/stylegan2_ffhq_config_f_1024_official-3ab41b38.pth'  # noqa: E501
+        # noqa: E251
+        default='experiments/pretrained_models/StyleGAN/stylegan2_ffhq_config_f_1024_official-3ab41b38.pth',  # noqa: E501
     )
     parser.add_argument('--channel_multiplier', type=int, default=2)
     parser.add_argument('--randomize_noise', type=bool, default=True)
@@ -55,8 +55,9 @@ if __name__ == '__main__':
     os.makedirs('samples', exist_ok=True)
     set_random_seed(2020)
 
-    g_ema = StyleGAN2Generator(
-        args.size, args.latent, args.n_mlp, channel_multiplier=args.channel_multiplier).to(device)
+    g_ema = StyleGAN2Generator(args.size, args.latent, args.n_mlp, channel_multiplier=args.channel_multiplier).to(
+        device
+    )
     checkpoint = torch.load(args.ckpt)['params_ema']
 
     g_ema.load_state_dict(checkpoint)

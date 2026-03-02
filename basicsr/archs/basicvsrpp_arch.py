@@ -1,8 +1,9 @@
+import warnings
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import warnings
 
 from basicsr.archs.arch_util import flow_warp
 from basicsr.archs.basicvsr_arch import ConvResidualBlocks
@@ -40,13 +41,15 @@ class BasicVSRPlusPlus(nn.Module):
             Default: 100.
     """
 
-    def __init__(self,
-                 mid_channels=64,
-                 num_blocks=7,
-                 max_residue_magnitude=10,
-                 is_low_res_input=True,
-                 spynet_path=None,
-                 cpu_cache_length=100):
+    def __init__(
+        self,
+        mid_channels=64,
+        num_blocks=7,
+        max_residue_magnitude=10,
+        is_low_res_input=True,
+        spynet_path=None,
+        cpu_cache_length=100,
+    ):
 
         super().__init__()
         self.mid_channels = mid_channels
@@ -61,9 +64,12 @@ class BasicVSRPlusPlus(nn.Module):
             self.feat_extract = ConvResidualBlocks(3, mid_channels, 5)
         else:
             self.feat_extract = nn.Sequential(
-                nn.Conv2d(3, mid_channels, 3, 2, 1), nn.LeakyReLU(negative_slope=0.1, inplace=True),
-                nn.Conv2d(mid_channels, mid_channels, 3, 2, 1), nn.LeakyReLU(negative_slope=0.1, inplace=True),
-                ConvResidualBlocks(mid_channels, mid_channels, 5))
+                nn.Conv2d(3, mid_channels, 3, 2, 1),
+                nn.LeakyReLU(negative_slope=0.1, inplace=True),
+                nn.Conv2d(mid_channels, mid_channels, 3, 2, 1),
+                nn.LeakyReLU(negative_slope=0.1, inplace=True),
+                ConvResidualBlocks(mid_channels, mid_channels, 5),
+            )
 
         # propagation branches
         self.deform_align = nn.ModuleDict()
@@ -77,7 +83,8 @@ class BasicVSRPlusPlus(nn.Module):
                     3,
                     padding=1,
                     deformable_groups=16,
-                    max_residue_magnitude=max_residue_magnitude)
+                    max_residue_magnitude=max_residue_magnitude,
+                )
             self.backbone[module] = ConvResidualBlocks((2 + i) * mid_channels, mid_channels, num_blocks)
 
         # upsampling module
@@ -102,9 +109,11 @@ class BasicVSRPlusPlus(nn.Module):
             self.is_with_alignment = True
         else:
             self.is_with_alignment = False
-            warnings.warn('Deformable alignment module is not added. '
-                          'Probably your CUDA is not configured correctly. DCN can only '
-                          'be used with CUDA enabled. Alignment is skipped now.')
+            warnings.warn(
+                'Deformable alignment module is not added. '
+                'Probably your CUDA is not configured correctly. DCN can only '
+                'be used with CUDA enabled. Alignment is skipped now.'
+            )
 
     def check_if_mirror_extended(self, lqs):
         """Check whether the input is a mirror-extended sequence.
@@ -296,8 +305,9 @@ class BasicVSRPlusPlus(nn.Module):
         if self.is_low_res_input:
             lqs_downsample = lqs.clone()
         else:
-            lqs_downsample = F.interpolate(
-                lqs.view(-1, c, h, w), scale_factor=0.25, mode='bicubic').view(n, t, c, h // 4, w // 4)
+            lqs_downsample = F.interpolate(lqs.view(-1, c, h, w), scale_factor=0.25, mode='bicubic').view(
+                n, t, c, h // 4, w // 4
+            )
 
         # check whether the input is an extended sequence
         self.check_if_mirror_extended(lqs)
@@ -318,8 +328,8 @@ class BasicVSRPlusPlus(nn.Module):
 
         # compute optical flow using the low-res inputs
         assert lqs_downsample.size(3) >= 64 and lqs_downsample.size(4) >= 64, (
-            'The height and width of low-res inputs must be at least 64, '
-            f'but got {h} and {w}.')
+            f'The height and width of low-res inputs must be at least 64, but got {h} and {w}.'
+        )
         flows_forward, flows_backward = self.compute_flow(lqs_downsample)
 
         # feature propgation
@@ -404,8 +414,9 @@ class SecondOrderDeformableAlignment(ModulatedDeformConvPack):
         # mask
         mask = torch.sigmoid(mask)
 
-        return torchvision.ops.deform_conv2d(x, offset, self.weight, self.bias, self.stride, self.padding,
-                                             self.dilation, mask)
+        return torchvision.ops.deform_conv2d(
+            x, offset, self.weight, self.bias, self.stride, self.padding, self.dilation, mask
+        )
 
 
 # if __name__ == '__main__':

@@ -1,7 +1,8 @@
-import cv2
 import math
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 import torch
 from torchvision.utils import make_grid
 
@@ -128,7 +129,7 @@ def imfrombytes(content, flag='color', float32=False):
     imread_flags = {'color': cv2.IMREAD_COLOR, 'grayscale': cv2.IMREAD_GRAYSCALE, 'unchanged': cv2.IMREAD_UNCHANGED}
     img = cv2.imdecode(img_np, imread_flags[flag])
     if float32:
-        img = img.astype(np.float32) / 255.
+        img = img.astype(np.float32) / 255.0
     return img
 
 

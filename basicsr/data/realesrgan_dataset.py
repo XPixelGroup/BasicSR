@@ -1,10 +1,11 @@
-import cv2
 import math
-import numpy as np
 import os
 import os.path as osp
 import random
 import time
+
+import cv2
+import numpy as np
 import torch
 from torch.utils import data as data
 
@@ -124,7 +125,7 @@ class RealESRGANDataset(data.Dataset):
             # randomly choose top and left coordinates
             top = random.randint(0, h - crop_pad_size)
             left = random.randint(0, w - crop_pad_size)
-            img_gt = img_gt[top:top + crop_pad_size, left:left + crop_pad_size, ...]
+            img_gt = img_gt[top : top + crop_pad_size, left : left + crop_pad_size, ...]
 
         # ------------------------ Generate kernels (used in the first degradation) ------------------------ #
         kernel_size = random.choice(self.kernel_range)
@@ -141,10 +142,12 @@ class RealESRGANDataset(data.Dataset):
                 self.kernel_prob,
                 kernel_size,
                 self.blur_sigma,
-                self.blur_sigma, [-math.pi, math.pi],
+                self.blur_sigma,
+                [-math.pi, math.pi],
                 self.betag_range,
                 self.betap_range,
-                noise_range=None)
+                noise_range=None,
+            )
         # pad kernel
         pad_size = (21 - kernel_size) // 2
         kernel = np.pad(kernel, ((pad_size, pad_size), (pad_size, pad_size)))
@@ -163,10 +166,12 @@ class RealESRGANDataset(data.Dataset):
                 self.kernel_prob2,
                 kernel_size,
                 self.blur_sigma2,
-                self.blur_sigma2, [-math.pi, math.pi],
+                self.blur_sigma2,
+                [-math.pi, math.pi],
                 self.betag_range2,
                 self.betap_range2,
-                noise_range=None)
+                noise_range=None,
+            )
 
         # pad kernel
         pad_size = (21 - kernel_size) // 2

@@ -1,7 +1,8 @@
+from os import path as osp
+
 import cv2
 import numpy as np
 import torch
-from os import path as osp
 from torch.nn import functional as F
 
 from basicsr.data.transforms import mod_crop
@@ -26,7 +27,7 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
         img_paths = path
     else:
         img_paths = sorted(list(scandir(path, full_path=True)))
-    imgs = [cv2.imread(v).astype(np.float32) / 255. for v in img_paths]
+    imgs = [cv2.imread(v).astype(np.float32) / 255.0 for v in img_paths]
 
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
@@ -129,16 +130,17 @@ def paired_paths_from_lmdb(folders, keys):
     Returns:
         list[str]: Returned path list.
     """
-    assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
-                               f'But got {len(folders)}')
+    assert len(folders) == 2, f'The len of folders should be 2 with [input_folder, gt_folder]. But got {len(folders)}'
     assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
     if not (input_folder.endswith('.lmdb') and gt_folder.endswith('.lmdb')):
-        raise ValueError(f'{input_key} folder and {gt_key} folder should both in lmdb '
-                         f'formats. But received {input_key}: {input_folder}; '
-                         f'{gt_key}: {gt_folder}')
+        raise ValueError(
+            f'{input_key} folder and {gt_key} folder should both in lmdb '
+            f'formats. But received {input_key}: {input_folder}; '
+            f'{gt_key}: {gt_folder}'
+        )
     # ensure that the two meta_info files are the same
     with open(osp.join(input_folder, 'meta_info.txt')) as fin:
         input_lmdb_keys = [line.split('.')[0] for line in fin]
@@ -178,8 +180,7 @@ def paired_paths_from_meta_info_file(folders, keys, meta_info_file, filename_tmp
     Returns:
         list[str]: Returned path list.
     """
-    assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
-                               f'But got {len(folders)}')
+    assert len(folders) == 2, f'The len of folders should be 2 with [input_folder, gt_folder]. But got {len(folders)}'
     assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
@@ -212,16 +213,16 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
     Returns:
         list[str]: Returned path list.
     """
-    assert len(folders) == 2, ('The len of folders should be 2 with [input_folder, gt_folder]. '
-                               f'But got {len(folders)}')
+    assert len(folders) == 2, f'The len of folders should be 2 with [input_folder, gt_folder]. But got {len(folders)}'
     assert len(keys) == 2, f'The len of keys should be 2 with [input_key, gt_key]. But got {len(keys)}'
     input_folder, gt_folder = folders
     input_key, gt_key = keys
 
     input_paths = list(scandir(input_folder))
     gt_paths = list(scandir(gt_folder))
-    assert len(input_paths) == len(gt_paths), (f'{input_key} and {gt_key} datasets have different number of images: '
-                                               f'{len(input_paths)}, {len(gt_paths)}.')
+    assert len(input_paths) == len(gt_paths), (
+        f'{input_key} and {gt_key} datasets have different number of images: {len(input_paths)}, {len(gt_paths)}.'
+    )
     paths = []
     for gt_path in gt_paths:
         basename, ext = osp.splitext(osp.basename(gt_path))
@@ -275,6 +276,7 @@ def generate_gaussian_kernel(kernel_size=13, sigma=1.6):
         np.array: The Gaussian kernel.
     """
     from scipy.ndimage import filters as filters
+
     kernel = np.zeros((kernel_size, kernel_size))
     # set element at the middle to one, a dirac delta
     kernel[kernel_size // 2, kernel_size // 2] = 1

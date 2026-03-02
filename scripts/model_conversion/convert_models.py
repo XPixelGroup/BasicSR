@@ -36,7 +36,7 @@ def convert_edvr():
             ori_k = crt_k.replace('predeblur.resblock_l', 'pre_deblur.RB_L')
         elif 'predeblur.resblock_l1' in crt_k:
             a, b, c, d, e = crt_k.split('.')
-            ori_k = f'pre_deblur.RB_L1_{int(c)+1}.{d}.{e}'
+            ori_k = f'pre_deblur.RB_L1_{int(c) + 1}.{d}.{e}'
 
         elif 'conv_l2' in crt_k:
             ori_k = crt_k.replace('conv_l2_', 'fea_L2_conv')
@@ -63,8 +63,14 @@ def convert_edvr():
             ori_k = f'pcd_align.L{level}_fea_conv.{d}'
         elif 'pcd_align.cas_dcnpack' in crt_k:
             ori_k = crt_k.replace('conv_offset', 'conv_offset_mask')
-        elif ('conv_first' in crt_k or 'feature_extraction' in crt_k or 'pcd_align.cas_offset' in crt_k
-              or 'upconv' in crt_k or 'conv_last' in crt_k or 'conv_1x1' in crt_k):
+        elif (
+            'conv_first' in crt_k
+            or 'feature_extraction' in crt_k
+            or 'pcd_align.cas_offset' in crt_k
+            or 'upconv' in crt_k
+            or 'conv_last' in crt_k
+            or 'conv_1x1' in crt_k
+        ):
             ori_k = crt_k
 
         elif 'temporal_attn1' in crt_k:
@@ -157,7 +163,7 @@ def convert_rcan_model():
 
         elif 'attention' in crt_k:
             _, ai, _, bi, _, ci, d, di, e = crt_k.split('.')
-            ori_k = f'body.{ai}.body.{bi}.body.{ci}.conv_du.{int(di)-1}.{e}'
+            ori_k = f'body.{ai}.body.{bi}.body.{ci}.conv_du.{int(di) - 1}.{e}'
         elif 'rcab' in crt_k:
             a, ai, b, bi, c, ci, d = crt_k.split('.')
             ori_k = f'body.{ai}.body.{bi}.body.{ci}.{d}'
@@ -173,6 +179,7 @@ def convert_rcan_model():
 
 def convert_esrgan_model():
     from basicsr.archs.rrdbnet_arch import RRDBNet
+
     rrdb = RRDBNet(3, 3, num_feat=64, num_block=23, num_grow_ch=32)
     crt_net = rrdb.state_dict()
     # for k, v in crt_net.items():
@@ -201,6 +208,7 @@ def convert_esrgan_model():
 
 def convert_duf_model():
     from basicsr.archs.duf_arch import DUF
+
     scale = 2
     duf = DUF(scale=scale, num_layer=16, adapt_official_weights=True)
     crt_net = duf.state_dict()
@@ -211,7 +219,7 @@ def convert_duf_model():
     # print('******')
     # for k, v in ori_net.items():
     #     print(k)
-    '''
+    """
     for crt_k, crt_v in crt_net.items():
         if 'conv3d1' in crt_k:
             ori_k = crt_k.replace('conv3d1', 'conv3d_1')
@@ -269,7 +277,7 @@ def convert_duf_model():
             print(crt_k)
 
         crt_net[crt_k] = ori_net[ori_k]
-    '''
+    """
     # for 16 layers
     for crt_k, _ in crt_net.items():
         if 'conv3d1' in crt_k:
@@ -343,17 +351,17 @@ def convert_duf_model():
     x1 = x[::3, ...]
     x2 = x[1::3, ...]
     x3 = x[2::3, ...]
-    crt_net['conv3d_r2.weight'][:scale**2, ...] = x1
-    crt_net['conv3d_r2.weight'][scale**2:2 * (scale**2), ...] = x2
-    crt_net['conv3d_r2.weight'][2 * (scale**2):, ...] = x3
+    crt_net['conv3d_r2.weight'][: scale**2, ...] = x1
+    crt_net['conv3d_r2.weight'][scale**2 : 2 * (scale**2), ...] = x2
+    crt_net['conv3d_r2.weight'][2 * (scale**2) :, ...] = x3
 
     x = crt_net['conv3d_r2.bias'].clone()
     x1 = x[::3, ...]
     x2 = x[1::3, ...]
     x3 = x[2::3, ...]
-    crt_net['conv3d_r2.bias'][:scale**2, ...] = x1
-    crt_net['conv3d_r2.bias'][scale**2:2 * (scale**2), ...] = x2
-    crt_net['conv3d_r2.bias'][2 * (scale**2):, ...] = x3
+    crt_net['conv3d_r2.bias'][: scale**2, ...] = x1
+    crt_net['conv3d_r2.bias'][scale**2 : 2 * (scale**2), ...] = x2
+    crt_net['conv3d_r2.bias'][2 * (scale**2) :, ...] = x3
     torch.save(crt_net, 'experiments/pretrained_models/DUF_x2_16L_official.pth')
 
 

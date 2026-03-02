@@ -1,4 +1,5 @@
 import math
+
 import torch
 from torch.utils.data.sampler import Sampler
 
@@ -36,7 +37,7 @@ class EnlargedSampler(Sampler):
         indices = [v % dataset_size for v in indices]
 
         # subsample
-        indices = indices[self.rank:self.total_size:self.num_replicas]
+        indices = indices[self.rank : self.total_size : self.num_replicas]
         assert len(indices) == self.num_samples
 
         return iter(indices)

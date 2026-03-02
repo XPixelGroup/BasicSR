@@ -6,7 +6,6 @@ from torch.nn.utils.spectral_norm import spectral_norm
 
 
 class BlurFunctionBackward(Function):
-
     @staticmethod
     def forward(ctx, grad_output, kernel, kernel_flip):
         ctx.save_for_backward(kernel, kernel_flip)
@@ -21,7 +20,6 @@ class BlurFunctionBackward(Function):
 
 
 class BlurFunction(Function):
-
     @staticmethod
     def forward(ctx, x, kernel, kernel_flip):
         ctx.save_for_backward(kernel, kernel_flip)
@@ -39,7 +37,6 @@ blur = BlurFunction.apply
 
 
 class Blur(nn.Module):
-
     def __init__(self, channel):
         super().__init__()
         kernel = torch.tensor([[1, 2, 1], [2, 4, 2], [1, 2, 1]], dtype=torch.float32)
@@ -90,8 +87,10 @@ def adaptive_instance_normalization(content_feat, style_feat):
 
 def AttentionBlock(in_channel):
     return nn.Sequential(
-        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)), nn.LeakyReLU(0.2, True),
-        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)))
+        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)),
+        nn.LeakyReLU(0.2, True),
+        spectral_norm(nn.Conv2d(in_channel, in_channel, 3, 1, 1)),
+    )
 
 
 def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, bias=True):
@@ -106,7 +105,9 @@ def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, b
                 stride=stride,
                 dilation=dilation,
                 padding=((kernel_size - 1) // 2) * dilation,
-                bias=bias)),
+                bias=bias,
+            )
+        ),
         nn.LeakyReLU(0.2),
         spectral_norm(
             nn.Conv2d(
@@ -116,7 +117,9 @@ def conv_block(in_channels, out_channels, kernel_size=3, stride=1, dilation=1, b
                 stride=stride,
                 dilation=dilation,
                 padding=((kernel_size - 1) // 2) * dilation,
-                bias=bias)),
+                bias=bias,
+            )
+        ),
     )
 
 
@@ -136,7 +139,9 @@ class MSDilationBlock(nn.Module):
                 kernel_size=kernel_size,
                 stride=1,
                 padding=(kernel_size - 1) // 2,
-                bias=bias))
+                bias=bias,
+            )
+        )
 
     def forward(self, x):
         out = []
@@ -148,7 +153,6 @@ class MSDilationBlock(nn.Module):
 
 
 class UpResBlock(nn.Module):
-
     def __init__(self, in_channel):
         super(UpResBlock, self).__init__()
         self.body = nn.Sequential(

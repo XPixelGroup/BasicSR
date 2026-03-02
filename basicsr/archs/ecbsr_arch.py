@@ -44,7 +44,7 @@ class SeqConv3x3(nn.Module):
             scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(scale)
             bias = torch.randn(self.out_channels) * 1e-3
-            bias = torch.reshape(bias, (self.out_channels, ))
+            bias = torch.reshape(bias, (self.out_channels,))
             self.bias = nn.Parameter(bias)
             # init mask
             self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
@@ -66,7 +66,7 @@ class SeqConv3x3(nn.Module):
             scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
             bias = torch.randn(self.out_channels) * 1e-3
-            bias = torch.reshape(bias, (self.out_channels, ))
+            bias = torch.reshape(bias, (self.out_channels,))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
             # init mask
             self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
@@ -88,7 +88,7 @@ class SeqConv3x3(nn.Module):
             scale = torch.randn(size=(self.out_channels, 1, 1, 1)) * 1e-3
             self.scale = nn.Parameter(torch.FloatTensor(scale))
             bias = torch.randn(self.out_channels) * 1e-3
-            bias = torch.reshape(bias, (self.out_channels, ))
+            bias = torch.reshape(bias, (self.out_channels,))
             self.bias = nn.Parameter(torch.FloatTensor(bias))
             # init mask
             self.mask = torch.zeros((self.out_channels, 1, 3, 3), dtype=torch.float32)
@@ -138,7 +138,12 @@ class SeqConv3x3(nn.Module):
             rep_weight = F.conv2d(input=self.k1, weight=self.k0.permute(1, 0, 2, 3))
             # re-param conv bias
             rep_bias = torch.ones(1, self.mid_planes, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
-            rep_bias = F.conv2d(input=rep_bias, weight=self.k1).view(-1, ) + self.b1
+            rep_bias = (
+                F.conv2d(input=rep_bias, weight=self.k1).view(
+                    -1,
+                )
+                + self.b1
+            )
         else:
             tmp = self.scale * self.mask
             k1 = torch.zeros((self.out_channels, self.out_channels, 3, 3), device=device)
@@ -149,7 +154,12 @@ class SeqConv3x3(nn.Module):
             rep_weight = F.conv2d(input=k1, weight=self.k0.permute(1, 0, 2, 3))
             # re-param conv bias
             rep_bias = torch.ones(1, self.out_channels, 3, 3, device=device) * self.b0.view(1, -1, 1, 1)
-            rep_bias = F.conv2d(input=rep_bias, weight=k1).view(-1, ) + b1
+            rep_bias = (
+                F.conv2d(input=rep_bias, weight=k1).view(
+                    -1,
+                )
+                + b1
+            )
         return rep_weight, rep_bias
 
 
@@ -217,8 +227,10 @@ class ECB(nn.Module):
         weight2, bias2 = self.conv1x1_sbx.rep_params()
         weight3, bias3 = self.conv1x1_sby.rep_params()
         weight4, bias4 = self.conv1x1_lpl.rep_params()
-        rep_weight, rep_bias = (weight0 + weight1 + weight2 + weight3 + weight4), (
-            bias0 + bias1 + bias2 + bias3 + bias4)
+        rep_weight, rep_bias = (
+            (weight0 + weight1 + weight2 + weight3 + weight4),
+            (bias0 + bias1 + bias2 + bias3 + bias4),
+        )
 
         if self.with_idt:
             device = rep_weight.get_device()

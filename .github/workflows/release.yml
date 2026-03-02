@@ -1,41 +1,31 @@
-name: release
+name: Release
+
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
-  build:
-    permissions: write-all
-    name: Create Release
+  release:
+    name: Create GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: BasicSR ${{ github.ref }} Release Note
-          body: |
-            🚀 See you again 😸
-            🚀Have a nice day 😸 and happy everyday 😃
-            🚀 Long time no see ☄️
-
-            ✨ **Highlights**
-            ✅ [Features] Support ...
-
-            🐛 **Bug Fixes**
-
-            🌴 **Improvements**
-
-            📢📢📢
-
-            <p align="center">
-               <img src="https://raw.githubusercontent.com/XPixelGroup/BasicSR/master/assets/basicsr_xpixel_logo.png" height=150>
-            </p>
           draft: true
           prerelease: false
+          generate_release_notes: true
+          body: |
+            ## BasicSR ${{ github.ref_name }}
+
+            ### Highlights
+            - See commits for full change list.
+
+            ### Installation
+            ```bash
+            pip install basicsr==${{ github.ref_name }}
+            ```

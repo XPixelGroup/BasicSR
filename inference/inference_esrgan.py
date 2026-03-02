@@ -1,8 +1,9 @@
 import argparse
-import cv2
 import glob
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 import torch
 
 from basicsr.archs.rrdbnet_arch import RRDBNet
@@ -13,8 +14,8 @@ def main():
     parser.add_argument(
         '--model_path',
         type=str,
-        default=  # noqa: E251
-        'experiments/pretrained_models/ESRGAN/ESRGAN_SRx4_DF2KOST_official-ff704c30.pth'  # noqa: E501
+        # noqa: E251
+        default='experiments/pretrained_models/ESRGAN/ESRGAN_SRx4_DF2KOST_official-ff704c30.pth',  # noqa: E501
     )
     parser.add_argument('--input', type=str, default='datasets/Set14/LRbicx4', help='input test image folder')
     parser.add_argument('--output', type=str, default='results/ESRGAN', help='output folder')
@@ -32,7 +33,7 @@ def main():
         imgname = os.path.splitext(os.path.basename(path))[0]
         print('Testing', idx, imgname)
         # read image
-        img = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        img = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.0
         img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
         img = img.unsqueeze(0).to(device)
         # inference

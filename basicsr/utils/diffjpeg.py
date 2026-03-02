@@ -4,7 +4,9 @@ Modified from https://github.com/mlomnitz/DiffJPEG
 For images not divisible by 8
 https://dsp.stackexchange.com/questions/35339/jpeg-dct-padding/35343#35343
 """
+
 import itertools
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -12,10 +14,18 @@ from torch.nn import functional as F
 
 # ------------------------ utils ------------------------#
 y_table = np.array(
-    [[16, 11, 10, 16, 24, 40, 51, 61], [12, 12, 14, 19, 26, 58, 60, 55], [14, 13, 16, 24, 40, 57, 69, 56],
-     [14, 17, 22, 29, 51, 87, 80, 62], [18, 22, 37, 56, 68, 109, 103, 77], [24, 35, 55, 64, 81, 104, 113, 92],
-     [49, 64, 78, 87, 103, 121, 120, 101], [72, 92, 95, 98, 112, 100, 103, 99]],
-    dtype=np.float32).T
+    [
+        [16, 11, 10, 16, 24, 40, 51, 61],
+        [12, 12, 14, 19, 26, 58, 60, 55],
+        [14, 13, 16, 24, 40, 57, 69, 56],
+        [14, 17, 22, 29, 51, 87, 80, 62],
+        [18, 22, 37, 56, 68, 109, 103, 77],
+        [24, 35, 55, 64, 81, 104, 113, 92],
+        [49, 64, 78, 87, 103, 121, 120, 101],
+        [72, 92, 95, 98, 112, 100, 103, 99],
+    ],
+    dtype=np.float32,
+).T
 y_table = nn.Parameter(torch.from_numpy(y_table))
 c_table = np.empty((8, 8), dtype=np.float32)
 c_table.fill(99)
@@ -24,13 +34,12 @@ c_table = nn.Parameter(torch.from_numpy(c_table))
 
 
 def diff_round(x):
-    """ Differentiable rounding function
-    """
-    return torch.round(x) + (x - torch.round(x))**3
+    """Differentiable rounding function"""
+    return torch.round(x) + (x - torch.round(x)) ** 3
 
 
 def quality_to_factor(quality):
-    """ Calculate factor corresponding to quality
+    """Calculate factor corresponding to quality
 
     Args:
         quality(float): Quality for jpeg compression.
@@ -39,22 +48,22 @@ def quality_to_factor(quality):
         float: Compression factor.
     """
     if quality < 50:
-        quality = 5000. / quality
+        quality = 5000.0 / quality
     else:
-        quality = 200. - quality * 2
-    return quality / 100.
+        quality = 200.0 - quality * 2
+    return quality / 100.0
 
 
 # ------------------------ compression ------------------------#
 class RGB2YCbCrJpeg(nn.Module):
-    """ Converts RGB image to YCbCr
-    """
+    """Converts RGB image to YCbCr"""
 
     def __init__(self):
         super(RGB2YCbCrJpeg, self).__init__()
-        matrix = np.array([[0.299, 0.587, 0.114], [-0.168736, -0.331264, 0.5], [0.5, -0.418688, -0.081312]],
-                          dtype=np.float32).T
-        self.shift = nn.Parameter(torch.tensor([0., 128., 128.]))
+        matrix = np.array(
+            [[0.299, 0.587, 0.114], [-0.168736, -0.331264, 0.5], [0.5, -0.418688, -0.081312]], dtype=np.float32
+        ).T
+        self.shift = nn.Parameter(torch.tensor([0.0, 128.0, 128.0]))
         self.matrix = nn.Parameter(torch.from_numpy(matrix))
 
     def forward(self, image):
@@ -71,8 +80,7 @@ class RGB2YCbCrJpeg(nn.Module):
 
 
 class ChromaSubsampling(nn.Module):
-    """ Chroma subsampling on CbCr channels
-    """
+    """Chroma subsampling on CbCr channels"""
 
     def __init__(self):
         super(ChromaSubsampling, self).__init__()
@@ -96,8 +104,7 @@ class ChromaSubsampling(nn.Module):
 
 
 class BlockSplitting(nn.Module):
-    """ Splitting image into patches
-    """
+    """Splitting image into patches"""
 
     def __init__(self):
         super(BlockSplitting, self).__init__()
@@ -119,15 +126,14 @@ class BlockSplitting(nn.Module):
 
 
 class DCT8x8(nn.Module):
-    """ Discrete Cosine Transformation
-    """
+    """Discrete Cosine Transformation"""
 
     def __init__(self):
         super(DCT8x8, self).__init__()
         tensor = np.zeros((8, 8, 8, 8), dtype=np.float32)
         for x, y, u, v in itertools.product(range(8), repeat=4):
             tensor[x, y, u, v] = np.cos((2 * x + 1) * u * np.pi / 16) * np.cos((2 * y + 1) * v * np.pi / 16)
-        alpha = np.array([1. / np.sqrt(2)] + [1] * 7)
+        alpha = np.array([1.0 / np.sqrt(2)] + [1] * 7)
         self.tensor = nn.Parameter(torch.from_numpy(tensor).float())
         self.scale = nn.Parameter(torch.from_numpy(np.outer(alpha, alpha) * 0.25).float())
 
@@ -146,7 +152,7 @@ class DCT8x8(nn.Module):
 
 
 class YQuantize(nn.Module):
-    """ JPEG Quantization for Y channel
+    """JPEG Quantization for Y channel
 
     Args:
         rounding(function): rounding function to use
@@ -176,7 +182,7 @@ class YQuantize(nn.Module):
 
 
 class CQuantize(nn.Module):
-    """ JPEG Quantization for CbCr channels
+    """JPEG Quantization for CbCr channels
 
     Args:
         rounding(function): rounding function to use
@@ -245,8 +251,7 @@ class CompressJpeg(nn.Module):
 
 
 class YDequantize(nn.Module):
-    """Dequantize Y channel
-    """
+    """Dequantize Y channel"""
 
     def __init__(self):
         super(YDequantize, self).__init__()
@@ -270,8 +275,7 @@ class YDequantize(nn.Module):
 
 
 class CDequantize(nn.Module):
-    """Dequantize CbCr channel
-    """
+    """Dequantize CbCr channel"""
 
     def __init__(self):
         super(CDequantize, self).__init__()
@@ -295,12 +299,11 @@ class CDequantize(nn.Module):
 
 
 class iDCT8x8(nn.Module):
-    """Inverse discrete Cosine Transformation
-    """
+    """Inverse discrete Cosine Transformation"""
 
     def __init__(self):
         super(iDCT8x8, self).__init__()
-        alpha = np.array([1. / np.sqrt(2)] + [1] * 7)
+        alpha = np.array([1.0 / np.sqrt(2)] + [1] * 7)
         self.alpha = nn.Parameter(torch.from_numpy(np.outer(alpha, alpha)).float())
         tensor = np.zeros((8, 8, 8, 8), dtype=np.float32)
         for x, y, u, v in itertools.product(range(8), repeat=4):
@@ -322,8 +325,7 @@ class iDCT8x8(nn.Module):
 
 
 class BlockMerging(nn.Module):
-    """Merge patches into image
-    """
+    """Merge patches into image"""
 
     def __init__(self):
         super(BlockMerging, self).__init__()
@@ -346,8 +348,7 @@ class BlockMerging(nn.Module):
 
 
 class ChromaUpsampling(nn.Module):
-    """Upsample chroma layers
-    """
+    """Upsample chroma layers"""
 
     def __init__(self):
         super(ChromaUpsampling, self).__init__()
@@ -376,14 +377,13 @@ class ChromaUpsampling(nn.Module):
 
 
 class YCbCr2RGBJpeg(nn.Module):
-    """Converts YCbCr image to RGB JPEG
-    """
+    """Converts YCbCr image to RGB JPEG"""
 
     def __init__(self):
         super(YCbCr2RGBJpeg, self).__init__()
 
-        matrix = np.array([[1., 0., 1.402], [1, -0.344136, -0.714136], [1, 1.772, 0]], dtype=np.float32).T
-        self.shift = nn.Parameter(torch.tensor([0, -128., -128.]))
+        matrix = np.array([[1.0, 0.0, 1.402], [1, -0.344136, -0.714136], [1, 1.772, 0]], dtype=np.float32).T
+        self.shift = nn.Parameter(torch.tensor([0, -128.0, -128.0]))
         self.matrix = nn.Parameter(torch.from_numpy(matrix))
 
     def forward(self, image):
@@ -496,11 +496,11 @@ if __name__ == '__main__':
 
     from basicsr.utils import img2tensor, tensor2img
 
-    img_gt = cv2.imread('test.png') / 255.
+    img_gt = cv2.imread('test.png') / 255.0
 
     # -------------- cv2 -------------- #
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20]
-    _, encimg = cv2.imencode('.jpg', img_gt * 255., encode_param)
+    _, encimg = cv2.imencode('.jpg', img_gt * 255.0, encode_param)
     img_lq = np.float32(cv2.imdecode(encimg, 1))
     cv2.imwrite('cv2_JPEG_20.png', img_lq)
 

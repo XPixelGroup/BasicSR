@@ -1,10 +1,11 @@
 import argparse
 import os
 import random
-import torch
-import yaml
 from collections import OrderedDict
 from os import path as osp
+
+import torch
+import yaml
 
 from basicsr.utils import set_random_seed
 from basicsr.utils.dist_util import get_dist_info, init_dist, master_only
@@ -104,7 +105,8 @@ def parse_options(root_path, is_train=True):
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument(
-        '--force_yml', nargs='+', default=None, help='Force to update yml files. Examples: train:ema_decay=0.999')
+        '--force_yml', nargs='+', default=None, help='Force to update yml files. Examples: train:ema_decay=0.999'
+    )
     args = parser.parse_args()
 
     # parse yml to dict
@@ -207,6 +209,7 @@ def copy_opt_file(opt_file, experiments_root):
     import sys
     import time
     from shutil import copyfile
+
     cmd = ' '.join(sys.argv)
     filename = osp.join(experiments_root, osp.basename(opt_file))
     copyfile(opt_file, filename)

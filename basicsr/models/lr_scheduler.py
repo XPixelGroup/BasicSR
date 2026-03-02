@@ -1,10 +1,11 @@
 import math
 from collections import Counter
+
 from torch.optim.lr_scheduler import _LRScheduler
 
 
 class MultiStepRestartLR(_LRScheduler):
-    """ MultiStep with restarts learning rate scheme.
+    """MultiStep with restarts learning rate scheme.
 
     Args:
         optimizer (torch.nn.optimizer): Torch optimizer.
@@ -16,7 +17,7 @@ class MultiStepRestartLR(_LRScheduler):
         last_epoch (int): Used in _LRScheduler. Default: -1.
     """
 
-    def __init__(self, optimizer, milestones, gamma=0.1, restarts=(0, ), restart_weights=(1, ), last_epoch=-1):
+    def __init__(self, optimizer, milestones, gamma=0.1, restarts=(0,), restart_weights=(1,), last_epoch=-1):
         self.milestones = Counter(milestones)
         self.gamma = gamma
         self.restarts = restarts
@@ -30,7 +31,7 @@ class MultiStepRestartLR(_LRScheduler):
             return [group['initial_lr'] * weight for group in self.optimizer.param_groups]
         if self.last_epoch not in self.milestones:
             return [group['lr'] for group in self.optimizer.param_groups]
-        return [group['lr'] * self.gamma**self.milestones[self.last_epoch] for group in self.optimizer.param_groups]
+        return [group['lr'] * self.gamma ** self.milestones[self.last_epoch] for group in self.optimizer.param_groups]
 
 
 def get_position_from_periods(iteration, cumulative_period):
@@ -55,7 +56,7 @@ def get_position_from_periods(iteration, cumulative_period):
 
 
 class CosineAnnealingRestartLR(_LRScheduler):
-    """ Cosine annealing with restarts learning rate scheme.
+    """Cosine annealing with restarts learning rate scheme.
 
     An example of config:
     periods = [10, 10, 10, 10]
@@ -74,13 +75,14 @@ class CosineAnnealingRestartLR(_LRScheduler):
         last_epoch (int): Used in _LRScheduler. Default: -1.
     """
 
-    def __init__(self, optimizer, periods, restart_weights=(1, ), eta_min=0, last_epoch=-1):
+    def __init__(self, optimizer, periods, restart_weights=(1,), eta_min=0, last_epoch=-1):
         self.periods = periods
         self.restart_weights = restart_weights
         self.eta_min = eta_min
-        assert (len(self.periods) == len(
-            self.restart_weights)), 'periods and restart_weights should have the same length.'
-        self.cumulative_period = [sum(self.periods[0:i + 1]) for i in range(0, len(self.periods))]
+        assert len(self.periods) == len(self.restart_weights), (
+            'periods and restart_weights should have the same length.'
+        )
+        self.cumulative_period = [sum(self.periods[0 : i + 1]) for i in range(0, len(self.periods))]
         super(CosineAnnealingRestartLR, self).__init__(optimizer, last_epoch)
 
     def get_lr(self):
@@ -90,7 +92,10 @@ class CosineAnnealingRestartLR(_LRScheduler):
         current_period = self.periods[idx]
 
         return [
-            self.eta_min + current_weight * 0.5 * (base_lr - self.eta_min) *
-            (1 + math.cos(math.pi * ((self.last_epoch - nearest_restart) / current_period)))
+            self.eta_min
+            + current_weight
+            * 0.5
+            * (base_lr - self.eta_min)
+            * (1 + math.cos(math.pi * ((self.last_epoch - nearest_restart) / current_period)))
             for base_lr in self.base_lrs
         ]

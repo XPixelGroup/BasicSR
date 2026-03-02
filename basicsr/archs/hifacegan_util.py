@@ -1,8 +1,10 @@
 import re
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import init
+
 # Warning: spectral norm could be buggy
 # under eval mode and multi-GPU inference
 # A workaround is sticking to single-GPU inference and train mode
@@ -10,7 +12,6 @@ from torch.nn.utils import spectral_norm
 
 
 class SPADE(nn.Module):
-
     def __init__(self, config_text, norm_nc, label_nc):
         super().__init__()
 
@@ -67,7 +68,7 @@ class SPADEResnetBlock(nn.Module):
     def __init__(self, fin, fout, norm_g='spectralspadesyncbatch3x3', semantic_nc=3):
         super().__init__()
         # Attributes
-        self.learned_shortcut = (fin != fout)
+        self.learned_shortcut = fin != fout
         fmiddle = min(fin, fout)
 
         # create conv layers
@@ -111,7 +112,7 @@ class SPADEResnetBlock(nn.Module):
 
 
 class BaseNetwork(nn.Module):
-    """ A basis for hifacegan archs with custom initialization """
+    """A basis for hifacegan archs with custom initialization"""
 
     def init_weights(self, init_type='normal', gain=0.02):
 
@@ -164,12 +165,13 @@ class SoftGate(nn.Module):
 
 
 class SimplifiedLIP(nn.Module):
-
     def __init__(self, channels):
         super(SimplifiedLIP, self).__init__()
         self.logit = nn.Sequential(
-            nn.Conv2d(channels, channels, 3, padding=1, bias=False), nn.InstanceNorm2d(channels, affine=True),
-            SoftGate())
+            nn.Conv2d(channels, channels, 3, padding=1, bias=False),
+            nn.InstanceNorm2d(channels, affine=True),
+            SoftGate(),
+        )
 
     def init_layer(self):
         self.logit[0].weight.data.fill_(0.0)
@@ -226,7 +228,7 @@ def get_nonspade_norm_layer(norm_type='instance'):
         nonlocal norm_type
         if norm_type.startswith('spectral'):
             layer = spectral_norm(layer)
-            subnorm_type = norm_type[len('spectral'):]
+            subnorm_type = norm_type[len('spectral') :]
 
         if subnorm_type == 'none' or len(subnorm_type) == 0:
             return layer

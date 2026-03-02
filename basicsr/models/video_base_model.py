@@ -1,6 +1,7 @@
-import torch
 from collections import Counter
 from os import path as osp
+
+import torch
 from torch import distributed as dist
 from tqdm import tqdm
 
@@ -8,6 +9,7 @@ from basicsr.metrics import calculate_metric
 from basicsr.utils import get_root_logger, imwrite, tensor2img
 from basicsr.utils.dist_util import get_dist_info
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .sr_model import SRModel
 
 
@@ -30,7 +32,8 @@ class VideoBaseModel(SRModel):
                 num_frame_each_folder = Counter(dataset.data_info['folder'])
                 for folder, num_frame in num_frame_each_folder.items():
                     self.metric_results[folder] = torch.zeros(
-                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda')
+                        num_frame, len(self.opt['val']['metrics']), dtype=torch.float32, device='cuda'
+                    )
             # initialize the best metric results
             self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
@@ -77,11 +80,19 @@ class VideoBaseModel(SRModel):
                         img_name = osp.splitext(osp.basename(lq_path))[0]
 
                     if self.opt['val']['suffix']:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
-                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'],
+                            dataset_name,
+                            folder,
+                            f'{img_name}_{self.opt["val"]["suffix"]}.png',
+                        )
                     else:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name, folder,
-                                                 f'{img_name}_{self.opt["name"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'],
+                            dataset_name,
+                            folder,
+                            f'{img_name}_{self.opt["name"]}.png',
+                        )
                 imwrite(result_img, save_img_path)
 
             if with_metrics:
@@ -123,8 +134,7 @@ class VideoBaseModel(SRModel):
         #    'folder2': tensor (len(metrics))
         # }
         metric_results_avg = {
-            folder: torch.mean(tensor, dim=0).cpu()
-            for (folder, tensor) in self.metric_results.items()
+            folder: torch.mean(tensor, dim=0).cpu() for (folder, tensor) in self.metric_results.items()
         }
         # total_avg_results is a dict: {
         #    'metric1': float,
@@ -147,8 +157,10 @@ class VideoBaseModel(SRModel):
             for folder, tensor in metric_results_avg.items():
                 log_str += f'\t # {folder}: {tensor[metric_idx].item():.4f}'
             if hasattr(self, 'best_metric_results'):
-                log_str += (f'\n\t    Best: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
-                            f'{self.best_metric_results[dataset_name][metric]["iter"]} iter')
+                log_str += (
+                    f'\n\t    Best: {self.best_metric_results[dataset_name][metric]["val"]:.4f} @ '
+                    f'{self.best_metric_results[dataset_name][metric]["iter"]} iter'
+                )
             log_str += '\n'
 
         logger = get_root_logger()

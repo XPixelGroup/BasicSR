@@ -1,7 +1,8 @@
-import cv2
 import math
-import numpy as np
 import os
+
+import cv2
+import numpy as np
 from scipy.ndimage import convolve
 from scipy.special import gamma
 
@@ -25,12 +26,12 @@ def estimate_aggd_param(block):
     gam_reciprocal = np.reciprocal(gam)
     r_gam = np.square(gamma(gam_reciprocal * 2)) / (gamma(gam_reciprocal) * gamma(gam_reciprocal * 3))
 
-    left_std = np.sqrt(np.mean(block[block < 0]**2))
-    right_std = np.sqrt(np.mean(block[block > 0]**2))
+    left_std = np.sqrt(np.mean(block[block < 0] ** 2))
+    right_std = np.sqrt(np.mean(block[block > 0] ** 2))
     gammahat = left_std / right_std
-    rhat = (np.mean(np.abs(block)))**2 / np.mean(block**2)
-    rhatnorm = (rhat * (gammahat**3 + 1) * (gammahat + 1)) / ((gammahat**2 + 1)**2)
-    array_position = np.argmin((r_gam - rhatnorm)**2)
+    rhat = (np.mean(np.abs(block))) ** 2 / np.mean(block**2)
+    rhatnorm = (rhat * (gammahat**3 + 1) * (gammahat + 1)) / ((gammahat**2 + 1) ** 2)
+    array_position = np.argmin((r_gam - rhatnorm) ** 2)
 
     alpha = gam[array_position]
     beta_l = left_std * np.sqrt(gamma(1 / alpha) / gamma(3 / alpha))
@@ -95,12 +96,12 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
         block_size_w (int): Width of the blocks in to which image is divided.
             Default: 96 (the official recommended value).
     """
-    assert img.ndim == 2, ('Input image must be a gray or Y (of YCbCr) image with shape (h, w).')
+    assert img.ndim == 2, 'Input image must be a gray or Y (of YCbCr) image with shape (h, w).'
     # crop image
     h, w = img.shape
     num_block_h = math.floor(h / block_size_h)
     num_block_w = math.floor(w / block_size_w)
-    img = img[0:num_block_h * block_size_h, 0:num_block_w * block_size_w]
+    img = img[0 : num_block_h * block_size_h, 0 : num_block_w * block_size_w]
 
     distparam = []  # dist param is actually the multiscale features
     for scale in (1, 2):  # perform on two scales (1, 2)
@@ -113,15 +114,17 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
         for idx_w in range(num_block_w):
             for idx_h in range(num_block_h):
                 # process ecah block
-                block = img_nomalized[idx_h * block_size_h // scale:(idx_h + 1) * block_size_h // scale,
-                                      idx_w * block_size_w // scale:(idx_w + 1) * block_size_w // scale]
+                block = img_nomalized[
+                    idx_h * block_size_h // scale : (idx_h + 1) * block_size_h // scale,
+                    idx_w * block_size_w // scale : (idx_w + 1) * block_size_w // scale,
+                ]
                 feat.append(compute_feature(block))
 
         distparam.append(np.array(feat))
 
         if scale == 1:
-            img = imresize(img / 255., scale=0.5, antialiasing=True)
-            img = img * 255.
+            img = imresize(img / 255.0, scale=0.5, antialiasing=True)
+            img = img * 255.0
 
     distparam = np.concatenate(distparam, axis=1)
 
@@ -134,7 +137,8 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
     # compute niqe quality, Eq. 10 in the paper
     invcov_param = np.linalg.pinv((cov_pris_param + cov_distparam) / 2)
     quality = np.matmul(
-        np.matmul((mu_pris_param - mu_distparam), invcov_param), np.transpose((mu_pris_param - mu_distparam)))
+        np.matmul((mu_pris_param - mu_distparam), invcov_param), np.transpose((mu_pris_param - mu_distparam))
+    )
 
     quality = np.sqrt(quality)
     quality = float(np.squeeze(quality))
@@ -185,7 +189,7 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y', **kwargs
         if convert_to == 'y':
             img = to_y_channel(img)
         elif convert_to == 'gray':
-            img = cv2.cvtColor(img / 255., cv2.COLOR_BGR2GRAY) * 255.
+            img = cv2.cvtColor(img / 255.0, cv2.COLOR_BGR2GRAY) * 255.0
         img = np.squeeze(img)
 
     if crop_border != 0:

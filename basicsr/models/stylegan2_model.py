@@ -1,16 +1,18 @@
-import cv2
 import math
-import numpy as np
 import random
-import torch
 from collections import OrderedDict
 from os import path as osp
+
+import cv2
+import numpy as np
+import torch
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
 from basicsr.losses.gan_loss import g_path_regularize, r1_penalty
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .base_model import BaseModel
 
 
@@ -105,25 +107,21 @@ class StyleGAN2Model(BaseModel):
             optim_params_g = [
                 {  # add normal params first
                     'params': normal_params,
-                    'lr': train_opt['optim_g']['lr']
+                    'lr': train_opt['optim_g']['lr'],
                 },
-                {
-                    'params': style_mlp_params,
-                    'lr': train_opt['optim_g']['lr'] * 0.01
-                },
-                {
-                    'params': modulation_conv_params,
-                    'lr': train_opt['optim_g']['lr'] / 3
-                }
+                {'params': style_mlp_params, 'lr': train_opt['optim_g']['lr'] * 0.01},
+                {'params': modulation_conv_params, 'lr': train_opt['optim_g']['lr'] / 3},
             ]
         else:
             normal_params = []
             for name, param in self.net_g.named_parameters():
                 normal_params.append(param)
-            optim_params_g = [{  # add normal params first
-                'params': normal_params,
-                'lr': train_opt['optim_g']['lr']
-            }]
+            optim_params_g = [
+                {  # add normal params first
+                    'params': normal_params,
+                    'lr': train_opt['optim_g']['lr'],
+                }
+            ]
 
         optim_type = train_opt['optim_g'].pop('type')
         lr = train_opt['optim_g']['lr'] * net_g_reg_ratio
@@ -144,21 +142,20 @@ class StyleGAN2Model(BaseModel):
             optim_params_d = [
                 {  # add normal params first
                     'params': normal_params,
-                    'lr': train_opt['optim_d']['lr']
+                    'lr': train_opt['optim_d']['lr'],
                 },
-                {
-                    'params': linear_params,
-                    'lr': train_opt['optim_d']['lr'] * (1 / math.sqrt(512))
-                }
+                {'params': linear_params, 'lr': train_opt['optim_d']['lr'] * (1 / math.sqrt(512))},
             ]
         else:
             normal_params = []
             for name, param in self.net_d.named_parameters():
                 normal_params.append(param)
-            optim_params_d = [{  # add normal params first
-                'params': normal_params,
-                'lr': train_opt['optim_d']['lr']
-            }]
+            optim_params_d = [
+                {  # add normal params first
+                    'params': normal_params,
+                    'lr': train_opt['optim_d']['lr'],
+                }
+            ]
 
         optim_type = train_opt['optim_d'].pop('type')
         lr = train_opt['optim_d']['lr'] * net_d_reg_ratio
@@ -209,7 +206,7 @@ class StyleGAN2Model(BaseModel):
             self.real_img.requires_grad = True
             real_pred = self.net_d(self.real_img)
             l_d_r1 = r1_penalty(real_pred, self.real_img)
-            l_d_r1 = (self.r1_reg_weight / 2 * l_d_r1 * self.net_d_reg_every + 0 * real_pred[0])
+            l_d_r1 = self.r1_reg_weight / 2 * l_d_r1 * self.net_d_reg_every + 0 * real_pred[0]
             # TODO: why do we need to add 0 * real_pred, otherwise, a runtime
             # error will arise: RuntimeError: Expected to have finished
             # reduction in the prior iteration before starting a new one.
@@ -240,7 +237,7 @@ class StyleGAN2Model(BaseModel):
             fake_img, latents = self.net_g(noise, return_latents=True)
             l_g_path, path_lengths, self.mean_path_length = g_path_regularize(fake_img, latents, self.mean_path_length)
 
-            l_g_path = (self.path_reg_weight * self.net_g_reg_every * l_g_path + 0 * fake_img[0, 0, 0, 0])
+            l_g_path = self.path_reg_weight * self.net_g_reg_every * l_g_path + 0 * fake_img[0, 0, 0, 0]
             # TODO:  why do we need to add 0 * fake_img[0, 0, 0, 0]
             l_g_path.backward()
             loss_dict['l_g_path'] = l_g_path.detach().mean()
@@ -251,7 +248,7 @@ class StyleGAN2Model(BaseModel):
         self.log_dict = self.reduce_loss_dict(loss_dict)
 
         # EMA
-        self.model_ema(decay=0.5**(32 / (10 * 1000)))
+        self.model_ema(decay=0.5 ** (32 / (10 * 1000)))
 
     def test(self):
         with torch.no_grad():
@@ -272,7 +269,7 @@ class StyleGAN2Model(BaseModel):
             save_img_path = osp.join(self.opt['path']['visualization'], 'test', f'test_{self.opt["name"]}.png')
         imwrite(result, save_img_path)
         # add sample images to tb_logger
-        result = (result / 255.).astype(np.float32)
+        result = (result / 255.0).astype(np.float32)
         result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
         if tb_logger is not None:
             tb_logger.add_image('samples', result, global_step=current_iter, dataformats='HWC')

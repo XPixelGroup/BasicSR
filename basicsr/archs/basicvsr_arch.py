@@ -3,6 +3,7 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .arch_util import ResidualBlockNoBN, flow_warp, make_layer
 from .edvr_arch import PCDAlignment, TSAFusion
 from .spynet_arch import SpyNet
@@ -110,8 +111,10 @@ class ConvResidualBlocks(nn.Module):
     def __init__(self, num_in_ch=3, num_out_ch=64, num_block=15):
         super().__init__()
         self.main = nn.Sequential(
-            nn.Conv2d(num_in_ch, num_out_ch, 3, 1, 1, bias=True), nn.LeakyReLU(negative_slope=0.1, inplace=True),
-            make_layer(ResidualBlockNoBN, num_block, num_feat=num_out_ch))
+            nn.Conv2d(num_in_ch, num_out_ch, 3, 1, 1, bias=True),
+            nn.LeakyReLU(negative_slope=0.1, inplace=True),
+            make_layer(ResidualBlockNoBN, num_block, num_feat=num_out_ch),
+        )
 
     def forward(self, fea):
         return self.main(fea)
@@ -130,13 +133,9 @@ class IconVSR(nn.Module):
         edvr_path (str): Path to the pretrained EDVR model. Default: None.
     """
 
-    def __init__(self,
-                 num_feat=64,
-                 num_block=15,
-                 keyframe_stride=5,
-                 temporal_padding=2,
-                 spynet_path=None,
-                 edvr_path=None):
+    def __init__(
+        self, num_feat=64, num_block=15, keyframe_stride=5, temporal_padding=2, spynet_path=None, edvr_path=None
+    ):
         super().__init__()
 
         self.num_feat = num_feat
@@ -210,7 +209,7 @@ class IconVSR(nn.Module):
         num_frames = 2 * self.temporal_padding + 1
         feats_keyframe = {}
         for i in keyframe_idx:
-            feats_keyframe[i] = self.edvr(x[:, i:i + num_frames].contiguous())
+            feats_keyframe[i] = self.edvr(x[:, i : i + num_frames].contiguous())
         return feats_keyframe
 
     def forward(self, x):
@@ -265,7 +264,7 @@ class IconVSR(nn.Module):
             out += base
             out_l[i] = out
 
-        return torch.stack(out_l, dim=1)[..., :4 * h_input, :4 * w_input]
+        return torch.stack(out_l, dim=1)[..., : 4 * h_input, : 4 * w_input]
 
 
 class EDVRFeatureExtractor(nn.Module):
@@ -321,13 +320,16 @@ class EDVRFeatureExtractor(nn.Module):
 
         # PCD alignment
         ref_feat_l = [  # reference feature list
-            feat_l1[:, self.center_frame_idx, :, :, :].clone(), feat_l2[:, self.center_frame_idx, :, :, :].clone(),
-            feat_l3[:, self.center_frame_idx, :, :, :].clone()
+            feat_l1[:, self.center_frame_idx, :, :, :].clone(),
+            feat_l2[:, self.center_frame_idx, :, :, :].clone(),
+            feat_l3[:, self.center_frame_idx, :, :, :].clone(),
         ]
         aligned_feat = []
         for i in range(n):
             nbr_feat_l = [  # neighboring feature list
-                feat_l1[:, i, :, :, :].clone(), feat_l2[:, i, :, :, :].clone(), feat_l3[:, i, :, :, :].clone()
+                feat_l1[:, i, :, :, :].clone(),
+                feat_l2[:, i, :, :, :].clone(),
+                feat_l3[:, i, :, :, :].clone(),
             ]
             aligned_feat.append(self.pcd_align(nbr_feat_l, ref_feat_l))
         aligned_feat = torch.stack(aligned_feat, dim=1)  # (b, t, c, h, w)

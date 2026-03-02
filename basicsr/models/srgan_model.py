@@ -1,10 +1,12 @@
-import torch
 from collections import OrderedDict
+
+import torch
 
 from basicsr.archs import build_network
 from basicsr.losses import build_loss
 from basicsr.utils import get_root_logger
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .sr_model import SRModel
 
 
@@ -92,7 +94,7 @@ class SRGANModel(SRModel):
 
         l_g_total = 0
         loss_dict = OrderedDict()
-        if (current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters):
+        if current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters:
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)

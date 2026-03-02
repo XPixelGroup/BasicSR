@@ -1,6 +1,7 @@
 import glob
-import torch
 from os import path as osp
+
+import torch
 from torch.utils import data as data
 
 from basicsr.data.data_util import duf_downsample, generate_frame_indices, read_img_seq
@@ -74,8 +75,9 @@ class VideoTestDataset(data.Dataset):
                 img_paths_gt = sorted(list(scandir(subfolder_gt, full_path=True)))
 
                 max_idx = len(img_paths_lq)
-                assert max_idx == len(img_paths_gt), (f'Different number of images in lq ({max_idx})'
-                                                      f' and gt folders ({len(img_paths_gt)})')
+                assert max_idx == len(img_paths_gt), (
+                    f'Different number of images in lq ({max_idx}) and gt folders ({len(img_paths_gt)})'
+                )
 
                 self.data_info['lq_path'].extend(img_paths_lq)
                 self.data_info['gt_path'].extend(img_paths_gt)
@@ -123,7 +125,7 @@ class VideoTestDataset(data.Dataset):
             'folder': folder,  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/99
             'border': border,  # 1 for border, 0 for non-border
-            'lq_path': lq_path  # center frame
+            'lq_path': lq_path,  # center frame
         }
 
     def __len__(self):
@@ -191,7 +193,7 @@ class VideoTestVimeo90KDataset(data.Dataset):
             'folder': self.data_info['folder'][index],  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/843
             'border': self.data_info['border'][index],  # 0 for non-border
-            'lq_path': lq_path[self.opt['num_frame'] // 2]  # center frame
+            'lq_path': lq_path[self.opt['num_frame'] // 2],  # center frame
         }
 
     def __len__(self):
@@ -200,7 +202,7 @@ class VideoTestVimeo90KDataset(data.Dataset):
 
 @DATASET_REGISTRY.register()
 class VideoTestDUFDataset(VideoTestDataset):
-    """ Video test dataset for DUF dataset.
+    """Video test dataset for DUF dataset.
 
     Args:
         opt (dict): Config for train dataset. Most of keys are the same as VideoTestDataset.
@@ -244,7 +246,7 @@ class VideoTestDUFDataset(VideoTestDataset):
             'folder': folder,  # folder name
             'idx': self.data_info['idx'][index],  # e.g., 0/99
             'border': border,  # 1 for border, 0 for non-border
-            'lq_path': lq_path  # center frame
+            'lq_path': lq_path,  # center frame
         }
 
 

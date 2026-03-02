@@ -7,8 +7,7 @@ from .dist_util import get_dist_info, master_only
 initialized_logger = {}
 
 
-class AvgTimer():
-
+class AvgTimer:
     def __init__(self, window=200):
         self.window = window  # average window
         self.current_time = 0
@@ -42,7 +41,7 @@ class AvgTimer():
         return self.avg_time
 
 
-class MessageLogger():
+class MessageLogger:
     """Message logger for printing.
 
     Args:
@@ -86,7 +85,7 @@ class MessageLogger():
         current_iter = log_vars.pop('iter')
         lrs = log_vars.pop('lrs')
 
-        message = (f'[{self.exp_name[:5]}..][epoch:{epoch:3d}, iter:{current_iter:8,d}, lr:(')
+        message = f'[{self.exp_name[:5]}..][epoch:{epoch:3d}, iter:{current_iter:8,d}, lr:('
         for v in lrs:
             message += f'{v:.3e},'
         message += ')] '
@@ -118,6 +117,7 @@ class MessageLogger():
 @master_only
 def init_tb_logger(log_dir):
     from torch.utils.tensorboard import SummaryWriter
+
     tb_logger = SummaryWriter(log_dir=log_dir)
     return tb_logger
 
@@ -126,6 +126,7 @@ def init_tb_logger(log_dir):
 def init_wandb_logger(opt):
     """We now only use wandb to sync tensorboard log."""
     import wandb
+
     logger = get_root_logger()
 
     project = opt['logger']['wandb']['project']
@@ -194,6 +195,7 @@ def get_env_info():
     import torchvision
 
     from basicsr.version import __version__
+
     msg = r"""
                 ____                _       _____  ____
                / __ ) ____ _ _____ (_)_____/ ___/ / __ \
@@ -206,8 +208,10 @@ def get_env_info():
   / /_/ // /_/ // /_/ // /_/ /  / /___/ /_/ // /__ / /<    /_/
   \____/ \____/ \____/ \____/  /_____/\____/ \___//_/|_|  (_)
     """
-    msg += ('\nVersion Information: '
-            f'\n\tBasicSR: {__version__}'
-            f'\n\tPyTorch: {torch.__version__}'
-            f'\n\tTorchVision: {torchvision.__version__}')
+    msg += (
+        '\nVersion Information: '
+        f'\n\tBasicSR: {__version__}'
+        f'\n\tPyTorch: {torch.__version__}'
+        f'\n\tTorchVision: {torchvision.__version__}'
+    )
     return msg

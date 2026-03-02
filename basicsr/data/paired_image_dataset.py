@@ -55,8 +55,9 @@ class PairedImageDataset(data.Dataset):
             self.io_backend_opt['client_keys'] = ['lq', 'gt']
             self.paths = paired_paths_from_lmdb([self.lq_folder, self.gt_folder], ['lq', 'gt'])
         elif 'meta_info_file' in self.opt and self.opt['meta_info_file'] is not None:
-            self.paths = paired_paths_from_meta_info_file([self.lq_folder, self.gt_folder], ['lq', 'gt'],
-                                                          self.opt['meta_info_file'], self.filename_tmpl)
+            self.paths = paired_paths_from_meta_info_file(
+                [self.lq_folder, self.gt_folder], ['lq', 'gt'], self.opt['meta_info_file'], self.filename_tmpl
+            )
         else:
             self.paths = paired_paths_from_folder([self.lq_folder, self.gt_folder], ['lq', 'gt'], self.filename_tmpl)
 
@@ -91,7 +92,7 @@ class PairedImageDataset(data.Dataset):
         # crop the unmatched GT images during validation or testing, especially for SR benchmark datasets
         # TODO: It is better to update the datasets, rather than force to crop
         if self.opt['phase'] != 'train':
-            img_gt = img_gt[0:img_lq.shape[0] * scale, 0:img_lq.shape[1] * scale, :]
+            img_gt = img_gt[0 : img_lq.shape[0] * scale, 0 : img_lq.shape[1] * scale, :]
 
         # BGR to RGB, HWC to CHW, numpy to tensor
         img_gt, img_lq = img2tensor([img_gt, img_lq], bgr2rgb=True, float32=True)

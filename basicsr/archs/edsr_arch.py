@@ -27,15 +27,17 @@ class EDSR(nn.Module):
             Default: (0.4488, 0.4371, 0.4040), calculated from DIV2K dataset.
     """
 
-    def __init__(self,
-                 num_in_ch,
-                 num_out_ch,
-                 num_feat=64,
-                 num_block=16,
-                 upscale=4,
-                 res_scale=1,
-                 img_range=255.,
-                 rgb_mean=(0.4488, 0.4371, 0.4040)):
+    def __init__(
+        self,
+        num_in_ch,
+        num_out_ch,
+        num_feat=64,
+        num_block=16,
+        upscale=4,
+        res_scale=1,
+        img_range=255.0,
+        rgb_mean=(0.4488, 0.4371, 0.4040),
+    ):
         super(EDSR, self).__init__()
 
         self.img_range = img_range

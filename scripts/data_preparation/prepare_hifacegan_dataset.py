@@ -1,5 +1,6 @@
-import cv2
 import os
+
+import cv2
 from tqdm import tqdm
 
 
@@ -16,8 +17,8 @@ class Mosaic16x:
         irange, jrange = (h + 15) // 16, (w + 15) // 16
         for i in range(irange):
             for j in range(jrange):
-                mean = x[i * 16:(i + 1) * 16, j * 16:(j + 1) * 16].mean(axis=(0, 1))
-                x[i * 16:(i + 1) * 16, j * 16:(j + 1) * 16] = mean
+                mean = x[i * 16 : (i + 1) * 16, j * 16 : (j + 1) * 16].mean(axis=(0, 1))
+                x[i * 16 : (i + 1) * 16, j * 16 : (j + 1) * 16] = mean
 
         return x.astype('uint8')
 
@@ -32,41 +33,40 @@ class DegradationSimulator:
         Custom degradation is possible by passing an inherited class from ia.augmentors
     """
 
-    def __init__(self, ):
+    def __init__(
+        self,
+    ):
         import imgaug.augmenters as ia
+
         self.default_deg_templates = {
-            'sr4x':
-            ia.Sequential([
-                # It's almost like a 4x bicubic downsampling
-                ia.Resize((0.25000, 0.25001), cv2.INTER_AREA),
-                ia.Resize({
-                    'height': 512,
-                    'width': 512
-                }, cv2.INTER_CUBIC),
-            ]),
-            'sr4x8x':
-            ia.Sequential([
-                ia.Resize((0.125, 0.25), cv2.INTER_AREA),
-                ia.Resize({
-                    'height': 512,
-                    'width': 512
-                }, cv2.INTER_CUBIC),
-            ]),
-            'denoise':
-            ia.OneOf([
-                ia.AdditiveGaussianNoise(scale=(20, 40), per_channel=True),
-                ia.AdditiveLaplaceNoise(scale=(20, 40), per_channel=True),
-                ia.AdditivePoissonNoise(lam=(15, 30), per_channel=True),
-            ]),
-            'deblur':
-            ia.OneOf([
-                ia.MotionBlur(k=(10, 20)),
-                ia.GaussianBlur((3.0, 8.0)),
-            ]),
-            'jpeg':
-            ia.JpegCompression(compression=(50, 85)),
-            '16x':
-            Mosaic16x(),
+            'sr4x': ia.Sequential(
+                [
+                    # It's almost like a 4x bicubic downsampling
+                    ia.Resize((0.25000, 0.25001), cv2.INTER_AREA),
+                    ia.Resize({'height': 512, 'width': 512}, cv2.INTER_CUBIC),
+                ]
+            ),
+            'sr4x8x': ia.Sequential(
+                [
+                    ia.Resize((0.125, 0.25), cv2.INTER_AREA),
+                    ia.Resize({'height': 512, 'width': 512}, cv2.INTER_CUBIC),
+                ]
+            ),
+            'denoise': ia.OneOf(
+                [
+                    ia.AdditiveGaussianNoise(scale=(20, 40), per_channel=True),
+                    ia.AdditiveLaplaceNoise(scale=(20, 40), per_channel=True),
+                    ia.AdditivePoissonNoise(lam=(15, 30), per_channel=True),
+                ]
+            ),
+            'deblur': ia.OneOf(
+                [
+                    ia.MotionBlur(k=(10, 20)),
+                    ia.GaussianBlur((3.0, 8.0)),
+                ]
+            ),
+            'jpeg': ia.JpegCompression(compression=(50, 85)),
+            '16x': Mosaic16x(),
         }
 
         rand_deg_list = [
@@ -79,6 +79,7 @@ class DegradationSimulator:
 
     def create_training_dataset(self, deg, gt_folder, lq_folder=None):
         from imgaug.augmenters.meta import Augmenter  # baseclass
+
         """
         Create a degradation simulator and apply it to GT images on the fly
         Save the degraded result in the lq_folder (if None, name it as GT_deg)
@@ -91,7 +92,8 @@ class DegradationSimulator:
 
         if isinstance(deg, str):
             assert deg in self.default_deg_templates, (
-                f'Degration type {deg} not recognized: {"|".join(list(self.default_deg_templates.keys()))}')
+                f'Degration type {deg} not recognized: {"|".join(list(self.default_deg_templates.keys()))}'
+            )
             deg = self.default_deg_templates[deg]
         else:
             assert isinstance(deg, Augmenter), f'Deg must be either str|Augmenter, got {deg}'

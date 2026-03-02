@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=68", "wheel", "cython", "numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basicsr"
+dynamic = ["version"]
+description = "Open Source Image and Video Super-Resolution Toolbox"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "Apache License 2.0" }
+authors = [
+    { name = "Xintao Wang", email = "xintao.wang@outlook.com" },
+]
+keywords = ["computer vision", "restoration", "super resolution"]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "numpy>=1.23",
+    "lmdb",
+    "opencv-python",
+    "Pillow>=9.4",
+    "pyyaml",
+    "requests",
+    "scikit-image>=0.19",
+    "scipy>=1.10",
+    "tensorboard>=2.12",
+    "torch>=2.0",
+    "torchvision>=0.15",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+    "pre-commit>=3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/XPixelGroup/BasicSR"
+Repository = "https://github.com/XPixelGroup/BasicSR"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = ["options*", "datasets*", "experiments*", "results*", "tb_logger*", "wandb*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "basicsr.version.__version__" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.isort]
+line_length = 120
+multi_line_output = 0
+known_standard_library = ["pkg_resources", "setuptools"]
+known_first_party = ["basicsr"]
+known_third_party = ["PIL", "cv2", "lmdb", "numpy", "pytest", "requests", "scipy", "skimage", "torch", "torchvision", "tqdm", "yaml"]
+no_lines_before = ["STDLIB", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.codespell]
+skip = ".git,./docs/build,*.cfg,*.toml"
+count = true
+quiet-level = 3
+ignore-words-list = "gool"

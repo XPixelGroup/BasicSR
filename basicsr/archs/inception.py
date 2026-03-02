@@ -2,6 +2,7 @@
 # For FID metric
 
 import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -10,7 +11,9 @@ from torchvision import models
 
 # Inception weights ported to Pytorch from
 # http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz
-FID_WEIGHTS_URL = 'https://github.com/mseitzer/pytorch-fid/releases/download/fid_weights/pt_inception-2015-12-05-6726825d.pth'  # noqa: E501
+FID_WEIGHTS_URL = (
+    'https://github.com/mseitzer/pytorch-fid/releases/download/fid_weights/pt_inception-2015-12-05-6726825d.pth'  # noqa: E501
+)
 LOCAL_FID_WEIGHTS = 'experiments/pretrained_models/pt_inception-2015-12-05-6726825d.pth'  # noqa: E501
 
 
@@ -26,15 +29,17 @@ class InceptionV3(nn.Module):
         64: 0,  # First max pooling features
         192: 1,  # Second max pooling features
         768: 2,  # Pre-aux classifier features
-        2048: 3  # Final average pooling features
+        2048: 3,  # Final average pooling features
     }
 
-    def __init__(self,
-                 output_blocks=(DEFAULT_BLOCK_INDEX),
-                 resize_input=True,
-                 normalize_input=True,
-                 requires_grad=False,
-                 use_fid_inception=True):
+    def __init__(
+        self,
+        output_blocks=(DEFAULT_BLOCK_INDEX),
+        resize_input=True,
+        normalize_input=True,
+        requires_grad=False,
+        use_fid_inception=True,
+    ):
         """Build pretrained InceptionV3.
 
         Args:
@@ -71,7 +76,7 @@ class InceptionV3(nn.Module):
         self.output_blocks = sorted(output_blocks)
         self.last_needed_block = max(output_blocks)
 
-        assert self.last_needed_block <= 3, ('Last possible output block index is 3')
+        assert self.last_needed_block <= 3, 'Last possible output block index is 3'
 
         self.blocks = nn.ModuleList()
 
@@ -86,8 +91,10 @@ class InceptionV3(nn.Module):
 
         # Block 0: input to maxpool1
         block0 = [
-            inception.Conv2d_1a_3x3, inception.Conv2d_2a_3x3, inception.Conv2d_2b_3x3,
-            nn.MaxPool2d(kernel_size=3, stride=2)
+            inception.Conv2d_1a_3x3,
+            inception.Conv2d_2a_3x3,
+            inception.Conv2d_2b_3x3,
+            nn.MaxPool2d(kernel_size=3, stride=2),
         ]
         self.blocks.append(nn.Sequential(*block0))
 
@@ -113,8 +120,10 @@ class InceptionV3(nn.Module):
         # Block 3: aux classifier to final avgpool
         if self.last_needed_block >= 3:
             block3 = [
-                inception.Mixed_7a, inception.Mixed_7b, inception.Mixed_7c,
-                nn.AdaptiveAvgPool2d(output_size=(1, 1))
+                inception.Mixed_7a,
+                inception.Mixed_7b,
+                inception.Mixed_7c,
+                nn.AdaptiveAvgPool2d(output_size=(1, 1)),
             ]
             self.blocks.append(nn.Sequential(*block3))
 

@@ -2,11 +2,12 @@ import torch
 import torch.nn as nn
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .arch_util import ResidualBlockNoBN, make_layer
 
 
 class MeanShift(nn.Conv2d):
-    """ Data normalization with mean and std.
+    """Data normalization with mean and std.
 
     Args:
         rgb_range (int): Maximum value of RGB.
@@ -53,7 +54,7 @@ class EResidualBlockNoBN(nn.Module):
 
 
 class MergeRun(nn.Module):
-    """ Merge-and-run unit.
+    """Merge-and-run unit.
 
     This unit contains two branches with different dilated convolutions,
     followed by a convolution to process the concatenated features.
@@ -66,14 +67,21 @@ class MergeRun(nn.Module):
         super(MergeRun, self).__init__()
 
         self.dilation1 = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding), nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 2, 2), nn.ReLU(inplace=True))
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 2, 2),
+            nn.ReLU(inplace=True),
+        )
         self.dilation2 = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, stride, 3, 3), nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 4, 4), nn.ReLU(inplace=True))
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, 3, 3),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size, stride, 4, 4),
+            nn.ReLU(inplace=True),
+        )
 
         self.aggregation = nn.Sequential(
-            nn.Conv2d(out_channels * 2, out_channels, kernel_size, stride, padding), nn.ReLU(inplace=True))
+            nn.Conv2d(out_channels * 2, out_channels, kernel_size, stride, padding), nn.ReLU(inplace=True)
+        )
 
     def forward(self, x):
         dilation1 = self.dilation1(x)
@@ -95,8 +103,12 @@ class ChannelAttention(nn.Module):
     def __init__(self, mid_channels, squeeze_factor=16):
         super(ChannelAttention, self).__init__()
         self.attention = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1), nn.Conv2d(mid_channels, mid_channels // squeeze_factor, 1, padding=0),
-            nn.ReLU(inplace=True), nn.Conv2d(mid_channels // squeeze_factor, mid_channels, 1, padding=0), nn.Sigmoid())
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(mid_channels, mid_channels // squeeze_factor, 1, padding=0),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(mid_channels // squeeze_factor, mid_channels, 1, padding=0),
+            nn.Sigmoid(),
+        )
 
     def forward(self, x):
         y = self.attention(x)
@@ -151,14 +163,16 @@ class RIDNet(nn.Module):
             Default: (0.4488, 0.4371, 0.4040), calculated from DIV2K dataset.
     """
 
-    def __init__(self,
-                 in_channels,
-                 mid_channels,
-                 out_channels,
-                 num_block=4,
-                 img_range=255.,
-                 rgb_mean=(0.4488, 0.4371, 0.4040),
-                 rgb_std=(1.0, 1.0, 1.0)):
+    def __init__(
+        self,
+        in_channels,
+        mid_channels,
+        out_channels,
+        num_block=4,
+        img_range=255.0,
+        rgb_mean=(0.4488, 0.4371, 0.4040),
+        rgb_std=(1.0, 1.0, 1.0),
+    ):
         super(RIDNet, self).__init__()
 
         self.sub_mean = MeanShift(img_range, rgb_mean, rgb_std)
@@ -166,7 +180,8 @@ class RIDNet(nn.Module):
 
         self.head = nn.Conv2d(in_channels, mid_channels, 3, 1, 1)
         self.body = make_layer(
-            EAM, num_block, in_channels=mid_channels, mid_channels=mid_channels, out_channels=mid_channels)
+            EAM, num_block, in_channels=mid_channels, mid_channels=mid_channels, out_channels=mid_channels
+        )
         self.tail = nn.Conv2d(mid_channels, out_channels, 3, 1, 1)
 
         self.relu = nn.ReLU(inplace=True)

@@ -28,14 +28,16 @@ def test_iconvsr():
 
     # model init and forward
     net = IconVSR(
-        num_feat=8, num_block=1, keyframe_stride=2, temporal_padding=2, spynet_path=None, edvr_path=None).cuda()
+        num_feat=8, num_block=1, keyframe_stride=2, temporal_padding=2, spynet_path=None, edvr_path=None
+    ).cuda()
     img = torch.rand((1, 6, 3, 64, 64), dtype=torch.float32).cuda()
     output = net(img)
     assert output.shape == (1, 6, 3, 256, 256)
 
     # --------------------------- temporal padding 3 ------------------------- #
     net = IconVSR(
-        num_feat=8, num_block=1, keyframe_stride=2, temporal_padding=3, spynet_path=None, edvr_path=None).cuda()
+        num_feat=8, num_block=1, keyframe_stride=2, temporal_padding=3, spynet_path=None, edvr_path=None
+    ).cuda()
     img = torch.rand((1, 8, 3, 64, 64), dtype=torch.float32).cuda()
     output = net(img)
     assert output.shape == (1, 8, 3, 256, 256)

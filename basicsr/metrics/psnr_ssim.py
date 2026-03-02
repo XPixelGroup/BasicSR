@@ -25,7 +25,7 @@ def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
         float: PSNR result.
     """
 
-    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
+    assert img.shape == img2.shape, f'Image shapes are different: {img.shape}, {img2.shape}.'
     if input_order not in ['HWC', 'CHW']:
         raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are "HWC" and "CHW"')
     img = reorder_image(img, input_order=input_order)
@@ -42,10 +42,10 @@ def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
     img = img.astype(np.float64)
     img2 = img2.astype(np.float64)
 
-    mse = np.mean((img - img2)**2)
+    mse = np.mean((img - img2) ** 2)
     if mse == 0:
         return float('inf')
-    return 10. * np.log10(255. * 255. / mse)
+    return 10.0 * np.log10(255.0 * 255.0 / mse)
 
 
 @METRIC_REGISTRY.register()
@@ -64,7 +64,7 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
         float: PSNR result.
     """
 
-    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
+    assert img.shape == img2.shape, f'Image shapes are different: {img.shape}, {img2.shape}.'
 
     if crop_border != 0:
         img = img[:, :, crop_border:-crop_border, crop_border:-crop_border]
@@ -77,8 +77,8 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     img = img.to(torch.float64)
     img2 = img2.to(torch.float64)
 
-    mse = torch.mean((img - img2)**2, dim=[1, 2, 3])
-    return 10. * torch.log10(1. / (mse + 1e-8))
+    mse = torch.mean((img - img2) ** 2, dim=[1, 2, 3])
+    return 10.0 * torch.log10(1.0 / (mse + 1e-8))
 
 
 @METRIC_REGISTRY.register()
@@ -105,7 +105,7 @@ def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
         float: SSIM result.
     """
 
-    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
+    assert img.shape == img2.shape, f'Image shapes are different: {img.shape}, {img2.shape}.'
     if input_order not in ['HWC', 'CHW']:
         raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are "HWC" and "CHW"')
     img = reorder_image(img, input_order=input_order)
@@ -150,7 +150,7 @@ def calculate_ssim_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
         float: SSIM result.
     """
 
-    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
+    assert img.shape == img2.shape, f'Image shapes are different: {img.shape}, {img2.shape}.'
 
     if crop_border != 0:
         img = img[:, :, crop_border:-crop_border, crop_border:-crop_border]
@@ -163,7 +163,7 @@ def calculate_ssim_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     img = img.to(torch.float64)
     img2 = img2.to(torch.float64)
 
-    ssim = _ssim_pth(img * 255., img2 * 255.)
+    ssim = _ssim_pth(img * 255.0, img2 * 255.0)
     return ssim
 
 
@@ -180,8 +180,8 @@ def _ssim(img, img2):
         float: SSIM result.
     """
 
-    c1 = (0.01 * 255)**2
-    c2 = (0.03 * 255)**2
+    c1 = (0.01 * 255) ** 2
+    c2 = (0.03 * 255) ** 2
     kernel = cv2.getGaussianKernel(11, 1.5)
     window = np.outer(kernel, kernel.transpose())
 
@@ -210,8 +210,8 @@ def _ssim_pth(img, img2):
     Returns:
         float: SSIM result.
     """
-    c1 = (0.01 * 255)**2
-    c2 = (0.03 * 255)**2
+    c1 = (0.01 * 255) ** 2
+    c2 = (0.03 * 255) ** 2
 
     kernel = cv2.getGaussianKernel(11, 1.5)
     window = np.outer(kernel, kernel.transpose())

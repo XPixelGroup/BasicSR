@@ -4,21 +4,24 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from basicsr.utils.registry import ARCH_REGISTRY
+
 from .hifacegan_util import BaseNetwork, LIPEncoder, SPADEResnetBlock, get_nonspade_norm_layer
 
 
 class SPADEGenerator(BaseNetwork):
     """Generator with SPADEResBlock"""
 
-    def __init__(self,
-                 num_in_ch=3,
-                 num_feat=64,
-                 use_vae=False,
-                 z_dim=256,
-                 crop_size=512,
-                 norm_g='spectralspadesyncbatch3x3',
-                 is_train=True,
-                 init_train_phase=3):  # progressive training disabled
+    def __init__(
+        self,
+        num_in_ch=3,
+        num_feat=64,
+        use_vae=False,
+        z_dim=256,
+        crop_size=512,
+        norm_g='spectralspadesyncbatch3x3',
+        is_train=True,
+        init_train_phase=3,
+    ):  # progressive training disabled
         super().__init__()
         self.nf = num_feat
         self.input_nc = num_in_ch
@@ -42,19 +45,23 @@ class SPADEGenerator(BaseNetwork):
         self.g_middle_0 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_g)
         self.g_middle_1 = SPADEResnetBlock(16 * self.nf, 16 * self.nf, norm_g)
 
-        self.ups = nn.ModuleList([
-            SPADEResnetBlock(16 * self.nf, 8 * self.nf, norm_g),
-            SPADEResnetBlock(8 * self.nf, 4 * self.nf, norm_g),
-            SPADEResnetBlock(4 * self.nf, 2 * self.nf, norm_g),
-            SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_g)
-        ])
+        self.ups = nn.ModuleList(
+            [
+                SPADEResnetBlock(16 * self.nf, 8 * self.nf, norm_g),
+                SPADEResnetBlock(8 * self.nf, 4 * self.nf, norm_g),
+                SPADEResnetBlock(4 * self.nf, 2 * self.nf, norm_g),
+                SPADEResnetBlock(2 * self.nf, 1 * self.nf, norm_g),
+            ]
+        )
 
-        self.to_rgbs = nn.ModuleList([
-            nn.Conv2d(8 * self.nf, 3, 3, padding=1),
-            nn.Conv2d(4 * self.nf, 3, 3, padding=1),
-            nn.Conv2d(2 * self.nf, 3, 3, padding=1),
-            nn.Conv2d(1 * self.nf, 3, 3, padding=1)
-        ])
+        self.to_rgbs = nn.ModuleList(
+            [
+                nn.Conv2d(8 * self.nf, 3, 3, padding=1),
+                nn.Conv2d(4 * self.nf, 3, 3, padding=1),
+                nn.Conv2d(2 * self.nf, 3, 3, padding=1),
+                nn.Conv2d(1 * self.nf, 3, 3, padding=1),
+            ]
+        )
 
         self.up = nn.Upsample(scale_factor=2)
 
@@ -148,15 +155,17 @@ class HiFaceGAN(SPADEGenerator):
     Current encoder design: LIPEncoder
     """
 
-    def __init__(self,
-                 num_in_ch=3,
-                 num_feat=64,
-                 use_vae=False,
-                 z_dim=256,
-                 crop_size=512,
-                 norm_g='spectralspadesyncbatch3x3',
-                 is_train=True,
-                 init_train_phase=3):
+    def __init__(
+        self,
+        num_in_ch=3,
+        num_feat=64,
+        use_vae=False,
+        z_dim=256,
+        crop_size=512,
+        norm_g='spectralspadesyncbatch3x3',
+        is_train=True,
+        init_train_phase=3,
+    ):
         super().__init__(num_in_ch, num_feat, use_vae, z_dim, crop_size, norm_g, is_train, init_train_phase)
         self.lip_encoder = LIPEncoder(num_in_ch, num_feat, self.sw, self.sh, self.scale_ratio)
 
@@ -185,15 +194,17 @@ class HiFaceGANDiscriminator(BaseNetwork):
             Default: True.
     """
 
-    def __init__(self,
-                 num_in_ch=3,
-                 num_out_ch=3,
-                 conditional_d=True,
-                 num_d=2,
-                 n_layers_d=4,
-                 num_feat=64,
-                 norm_d='spectralinstance',
-                 keep_features=True):
+    def __init__(
+        self,
+        num_in_ch=3,
+        num_out_ch=3,
+        conditional_d=True,
+        num_d=2,
+        n_layers_d=4,
+        num_feat=64,
+        norm_d='spectralinstance',
+        keep_features=True,
+    ):
         super().__init__()
         self.num_d = num_d
 
@@ -237,10 +248,12 @@ class NLayerDiscriminator(BaseNetwork):
             nf_prev = nf
             nf = min(nf * 2, 512)
             stride = 1 if n == n_layers_d - 1 else 2
-            sequence += [[
-                norm_layer(nn.Conv2d(nf_prev, nf, kernel_size=kw, stride=stride, padding=padw)),
-                nn.LeakyReLU(0.2, False)
-            ]]
+            sequence += [
+                [
+                    norm_layer(nn.Conv2d(nf_prev, nf, kernel_size=kw, stride=stride, padding=padw)),
+                    nn.LeakyReLU(0.2, False),
+                ]
+            ]
 
         sequence += [[nn.Conv2d(nf, 1, kernel_size=kw, stride=1, padding=padw)]]
 

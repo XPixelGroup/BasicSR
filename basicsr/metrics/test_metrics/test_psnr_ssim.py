@@ -16,8 +16,8 @@ def test(img_path, img_path2, crop_border, test_y_channel=False):
     print(f'\tNumpy\tPSNR: {psnr:.6f} dB, \tSSIM: {ssim:.6f}')
 
     # --------------------- PyTorch (CPU) ---------------------
-    img = img2tensor(img / 255., bgr2rgb=True, float32=True).unsqueeze_(0)
-    img2 = img2tensor(img2 / 255., bgr2rgb=True, float32=True).unsqueeze_(0)
+    img = img2tensor(img / 255.0, bgr2rgb=True, float32=True).unsqueeze_(0)
+    img2 = img2tensor(img2 / 255.0, bgr2rgb=True, float32=True).unsqueeze_(0)
 
     psnr_pth = calculate_psnr_pt(img, img2, crop_border=crop_border, test_y_channel=test_y_channel)
     ssim_pth = calculate_ssim_pt(img, img2, crop_border=crop_border, test_y_channel=test_y_channel)
@@ -34,14 +34,18 @@ def test(img_path, img_path2, crop_border, test_y_channel=False):
         torch.repeat_interleave(img, 2, dim=0),
         torch.repeat_interleave(img2, 2, dim=0),
         crop_border=crop_border,
-        test_y_channel=test_y_channel)
+        test_y_channel=test_y_channel,
+    )
     ssim_pth = calculate_ssim_pt(
         torch.repeat_interleave(img, 2, dim=0),
         torch.repeat_interleave(img2, 2, dim=0),
         crop_border=crop_border,
-        test_y_channel=test_y_channel)
-    print(f'\tTensor (GPU batch) \tPSNR: {psnr_pth[0]:.6f}, {psnr_pth[1]:.6f} dB,'
-          f'\tSSIM: {ssim_pth[0]:.6f}, {ssim_pth[1]:.6f}')
+        test_y_channel=test_y_channel,
+    )
+    print(
+        f'\tTensor (GPU batch) \tPSNR: {psnr_pth[0]:.6f}, {psnr_pth[1]:.6f} dB,'
+        f'\tSSIM: {ssim_pth[0]:.6f}, {ssim_pth[1]:.6f}'
+    )
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
-import torch
 from collections import OrderedDict
 from os import path as osp
+
+import torch
 from tqdm import tqdm
 
 from basicsr.archs import build_network
@@ -8,6 +9,7 @@ from basicsr.losses import build_loss
 from basicsr.metrics import calculate_metric
 from basicsr.utils import imwrite, tensor2img
 from basicsr.utils.registry import MODEL_REGISTRY
+
 from .sr_model import SRModel
 
 
@@ -101,15 +103,15 @@ class HiFaceGANModel(SRModel):
         The prediction contains the intermediate outputs of multiscale GAN,
         so it's usually a list
         """
-        if type(pred) == list:
+        if isinstance(pred, list):
             fake = []
             real = []
             for p in pred:
-                fake.append([tensor[:tensor.size(0) // 2] for tensor in p])
-                real.append([tensor[tensor.size(0) // 2:] for tensor in p])
+                fake.append([tensor[: tensor.size(0) // 2] for tensor in p])
+                real.append([tensor[tensor.size(0) // 2 :] for tensor in p])
         else:
-            fake = pred[:pred.size(0) // 2]
-            real = pred[pred.size(0) // 2:]
+            fake = pred[: pred.size(0) // 2]
+            real = pred[pred.size(0) // 2 :]
 
         return fake, real
 
@@ -124,7 +126,7 @@ class HiFaceGANModel(SRModel):
         l_g_total = 0
         loss_dict = OrderedDict()
 
-        if (current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters):
+        if current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters:
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, self.gt)
@@ -209,8 +211,10 @@ class HiFaceGANModel(SRModel):
         if self.opt['dist']:
             self.dist_validation(dataloader, current_iter, tb_logger, save_img)
         else:
-            print('In HiFaceGANModel: The new metrics package is under development.' +
-                  'Using super method now (Only PSNR & SSIM are supported)')
+            print(
+                'In HiFaceGANModel: The new metrics package is under development.'
+                + 'Using super method now (Only PSNR & SSIM are supported)'
+            )
             super().nondist_validation(dataloader, current_iter, tb_logger, save_img)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
@@ -253,15 +257,20 @@ class HiFaceGANModel(SRModel):
 
             if save_img:
                 if self.opt['is_train']:
-                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                             f'{img_name}_{current_iter}.png')
+                    save_img_path = osp.join(
+                        self.opt['path']['visualization'], img_name, f'{img_name}_{current_iter}.png'
+                    )
                 else:
                     if self.opt['val']['suffix']:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                 f'{img_name}_{self.opt["val"]["suffix"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'],
+                            dataset_name,
+                            f'{img_name}_{self.opt["val"]["suffix"]}.png',
+                        )
                     else:
-                        save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                 f'{img_name}_{self.opt["name"]}.png')
+                        save_img_path = osp.join(
+                            self.opt['path']['visualization'], dataset_name, f'{img_name}_{self.opt["name"]}.png'
+                        )
 
                 imwrite(tensor2img(visuals['result']), save_img_path)
 

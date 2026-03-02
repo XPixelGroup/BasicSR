@@ -1,9 +1,10 @@
-import cv2
-import numpy as np
 import os
 import sys
 from multiprocessing import Pool
 from os import path as osp
+
+import cv2
+import numpy as np
 from tqdm import tqdm
 
 from basicsr.utils import scandir
@@ -143,11 +144,13 @@ def worker(path, opt):
     for x in h_space:
         for y in w_space:
             index += 1
-            cropped_img = img[x:x + crop_size, y:y + crop_size, ...]
+            cropped_img = img[x : x + crop_size, y : y + crop_size, ...]
             cropped_img = np.ascontiguousarray(cropped_img)
             cv2.imwrite(
-                osp.join(opt['save_folder'], f'{img_name}_s{index:03d}{extension}'), cropped_img,
-                [cv2.IMWRITE_PNG_COMPRESSION, opt['compression_level']])
+                osp.join(opt['save_folder'], f'{img_name}_s{index:03d}{extension}'),
+                cropped_img,
+                [cv2.IMWRITE_PNG_COMPRESSION, opt['compression_level']],
+            )
     process_info = f'Processing {img_name} ...'
     return process_info
 

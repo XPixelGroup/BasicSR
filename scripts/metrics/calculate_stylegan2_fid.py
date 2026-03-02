@@ -1,5 +1,6 @@
 import argparse
 import math
+
 import numpy as np
 import torch
 from torch import nn
@@ -28,7 +29,8 @@ def calculate_stylegan2_fid():
         num_style_feat=512,
         num_mlp=8,
         channel_multiplier=args.channel_multiplier,
-        resample_kernel=(1, 3, 3, 1))
+        resample_kernel=(1, 3, 3, 1),
+    )
     generator.load_state_dict(torch.load(args.ckpt)['params_ema'])
     generator = nn.DataParallel(generator).eval().to(device)
 
@@ -53,7 +55,7 @@ def calculate_stylegan2_fid():
     features = extract_inception_features(sample_generator(total_batch), inception, total_batch, device)
     features = features.numpy()
     total_len = features.shape[0]
-    features = features[:args.num_sample]
+    features = features[: args.num_sample]
     print(f'Extracted {total_len} features, use the first {features.shape[0]} features to calculate stats.')
     sample_mean = np.mean(features, 0)
     sample_cov = np.cov(features, rowvar=False)
