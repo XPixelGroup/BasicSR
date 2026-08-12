@@ -41,7 +41,14 @@ def _init_dist_slurm(backend, port=None):
     node_list = os.environ['SLURM_NODELIST']
     num_gpus = torch.cuda.device_count()
     torch.cuda.set_device(proc_id % num_gpus)
-    addr = subprocess.getoutput(f'scontrol show hostname {node_list} | head -n1')
+    # `SLURM_NODELIST` is environment-controlled input, so it is passed as an argv
+    # element instead of being interpolated into a shell command (CVE-2024-27763).
+    # `head -n1` is replaced by taking the first line in Python.
+    hostnames = subprocess.run(['scontrol', 'show', 'hostname', node_list],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               text=True).stdout
+    addr = hostnames.split('\n')[0]
     # specify master port
     if port is not None:
         os.environ['MASTER_PORT'] = str(port)
