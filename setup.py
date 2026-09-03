@@ -74,9 +74,10 @@ version_info = ({})
 
 
 def get_version():
+    namespace = {}
     with open(version_file, 'r') as f:
-        exec(compile(f.read(), version_file, 'exec'))
-    return locals()['__version__']
+        exec(compile(f.read(), version_file, 'exec'), namespace)
+    return namespace['__version__']
 
 
 def make_cuda_ext(name, module, sources, sources_cuda=None):
@@ -111,6 +112,7 @@ def get_requirements(filename='requirements.txt'):
         requires = [line.replace('\n', '') for line in f.readlines()]
     return requires
 
+write_version_py()
 
 if __name__ == '__main__':
     cuda_ext = os.getenv('BASICSR_EXT')  # whether compile cuda ext
@@ -143,7 +145,7 @@ if __name__ == '__main__':
         ext_modules = []
         setup_kwargs = dict()
 
-    write_version_py()
+    
     setup(
         name='basicsr',
         version=get_version(),
